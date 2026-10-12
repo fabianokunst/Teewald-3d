@@ -22,6 +22,7 @@ O navegador abre em `http://localhost:5173`.
 | Câmera | mouse (clique na tela para prender) · Q/E | analógico direito | arrastar no lado direito |
 | Centralizar câmera | — | R3 | toque duplo no lado direito |
 | Zoom | roda do mouse | direcional ↑↓ | pinça com dois dedos |
+| Conversar (perto de um morador) | F | A | botão FALAR sobre o morador |
 | Inventário | I ou Tab | Y | botão INV |
 | Mirar (com a pistola na mão) | botão direito (segurar) | L2 ou LB (segurar) | botão MIRAR (liga/desliga) |
 | Atirar | botão esquerdo | R2 mirando · RB | botão ATIRAR |
@@ -75,6 +76,18 @@ o controle é usado e voltam ao tocar na tela.
   barraca no Pavilhão da Kartoffelfest; atrás de um gol do campo). Lata voa e
   quica, garrafa quebra; o estande limpo se remonta. Ao lado de cada estande há
   uma caixa de munição (+12), que reaparece depois de um minuto.
+- **23 moradores com falas** (`src/game/npcData.js`): pescador no Rio Cadeia,
+  caminhante e corredor no calçadão, turista fotografando o letreiro, professor
+  no Monumento ao Imigrante, Seu Valdir com chimarrão no banco da praça, banca
+  de pinhão e cuca, piá correndo, casal de idosos, padre e beata na Igreja
+  Matriz, zelador do cemitério, carteiro, prefeitura, Kartoffelfest, campo,
+  floricultura e loja. Cada um tem roupa própria no mesmo esqueleto do
+  protagonista (suéter, camisa xadrez, batina, terno, jardineira, vestido com
+  avental, uniforme), chapéu, lenço, cabelo comprido ou objeto na mão. Andam,
+  sentam, cumprimentam e comentam quando o jogador passa; a conversa abre com
+  câmera de lado, texto letra a letra e voz em bipes. Com a pistola na mão
+  eles comentam; mirada, levantam as mãos; um tiro por perto os faz encolher
+  e fugir. Ninguém se machuca.
 - **Protagonista** com ~1200 triângulos numa malha única com esqueleto
   (cotovelos e joelhos contínuos ao dobrar), sombreamento suave e um atlas de
   128x128 pintado a partir das texturas da pasta: jaqueta de lona com bolsos e
@@ -89,8 +102,8 @@ o controle é usado e voltam ao tocar na tela.
 ```
 src/engine   motor: material PS1, texturas, renderizador, colisão, controles, som
 src/world    cidade: relevo, ruas, rio, prédios, igreja, praça, calçadão, árvores, alvos
-src/game     personagem, controle do jogador, câmera, itens, pistola e efeitos de tiro
-src/ui       menu, HUD, inventário e textos
+src/game     personagem, controle do jogador, câmera, itens, pistola, efeitos de tiro e moradores
+src/ui       menu, HUD, inventário, diálogo e textos
 tools/       build-mapdata.mjs (regera os dados do mapa), capturas de teste
 texture/     texturas do projeto (servidas como pasta pública)
 ```

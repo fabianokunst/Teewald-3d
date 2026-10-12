@@ -29,6 +29,8 @@ export function bench(B, ctx, x, z, rot) {
     B.box('woodBench', p[0], y + 0.6 + i * 0.2, p[2], 1.8, 0.12, 0.05, rot, { uvScale: 1 });
   }
   ctx.collision.addBox(x, z, 0.95, 0.3, rot, y, y + 0.9, { cam: false });
+  // assento (os moradores sentam aqui): frente para +z local, tampo a 0,47 m
+  (ctx.seats ||= []).push({ x, z, rot, y, seat: 0.47, kind: 'bench' });
 }
 
 export function picnicTable(B, ctx, x, z, rot) {
@@ -84,6 +86,7 @@ export function streetPole(B, ctx, x, z, rot, withLamp = true) {
 
 export function orelhao(B, ctx, x, z, rot) {
   const y = ctx.terrain.heightAt(x, z);
+  (ctx.phones ||= []).push({ x, z, rot, y });   // o telefone fica do lado +z local
   const P = rotP(x, z, rot);
   B.col = [0.7, 0.7, 0.7];
   B.box('metalGray', x, y, z, 0.1, 2.0, 0.1, rot, { uvScale: 1 });
@@ -139,6 +142,7 @@ export function busStop(B, ctx, x, z, rot) {
   // banco e plataforma (a plataforma é um degrau baixo: dá para subir)
   ctx.collision.addBox(seat[0], seat[2], 1.2, 0.2, rot, y, y + 0.66, { cam: false });
   ctx.collision.addBox(x, z, 1.7, 0.9, rot, y - 0.3, y + 0.15, { walk: true, cam: false });
+  (ctx.seats ||= []).push({ x: seat[0], z: seat[2], rot, y: y + 0.15, seat: 0.51, kind: 'bus' });
 }
 
 // carro estacionado simples (estilo Fusca/Brasília/pick-up de 1990)

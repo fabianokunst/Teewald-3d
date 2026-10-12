@@ -356,7 +356,8 @@ function buildHero(b) {
 }
 
 export class Character {
-  constructor(M) {
+  // material: atlas de outro personagem (moradores usam a mesma malha e o mesmo esqueleto)
+  constructor(M, material = M.hero) {
     this.root = new THREE.Group();
     this.root.scale.setScalar(0.95);
     const bones = [];
@@ -382,13 +383,14 @@ export class Character {
       this.legs.push({ hip, knee, ankle, side });
     }
 
-    const geo = buildHero({
+    // os ossos nascem sempre na mesma ordem: a geometria é a mesma para todos
+    const geo = Character.geo ||= buildHero({
       hips: idx(this.hips), spine: idx(this.spine), neck: idx(this.neck), head: idx(this.head),
       sh: this.arms.map(a => idx(a.sh)), el: this.arms.map(a => idx(a.el)), hand: this.arms.map(a => idx(a.hand)),
       hip: this.legs.map(l => idx(l.hip)), knee: this.legs.map(l => idx(l.knee)), ankle: this.legs.map(l => idx(l.ankle)),
     });
     this.triangles = geo.getAttribute('position').count / 3;
-    const mesh = new THREE.SkinnedMesh(geo, M.hero);
+    const mesh = new THREE.SkinnedMesh(geo, material);
     mesh.frustumCulled = false;
     this.root.add(mesh);
     this.root.updateMatrixWorld(true);

@@ -20,6 +20,7 @@ import { Pistol } from './game/weapon.js';
 import { Effects } from './game/effects.js';
 import { Targets } from './world/targets.js';
 import { InventoryScreen } from './ui/inventory.js';
+import { NPCs } from './game/npcs.js';
 import { loadFonts, drawText, FONT_TITLE } from './ui/overlay.js';
 
 const params = new URLSearchParams(location.search);
@@ -38,6 +39,7 @@ G.uSunDir.value.set(-0.62, 0.4, -0.68).normalize();
 
 let ctx, character, player, tpc, menu, minimap;
 let inventory, pistol, effects, targets, invScreen;
+let npcs;
 let state = 'loading';
 let time = 0, stateT = 0, fade = 1, fadeTarget = 0, onFaded = null;
 let introPath = null;
@@ -117,6 +119,8 @@ async function boot() {
   targets = new Targets(scene, ctx, M, { effects, audio, inventory, hud });
   pistol = new Pistol({ ctx, character, player, tpc, camera, inventory, effects, targets, audio, hud, input, M });
   invScreen = new InventoryScreen(R, input, audio, inventory, pistol, M);
+  // moradores com falas (F / A / toque em FALAR para conversar)
+  npcs = new NPCs({ ctx, scene, M, audio, player, tpc, camera, pistol, R });
   menu = new Menu(input, audio, settings, applySettings);
   setupStart();
   exposeDebug();
@@ -202,13 +206,23 @@ function loop(now) {
   } else if (state === 'play') {
     if (input.pause()) pauseGame();
     else if (input.inventory()) { invScreen.open(); setState('inventory'); input.unlock(); }
+    else if (npcs.talkHit(input)) { npcs.startTalk(); setState('talk'); }
     else {
       if (input.mouse.clicked && !input.locked && input.lastDevice === 'keyboard') input.lock();
       pistol.pre(dt, input);
       const r = player.update(dt, tpc.yaw, input);
       pistol.post(dt);
+      npcs.pushPlayer();
       tpc.update(dt, player, input, settings, r.moving);
+      R.bars = npcs.applyCamera(dt) * 0.1;
     }
+  } else if (state === 'talk') {
+    // conversa: o jogador para e vira para o morador; câmera de lado e tarjas
+    const done = npcs.updateTalk(dt, input) === 'close';
+    player.update(dt, tpc.yaw, null);
+    tpc.update(dt, player, null, settings, false);
+    R.bars = npcs.applyCamera(dt) * 0.1;
+    if (done) setState('play');
   } else if (state === 'inventory') {
     if (invScreen.update(dt, mouseInt) === 'close') { invScreen.close(); setState('play'); }
   } else if (state === 'pause') {
@@ -230,6 +244,7 @@ function loop(now) {
   ctx.leaves.update(dt, focus, time);
   if (state !== 'inventory' && state !== 'pause') {
     targets.update(dt, player, state === 'play');
+    npcs.update(dt, state);
     effects.update(dt, camera, ctx.groundAt);
   }
   ctx.sky.update(camera);
@@ -286,10 +301,13 @@ function drawUI() {
     invScreen.draw(g, W, H);
   } else if (state === 'intro') {
     hud.drawIntro(g, W, H, stateT);
+  } else if (state === 'talk') {
+    npcs.drawTalk(g, W, H, input.lastDevice);
   } else if (state === 'play') {
     const showMap = settings.minimap !== false;
     const device = input.lastDevice, touch = device === 'touch';
     // no toque o minimapa vai para o alto, longe dos polegares
+    npcs.drawHud(g, W, H, device);
     if (showMap) minimap.draw(g, W, H, player, tpc.yaw, touch);
     pistol.drawHud(g, W, H, device);
     hud.draw(g, W, H, {
@@ -303,7 +321,7 @@ function drawUI() {
 
 function exposeDebug() {
   window.__teewald = {
-    ctx, player, camera, tpc, settings, scene, renderer: R, G, input, menu, inventory, pistol, targets, effects, invScreen,
+    ctx, player, camera, tpc, settings, scene, renderer: R, G, input, menu, inventory, pistol, targets, effects, invScreen, npcs,
     get state() { return state; },
     startGame: (intro = false) => { startGame(intro); fade = 0; fadeTarget = 0; },
     teleport: (x, z, heading = 0) => { player.place(x, z, heading); tpc.snap(player); },

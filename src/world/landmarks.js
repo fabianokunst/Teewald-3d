@@ -708,6 +708,7 @@ function buildSpecials(B, ctx) {
   }
 
   for (const s of specs) buildHouse(B, ctx, s);
+  ctx.landmarks.specials = specs;   // prédios especiais (os moradores usam as fachadas)
 
   // Posto Calçadão: cobertura, bombas e loja
   {
