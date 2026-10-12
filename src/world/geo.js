@@ -124,6 +124,29 @@ export function segIntersect(a, b, c, d) {
   return t >= 0 && t <= 1 && u >= 0 && u <= 1 ? [t, u] : null;
 }
 
+export function polyArea(poly) {
+  let a = 0;
+  for (let i = 0; i < poly.length; i++) { const p = poly[i], q = poly[(i + 1) % poly.length]; a += p[0] * q[1] - q[0] * p[1]; }
+  return Math.abs(a / 2);
+}
+
+// menor retângulo (alinhado a uma das arestas) que contém o polígono
+export function minRect(poly) {
+  let best = null;
+  for (let i = 0; i < poly.length; i++) {
+    const a = poly[i], b = poly[(i + 1) % poly.length];
+    const rot = -Math.atan2(b[1] - a[1], b[0] - a[0]), c = Math.cos(rot), s = Math.sin(rot);
+    let x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity;
+    for (const [x, z] of poly) { const lx = x * c - z * s, lz = x * s + z * c; x0 = Math.min(x0, lx); x1 = Math.max(x1, lx); z0 = Math.min(z0, lz); z1 = Math.max(z1, lz); }
+    const A = (x1 - x0) * (z1 - z0);
+    if (!best || A < best.A - 1e-6) {
+      const lx = (x0 + x1) / 2, lz = (z0 + z1) / 2;
+      best = { A, x: lx * c + lz * s, z: -lx * s + lz * c, hx: (x1 - x0) / 2, hz: (z1 - z0) / 2, rot };
+    }
+  }
+  return best;
+}
+
 // caixas orientadas 2D: {x, z, hx, hz, rot}
 export function obbCorners(b) {
   const c = Math.cos(b.rot), s = Math.sin(b.rot);

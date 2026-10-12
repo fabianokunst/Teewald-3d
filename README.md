@@ -22,6 +22,7 @@ O navegador abre em `http://localhost:5173`.
 | Câmera | mouse (clique na tela para prender) · Q/E | analógico direito |
 | Zoom | roda do mouse | — |
 | Pausa | Esc ou P | Start |
+| Minimapa (liga/desliga) | M | — |
 | Mostrar FPS | F3 | — |
 
 ## O que já existe
@@ -29,14 +30,17 @@ O navegador abre em `http://localhost:5173`.
 - **Mapa real**: ruas, Rio Cadeia, arroios, praça, campo, cemitério e prédios
   conhecidos vêm do OpenStreetMap; o relevo vem do SRTM (altitude real).
 - **Igreja Matriz** modelada a partir de `texture/igreja.png`: rosácea, portal
-  e janelas recortados da foto.
+  e janelas recortados da foto. Posição e orientação conferidas em imagem de
+  satélite: fachada a oeste, nave ao longo da Rua 12 de Maio, cemitério atrás.
 - **Praça 10 de Abril**: fonte, hortênsias, bancos, lampiões e orelhão.
 - **Calçadão do Rio Cadeia**: caminho, guarda-corpo, letreiro TEEWALD e
   Monumento ao Imigrante. O jogo começa aqui.
 - Cemitério, Kartoffelfest, Sociedade, Prefeitura, Museu (enxaimel), Posto
   Calçadão, fábricas de calçados, escola, hospital e comércio.
-- Cerca de 500 casas geradas ao longo das ruas: alvenaria, madeira, enxaimel
-  (com as fotos de fachada da pasta `texture`) e comércio com placas.
+- Cerca de 600 construções nos **contornos reais dos prédios** (Microsoft
+  Building Footprints): alvenaria, madeira, enxaimel (com as fotos de fachada da
+  pasta `texture`), comércio com placas e galpões.
+- **Minimapa** no canto inferior direito, girando com a câmera (tecla M).
 - Milhares de árvores (araucárias, plátanos de outono, nativas, pinheiros,
   ciprestes) e folhas caindo.
 - Efeitos de PS1: 320x240, tremor de vértices, dithering, cor de 15 bits,
@@ -56,4 +60,5 @@ texture/     texturas do projeto (servidas como pasta pública)
 Para mudar o mapa: `npm run mapdata` regera `src/world/mapdata.json` a partir
 do cache em `tools/cache`. Com `-- --refresh`, baixa tudo de novo da internet.
 
-Dados de mapa © colaboradores do OpenStreetMap (ODbL).
+Dados de mapa © colaboradores do OpenStreetMap (ODbL). Contornos de prédios:
+Microsoft Global ML Building Footprints (ODbL).

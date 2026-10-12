@@ -13,6 +13,7 @@ const OPTIONS = [
   { key: 'invertY', label: 'INVERTER EIXO Y', values: [false, true], fmt: v => (v ? 'SIM' : 'NÃO') },
   { key: 'volume', label: 'VOLUME', values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], fmt: v => '▮'.repeat(v) + '▯'.repeat(10 - v) },
   { key: 'fps', label: 'QUADROS POR SEGUNDO', values: [60, 30], fmt: v => v + ' FPS' },
+  { key: 'minimap', label: 'MINIMAPA (TECLA M)', values: [true, false], fmt: v => (v ? 'LIGADO' : 'DESLIGADO') },
 ];
 
 const CREDITS = [
@@ -22,8 +23,8 @@ const CREDITS = [
   ['Cidade inspirada em', 'dim'],
   ['Santa Maria do Herval - RS', ''],
   ['', ''],
-  ['Ruas, rio e prédios', 'dim'],
-  ['© colaboradores do OpenStreetMap (ODbL)', ''],
+  ['Ruas, rio e lugares: © OpenStreetMap (ODbL)', ''],
+  ['Prédios: Microsoft Building Footprints (ODbL)', ''],
   ['Relevo: SRTM 30m (NASA) via OpenTopoData', ''],
   ['', ''],
   ['Texturas: biblioteca do projeto', ''],
@@ -159,7 +160,7 @@ export class Menu {
   _options(g, W, H, k) {
     const items = this.items();
     items.forEach((it, i) => {
-      const y = 52 * k + i * 14 * k, on = i === this.sel;
+      const y = 50 * k + i * 13 * k, on = i === this.sel;
       const color = on ? '#f2c879' : '#c8b898';
       if (it.opt) {
         drawText(g, it.label, W / 2 - 140 * k, y, 13 * k, { color });

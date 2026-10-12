@@ -148,10 +148,10 @@ export function scatterVegetation(ctx) {
     }
   }
   // anel distante (morros)
-  for (let z = -1300; z <= 1300; z += 26) for (let x = -1300; x <= 1300; x += 26) {
+  for (let z = -1300; z <= 1300; z += 20) for (let x = -1300; x <= 1300; x += 20) {
     if (x > n.x0 && x < n.x1 && z > n.z0 && z < n.z1) continue;
-    if (Math.hypot(x, z) > 1350 || !R.chance(0.55)) continue;
-    const px = x + R.range(-10, 10), pz = z + R.range(-10, 10);
+    if (Math.hypot(x, z) > 1350 || !R.chance(0.65)) continue;
+    const px = x + R.range(-8, 8), pz = z + R.range(-8, 8);
     trees.push({ t: R.chance(0.35) ? 'farA' : 'far', x: px, z: pz, s: R.range(0.9, 1.4), far: true });
   }
 }

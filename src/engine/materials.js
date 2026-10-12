@@ -24,7 +24,7 @@ export function makeMaterials() {
   M.water = ps1Material({ map: TEX.water, scroll: [0.02, -0.18], wave: 0.04 });
   M.sky = ps1Material({ map: TEX.sky, lit: false, fog: false, side: THREE.BackSide, depthWrite: false, affine: false });
   M.lamp = ps1Material({ map: TEX.lamp, lit: false, emissive: 0x222018 });
-  M.farForest = ps1Material({ map: TEX.grassDry, color: 0xa89a7a });
+  M.farForest = ps1Material({ map: TEX.grassDry, color: 0xd0c098 });
   M.blob = ps1Material({ map: TEX.blob, lit: false, transparent: true, fog: true, polygonOffset: -2 });
   M.paint = ps1Material({ map: TEX.paint, affine: false, polygonOffset: -1 });
   M.leafFall = ps1Material({ map: TEX.mapleLeaf, cutout: true, foliage: true });

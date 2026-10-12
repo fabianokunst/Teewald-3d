@@ -124,13 +124,20 @@ export function whiteTex() {
   return white;
 }
 
+// cor "crua": o hexadecimal vai direto para o shader, sem conversão sRGB -> linear
+// (o jogo trabalha todo em espaço de cor de tela, como o PS1)
+export function rawColor(c) {
+  if (c instanceof THREE.Color) return c;
+  return new THREE.Color().setHex(c, THREE.LinearSRGBColorSpace);
+}
+
 export function ps1Material(o = {}) {
   const mat = new THREE.ShaderMaterial({
     uniforms: {
       ...G,
       map: { value: o.map || whiteTex() },
-      uColor: { value: new THREE.Color(o.color ?? 0xffffff) },
-      uEmissive: { value: new THREE.Color(o.emissive ?? 0x000000) },
+      uColor: { value: rawColor(o.color ?? 0xffffff) },
+      uEmissive: { value: rawColor(o.emissive ?? 0x000000) },
       uLit: { value: o.lit === false ? 0 : 1 },
       uFoliage: { value: o.foliage ? 1 : 0 },
       uFogMul: { value: o.fog === false ? 0 : 1 },
@@ -171,7 +178,7 @@ export function ensureColor(geo, rgb = [1, 1, 1]) {
 // material para linhas (fios de luz)
 export function ps1LineMaterial(color = 0x1a1a1a) {
   return new THREE.ShaderMaterial({
-    uniforms: { ...G, uColor: { value: new THREE.Color(color) } },
+    uniforms: { ...G, uColor: { value: rawColor(color) } },
     vertexShader: /* glsl */`
       uniform vec2 uSnap; uniform float uJitter; uniform float uFogNear; uniform float uFogFar;
       varying float vFog;

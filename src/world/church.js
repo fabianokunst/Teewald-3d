@@ -41,7 +41,7 @@ export function buildChurch(B, ctx, s) {
     const r = 5.5, N = 4, apH = C.wallH - 1.2;
     const pts = [];
     for (let i = 0; i <= N; i++) { const a = Math.PI + (i / N) * Math.PI; pts.push([Math.cos(a) * r, -hl + Math.sin(a) * r]); }
-    for (let i = 0; i < N; i++) {
+    for (let i = 0; i < (s.apse === false ? 0 : N); i++) {
       const p0 = P(pts[i][0], 0, pts[i][1]), p1 = P(pts[i + 1][0], 0, pts[i + 1][1]);
       B.wall(wall, p1[0], p1[2], p0[0], p0[2], fy, fy + apH, { uvScale: 4, col: cream, ao: 0.82 });
       // janela
@@ -166,8 +166,10 @@ export function buildChurch(B, ctx, s) {
   const col = ctx.collision;
   col.addBox(s.x, s.z, hw + 0.4, hl + 0.1, s.rot, y0 - 2, fy + C.ridge);
   col.addBox(tc[0], tc[2], tw + 0.3, C.towerD / 2 + 0.1, s.rot, y0, fy + C.spire);
-  const back = P(0, 0, -hl - 3);
-  col.addBox(back[0], back[2], 5.5, 3, s.rot, y0, fy + 9);
+  if (s.apse !== false) {
+    const back = P(0, 0, -hl - 3);
+    col.addBox(back[0], back[2], 5.5, 3, s.rot, y0, fy + 9);
+  }
   // degraus como rampa caminhável
   const st = P(0, 0, tz1 + 0.4 + (steps * sd) / 2);
   col.addBox(st[0], st[2], 5.5, (steps * sd) / 2, s.rot, y0 - 1, y0 + C.floor, { walk: true, ramp: [y0 + C.floor, y0], cam: false });

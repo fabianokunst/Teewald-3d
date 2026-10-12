@@ -50,7 +50,8 @@ export class Hud {
       const lines = o.pad
         ? ['ANALÓGICO mover   B correr   A pular', 'ANALÓGICO DIR. câmera   START pausa']
         : ['WASD mover   SHIFT correr   ESPAÇO pular', 'MOUSE câmera (clique)   RODA zoom   ESC pausa'];
-      lines.forEach((l, i) => drawText(g, l, W / 2, H - (44 - i * 12) * k, 11 * k, { align: 'center', alpha: a, color: '#e8dcc0' }));
+      const hx = (W - (o.rightPad || 0)) / 2 + 4 * k;
+      lines.forEach((l, i) => drawText(g, l, hx, H - (44 - i * 12) * k, 11 * k, { align: 'center', alpha: a, color: '#e8dcc0' }));
     }
     if (this.street && this.streetT < 6 && !o.hideCard) {
       const a = Math.min(1, this.streetT * 2) * Math.min(1, Math.max(0, (6 - this.streetT) / 1.5));

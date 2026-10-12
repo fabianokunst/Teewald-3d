@@ -54,6 +54,29 @@ async function fetchElevation() {
   return out;
 }
 
+// contornos de prédios (Microsoft Global ML Building Footprints, ODbL)
+async function fetchBuildings() {
+  const zlib = await import('node:zlib');
+  const quadkey = '210312133';
+  const links = await (await fetch('https://minedbuildings.z5.web.core.windows.net/global-buildings/dataset-links.csv')).text();
+  const row = links.split('\n').find(l => l.startsWith('Brazil,' + quadkey + ','));
+  const url = row.split(',')[2];
+  const gz = Buffer.from(await (await fetch(url)).arrayBuffer());
+  const lines = zlib.gunzipSync(gz).toString('utf8').split('\n');
+  const out = [];
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    let f; try { f = JSON.parse(line); } catch { continue; }
+    if (f.geometry?.type !== 'Polygon') continue;
+    const pts = f.geometry.coordinates[0].map(([lon, lat]) => toXZ(lat, lon).map(r1));
+    pts.pop();
+    const cx = pts.reduce((a, p) => a + p[0], 0) / pts.length, cz = pts.reduce((a, p) => a + p[1], 0) / pts.length;
+    if (cx < -1000 || cx > 1100 || cz < -1000 || cz > 1000) continue;
+    out.push({ p: pts, h: f.properties?.height ?? -1, c: f.properties?.confidence ?? -1 });
+  }
+  return out;
+}
+
 async function cached(name, fn) {
   const f = path.join(cacheDir, name);
   if (!refresh && fs.existsSync(f)) return JSON.parse(fs.readFileSync(f, 'utf8'));
@@ -81,6 +104,7 @@ const r1 = v => Math.round(v * 10) / 10;
 
 const osm = await cached('osm.json', fetchOSM);
 const elev = await cached('elev.json', fetchElevation);
+const msb = await cached('buildings-ms.json', fetchBuildings);
 
 const nodes = new Map();
 for (const e of osm.elements) if (e.type === 'node') nodes.set(e.id, e);
@@ -117,14 +141,16 @@ for (const e of osm.elements) {
   pois.push({ k, n: t.name || '', x: r1(x), z: r1(z) });
 }
 
+const buildings = msb.filter(b => b.p.every(([x, z]) => x > AREA_BOX[0] && x < AREA_BOX[2] && z > AREA_BOX[1] && z < AREA_BOX[3])).map(b => b.p);
+
 const data = {
-  attribution: 'Dados de mapa © colaboradores do OpenStreetMap (ODbL). Relevo: SRTM 30m (NASA) via OpenTopoData.',
+  attribution: 'Dados de mapa © colaboradores do OpenStreetMap (ODbL). Prédios: Microsoft Global ML Building Footprints (ODbL). Relevo: SRTM 30m (NASA) via OpenTopoData.',
   origin: { lat: LAT0, lon: LON0 },
-  roads, rivers, areas, pois,
+  roads, rivers, areas, pois, buildings,
   elev: {
     fine: { ...elev.fine, h: elev.fine.h.map(v => Math.round(v * 10) / 10) },
     wide: { ...elev.wide, h: elev.wide.h.map(v => Math.round(v * 10) / 10) },
   },
 };
 fs.writeFileSync(outFile, JSON.stringify(data));
-console.log(`mapdata.json: ${roads.length} ruas, ${rivers.length} rios, ${areas.length} áreas, ${pois.length} pontos`);
+console.log(`mapdata.json: ${roads.length} ruas, ${rivers.length} rios, ${areas.length} áreas, ${pois.length} pontos, ${buildings.length} prédios`);

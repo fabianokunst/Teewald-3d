@@ -215,7 +215,7 @@ export class Terrain {
       if (x > n.x0 && x < n.x1 && z > n.z0 && z < n.z1) h -= 8;
       pos[v * 3] = x; pos[v * 3 + 1] = h; pos[v * 3 + 2] = z;
       uv[v * 2] = x / 24; uv[v * 2 + 1] = z / 24;
-      col[v * 3] = col[v * 3 + 1] = col[v * 3 + 2] = 0.85;
+      col[v * 3] = col[v * 3 + 1] = col[v * 3 + 2] = 0.95;
     }
     const idx = [];
     for (let j = 0; j < vz - 1; j++) for (let i = 0; i < vx - 1; i++) {

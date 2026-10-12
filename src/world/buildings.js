@@ -277,6 +277,11 @@ function addFence(B, ctx, s, P) {
     if (b - a < 0.3) continue;
     const pa = P(a, 0, z), pb = P(b, 0, z);
     const cx = (pa[0] + pb[0]) / 2, cz = (pa[2] + pb[2]) / 2;
+    const onRoad = [[pa[0], pa[2]], [pb[0], pb[2]], [cx, cz]].some(([x, zz]) => {
+      const rc = ctx.roads.index.clearance(x, zz);
+      return rc.d < (rc.seg && rc.seg.data.sidewalk ? 2.1 : 0.3) || ctx.zones.insideBuilding(x, zz, 0.2);
+    });
+    if (onRoad) continue;
     const y = Math.min(ctx.terrain.heightAt(pa[0], pa[2]), ctx.terrain.heightAt(pb[0], pb[2]), ctx.terrain.heightAt(cx, cz)) - 0.3;
     const len = b - a;
     B.col = f.col || [1, 1, 1];
@@ -354,7 +359,7 @@ export function makeSpec(R, style, x, z, rot, w, d, o = {}) {
     s.found = 'stoneBase';
     s.chimney = R.chance(0.4);
     s.wallUV = 2.5;
-    if (R.chance(0.35) && w > 7.5) { s.facade = 'facWoodBlue'; s.facadeTile = true; s.w = Math.max(w, 8.5); }
+    if (R.chance(0.35) && w >= 8) { s.facade = 'facWoodBlue'; s.facadeTile = true; }
   } else if (style === 'enxaimel') {
     const key = R.pick(['facWidenka', 'facKleiser', 'facWegmann', 'facMeritt', 'facKleiser', 'facWidenka']);
     s.facade = key;
@@ -450,6 +455,87 @@ export function placeTownBuildings(ctx, B) {
     }
   }
   for (const spec of placed) buildHouse(B, ctx, spec);
+  return placed;
+}
+
+// gira a caixa para a frente (+z local) apontar para a rua mais próxima
+export function orientToRoad(ctx, o) {
+  const fr = facingRoad(ctx, o.x, o.z);
+  if (!fr.road) return o;
+  const want = [-fr.nx, -fr.nz];
+  let bk = 0, bd = -Infinity;
+  for (let k = 0; k < 4; k++) {
+    const r = o.rot + k * Math.PI / 2;
+    const d = Math.sin(r) * want[0] + Math.cos(r) * want[1];
+    if (d > bd) { bd = d; bk = k; }
+  }
+  const r = o.rot + bk * Math.PI / 2;
+  return bk % 2 ? { ...o, rot: r, hx: o.hz, hz: o.hx } : { ...o, rot: r };
+}
+
+// encolhe a caixa até ela não invadir ruas/calçadas nem o rio
+export function fitBox(ctx, o) {
+  let b = { ...o };
+  for (let it = 0; it < 6; it++) {
+    const cs = obbCorners(b);
+    const pts = [...cs];
+    for (let i = 0; i < 4; i++) pts.push([(cs[i][0] + cs[(i + 1) % 4][0]) / 2, (cs[i][1] + cs[(i + 1) % 4][1]) / 2]);
+    let bad = false;
+    for (const [x, z] of pts) {
+      const rc = ctx.roads.index.clearance(x, z);
+      const need = rc.seg && rc.seg.data.sidewalk ? 2.2 : 0.4;
+      const rv = ctx.rivers.index.nearest(x, z);
+      if (rc.d < need || (rv.seg && rv.d < rv.seg.data.width / 2 + 1.5)) { bad = true; break; }
+    }
+    if (!bad) return b;
+    // afasta um pouco da rua e encolhe
+    const fr = facingRoad(ctx, b.x, b.z);
+    if (fr.road) { b.x += fr.nx * 0.4; b.z += fr.nz * 0.4; }
+    b.hx = Math.max(1.2, b.hx - 0.35); b.hz = Math.max(1.2, b.hz - 0.35);
+  }
+  return null;
+}
+
+// construções nos contornos reais (Microsoft Building Footprints)
+export function placeFootprintBuildings(ctx, B) {
+  const R = rng(1853);
+  const { zones } = ctx;
+  const core = [-110, -10];
+  const placed = [];
+  for (const f of ctx.footprints) {
+    if (f.used) continue;
+    if (!ctx.terrain.inBounds(f.x, f.z) || zones.isBlocked(f.x, f.z)) continue;
+    let o = fitBox(ctx, orientToRoad(ctx, f));
+    if (!o || o.hx < 1.25 || o.hz < 1.25) continue;
+    if (zones.overlapsBuilding(o, -0.4)) continue;
+    const A = 4 * o.hx * o.hz, w = o.hx * 2, d = o.hz * 2;
+    const dc = Math.hypot(o.x - core[0], o.z - core[1]);
+    const fr = facingRoad(ctx, o.x, o.z);
+    const road = fr.road;
+    const main = road && (road.rank >= 5 || road.name === 'Rua 12 de Maio' || road.name === 'Rua Professor Laurindo Vier');
+    const front = road ? fr.d - o.hz - road.hw - (road.sidewalk ? 2 : 0) : 99;
+    const r = R();
+    let style, extra = {};
+    if (A > 750) style = 'factory';
+    else if (A > 320) style = main && dc < 320 ? 'commercial' : r < 0.45 ? 'factory' : 'masonry';
+    else if (A < 30) { style = 'shed'; extra.floors = 1; }
+    else if (main && dc < 300 && front < 4) style = r < 0.6 ? 'commercial' : r < 0.85 ? 'masonry' : 'enxaimel';
+    else if (dc < 230) style = r < 0.1 ? 'commercial' : r < 0.66 ? 'masonry' : r < 0.84 ? 'enxaimel' : 'wood';
+    else style = r < 0.55 ? 'masonry' : r < 0.85 ? 'wood' : r < 0.93 ? 'enxaimel' : 'shed';
+    if (style === 'enxaimel' && (w < 6 || w > 11 || d < 6)) style = 'masonry';
+    if (style === 'masonry' && A > 160) extra.floors = R.chance(0.55) ? 2 : 1;
+    if (style === 'factory') extra.floors = A > 1500 ? 3 : 2;
+    const s = makeSpec(R, style, o.x, o.z, o.rot, w, d, extra);
+    s.w = Math.min(s.w, w); s.d = Math.min(s.d, d);
+    if (style === 'shed') { s.floors = 1; s.roof = R.pick(['metalRoof', 'metalRust', 'roofOld']); }
+    if (style !== 'commercial' && style !== 'factory' && front > 2.2 && R.chance(0.5)) {
+      s.fence = { dist: Math.min(front - 0.6, 7), h: R.range(0.7, 1.2), mat: R.pick(['plWhite', 'brick', 'plCream', 'woodPlank', 'stoneBase']), col: [1, 1, 1] };
+    }
+    zones.addBuilding({ x: s.x, z: s.z, hx: s.w / 2, hz: s.d / 2, rot: s.rot });
+    f.used = true;
+    placed.push(s);
+  }
+  for (const s of placed) buildHouse(B, ctx, s);
   return placed;
 }
 

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { settings, START } from './config.js';
+import { settings, saveSettings, START } from './config.js';
 import { Renderer } from './engine/renderer.js';
 import { loadTextures } from './engine/textures.js';
 import { makeMaterials, M } from './engine/materials.js';
@@ -13,6 +13,7 @@ import { Player } from './game/player.js';
 import { ThirdPersonCamera } from './game/camera.js';
 import { Menu } from './ui/menu.js';
 import { Hud } from './ui/hud.js';
+import { Minimap } from './ui/minimap.js';
 import { loadFonts, drawText, FONT_TITLE } from './ui/overlay.js';
 
 const params = new URLSearchParams(location.search);
@@ -29,7 +30,7 @@ const hud = new Hud();
 // sol de fim de tarde vindo do noroeste (hemisfério sul)
 G.uSunDir.value.set(-0.62, 0.4, -0.68).normalize();
 
-let ctx, character, player, tpc, menu;
+let ctx, character, player, tpc, menu, minimap;
 let state = 'loading';
 let time = 0, stateT = 0, fade = 1, fadeTarget = 0, onFaded = null;
 let introPath = null;
@@ -64,6 +65,7 @@ async function boot() {
   makeMaterials();
   applyAtmosphere(settings.drawDistance);
   ctx = await buildWorld(scene, (f, t) => { loadP = 0.25 + f * 0.75; loadLabel = t; drawLoading(); });
+  minimap = new Minimap(ctx);
   character = new Character(M);
   scene.add(character.root, character.blob);
   player = new Player(ctx, character, audio);
@@ -119,6 +121,7 @@ function loop(now) {
   time += dt; stateT += dt;
   G.uTime.value = time;
   if (input.hit('F3')) hud.showFps = !hud.showFps;
+  if (input.hit('KeyM') && (state === 'play' || state === 'pause')) { settings.minimap = !settings.minimap; saveSettings(); }
 
   // fade
   if (fade !== fadeTarget) {
@@ -205,13 +208,15 @@ function drawUI() {
   } else if (state === 'intro') {
     hud.drawIntro(g, W, H, stateT);
   } else if (state === 'play') {
-    hud.draw(g, W, H, { pad: input.lastDevice === 'pad', lockHint: !input.locked && input.lastDevice !== 'pad' && stateT > 1, stats: hud.showFps ? `${ctx.stats.triangles} tri` : '' });
+    const showMap = settings.minimap !== false;
+    if (showMap) minimap.draw(g, W, H, player, tpc.yaw);
+    hud.draw(g, W, H, { pad: input.lastDevice === 'pad', lockHint: !input.locked && input.lastDevice !== 'pad' && stateT > 1, stats: hud.showFps ? `${ctx.stats.triangles} tri` : '', rightPad: showMap ? 96 * (H / 240) : 0 });
   }
 }
 
 function exposeDebug() {
   window.__teewald = {
-    ctx, player, camera, tpc, settings,
+    ctx, player, camera, tpc, settings, scene, renderer: R, G,
     get state() { return state; },
     startGame: (intro = false) => { startGame(intro); fade = 0; fadeTarget = 0; },
     teleport: (x, z, heading = 0) => { player.place(x, z, heading); tpc.snap(player); },

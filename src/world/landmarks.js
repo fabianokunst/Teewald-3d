@@ -1,6 +1,7 @@
 import { rng, polyCentroid, pointInPoly, distSeg, resample, chaikin, obbCorners } from './geo.js';
 import { buildChurch, CHURCH, pyramid } from './church.js';
-import { buildHouse, makeSpec, lotValid, facingRoad, frame, groundFor } from './buildings.js';
+import { buildHouse, makeSpec, lotValid, facingRoad, frame, groundFor, orientToRoad as orientFP, fitBox } from './buildings.js';
+import { claimFootprint } from './footprints.js';
 import { bench, picnicTable, bin, lantern, orelhao, letreiro, monumento, fountain, railing, car, busStop, stopSign } from './props.js';
 import { signMaterial } from '../engine/materials.js';
 
@@ -34,21 +35,25 @@ export function defineLandmarks(ctx) {
   const L = ctx.landmarks = {};
 
   // ---------------- Igreja Matriz ----------------
+  // Posição conferida na imagem de satélite e no contorno do prédio (Microsoft):
+  // nave de ~34 x 20 m alinhada à Rua 12 de Maio, torre e fachada na ponta OESTE,
+  // voltada para o fim da Rua Cônego Afonso Wiest e para a Praça 10 de Abril.
   {
     const ig = poi(md, 'Igreja Matriz de Nossa Senhora Auxiliadora');
-    const street = roads.list.find(r => r.name === 'Rua Cônego Afonso Wiest');
-    const q = nearestOnPolyline(street.pts, ig.x, ig.z);
-    let fx = q.x - ig.x, fz = q.z - ig.z; const fl = Math.hypot(fx, fz); fx /= fl; fz /= fl;
-    const dist = CHURCH.L / 2 + 1.2 + 0.4 + 5 * 0.45 + 5.5;
-    const x = q.x - fx * dist, z = q.z - fz * dist, rot = Math.atan2(fx, fz);
-    const y = terrain.roadHeight(q.x, q.z) + 0.05;
+    const fx = -0.998, fz = -0.0635;                // direção da fachada (oeste)
+    const x = -42.8, z = 40.4, rot = Math.atan2(fx, fz);
     const hl = CHURCH.L / 2;
-    const pad = rectPoly(x, z, rot, -CHURCH.W / 2 - 5, CHURCH.W / 2 + 5, -hl - 9, dist - 3.5);
-    terrain.addPad(pad, y, 10);
-    zones.block(pad, 1.5);
+    const street = roads.list.find(r => r.name === 'Rua Cônego Afonso Wiest');
+    const F = [x + fx * hl, z + fz * hl];
+    const q = nearestOnPolyline(street.pts, F[0], F[1]);
+    const dist = Math.max(hl + 8, (q.x - x) * fx + (q.z - z) * fz); // centro -> rua, ao longo do eixo
+    const y = terrain.roadHeight(F[0], F[1]) + 0.05;
+    const pad = rectPoly(x, z, rot, -CHURCH.W / 2 - 4, CHURCH.W / 2 + 4, -hl - 1, dist - 3.5);
+    terrain.addPad(pad, y, 8);
+    zones.block(pad, 0.5);
     zones.clearForest(pad);
-    zones.place(rectPoly(x, z, rot, -CHURCH.W / 2 - 6, CHURCH.W / 2 + 6, -hl - 9, dist + 2), 'IGREJA MATRIZ', 3);
-    L.church = { x, z, rot, y, street: q, dist };
+    zones.place(rectPoly(x, z, rot, -CHURCH.W / 2 - 6, CHURCH.W / 2 + 6, -hl - 2, dist + 2), 'IGREJA MATRIZ', 3);
+    L.church = { x, z, rot, y, street: q, dist, poi: ig };
   }
 
   // ---------------- Cemitério ----------------
@@ -185,7 +190,7 @@ export function outwardEdges(poly) {
 }
 
 function buildChurchArea(B, ctx, ch) {
-  const res = buildChurch(B, ctx, { x: ch.x, z: ch.z, rot: ch.rot, y: ch.y });
+  const res = buildChurch(B, ctx, { x: ch.x, z: ch.z, rot: ch.rot, y: ch.y, apse: false });
   const { P, W } = frame({ x: ch.x, z: ch.z, rot: ch.rot });
   const hl = CHURCH.L / 2;
   // adro em pedra
@@ -486,8 +491,8 @@ function buildKartoffel(B, ctx, k) {
   }
   // telhado metálico de duas águas
   const e = y + H, r = y + H + rise;
-  B.quad('metalRoof', P(-hw - 0.6, e, hd + 0.8), P(hw + 0.6, e, hd + 0.8), P(hw + 0.6, r, 0), P(-hw - 0.6, r, 0), [[0, 0], [12, 0], [12, 4], [0, 4]]);
-  B.quad('metalRoof', P(hw + 0.6, e, -hd - 0.8), P(-hw - 0.6, e, -hd - 0.8), P(-hw - 0.6, r, 0), P(hw + 0.6, r, 0), [[0, 0], [12, 0], [12, 4], [0, 4]]);
+  B.quad('metalRoof', P(-hw - 0.6, e, hd + 0.8), P(hw + 0.6, e, hd + 0.8), P(hw + 0.6, r, 0), P(-hw - 0.6, r, 0), [[0, 0], [6, 0], [6, 2], [0, 2]]);
+  B.quad('metalRoof', P(hw + 0.6, e, -hd - 0.8), P(-hw - 0.6, e, -hd - 0.8), P(-hw - 0.6, r, 0), P(hw + 0.6, r, 0), [[0, 0], [6, 0], [6, 2], [0, 2]]);
   B.tri('woodPlank', P(-hw, e, -hd), P(-hw, e, hd), P(-hw, r, 0), [0, 0], [6, 0], [3, 1.2]);
   B.tri('woodPlank', P(hw, e, hd), P(hw, e, -hd), P(hw, r, 0), [0, 0], [6, 0], [3, 1.2]);
   // placa e bandeirolas
@@ -542,6 +547,17 @@ function orientToRoad(ctx, o) {
 }
 
 function placeAtPOI(ctx, R, x, z, w, d, style, extra = {}) {
+  // primeiro tenta o contorno real do prédio mais próximo
+  if (ctx.footprints?.length) {
+    const f = claimFootprint(ctx, x, z, 22, extra.minArea ?? 40);
+    const o = f && fitBox(ctx, orientFP(ctx, f));
+    if (o && !ctx.zones.overlapsBuilding(o, -0.4)) {
+      const spec = makeSpec(R, style, o.x, o.z, o.rot, o.hx * 2, o.hz * 2, extra);
+      spec.w = Math.min(spec.w, o.hx * 2); spec.d = Math.min(spec.d, o.hz * 2);
+      ctx.zones.addBuilding({ x: o.x, z: o.z, hx: spec.w / 2, hz: spec.d / 2, rot: o.rot });
+      return spec;
+    }
+  }
   const fr = facingRoad(ctx, x, z);
   let cx = x, cz = z;
   if (fr.road && fr.d < 30) {
@@ -608,7 +624,7 @@ function buildSpecials(B, ctx) {
   }
   // fábricas de calçados
   for (const p of poiK(md, 'works')) {
-    const s = add(placeAtPOI(ctx, R, p.x, p.z, R.range(20, 26), R.range(28, 36), 'factory', { setback: 3 }));
+    const s = add(placeAtPOI(ctx, R, p.x, p.z, R.range(20, 26), R.range(28, 36), 'factory', { setback: 3, minArea: 250 }));
     if (s) s.sign = sign('INDÚSTRIA DE CALÇADOS', { bg: '#1f3f6b', fg: '#f0f0e0' });
   }
   // escola, hospital, mercados, bancos, igrejas, lojas, correio
@@ -690,6 +706,11 @@ function buildSpecials(B, ctx) {
     const dx = e[0] - b[0], dz = e[1] - b[1], l = Math.hypot(dx, dz);
     busStop(B, ctx, e[0] - dx / l * 1.5, e[1] - dz / l * 1.5, Math.atan2(dx, dz));
   }
+  void obbCorners;
+}
+
+// placas de PARE nas ruas que chegam às avenidas (depois de todas as casas)
+export function placeStopSigns(B, ctx) {
   for (const r of ctx.roads.list) {
     if (r.rank !== 3 && r.rank !== 4) continue;
     for (const end of [0, r.pts.length - 1]) {
@@ -703,5 +724,4 @@ function buildSpecials(B, ctx) {
       stopSign(B, ctx, px, pz, Math.atan2(t[0], t[1]) + (end === 0 ? Math.PI : 0));
     }
   }
-  void obbCorners;
 }

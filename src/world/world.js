@@ -4,8 +4,9 @@ import { Terrain } from './terrain.js';
 import { prepareRoads, buildRoads, roadSurfaceAt } from './roads.js';
 import { prepareRivers, buildWater } from './water.js';
 import { Zones } from './zones.js';
-import { defineLandmarks, buildLandmarks } from './landmarks.js';
-import { placeTownBuildings } from './buildings.js';
+import { defineLandmarks, buildLandmarks, placeStopSigns } from './landmarks.js';
+import { placeTownBuildings, placeFootprintBuildings } from './buildings.js';
+import { prepareFootprints } from './footprints.js';
 import { scatterVegetation, buildVegetation } from './vegetation.js';
 import { utilityLines } from './props.js';
 import { makeSky } from './sky.js';
@@ -40,10 +41,13 @@ export async function buildWorld(scene, onStep) {
   buildWater(B, ctx.rivers);
 
   await step(0.4, 'igreja, praça e calçadão');
+  ctx.footprints = prepareFootprints(mapdata);
   buildLandmarks(B, ctx);
 
   await step(0.55, 'casas');
-  ctx.buildings = placeTownBuildings(ctx, B);
+  // contornos reais de prédios; sem eles, casas geradas ao longo das ruas
+  ctx.buildings = ctx.footprints.length ? placeFootprintBuildings(ctx, B) : placeTownBuildings(ctx, B);
+  placeStopSigns(B, ctx);
 
   await step(0.7, 'postes e fios');
   const wires = utilityLines(ctx, B);

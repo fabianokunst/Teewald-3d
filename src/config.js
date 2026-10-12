@@ -12,6 +12,7 @@ export const DEFAULTS = {
   invertY: false,
   volume: 7,            // 0..10
   fps: 60,              // 30 ou 60
+  minimap: true,        // minimapa no canto inferior direito (tecla M)
 };
 
 function load() {
