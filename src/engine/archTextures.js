@@ -1,7 +1,8 @@
 import { TEX, makeCanvas, canvasTex, processPixels } from './textures.js';
 
-// Detalhes de arquitetura desenhados pixel a pixel (janelas ogivais, rosácea,
-// portal, enxaimel, vitrine). Pedra, reboco e madeira vêm das texturas da pasta; só a
+// Detalhes de arquitetura desenhados pixel a pixel: igreja (janelas ogivais,
+// rosácea, portal), enxaimel, janelas, venezianas, portas, vitrines e janelas
+// industriais. Pedra, reboco e madeira vêm das texturas da pasta; só a
 // forma é desenhada aqui, sem recortes de fotos.
 
 // lê uma textura já reduzida para amostrar com repetição; swap = veio na horizontal
@@ -215,5 +216,86 @@ export function makeArchTextures() {
     }
     const r = (((x - y * 1.3) % 37) + 37) % 37; // reflexo do céu
     return r < 4 ? c.map(v => v + 46) : r < 6 ? c.map(v => v + 20) : c;
+  }), false);
+
+  // ---- janelas: moldura de reboco, caixilho recuado, vidro com reflexo e peitoril ----
+  const trim = (x, y, k = 1) => mul(tint(plWhite(x, y), [1.04, 1.02, 0.98]), k);
+  const woodG = sampler('woodGray'), plank = sampler('woodPlank');
+  const windowTex = o => {
+    const bar = (x, y) => x < 4 || x > 59 || y < 4 || y > 55 || o.bars(x, y);
+    return finish(paint(64, 64, (x, y) => {
+      if (y >= 56) return trim(x, y, y === 56 ? 1.28 : y === 63 ? 0.68 : 1); // peitoril
+      if (x < 4 || x > 59 || y < 4) return trim(x, y, x === 0 || y === 0 ? 1.15 : x === 63 ? 0.8 : 1.02);
+      if (bar(x, y)) {
+        if (x === 4 || y === 4) return mul(o.frame(x, y), 0.55); // sombra do recuo
+        const lit = !bar(x, y - 1) || !bar(x - 1, y), dark = !bar(x, y + 1) || !bar(x + 1, y);
+        return mul(o.frame(x, y), lit && !dark ? 1.15 : dark && !lit ? 0.78 : 1);
+      }
+      const gy = y / 56;
+      let c = [150 - gy * 104, 146 - gy * 98, 152 - gy * 92]; // céu refletido, escurece para baixo
+      if (o.curtain?.(x, y)) c = mul([204, 190, 152], x % 3 === 0 ? 0.8 : 1);
+      else if (o.blinds?.(x, y)) c = y % 3 === 0 ? [118, 116, 110] : [178, 176, 168];
+      const r = (((x + Math.floor(y * 0.8)) % 41) + 41) % 41;
+      if (r < 5) c = c.map(v => v + 40); else if (r < 7) c = c.map(v => v + 16);
+      return bar(x, y - 1) || bar(x, y - 2) ? mul(c, 0.68) : c; // sombra sob o caixilho
+    }), false);
+  };
+  const leafEdge = (x, y) => (x >= 8 && x <= 12) || (x >= 51 && x <= 55);
+  // colonial: caixilho pintado de branco, duas folhas de seis vidros, cortina
+  TEX.window1 = windowTex({
+    frame: (x, y) => mul([226, 224, 216], 0.9 + 0.1 * woodG(x, y)[0] / 200),
+    bars: (x, y) => x <= 7 || x >= 56 || y <= 7 || y >= 52 || (x >= 30 && x <= 33) || x === 18 || x === 19 || x === 44 || x === 45 || y === 22 || y === 23 || y === 37 || y === 38,
+    curtain: leafEdge,
+  });
+  // alumínio: duas folhas de correr com persiana (comércio, hospital, galpões)
+  TEX.window2 = windowTex({
+    frame: (x, y) => tint(metal(x, y), [0.82, 0.85, 0.88]),
+    bars: (x, y) => x <= 6 || x >= 57 || y <= 6 || y >= 53 || x === 31 || x === 32,
+    blinds: (x, y) => y < 26,
+  });
+  // madeira: bandeira em cima e duas folhas de quatro vidros
+  TEX.window3 = windowTex({
+    frame: (x, y) => mul(plank(x, y), 0.95),
+    bars: (x, y) => x <= 7 || x >= 56 || y <= 7 || y >= 52 || (y >= 20 && y <= 22) || (y < 20 ? x === 31 || x === 32 : (x >= 30 && x <= 33) || x === 18 || x === 19 || x === 44 || x === 45 || y === 36 || y === 37),
+    curtain: (x, y) => y > 22 && leafEdge(x, y),
+  });
+
+  // ---- veneziana: quadro e palhetas (a cor vem da cor do vértice) ----
+  TEX.shutter = finish(paint(32, 64, (x, y) => {
+    const base = mul([214, 212, 204], 0.88 + 0.12 * woodG(x, y)[0] / 160);
+    if (x < 3 || x > 28 || y < 3 || y > 60 || (y >= 30 && y <= 32)) return mul(base, x === 0 || y === 0 ? 1.12 : x === 31 || y === 63 ? 0.78 : 1);
+    return mul(base, [1.12, 0.92, 0.92, 0.6][y % 4]);
+  }), false);
+
+  // ---- porta: batente, bandeira de vidro com grade, quatro almofadas ----
+  TEX.door = finish(paint(32, 64, (x, y) => {
+    if (x < 2 || x > 29 || y < 2) return trim(x, y, x === 0 || y === 0 ? 1.15 : 0.95);
+    if (x === 2 || y === 2) return mul(wood(x, y), 0.45);
+    const c = wood(x, y);
+    if (y >= 5 && y <= 16 && x >= 6 && x <= 25) {
+      if (x % 5 === 0) return [40, 38, 36];
+      const g = [126 - y * 3, 122 - y * 3, 128 - y * 2];
+      return (x + y) % 9 < 2 ? g.map(v => v + 40) : g;
+    }
+    for (const [x0, x1, y0, y1] of [[6, 14, 20, 38], [17, 25, 20, 38], [6, 14, 42, 59], [17, 25, 42, 59]]) {
+      if (x >= x0 && x <= x1 && y >= y0 && y <= y1) return mul(c, x === x0 || y === y0 ? 1.25 : x === x1 || y === y1 ? 0.6 : 1.08);
+    }
+    if ((x === 25 || x === 26) && (y === 40 || y === 41)) return [200, 164, 80]; // maçaneta
+    return y === 63 ? mul(c, 0.6) : c;
+  }), false);
+
+  // ---- porta de enrolar: perfis de chapa ----
+  const mg = sampler('metalGray');
+  TEX.rollDoor = finish(paint(32, 32, (x, y) => mul([150, 154, 156], (0.8 + 0.2 * mg(x, y)[0] / 160) * [1.2, 1.0, 0.92, 0.68][y % 4])), false);
+
+  // ---- janela industrial: grade de aço com vidro aramado e basculantes abertas ----
+  const conc = sampler('concrete');
+  TEX.winFactory = finish(paint(64, 32, (x, y) => {
+    if (y <= 1 || y >= 30) return mul(conc(x, y), y === 0 || y === 30 ? 1.15 : 0.85);
+    if (x % 8 === 0 || y % 7 === 2) return mul([92, 100, 98], x % 8 === 0 ? 1 : 1.12);
+    const h = ((Math.floor(x / 8) + Math.floor((y - 2) / 7) * 8) * 2654435761) >>> 0;
+    if ((h >>> 5) % 13 === 0) return [52, 56, 58]; // basculante aberta
+    const c = [168 - y * 1.6, 178 - y * 1.6, 172 - y * 1.4]; // vidro aramado, mais claro em cima
+    return (x + y) % 4 === 0 ? mul(c, 0.92) : c;
   }), false);
 }

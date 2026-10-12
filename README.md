@@ -52,7 +52,9 @@ o controle é usado e voltam ao tocar na tela.
 - Cerca de 600 construções nos **contornos reais dos prédios** (Microsoft
   Building Footprints): alvenaria, madeira, enxaimel (vigas escuras com reboco
   branco, creme ou tijolo à vista, alinhadas com portas e janelas), comércio
-  com placas e vitrines, e galpões.
+  com placas e vitrines, fábricas com janelas industriais e portão de enrolar,
+  e galpões. Janelas (colonial, madeira com bandeira, alumínio), venezianas e
+  portas são desenhadas em pixel art; casas rebocadas têm barrado na base.
 - **Minimapa** no canto inferior direito, girando com a câmera (tecla M).
 - **Protagonista** com ~1200 triângulos numa malha única com esqueleto
   (cotovelos e joelhos contínuos ao dobrar), sombreamento suave e um atlas de

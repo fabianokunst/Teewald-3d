@@ -50,8 +50,11 @@ export function buildHouse(B, ctx, s) {
   const top = y0 + s.floors * FLOOR + 0.2;
   B.col = s.tint || [1, 1, 1];
 
-  // alicerce (aparece em terreno inclinado)
-  B.box(s.found || 'stoneBase', s.x, yMin - 0.6, s.z, s.w + 0.12, y0 - yMin + 0.6, s.d + 0.12, s.rot, { top: false, uvScale: 2 });
+  // alicerce (aparece em terreno inclinado); nas casas rebocadas, o mesmo reboco do barrado
+  const plastered = (s.style === 'masonry' || s.style === 'commercial') && s.found !== 'stoneBase';
+  if (plastered) B.col = (s.tint || [1, 1, 1]).map(v => v * 0.62);
+  B.box(plastered ? s.wall : s.found || 'stoneBase', s.x, yMin - 0.6, s.z, s.w + 0.04, y0 - yMin + 0.6, s.d + 0.04, s.rot, { uvScale: plastered ? s.wallUV || 3 : 2 });
+  B.col = s.tint || [1, 1, 1];
 
   // paredes: frente (+z local), direita, fundos, esquerda
   const corners = { FL: [-hw, hd], FR: [hw, hd], BR: [hw, -hd], BL: [-hw, -hd] };
@@ -62,13 +65,23 @@ export function buildHouse(B, ctx, s) {
     const len = name === 'front' || name === 'back' ? s.w : s.d;
     B.wall(mat, pa[0], pa[2], pb[0], pb[2], y0, top, s.bays ? { uv: bayUV(name, len, 0, (top - y0) / FLOOR), ao: 0.8 } : { uvScale: s.wallUV || 3, ao: 0.8 });
   }
+  // barrado: faixa mais escura na base das paredes rebocadas
+  if (s.style === 'masonry' || s.style === 'commercial') {
+    const e = 0.02, bc = (s.tint || [1, 1, 1]).map(v => v * 0.62);
+    const cs = [[-hw - e, hd + e], [hw + e, hd + e], [hw + e, -hd - e], [-hw - e, -hd - e]];
+    for (let i = 0; i < 4; i++) {
+      const pa = P(cs[i][0], 0, cs[i][1]), pb = P(cs[(i + 1) % 4][0], 0, cs[(i + 1) % 4][1]);
+      B.wall(s.wall, pa[0], pa[2], pb[0], pb[2], y0, y0 + 0.5, { uvScale: s.wallUV || 3, col: bc, ao: 0.9, seg: 0 });
+    }
+  }
   B.col = [1, 1, 1];
 
   // telhado
   const roofTop = buildRoof(B, s, P, top, y0);
 
   // aberturas
-  if (s.style !== 'factory' && s.style !== 'pavilion') addOpenings(B, s, P, y0, ctx);
+  if (s.style === 'factory') addFactoryOpenings(B, s, P, y0, top);
+  else if (s.style !== 'pavilion') addOpenings(B, s, P, y0, ctx);
   if (s.sign) addSign(B, s, P, y0, top);
   if (s.chimney) {
     const cx = hw * 0.45, cz = -hd * 0.3;
@@ -218,8 +231,8 @@ function addOpenings(B, s, P, y0, ctx) {
         if (s.shutters) {
           const sw = 0.5 / f.len;
           B.col = s.shutters;
-          quadOn('woodPlank', t - ww - sw, t - ww, yb + 0.95, yb + 2.25, [[0, 0], [0.3, 0], [0.3, 1], [0, 1]]);
-          quadOn('woodPlank', t + ww, t + ww + sw, yb + 0.95, yb + 2.25, [[0, 0], [0.3, 0], [0.3, 1], [0, 1]]);
+          quadOn('shutter', t - ww - sw, t - ww, yb + 0.95, yb + 2.25);
+          quadOn('shutter', t + ww, t + ww + sw, yb + 0.95, yb + 2.25);
           B.col = [1, 1, 1];
         }
       }
@@ -237,6 +250,34 @@ function addOpenings(B, s, P, y0, ctx) {
     if (y0 - base > 0.08) {
       B.box('concrete', p[0], base, p[2], 1.4, y0 - base, 0.7, s.rot, { uvScale: 1 });
       ctx.collision.addBox(p[0], p[2], 0.7, 0.35, s.rot, base, y0, { walk: true, cam: false });
+    }
+  }
+}
+
+// fábrica: uma faixa de janelas industriais por andar, portão de enrolar e porta
+function addFactoryOpenings(B, s, P, y0, top) {
+  const hw = s.w / 2, hd = s.d / 2, out = 0.04;
+  const faces = [
+    { name: 'front', a: [-hw, hd + out], b: [hw, hd + out], len: s.w },
+    { name: 'right', a: [hw + out, hd], b: [hw + out, -hd], len: s.d },
+    { name: 'back', a: [hw, -hd - out], b: [-hw, -hd - out], len: s.w },
+    { name: 'left', a: [-hw - out, -hd], b: [-hw - out, hd], len: s.d },
+  ];
+  for (const f of faces) {
+    if (f.len < 5) continue;
+    const at = (t, y) => P(f.a[0] + (f.b[0] - f.a[0]) * t, y, f.a[1] + (f.b[1] - f.a[1]) * t);
+    const quadOn = (mat, t0, t1, ya, yb, uv) => B.quad(mat, at(t0, ya), at(t1, ya), at(t1, yb), at(t0, yb), uv);
+    const m = 1.2 / f.len, reps = Math.max(1, Math.round((f.len - 2.4) / 3.2));
+    for (let fl = 0; fl < s.floors; fl++) {
+      const ya = y0 + fl * FLOOR + 1.1, yb = ya + 1.4;
+      if (yb > top - 0.3 || (fl === 0 && f.name === 'front')) continue;
+      quadOn('winFactory', m, 1 - m, ya, yb, [[0, 0], [reps, 0], [reps, 1], [0, 1]]);
+    }
+    if (f.name === 'front') {
+      const gw = Math.min(4.5, f.len * 0.4) / f.len / 2, gh = Math.min(3.8, top - y0 - 0.6);
+      quadOn('rollDoor', 0.35 - gw, 0.35 + gw, y0, y0 + gh, [[0, 0], [gw * f.len * 2 / 1.6, 0], [gw * f.len * 2 / 1.6, gh / 1.6], [0, gh / 1.6]]);
+      const dw = 0.5 / f.len;
+      quadOn('door', 0.75 - dw, 0.75 + dw, y0, y0 + 2.15);
     }
   }
 }

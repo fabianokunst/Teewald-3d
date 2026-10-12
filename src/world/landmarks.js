@@ -743,7 +743,7 @@ function buildSpecials(B, ctx) {
       ctx.collision.addBox(p[0], p[2], 0.45, 0.3, o.rot, y, y + 1.6);
     }
     // loja de conveniência nos fundos
-    const st = { x: P(0, 0, -o.hz + 4)[0], z: P(0, 0, -o.hz + 4)[2], rot: o.rot, w: Math.min(o.hx * 2, 14), d: 7, style: 'commercial', floors: 1, wall: 'plWhite', roofType: 'flat', roof: 'concrete', win: 'window2', sign: 'posto', signH: 1.0, found: 'concrete', plinth: 0.1 };
+    const st = { x: P(0, 0, -o.hz + 4)[0], z: P(0, 0, -o.hz + 4)[2], rot: o.rot, w: Math.min(o.hx * 2, 14), d: 7, style: 'commercial', floors: 1, wall: 'plWhite', roofType: 'flat', roof: 'concrete', win: 'window2', sign: sign('CONVENIÊNCIA', { bg: '#a01818', fg: '#f6eed8' }), signH: 1.0, found: 'concrete', plinth: 0.1 };
     buildHouse(B, ctx, st);
     ctx.zones.addBuilding({ x: o.x, z: o.z, hx: o.hx + 2, hz: o.hz + 2, rot: o.rot });
     car(B, ctx, P(5, 0, o.hz - 6)[0], P(5, 0, o.hz - 6)[2], o.rot, [0.2, 0.3, 0.55]);

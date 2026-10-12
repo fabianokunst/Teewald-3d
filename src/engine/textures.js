@@ -100,14 +100,14 @@ const DEFS = [
   ['concreteW', 'Concrete/Mat_Concrete_White_01-256x256.png', 64, 64, {}],
   // paredes
   ['plWhite', 'Plaster/Mat_Plaster_White_01-256x256.png', 64, 64, {}],
-  ['plCream', 'Plaster/Plaster_15-256x256.png', 64, 64, {}],
+  ['plCream', 'Plaster/Mat_Plaster_White_02-256x256.png', 64, 64, { tint: [1.04, 0.99, 0.84] }],
   ['plChurch', 'Plaster/Mat_Plaster_White_02-256x256.png', 64, 64, { tint: [1.06, 1.02, 0.92], bright: 1.05 }],
   ['plYellow', 'Plaster/Mat_Plaster_Yellow_01-256x256.png', 64, 64, { saturate: 0.8 }],
   ['plPink', 'Plaster/Mat_Plaster_Red_02-256x256.png', 64, 64, { saturate: 0.7, bright: 1.05 }],
   ['plGreen', 'Plaster/Plaster_11-256x256.png', 64, 64, { saturate: 0.45, bright: 1.15 }],
-  ['plBlue', 'Plaster/Plaster_13-256x256.png', 64, 64, { saturate: 0.5, bright: 1.05 }],
+  ['plBlue', 'Plaster/Mat_Plaster_White_03-256x256.png', 64, 64, { tint: [0.8, 0.9, 1.0] }],
   ['plGray', 'Plaster/Mat_Plaster_Gray_02-256x256.png', 64, 64, {}],
-  ['plBeige', 'Plaster/Plaster_09-256x256.png', 64, 64, {}],
+  ['plBeige', 'Plaster/Mat_Plaster_White_04-256x256.png', 64, 64, { tint: [1.0, 0.92, 0.78] }],
   ['plOchre', 'Plaster/Plaster_07-256x256.png', 64, 64, { saturate: 0.8 }],
   ['brick', 'Bricks/Bricks_22-256x256.png', 64, 64, {}],
   ['brickOld', 'Murano-Bricks-Red-_B01.jpg', 64, 64, {}],
@@ -138,10 +138,6 @@ const DEFS = [
   ['roofDark', 'Roofs/Roofs_16-256x256.png', 64, 64, {}],
   ['roofSlate', 'Roofs/Roofs_19-256x256.png', 64, 64, { saturate: 0.6 }],
   ['roofTerra', 'RoofingTiles014C_1K-JPG_Color.jpg', 64, 64, {}],
-  // janelas
-  ['window1', 'windows/window1.png', 64, 64, {}],
-  ['window2', 'windows/window2.png', 64, 64, {}],
-  ['window3', 'windows/window3.png', 64, 64, {}],
   // vegetação
   ['araucaria', 'leaf/araucarua.png', 128, 128, { alpha: true }],
   ['araucariaBranch', 'araucaria-leafs copiar.png', 64, 64, { alpha: true }],
@@ -163,7 +159,6 @@ const DEFS = [
   ['orelhao', 'orelhao.jpg', 64, 64, {}],
   ['orelhaoShell', 'orelhão-teto.png', 64, 64, {}],
   ['pare', 'placa-pare.jpg', 64, 64, {}],
-  ['posto', 'posto1.png', 256, 64, {}],
   ['marble', 'Marble/Mat_Marble_White_01-256x256.png', 64, 64, {}],
   ['granite', 'Stone/Mat_Stone_Gray_01-256x256.png', 64, 64, {}],
   ['stoneRock', 'Rocks025_1K-JPG_Color.jpg', 64, 64, {}],
@@ -208,21 +203,6 @@ function generateTextures() {
   g1.fillStyle = grd; g1.fillRect(0, 0, 32, 32);
   g1.fillStyle = 'rgba(255,255,255,0.18)'; g1.fillRect(4, 2, 6, 28); g1.fillRect(14, 2, 2, 28);
   TEX.glass = canvasTex(processPixels(gl));
-
-  // porta de madeira com almofadas
-  const dr = makeCanvas(32, 64), g3 = dr.getContext('2d');
-  g3.drawImage(TEX.woodDark.image, 0, 0, 32, 64);
-  g3.fillStyle = 'rgba(0,0,0,0.35)';
-  g3.fillRect(5, 6, 9, 22); g3.fillRect(18, 6, 9, 22); g3.fillRect(5, 34, 9, 24); g3.fillRect(18, 34, 9, 24);
-  g3.fillStyle = 'rgba(255,230,180,0.15)'; g3.fillRect(5, 6, 9, 2); g3.fillRect(18, 6, 9, 2); g3.fillRect(5, 34, 9, 2); g3.fillRect(18, 34, 9, 2);
-  g3.fillStyle = '#d8b04a'; g3.fillRect(24, 32, 2, 3);
-  g3.fillStyle = '#1a120c'; g3.fillRect(0, 0, 32, 2); g3.fillRect(0, 0, 2, 64); g3.fillRect(30, 0, 2, 64);
-  TEX.door = canvasTex(processPixels(dr), false);
-
-  // porta de enrolar (comércio)
-  const rl = makeCanvas(32, 32), g4 = rl.getContext('2d');
-  for (let y = 0; y < 32; y += 2) { pxRect(g4, 0, y, 32, 1, '#9aa0a4'); pxRect(g4, 0, y + 1, 32, 1, '#7d8286'); }
-  TEX.rollDoor = canvasTex(processPixels(rl));
 
   // céu: degradê de fim de tarde + nuvens da pasta + sol
   TEX.sky = canvasTex(makeSky(), true);
