@@ -78,12 +78,12 @@ export async function buildWorld(scene, onStep) {
     const w = ctx.terrain.waterAt(x, z);
     return w && w.river.width > 5 && y < w.level + 0.2;
   };
-  ctx.placeName = (x, z) => {
-    const p = ctx.zones.placeAt(x, z);
-    if (p) return p;
+  ctx.placeName = (x, z) => ctx.zones.placeAt(x, z);
+  ctx.streetName = (x, z) => {
     const q = ctx.roads.index.nearest(x, z, d => d.name && d.rank >= 2);
-    if (q.seg && q.d < q.seg.data.hw + 3) return q.seg.data.name.toUpperCase();
-    return null;
+    if (!q.seg || q.d > q.seg.data.hw + 4) return null;
+    const n = q.seg.data.name;
+    return /^[A-Z]{2,4}-\d+$/.test(n) ? 'Rodovia ' + n : n;
   };
 
   let tris = 0;

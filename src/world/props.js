@@ -180,7 +180,7 @@ export function letreiro(B, ctx, x, z, rot, text = 'TEEWALD') {
   const y = ctx.terrain.heightAt(x, z);
   const P = rotP(x, z, rot);
   const colors = [[0.85, 0.2, 0.15], [0.95, 0.75, 0.15], [0.2, 0.55, 0.3], [0.2, 0.45, 0.75], [0.9, 0.45, 0.15], [0.6, 0.25, 0.55], [0.85, 0.2, 0.15]];
-  const cw = 1.25, H = 1.8, gap = 0.18;
+  const cw = 1.5, H = 1.8, gap = 0.25;
   const total = text.length * (cw + gap) - gap;
   B.col = [0.9, 0.9, 0.9];
   B.box('concrete', x, y - 0.3, z, total + 1, 0.55, 1.4, rot, { uvScale: 2 });
@@ -193,19 +193,20 @@ export function letreiro(B, ctx, x, z, rot, text = 'TEEWALD') {
   ctx.collision.addBox(x, z, total / 2 + 0.5, 0.7, rot, y - 0.5, y + 0.25 + H);
 }
 
-// letras em blocos (grade 3x5)
+// letras em blocos (grade 5x5)
 const FONT = {
-  T: ['111', '010', '010', '010', '010'], E: ['111', '100', '110', '100', '111'], W: ['101', '101', '101', '111', '101'],
-  A: ['010', '101', '111', '101', '101'], L: ['100', '100', '100', '100', '111'], D: ['110', '101', '101', '101', '110'],
+  T: ['11111', '00100', '00100', '00100', '00100'], E: ['11111', '10000', '11110', '10000', '11111'],
+  W: ['10001', '10001', '10101', '11011', '10001'], A: ['01110', '10001', '11111', '10001', '10001'],
+  L: ['10000', '10000', '10000', '10000', '11111'], D: ['11110', '10001', '10001', '10001', '11110'],
 };
 function glyph(B, P, lx, y, lz, w, h, ch, rot) {
   const g = FONT[ch];
   if (!g) return;
-  const cw = w / 3, chh = h / 5;
-  for (let r = 0; r < 5; r++) for (let c = 0; c < 3; c++) {
+  const cw = w / 5, chh = h / 5;
+  for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) {
     if (g[r][c] !== '1') continue;
     const p = P(lx - w / 2 + cw * (c + 0.5), 0, lz);
-    B.box('carPaint', p[0], y + (4 - r) * chh, p[2], cw, chh, 0.45, rot, { uvScale: 1 });
+    B.box('letter', p[0], y + (4 - r) * chh, p[2], cw * 1.02, chh * 1.02, 0.45, rot, { uvScale: 1 });
   }
 }
 

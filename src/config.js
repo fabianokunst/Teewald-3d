@@ -5,7 +5,7 @@ export const DEFAULTS = {
   resolution: 240,      // linhas internas (240 = PS1)
   aspect: 'wide',       // 'wide' ocupa a tela toda, '4:3' usa barras laterais
   jitter: true,         // tremor de vértices
-  affine: 1,            // distorção de textura: 0 desligada, 1 sutil, 2 total
+  affine: 0,            // distorção de textura: 0 desligada, 1 sutil, 2 total
   dither: true,         // dithering + cor de 15 bits
   drawDistance: 1,      // 0 curta, 1 média, 2 longa
   sensitivity: 5,       // 1..10

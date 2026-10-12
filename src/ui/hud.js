@@ -22,6 +22,11 @@ export class Hud {
 
   showHints() { this.hintT = 0.001; }
 
+  setStreet(name, dt) {
+    this.streetT = (this.streetT ?? 99) + dt;
+    if (name && name !== this.street) { this.street = name; this.streetT = 0; }
+  }
+
   update(dt) {
     if (this.card) { this.cardT += dt; if (this.cardT > 4.5) this.card = null; }
     if (this.hintT > 0) { this.hintT += dt; if (this.hintT > 11) this.hintT = 0; }
@@ -45,7 +50,11 @@ export class Hud {
       const lines = o.pad
         ? ['ANALÓGICO mover   B correr   A pular', 'ANALÓGICO DIR. câmera   START pausa']
         : ['WASD mover   SHIFT correr   ESPAÇO pular', 'MOUSE câmera (clique)   RODA zoom   ESC pausa'];
-      lines.forEach((l, i) => drawText(g, l, W / 2, H - (34 - i * 12) * k, 11 * k, { align: 'center', alpha: a, color: '#e8dcc0' }));
+      lines.forEach((l, i) => drawText(g, l, W / 2, H - (44 - i * 12) * k, 11 * k, { align: 'center', alpha: a, color: '#e8dcc0' }));
+    }
+    if (this.street && this.streetT < 6 && !o.hideCard) {
+      const a = Math.min(1, this.streetT * 2) * Math.min(1, Math.max(0, (6 - this.streetT) / 1.5));
+      drawText(g, this.street, 8 * k, H - 16 * k, 11 * k, { alpha: a, color: '#e0d2b4' });
     }
     if (o.lockHint) drawText(g, 'clique para controlar a câmera', W - 6 * k, 6 * k, 10 * k, { align: 'right', color: '#c8b898', alpha: 0.8 });
     if (this.showFps) drawText(g, this.fps + ' FPS' + (o.stats ? '  ' + o.stats : ''), 6 * k, 6 * k, 10 * k, { color: '#9f9' });

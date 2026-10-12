@@ -151,6 +151,7 @@ function loop(now) {
   const focus = state === 'title' ? camera.position : player.pos;
   if (state !== 'title') {
     hud.setPlace(state === 'intro' ? hud.place : ctx.placeName(player.pos.x, player.pos.z), dt);
+    if (state === 'play') hud.setStreet(ctx.streetName(player.pos.x, player.pos.z), dt);
     const rv = ctx.rivers.index.nearest(player.pos.x, player.pos.z);
     audio.update(dt, time, rv.seg ? rv.d : 999);
   } else audio.update(dt, time, 999);
@@ -164,14 +165,16 @@ function loop(now) {
   input.endFrame();
 }
 
-let titleAng = 0.6;
+// câmera da tela título: passeia lentamente diante da fachada da igreja
+let titleT = 0;
 function titleCamera(dt) {
-  const L = ctx.landmarks;
-  const cx = (L.praca.c[0] + L.church.x) / 2, cz = (L.praca.c[1] + L.church.z) / 2;
-  titleAng += dt * 0.035;
-  const r = 78, y = ctx.terrain.heightAt(cx, cz);
-  camera.position.set(cx + Math.cos(titleAng) * r, y + 26 + Math.sin(titleAng * 0.7) * 4, cz + Math.sin(titleAng) * r);
-  camera.lookAt(L.church.x, L.church.y + 14, L.church.z);
+  const c = ctx.landmarks.church;
+  titleT += dt;
+  const a = c.rot + 0.35 + Math.sin(titleT * 0.045) * 0.55;
+  const r = 64;
+  const x = c.x + Math.sin(a) * r, z = c.z + Math.cos(a) * r;
+  camera.position.set(x, Math.max(ctx.terrain.heightAt(x, z) + 6, c.y + 15 + Math.sin(titleT * 0.08) * 3), z);
+  camera.lookAt(c.x, c.y + 13, c.z);
 }
 
 function playIntro(dt) {
@@ -198,7 +201,6 @@ function drawUI() {
   const g = R.uictx, W = R.W, H = R.H;
   g.clearRect(0, 0, W, H);
   if (state === 'title' || state === 'pause') {
-    if (state === 'pause') hud.draw(g, W, H, { hideCard: true });
     menu.draw(g, W, H);
   } else if (state === 'intro') {
     hud.drawIntro(g, W, H, stateT);
@@ -213,7 +215,10 @@ function exposeDebug() {
     get state() { return state; },
     startGame: (intro = false) => { startGame(intro); fade = 0; fadeTarget = 0; },
     teleport: (x, z, heading = 0) => { player.place(x, z, heading); tpc.snap(player); },
-    view: (x, y, z, lx, ly, lz) => { state = 'debug'; camera.position.set(x, y, z); camera.lookAt(lx, ly, lz); },
+    view: (x, y, z, lx, ly, lz, fogFar) => {
+      state = 'debug'; camera.position.set(x, y, z); camera.lookAt(lx, ly, lz);
+      if (fogFar) { G.uFogFar.value = fogFar; G.uFogNear.value = fogFar * 0.5; }
+    },
     setYawPitch: (yaw, pitch, dist) => { tpc.yaw = yaw; tpc.pitch = pitch; if (dist) tpc.dist = dist; tpc.snap(player); tpc.yaw = yaw; tpc.pitch = pitch; tpc._place(1); },
   };
 }

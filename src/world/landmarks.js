@@ -336,14 +336,16 @@ function buildPraca(B, ctx, pr) {
     const p = poly[i];
     ring.push([p[0] + (pr.c[0] - p[0]) * 0.22, p[1] + (pr.c[1] - p[1]) * 0.22]);
   }
-  ring.forEach((p, i) => {
-    const q = ring[(i + 1) % ring.length];
+  const step = Math.max(1, Math.floor(ring.length / 8));
+  for (let i = 0; i < ring.length; i += step) {
+    const p = ring[i], q = ring[(i + 1) % ring.length];
     const m = [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2];
     const rot = Math.atan2(pr.c[0] - m[0], pr.c[1] - m[1]);
-    if (i % 2 === 0) bench(B, ctx, m[0], m[1], rot);
+    const k = i / step;
+    if (k % 2 === 0) bench(B, ctx, m[0], m[1], rot);
     else lantern(B, ctx, m[0], m[1]);
-    tree(ctx, i % 3 === 0 ? 'araucaria' : 'platano', p[0], p[1], R.range(0.85, 1.1));
-  });
+    if (k % 2 === 1) tree(ctx, k % 4 === 1 ? 'araucaria' : 'platano', p[0], p[1], R.range(0.85, 1.05));
+  }
   // orelhão real do OSM (fica perto da praça)
   const tel = ctx.mapdata.pois.find(p => p.k === 'telephone' && Math.hypot(p.x - pr.c[0], p.z - pr.c[1]) < 40);
   if (tel) {

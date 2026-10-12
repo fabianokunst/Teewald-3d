@@ -16,9 +16,9 @@ const OPTIONS = [
 ];
 
 const CREDITS = [
-  ['TEEWALD', 'title'],
-  ['protótipo 0.1', ''],
+  ['Teewald', 'title'],
   ['', ''],
+  ['protótipo 0.1', 'dim'],
   ['Cidade inspirada em', 'dim'],
   ['Santa Maria do Herval - RS', ''],
   ['', ''],
@@ -126,8 +126,8 @@ export class Menu {
       else {
         CREDITS.forEach(([line, style], i) => {
           if (!line) return;
-          if (style === 'title') drawText(g, line, W / 2, 48 * k, 26 * k, { align: 'center', font: FONT_TITLE, color: '#e9dcc0', shadow: '#4a0d08' });
-          else drawText(g, line, W / 2, 50 * k + i * 12 * k, 13 * k, { align: 'center', color: style === 'dim' ? '#a89878' : '#e8dcc0' });
+          if (style === 'title') drawText(g, line, W / 2, 44 * k, 26 * k, { align: 'center', font: FONT_TITLE, color: '#e9dcc0', shadow: '#4a0d08' });
+          else drawText(g, line, W / 2, 52 * k + i * 11.5 * k, 12 * k, { align: 'center', color: style === 'dim' ? '#a89878' : '#e8dcc0' });
         });
         this._list(g, W, H, k, 196 * k);
       }

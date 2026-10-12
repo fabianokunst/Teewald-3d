@@ -157,7 +157,7 @@ const DEFS = [
   ['barkD', 'Trees/Photoreal_Trees_01-512x512.png', 64, 64, {}],
   // céu e água
   ['clouds', 'Elements/Elements_05-256x256.png', 128, 128, {}],
-  ['water', 'elements2/Elements_17-256x256.png', 64, 64, { saturate: 0.35, tint: [0.62, 0.7, 0.52], contrast: 0.8 }],
+  ['water', 'elements2/Elements_17-256x256.png', 64, 64, { saturate: 0.3, tint: [0.5, 0.52, 0.4], contrast: 0.9 }],
   // objetos
   ['orelhao', 'orelhao.jpg', 64, 64, {}],
   ['orelhaoShell', 'orelhão-teto.png', 64, 64, {}],
@@ -169,7 +169,7 @@ const DEFS = [
   ['stoneRock', 'Rocks025_1K-JPG_Color.jpg', 64, 64, {}],
   ['stoneWarm', 'Stone/Mat_Stone_Tan_01-256x256.png', 64, 64, {}],
   // personagem
-  ['clothBrown', 'Skin.png', 32, 32, { crop: [172, 88, 50, 36], contrast: 1.25, saturate: 0.55, tint: [0.8, 0.68, 0.56] }],
+  ['clothBrown', 'Skin.png', 32, 32, { crop: [172, 88, 50, 36], contrast: 1.25, saturate: 0.35, tint: [0.86, 0.72, 0.56] }],
   ['clothDark', 'Cloth/Cloth_17-256x256.png', 32, 32, { tint: [0.75, 0.6, 0.45] }],
   ['hair', 'person1.jpg', 32, 32, { crop: [236, 96, 128, 128], saturate: 1.1, bright: 1.1 }],
   // fachadas (fotos)

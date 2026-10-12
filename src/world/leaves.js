@@ -5,7 +5,7 @@ import { ensureColor } from '../engine/ps1material.js';
 export class FallingLeaves {
   constructor(material, terrain, count = 260) {
     this.terrain = terrain;
-    const geo = ensureColor(new THREE.PlaneGeometry(0.32, 0.32));
+    const geo = ensureColor(new THREE.PlaneGeometry(0.22, 0.22));
     this.mesh = new THREE.InstancedMesh(geo, material, count);
     this.mesh.frustumCulled = false;
     this.items = [];

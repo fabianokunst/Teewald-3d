@@ -30,22 +30,28 @@ export class Input {
   lock() { if (!this.locked && this.target.requestPointerLock) { try { const p = this.target.requestPointerLock(); p?.catch?.(() => {}); } catch (e) { /* ignora */ } } }
   unlock() { if (this.locked) document.exitPointerLock(); }
 
+  // lê todos os controles conectados; um controle só conta depois de ser usado
   poll() {
-    const pads = navigator.getGamepads ? navigator.getGamepads() : [];
-    this.pad = null;
-    for (const p of pads) if (p && p.connected) { this.pad = p; break; }
+    const pads = navigator.getGamepads ? [...navigator.getGamepads()].filter(p => p && p.connected) : [];
     this.padPressed.clear();
-    if (this.pad) {
-      const b = this.pad.buttons;
-      const map = { a: 0, b: 1, x: 2, y: 3, lb: 4, rb: 5, select: 8, start: 9, l3: 10, up: 12, down: 13, left: 14, right: 15 };
-      for (const [k, i] of Object.entries(map)) {
-        const v = !!(b[i] && b[i].pressed);
-        if (v && !this.padPrev[k]) { this.padPressed.add(k); this.lastDevice = 'pad'; }
-        this.padPrev[k] = v;
+    const map = { a: 0, b: 1, x: 2, y: 3, lb: 4, rb: 5, select: 8, start: 9, l3: 10, up: 12, down: 13, left: 14, right: 15 };
+    let best = null, bestMag = -1;
+    this.padHeld = new Set();
+    for (const p of pads) {
+      const st = (this.padState ||= {})[p.index] ||= { prev: null, active: false };
+      const now = {};
+      for (const [k, i] of Object.entries(map)) now[k] = !!(p.buttons[i] && p.buttons[i].pressed);
+      if (st.prev) {
+        for (const k of Object.keys(map)) if (now[k] && !st.prev[k]) { this.padPressed.add(k); st.active = true; this.lastDevice = 'pad'; }
       }
-      const ax = this.pad.axes;
-      if (Math.abs(ax[0] || 0) > 0.3 || Math.abs(ax[1] || 0) > 0.3) this.lastDevice = 'pad';
+      st.prev = now;
+      for (const k of Object.keys(map)) if (now[k]) this.padHeld.add(k);
+      const ax = p.axes;
+      const mag = Math.max(Math.hypot(ax[0] || 0, ax[1] || 0), Math.hypot(ax[2] || 0, ax[3] || 0));
+      if (mag > 0.5) { st.active = true; this.lastDevice = 'pad'; }
+      if (st.active && mag > bestMag) { bestMag = mag; best = p; }
     }
+    this.pad = best;
   }
 
   down(...codes) { return codes.some(c => this.keys.has(c)); }
@@ -82,7 +88,8 @@ export class Input {
 
   running() {
     if (this.down('ShiftLeft', 'ShiftRight')) return true;
-    if (this.pad) { const b = this.pad.buttons; return !!((b[1] && b[1].pressed) || (b[7] && b[7].value > 0.3) || (b[10] && b[10].pressed)); }
+    if (this.padHeld && (this.padHeld.has('b') || this.padHeld.has('l3'))) return true;
+    if (this.pad) { const b = this.pad.buttons; return !!(b[7] && b[7].value > 0.3); }
     return false;
   }
 

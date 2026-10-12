@@ -416,9 +416,9 @@ export function placeTownBuildings(ctx, B) {
         const at = pointAlong(pts, s + 6);
         if (!at) break;
         const dc = Math.hypot(at.p[0] - core[0], at.p[1] - core[1]);
-        const dens = clamp(1.08 - dc / 520, 0.12, 0.95) * (road.rank >= 6 && dc > 320 ? 0.45 : 1);
+        const dens = clamp(1.2 - dc / 560, 0.18, 0.97) * (road.rank >= 6 && dc > 320 ? 0.5 : 1);
         const central = dc < 230;
-        const lotW = central ? R.range(9, 13) : R.range(11, 19);
+        const lotW = central ? R.range(8.5, 12.5) : R.range(10, 17);
         if (!R.chance(dens)) { s += lotW * R.range(0.6, 1.4); continue; }
         // estilo
         let style;

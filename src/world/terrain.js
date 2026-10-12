@@ -135,7 +135,7 @@ export class Terrain {
   // tipo de chão em cada célula
   groundClass(x, z, zones) {
     const w = this.riverIndex.nearest(x, z);
-    if (w.seg && w.d < w.seg.data.width / 2 + 2.5) return 'mud';
+    if (w.seg && w.d < w.seg.data.width / 2 + w.seg.data.bank * 0.8) return 'mud';
     if (zones.isForest(x, z)) return 'leaves';
     const r = this.roadIndex.clearance(x, z);
     if (r.d < 22) return fbm(x * 0.05, z * 0.05, 2) > 0.62 ? 'grassDry' : 'lawn';
