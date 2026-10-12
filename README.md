@@ -41,6 +41,10 @@ O navegador abre em `http://localhost:5173`.
   Building Footprints): alvenaria, madeira, enxaimel (com as fotos de fachada da
   pasta `texture`), comércio com placas e galpões.
 - **Minimapa** no canto inferior direito, girando com a câmera (tecla M).
+- **Protagonista** com ~1200 triângulos numa malha única com esqueleto
+  (cotovelos e joelhos contínuos ao dobrar), sombreamento suave e um atlas de
+  128x128 pintado a partir das texturas da pasta: jaqueta de lona com bolsos e
+  zíper, calça marrom, botas com cadarço, cabelo loiro em mechas e olhos azuis.
 - Milhares de árvores (araucárias, plátanos de outono, nativas, pinheiros,
   ciprestes) e folhas caindo.
 - Efeitos de PS1: 320x240, tremor de vértices, dithering, cor de 15 bits,

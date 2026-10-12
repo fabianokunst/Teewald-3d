@@ -49,16 +49,16 @@ const C = {
   pants: [78, 60, 48],
   boot: [104, 66, 42],
   sole: [48, 38, 32],
-  skin: [236, 194, 164],
+  skin: [230, 186, 154],
   shirt: [220, 206, 178],
   hair: [[128, 88, 46], [206, 166, 100], [246, 222, 160]],
-  brow: [168, 122, 70],
+  brow: [150, 106, 60],
   lid: [100, 66, 50],
   white: [238, 234, 224],
   iris: [72, 122, 180],
   irisLow: [104, 152, 200],
   pupil: [26, 34, 50],
-  lip: [164, 94, 84],
+  lip: [146, 82, 74],
   lipLow: [206, 134, 118],
   brass: [200, 168, 96],
   stitch: [200, 164, 116],
@@ -214,7 +214,9 @@ function paintHead(P, hairAt, rnd) {
     p.set(cx - 2, 19, C.white); p.set(cx - 1, 19, C.iris); p.set(cx, 19, C.pupil); p.set(cx + 1, 19, C.iris); p.set(cx + 2, 19, C.white);
     p.mul(cx - 2, 20, 0.92); p.set(cx - 1, 20, scale(C.white, 0.94)); p.set(cx, 20, C.irisLow); p.set(cx + 1, 20, scale(C.white, 0.94)); p.mul(cx + 2, 20, 0.92);
     p.mul(cx - 3, 18, 0.9); p.mul(cx + 3, 18, 0.9);
+    for (let x = cx - 2; x <= cx + 2; x++) p.mul(x, 17, 0.94);
   }
+  p.set(23, 18, scale(C.lid, 1.2)); p.set(41, 18, scale(C.lid, 1.2));
   // nariz: luz no dorso, sombra lateral, narinas
   for (let y = 18; y < 25; y++) p.mul(32, y, 1.04);
   for (let y = 21; y < 25; y++) p.mul(30, y, 0.93);
@@ -226,6 +228,9 @@ function paintHead(P, hairAt, rnd) {
   p.mul(29, 31, 0.85); p.mul(35, 31, 0.85);
   for (let x = 30; x <= 34; x++) p.set(x, 32, C.lipLow);
   for (let x = 30; x <= 34; x++) p.mul(x, 34, 0.93);
+  // laterais do rosto e ângulo da mandíbula um pouco mais escuros
+  for (let y = 10; y < 36; y++) for (const x of [16, 17, 18, 46, 47, 48]) p.mul(x, y, 0.96);
+  for (let y = 32; y < 36; y++) for (const x of [19, 20, 21, 43, 44, 45]) p.mul(x, y, 0.92);
   // bochechas levemente rosadas
   for (const x0 of [22, 40]) for (let y = 23; y < 25; y++) for (let x = x0; x < x0 + 3; x++) p.set(x, y, mix(p.get(x, y), [240, 168, 146], 0.3));
 }

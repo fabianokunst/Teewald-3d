@@ -71,13 +71,13 @@ class SkinBuilder {
     this.tri(A, C, D, ua, uc, ud, g, inside);
   }
 
-  // anéis: { pts, w, v, c }; o: { reg, u(k), g, closed, inside(i, centro), capStart, capEnd }
+  // anéis: { pts, w (lista ou função do ponto), v, c }; o: { reg, u(k), g, closed, inside(i, centro), capStart, capEnd }
   // v de cada anel e u(k) são relativos à região do atlas
   loft(rings, o) {
     const [rx, ry, rw] = REG[o.reg];
     const n = rings[0].pts.length, segs = o.closed === false ? n - 1 : n;
     const U = o.u || (k => (k / segs) * rw);
-    const V = (r, k) => ({ p: r.pts[k % n], w: r.w, c: r.c ?? 1 });
+    const V = (r, k) => ({ p: r.pts[k % n], w: typeof r.w === 'function' ? r.w(r.pts[k % n]) : r.w, c: r.c ?? 1 });
     const T = (r, k) => [rx + U(k), ry + r.v];
     for (let i = 0; i < rings.length - 1; i++) {
       const A = rings[i], B = rings[i + 1];
@@ -161,13 +161,14 @@ function buildHero(b) {
   const NT = 10;
   const T = (y, rx, f, bk, z, p, w, v, c) => ({ pts: ring(NT, 0, y, z, rx, f, bk, p), w, v, c });
   const hemW = [[b.hips, 0.6], [b.spine, 0.4]];
+  const shoulderW = p => (Math.abs(p[0]) > 0.14 ? [[b.spine, 0.7], [b.sh[p[0] < 0 ? 0 : 1], 0.3]] : S);
   const torso = [
     T(0.875, 0.168, 0.114, 0.11, 0, 0.9, hemW, 47.5),
     T(1.08, 0.168, 0.115, 0.106, 0.004, 0.9, S, 34),
     T(1.25, 0.186, 0.126, 0.11, 0.008, 0.85, S, 22),
     T(1.36, 0.192, 0.118, 0.108, 0.006, 0.8, S, 14),
-    T(1.44, 0.2, 0.096, 0.094, 0, 0.65, S, 8),
-    T(1.5, 0.128, 0.078, 0.074, 0, 0.8, S, 3),
+    T(1.44, 0.212, 0.096, 0.094, 0, 0.75, shoulderW, 8),
+    T(1.493, 0.15, 0.08, 0.076, 0, 0.75, S, 3),
     T(1.517, 0.074, 0.07, 0.064, 0.004, 1, S, 0.5),
   ];
   B.loft(torso, { reg: 'jacket', g: 'torso' });
@@ -187,16 +188,16 @@ function buildHero(b) {
 
   // --- pescoço ---
   B.loft([
-    { pts: ring(8, 0, 1.49, 0.012, 0.05, 0.048, 0.048), w: [[b.neck, 1]], v: 15.5, c: 0.9 },
-    { pts: ring(8, 0, 1.64, 0.008, 0.047, 0.048, 0.05), w: HD, v: 0.5, c: 0.72 },
+    { pts: ring(8, 0, 1.49, 0.012, 0.055, 0.052, 0.05), w: [[b.neck, 1]], v: 15.5, c: 0.9 },
+    { pts: ring(8, 0, 1.64, 0.008, 0.052, 0.05, 0.052), w: HD, v: 0.5, c: 0.72 },
   ], { reg: 'skin', g: 'neck' });
 
   // --- cabeça: anéis do queixo ao alto, com o cabelo "inflado" acima da linha do cabelo ---
   const NH = 10;
   const HR = [ // y, rx, rzF, rzB, cz
-    [0.012, 0.03, 0.022, 0.02, 0.08],
-    [0.03, 0.062, 0.026, 0.05, 0.055],
-    [0.065, 0.082, 0.05, 0.075, 0.03],
+    [0.02, 0.04, 0.022, 0.02, 0.078],
+    [0.038, 0.07, 0.028, 0.05, 0.052],
+    [0.068, 0.085, 0.05, 0.075, 0.03],
     [0.105, 0.09, 0.07, 0.095, 0.01],
     [0.145, 0.094, 0.075, 0.102, 0.002],
     [0.18, 0.095, 0.08, 0.102, -0.002],
@@ -223,21 +224,21 @@ function buildHero(b) {
   }));
   B.loft(headRings, {
     reg: 'head', g: 'head', u: k => headU(k / NH),
-    capStart: { p: add(HEAD_J, [0, 0, 0.074]), v: headRow(0.003) - REG.head[1] },
+    capStart: { p: add(HEAD_J, [0, 0.01, 0.074]), v: headRow(0.012) - REG.head[1] },
     capEnd: { p: add(HEAD_J, [0, 0.276, -0.012]), v: headRow(0.262) - REG.head[1] },
   });
 
-  // nariz facetado (3 triângulos), mapeado na mesma projeção do rosto
+  // nariz (3 triângulos), mapeado na mesma projeção do rosto
   const hv = q => ({ p: add(HEAD_J, q), w: HD, c: 1 });
   const huv = q => {
     const f = ((Math.atan2(q[0] / 0.09, -(q[2] - 0.005) / 0.075) / TAU) + 1) % 1;
     return [headU(f), headRow(q[1])];
   };
-  const nb = [0, 0.158, 0.081], nt = [0, 0.11, 0.104], nl = [-0.017, 0.099, 0.085], nr = [0.017, 0.099, 0.085];
+  const nb = [0, 0.156, 0.08], nt = [0, 0.112, 0.098], nl = [-0.015, 0.1, 0.084], nr = [0.015, 0.1, 0.084];
   const nIn = add(HEAD_J, [0, 0.12, 0.05]);
-  B.tri(hv(nb), hv(nl), hv(nt), huv(nb), huv(nl), huv(nt), '!nose', nIn);
-  B.tri(hv(nb), hv(nt), hv(nr), huv(nb), huv(nt), huv(nr), '!nose', nIn);
-  B.tri(hv(nl), hv(nr), hv(nt), huv(nl), huv(nr), huv(nt), '!nose', add(HEAD_J, [0, 0.13, 0.09]));
+  B.tri(hv(nb), hv(nl), hv(nt), huv(nb), huv(nl), huv(nt), 'nose', nIn);
+  B.tri(hv(nb), hv(nt), hv(nr), huv(nb), huv(nt), huv(nr), 'nose', nIn);
+  B.tri(hv(nl), hv(nr), hv(nt), huv(nl), huv(nr), huv(nt), 'nose', add(HEAD_J, [0, 0.13, 0.09]));
 
   // orelhas: contorno preso à cabeça, aba saliente e concha
   const EAR = [[0, 0.158], [-0.022, 0.168], [-0.036, 0.145], [-0.03, 0.112], [-0.01, 0.1]]; // (z, y)
@@ -282,14 +283,14 @@ function buildHero(b) {
   for (const [i, s] of [[0, -1], [1, 1]]) {
     const sh = b.sh[i], el = b.el[i], hd = b.hand[i], hip = b.hip[i], knee = b.knee[i], ank = b.ankle[i];
     // coordenadas locais do lado +x, espelhadas para o outro lado (a textura espelha junto)
-    const at = (j, q) => [j[0] + s * q[0], j[1] + q[1], j[2] + q[2]];
+    const at = (j, q) => [s * (j[0] + q[0]), j[1] + q[1], j[2] + q[2]];
     const R = (j, n, y, rx, f, bk, cx, w, v, c, cz = 0) => ({ pts: ring(n, cx, y, cz, rx, f, bk).map(q => at(j, q)), w, v, c });
 
     // braço: ombro (domo sobre o tronco), cotovelo costurado, punho canelado
     const SJ = [SH_X, SH_Y, 0];
     const half = [[sh, 0.5], [el, 0.5]];
     const arm = [
-      R(SJ, 8, 0.012, 0.056, 0.058, 0.056, 0, [[sh, 1]], 4),
+      R(SJ, 8, -0.02, 0.057, 0.058, 0.056, 0, [[sh, 1]], 4),
       R(SJ, 8, -0.2, 0.047, 0.05, 0.048, 0, [[sh, 1]], 18),
       R(SJ, 8, EL_DY, 0.045, 0.046, 0.048, 0, half, 24),
       R(SJ, 8, EL_DY - 0.06, 0.046, 0.049, 0.05, 0, [[el, 1]], 29),
@@ -298,7 +299,7 @@ function buildHero(b) {
       R(SJ, 8, EL_DY - 0.232, 0.03, 0.032, 0.032, 0, [[el, 1]], 47.9, 0.5),
     ];
     B.loft(arm, {
-      reg: 'sleeve', g: 'arm' + s, capStart: { p: at(SJ, [0, 0.05, 0]), v: 0.5 },
+      reg: 'sleeve', g: 'arm' + s, capStart: { p: at(SJ, [-0.025, 0.018, 0]), v: 0.5 },
       inside: k => (k === arm.length - 2 ? at(SJ, [0, -0.3, 0]) : undefined),
     });
 
@@ -341,14 +342,14 @@ function buildHero(b) {
       [cx - 0.8 * hw, bot, z], [cx - 1.05 * hw, bot + 0.016, z], [cx - hw, (top + bot) / 2 + 0.01, z], [cx - 0.55 * hw, top, z],
     ].map(q => at(AJ, q));
     B.loft([
-      { pts: sec(-0.068, 0.04, 0.005, -0.07, 0), w: AW, v: 9 },
-      { pts: sec(-0.02, 0.048, 0.025, -0.07, 0), w: AW, v: 14 },
-      { pts: sec(0.06, 0.052, -0.012, -0.07, 0.004), w: AW, v: 22 },
-      { pts: sec(0.13, 0.047, -0.034, -0.07, 0.007), w: AW, v: 29 },
+      { pts: sec(-0.07, 0.042, 0.005, -0.07, 0), w: AW, v: 9 },
+      { pts: sec(-0.02, 0.051, 0.026, -0.07, 0), w: AW, v: 14 },
+      { pts: sec(0.065, 0.056, -0.01, -0.07, 0.004), w: AW, v: 22 },
+      { pts: sec(0.14, 0.05, -0.033, -0.07, 0.008), w: AW, v: 29 },
     ], {
       reg: 'boot', g: 'foot' + s,
-      capStart: { p: at(AJ, [0, -0.035, -0.076]), v: 8.5 },
-      capEnd: { p: at(AJ, [0.008, -0.052, 0.168]), v: 31.5 },
+      capStart: { p: at(AJ, [0, -0.035, -0.079]), v: 8.5 },
+      capEnd: { p: at(AJ, [0.009, -0.051, 0.18]), v: 31.5 },
     });
   }
   return B.build();
@@ -390,6 +391,7 @@ export class Character {
     const mesh = new THREE.SkinnedMesh(geo, M.hero);
     mesh.frustumCulled = false;
     this.root.add(mesh);
+    this.root.updateMatrixWorld(true);
     mesh.bind(new THREE.Skeleton(bones));
     this.mesh = mesh;
 
