@@ -3,7 +3,7 @@ import { saveSettings } from '../config.js';
 
 // Tela título, menu principal, opções, créditos e pausa
 const OPTIONS = [
-  { key: 'resolution', label: 'RESOLUÇÃO', values: [240, 360, 480], fmt: v => v + 'p' + (v === 240 ? ' (PS1)' : '') },
+  { key: 'resolution', label: 'RESOLUÇÃO', values: [240, 360, 480, 720, 1080, 0], fmt: v => (v === 0 ? 'NATIVA' : v + 'p' + (v === 240 ? ' (PS1)' : '')) },
   { key: 'aspect', label: 'PROPORÇÃO', values: ['wide', '4:3'], fmt: v => (v === 'wide' ? 'TELA CHEIA' : '4:3') },
   { key: 'jitter', label: 'TREMOR DE VÉRTICES', values: [true, false], fmt: v => (v ? 'LIGADO' : 'DESLIGADO') },
   { key: 'affine', label: 'DISTORÇÃO DE TEXTURA', values: [0, 1, 2], fmt: v => ['DESLIGADA', 'SUTIL', 'TOTAL'][v] },

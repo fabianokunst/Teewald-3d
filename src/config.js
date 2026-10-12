@@ -2,7 +2,7 @@
 const KEY = 'teewald.settings.v1';
 
 export const DEFAULTS = {
-  resolution: 240,      // linhas internas (240 = PS1)
+  resolution: 240,      // linhas internas (240 = PS1, 0 = nativa da tela)
   aspect: 'wide',       // 'wide' ocupa a tela toda, '4:3' usa barras laterais
   jitter: true,         // tremor de vértices
   affine: 0,            // distorção de textura: 0 desligada, 1 sutil, 2 total

@@ -61,10 +61,12 @@ export class Renderer {
 
   layout() {
     const vw = window.innerWidth, vh = window.innerHeight;
-    const H = this.lines;
     let cssW, cssH;
     if (this.aspect === '4:3') { cssH = vh; cssW = Math.min(vw, vh * 4 / 3); cssH = cssW * 3 / 4; }
     else { cssW = vw; cssH = vh; }
+    // 0 = nativa (pixels reais da tela); as demais nunca passam da nativa para não reduzir com serrilhado
+    const native = Math.max(240, Math.round(cssH * (window.devicePixelRatio || 1)));
+    const H = this.lines > 0 ? Math.min(this.lines, native) : native;
     const W = Math.max(2, Math.round((H * cssW / cssH) / 2) * 2);
     this.W = W; this.H = H;
     this.gl.setSize(W, H, false);

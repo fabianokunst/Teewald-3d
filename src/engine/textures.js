@@ -162,14 +162,13 @@ const DEFS = [
   ['orelhao', 'orelhao.jpg', 64, 64, {}],
   ['orelhaoShell', 'orelhão-teto.png', 64, 64, {}],
   ['pare', 'placa-pare.jpg', 64, 64, {}],
-  ['comercial', 'comercial.png', 128, 128, {}],
   ['posto', 'posto1.png', 256, 64, {}],
   ['marble', 'Marble/Mat_Marble_White_01-256x256.png', 64, 64, {}],
   ['granite', 'Stone/Mat_Stone_Gray_01-256x256.png', 64, 64, {}],
   ['stoneRock', 'Rocks025_1K-JPG_Color.jpg', 64, 64, {}],
   ['stoneWarm', 'Stone/Mat_Stone_Tan_01-256x256.png', 64, 64, {}],
   // personagem
-  ['clothBrown', 'Skin.png', 32, 32, { crop: [172, 88, 50, 36], contrast: 1.25, saturate: 0.35, tint: [0.86, 0.72, 0.56] }],
+  ['clothBrown', 'Cloth/Mat_Cloth_Canvas_01-256x256.png', 32, 32, { saturate: 0.6, contrast: 1.2, tint: [0.72, 0.52, 0.36] }],
   ['clothDark', 'Cloth/Cloth_17-256x256.png', 32, 32, { tint: [0.75, 0.6, 0.45] }],
   ['hair', 'person1.jpg', 32, 32, { crop: [236, 96, 128, 128], saturate: 1.1, bright: 1.1 }],
   // fachadas (fotos)

@@ -586,13 +586,13 @@ function buildSpecials(B, ctx) {
     ctx.zones.addBuilding({ x: o.x, z: o.z, hx: s.w / 2, hz: s.d / 2, rot: o.rot });
     add(s);
   }
-  // Comércio da praça (TEEWALD STORE, textura comercial.png)
+  // Comércio da praça (TEEWALD STORE)
   {
     const a = md.areas.find(x => x.k === 'building' && !x.n && Math.hypot(polyCentroid(x.p)[0] + 165, polyCentroid(x.p)[1] - 30) < 15);
     if (a) {
       const o = orientToRoad(ctx, polyToOBB(a.p));
-      const s = makeSpec(R, 'commercial', o.x, o.z, o.rot, Math.max(o.hx * 2, 10), Math.max(o.hz * 2, 10), { floors: 2, sign: 'comercial' });
-      s.signH = 1.6; s.awning = 'awnRed';
+      const s = makeSpec(R, 'commercial', o.x, o.z, o.rot, Math.max(o.hx * 2, 10), Math.max(o.hz * 2, 10), { floors: 2, sign: sign('TEEWALD STORE', { bg: '#7a1c16', fg: '#f6eed8' }) });
+      s.signH = 0.9; s.awning = 'awnRed';
       ctx.zones.addBuilding({ x: o.x, z: o.z, hx: s.w / 2, hz: s.d / 2, rot: o.rot });
       add(s);
     }
