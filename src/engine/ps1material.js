@@ -39,21 +39,30 @@ varying vec2 vUv;
 varying vec3 vLight;
 varying float vFog;
 
+#include <skinning_pars_vertex>
+
 void main() {
+  // malhas com esqueleto (protagonista): deforma posição e normal pelos ossos
+  vec3 transformed = position;
+  vec3 objectNormal = normal;
+  #include <skinbase_vertex>
+  #include <skinnormal_vertex>
+  #include <skinning_vertex>
+
   mat4 m = modelMatrix;
   #ifdef USE_INSTANCING
     m = m * instanceMatrix;
   #endif
-  vec4 wp = m * vec4(position, 1.0);
+  vec4 wp = m * vec4(transformed, 1.0);
   if (uWave > 0.0) {
     wp.y += sin(wp.x * 0.35 + uTime * 1.3) * cos(wp.z * 0.3 + uTime * 0.9) * uWave;
   }
   if (uSway > 0.0) {
-    float h = max(position.y, 0.0);
+    float h = max(transformed.y, 0.0);
     wp.x += sin(uTime * 1.1 + wp.z * 0.2) * uSway * h * 0.02;
     wp.z += cos(uTime * 0.9 + wp.x * 0.2) * uSway * h * 0.015;
   }
-  vec3 n = normalize(mat3(m) * normal);
+  vec3 n = normalize(mat3(m) * objectNormal);
   vec4 vp = viewMatrix * wp;
   vec4 cp = projectionMatrix * vp;
 

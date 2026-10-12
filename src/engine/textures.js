@@ -167,10 +167,6 @@ const DEFS = [
   ['granite', 'Stone/Mat_Stone_Gray_01-256x256.png', 64, 64, {}],
   ['stoneRock', 'Rocks025_1K-JPG_Color.jpg', 64, 64, {}],
   ['stoneWarm', 'Stone/Mat_Stone_Tan_01-256x256.png', 64, 64, {}],
-  // personagem
-  ['clothBrown', 'Cloth/Mat_Cloth_Canvas_01-256x256.png', 32, 32, { saturate: 0.6, contrast: 1.2, tint: [0.72, 0.52, 0.36] }],
-  ['clothDark', 'Cloth/Cloth_17-256x256.png', 32, 32, { tint: [0.75, 0.6, 0.45] }],
-  ['hair', 'person1.jpg', 32, 32, { crop: [236, 96, 128, 128], saturate: 1.1, bright: 1.1 }],
   // fachadas (fotos)
   ['facKleiser', 'fabian-kleiser-lq65t9NVi4g-unsplash.jpg', 128, 128, { crop: [8, 8, 240, 279] }],
   ['facWidenka', 'martin-widenka-xY4_JDEKu8g-unsplash.jpg', 128, 128, { crop: [0, 0, 256, 320] }],
@@ -182,6 +178,14 @@ const DEFS = [
   ['stoneWindow', 'daniel-von-appen---8sJ3JSVfM-unsplash.jpg', 64, 64, {}],
 ];
 
+// imagens usadas no atlas do protagonista (game/heroTexture.js)
+export const HERO_FILES = {
+  jacket: 'Cloth/Mat_Cloth_Canvas_01-256x256.png',
+  pants: 'Cloth/Cloth_17-256x256.png',
+  shirt: 'Cloth/Mat_Cloth_Canvas_05-256x256.png',
+  hair: 'person1.jpg',
+};
+
 // recortes da foto da igreja (igreja.png 256x256) para os detalhes da fachada
 const CHURCH_CROPS = {
   chRose: [88, 139, 28, 28, 32, 32],
@@ -191,7 +195,7 @@ const CHURCH_CROPS = {
 };
 
 export async function loadTextures(onProgress) {
-  const files = [...new Set([...DEFS.map(d => d[1]), 'igreja.png'])];
+  const files = [...new Set([...DEFS.map(d => d[1]), 'igreja.png', ...Object.values(HERO_FILES)])];
   let done = 0;
   await Promise.all(files.map(f => loadImage(f).then(() => { done++; onProgress?.(done / files.length); })));
   for (const [name, file, w, h, o] of DEFS) {
@@ -267,11 +271,6 @@ function generateTextures() {
   const ln = makeCanvas(8, 8); pxRect(ln.getContext('2d'), 0, 0, 8, 8, '#e8e2d0');
   TEX.paint = canvasTex(ln);
 
-  // rosto do protagonista (pele clara, olhos azuis, sobrancelhas loiras)
-  TEX.face = canvasTex(makeFace(), false);
-  TEX.skin = canvasTex(processPixels(fill(16, 16, '#f0c8a8')), true);
-  TEX.boot = canvasTex(processPixels(noiseFill(16, 16, [70, 46, 30], 14)), true);
-
   // bandeirolas da Kartoffelfest
   const fl = makeCanvas(64, 16), g7 = fl.getContext('2d');
   const cols = ['#c8102e', '#f2c100', '#1e7b3a', '#ffffff', '#1f4fa3', '#e87511'];
@@ -301,8 +300,6 @@ function generateTextures() {
   TEX.tire = canvasTex(processPixels(noiseFill(16, 16, [28, 28, 28], 6)));
 }
 
-function fill(w, h, color) { const c = makeCanvas(w, h); pxRect(c.getContext('2d'), 0, 0, w, h, color); return c; }
-
 function noiseFill(w, h, [r, g, b], amp) {
   const c = makeCanvas(w, h), x = c.getContext('2d'), d = x.createImageData(w, h);
   for (let i = 0; i < w * h; i++) {
@@ -310,26 +307,6 @@ function noiseFill(w, h, [r, g, b], amp) {
     d.data[i * 4] = r + n; d.data[i * 4 + 1] = g + n; d.data[i * 4 + 2] = b + n; d.data[i * 4 + 3] = 255;
   }
   x.putImageData(d, 0, 0); return c;
-}
-
-function makeFace() {
-  const c = makeCanvas(32, 32), g = c.getContext('2d');
-  pxRect(g, 0, 0, 32, 32, '#f0c8a8');
-  // sombras laterais
-  pxRect(g, 0, 0, 3, 32, '#e0b090'); pxRect(g, 29, 0, 3, 32, '#e0b090');
-  // sobrancelhas loiras
-  pxRect(g, 7, 11, 6, 2, '#c9a35a'); pxRect(g, 19, 11, 6, 2, '#c9a35a');
-  // olhos
-  pxRect(g, 8, 14, 5, 3, '#ffffff'); pxRect(g, 19, 14, 5, 3, '#ffffff');
-  pxRect(g, 10, 14, 2, 3, '#3d6ea8'); pxRect(g, 21, 14, 2, 3, '#3d6ea8');
-  pxRect(g, 10, 15, 1, 1, '#10161f'); pxRect(g, 21, 15, 1, 1, '#10161f');
-  // nariz
-  pxRect(g, 15, 16, 2, 5, '#e2b090'); pxRect(g, 14, 20, 4, 1, '#c99478');
-  // boca
-  pxRect(g, 12, 24, 8, 1, '#b56a5c'); pxRect(g, 13, 25, 6, 1, '#d08a7a');
-  // bochechas
-  pxRect(g, 6, 19, 3, 2, '#f2b8a0'); pxRect(g, 23, 19, 3, 2, '#f2b8a0');
-  return processPixels(c);
 }
 
 export const SKY = {
