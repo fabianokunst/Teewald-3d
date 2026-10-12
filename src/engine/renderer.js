@@ -47,7 +47,11 @@ export class Renderer {
     this.postScene.add(quad);
     this.postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     this.lines = 240; this.aspect = 'wide';
+    // celular em retrato: jogo em 4:3 no alto e controles de toque embaixo
+    this.stackPortrait = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
     window.addEventListener('resize', () => this.layout());
+    // alguns aparelhos só informam o tamanho novo um pouco depois de girar
+    window.addEventListener('orientationchange', () => { this.layout(); setTimeout(() => this.layout(), 250); setTimeout(() => this.layout(), 700); });
   }
 
   configure(settings) {
@@ -61,9 +65,11 @@ export class Renderer {
 
   layout() {
     const vw = window.innerWidth, vh = window.innerHeight;
-    let cssW, cssH;
-    if (this.aspect === '4:3') { cssH = vh; cssW = Math.min(vw, vh * 4 / 3); cssH = cssW * 3 / 4; }
+    let cssW, cssH, top = null;
+    if (this.stackPortrait && vh > vw * 1.1) { cssW = vw; cssH = Math.round(vw * 3 / 4); top = 0; }
+    else if (this.aspect === '4:3') { cssH = vh; cssW = Math.min(vw, vh * 4 / 3); cssH = cssW * 3 / 4; }
     else { cssW = vw; cssH = vh; }
+    if (top === null) top = (vh - cssH) / 2;
     // 0 = nativa (pixels reais da tela); as demais nunca passam da nativa para não reduzir com serrilhado
     const native = Math.max(240, Math.round(cssH * (window.devicePixelRatio || 1)));
     const H = this.lines > 0 ? Math.min(this.lines, native) : native;
@@ -74,11 +80,11 @@ export class Renderer {
     this.ui.width = W; this.ui.height = H;
     for (const c of [this.canvas, this.ui]) {
       c.style.width = cssW + 'px'; c.style.height = cssH + 'px';
-      c.style.left = (vw - cssW) / 2 + 'px'; c.style.top = (vh - cssH) / 2 + 'px';
+      c.style.left = (vw - cssW) / 2 + 'px'; c.style.top = top + 'px';
     }
     // grade de encaixe dos vértices sempre equivalente a 240 linhas
     G.uSnap.value.set((W * (240 / H)) / 2, 120);
-    this.cssRect = { x: (vw - cssW) / 2, y: (vh - cssH) / 2, w: cssW, h: cssH };
+    this.cssRect = { x: (vw - cssW) / 2, y: top, w: cssW, h: cssH };
     this.onLayout?.(W, H);
   }
 

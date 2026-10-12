@@ -80,7 +80,12 @@ export class Menu {
       this.rects.forEach((r, i) => {
         if (mx >= r[0] && mx <= r[0] + r[2] && my >= r[1] && my <= r[1] + r[3]) {
           if (this.sel !== i && I.mouse.moved) { this.sel = i; this.audio.menuMove(); }
-          if (I.mouse.clicked) { this.sel = i; this._click = r[4]; }
+          if (I.mouse.clicked) {
+            this.sel = i;
+            // linha de opção: metade esquerda do valor diminui, o resto aumenta
+            const z = r[4];
+            this._click = z && typeof z === 'object' ? (mx >= z.lo && mx < z.mid ? 'left' : 'right') : (z || 'click');
+          }
         }
       });
     }
@@ -108,11 +113,16 @@ export class Menu {
   draw(g, W, H) {
     const k = H / 240;
     this.rects = [];
-    const pad = this.input.lastDevice === 'pad';
+    const dev = this.input.lastDevice, pad = dev === 'pad', touch = dev === 'touch';
+    const help = (pd, kb, tc) => {
+      const t = pad ? pd : touch ? tc : kb;
+      if (t) drawText(g, t, 6 * k, H - 14 * k, 10 * k, { color: '#a89878' });
+    };
     if (this.screen === 'pause') {
       g.globalAlpha = 0.55; g.fillStyle = '#000'; g.fillRect(0, 0, W, H); g.globalAlpha = 1;
       drawText(g, 'PAUSA', W / 2, 62 * k, 26 * k, { align: 'center', color: '#e9dcc0' });
       this._list(g, W, H, k, 112 * k);
+      help('DIRECIONAL escolher   A confirmar   START continuar', '↑↓ escolher   ENTER confirmar   ESC continuar', '');
       return;
     }
     // vinheta
@@ -123,8 +133,10 @@ export class Menu {
     if (this.screen === 'options' || this.screen === 'credits') {
       panel(g, W / 2 - 150 * k, 20 * k, 300 * k, 200 * k, 0.78);
       drawText(g, this.screen === 'options' ? 'OPÇÕES' : 'CRÉDITOS', W / 2, 26 * k, 20 * k, { align: 'center', color: '#f2c879' });
-      if (this.screen === 'options') this._options(g, W, H, k);
-      else {
+      if (this.screen === 'options') {
+        this._options(g, W, H, k, touch);
+        help('↑↓ escolher   ◀▶ mudar   B voltar', '↑↓ escolher   ←→ mudar   ESC voltar', 'toque à esquerda do valor diminui, à direita aumenta');
+      } else {
         CREDITS.forEach(([line, style], i) => {
           if (!line) return;
           if (style === 'title') drawText(g, line, W / 2, 44 * k, 26 * k, { align: 'center', font: FONT_TITLE, color: '#e9dcc0', shadow: '#4a0d08' });
@@ -140,10 +152,11 @@ export class Menu {
     g.fillStyle = '#b89a62';
     g.fillRect(Math.round(W / 2 - 70 * k), Math.round(ty + 74 * k), Math.round(140 * k), Math.max(1, Math.round(k)));
     if (this.screen === 'press') {
-      if (Math.floor(this.t * 1.6) % 2 === 0) drawText(g, pad ? 'PRESSIONE START' : 'PRESSIONE ENTER', W / 2, 168 * k, 16 * k, { align: 'center', color: '#f2e6c8' });
+      const prompt = pad ? 'PRESSIONE START' : touch ? 'TOQUE PARA COMEÇAR' : 'PRESSIONE ENTER';
+      if (Math.floor(this.t * 1.6) % 2 === 0) drawText(g, prompt, W / 2, 168 * k, 16 * k, { align: 'center', color: '#f2e6c8' });
     } else {
       this._list(g, W, H, k, 140 * k);
-      drawText(g, pad ? 'DIRECIONAL escolher   A confirmar' : '↑↓ escolher   ENTER confirmar', 6 * k, H - 14 * k, 10 * k, { color: '#a89878' });
+      help('DIRECIONAL escolher   A confirmar', '↑↓ escolher   ENTER confirmar', 'TOQUE para escolher');
     }
     drawText(g, 'v0.1', W - 6 * k, H - 14 * k, 10 * k, { align: 'right', color: '#a89878' });
   }
@@ -157,16 +170,18 @@ export class Menu {
     });
   }
 
-  _options(g, W, H, k) {
+  // touch: setas em todas as linhas, para tocar direto no lado que quer mudar
+  _options(g, W, H, k, touch = false) {
     const items = this.items();
     items.forEach((it, i) => {
       const y = 50 * k + i * 13 * k, on = i === this.sel;
       const color = on ? '#f2c879' : '#c8b898';
       if (it.opt) {
         drawText(g, it.label, W / 2 - 140 * k, y, 13 * k, { color });
-        const v = it.opt.fmt(this.settings[it.opt.key]);
-        drawText(g, (on ? '◀ ' : '') + v + (on ? ' ▶' : ''), W / 2 + 140 * k, y, 13 * k, { align: 'right', color: on ? '#fff2d0' : '#a89878', font: FONT_UI });
-        this.rects.push([W / 2 - 140 * k, y, 280 * k, 13 * k, 'right']);
+        const v = it.opt.fmt(this.settings[it.opt.key]), arrows = on || touch;
+        const s = drawText(g, (arrows ? '◀ ' : '') + v + (arrows ? ' ▶' : ''), W / 2 + 140 * k, y, 13 * k, { align: 'right', color: on ? '#fff2d0' : '#a89878', font: FONT_UI });
+        const right = W / 2 + 140 * k;
+        this.rects.push([W / 2 - 140 * k, y, 280 * k, 13 * k, { lo: right - s.w - 10 * k, mid: right - s.w / 2 }]);
       } else {
         const s = drawText(g, it.label, W / 2, y + 6 * k, 15 * k, { align: 'center', color });
         this.rects.push([W / 2 - s.w / 2, y + 6 * k, s.w, 15 * k]);

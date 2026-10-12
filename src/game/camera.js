@@ -37,9 +37,22 @@ export class ThirdPersonCamera {
         this.pitch += l.py * dt * 1.8 * sens * inv;
         looked = true;
       }
-      if (input.mouse.wheel) this.dist = Math.max(2.2, Math.min(9, this.dist + input.mouse.wheel * 0.5));
+      const zd = input.zoom(dt);
+      if (zd) this.dist = Math.max(2.2, Math.min(9, this.dist + zd));
       if (input.down('KeyQ')) { this.yaw += dt * 2; looked = true; }
       if (input.down('KeyE')) { this.yaw -= dt * 2; looked = true; }
+      // R3 / toque duplo: volta para trás do personagem
+      if (input.recenter()) this.recentering = true;
+      else if (looked) this.recentering = false;
+    }
+    if (this.recentering) {
+      let d = player.heading + Math.PI - this.yaw;
+      while (d > Math.PI) d -= Math.PI * 2;
+      while (d < -Math.PI) d += Math.PI * 2;
+      const k = Math.min(1, dt * 9);
+      this.yaw += d * k;
+      this.pitch += (0.32 - this.pitch) * k;
+      if (Math.abs(d) < 0.01 && Math.abs(0.32 - this.pitch) < 0.01) this.recentering = false;
     }
     this.pitch = Math.max(-0.3, Math.min(1.15, this.pitch));
     this.idle = looked ? 0 : this.idle + dt;

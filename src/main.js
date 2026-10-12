@@ -5,6 +5,7 @@ import { loadTextures } from './engine/textures.js';
 import { makeMaterials, M } from './engine/materials.js';
 import { G } from './engine/ps1material.js';
 import { Input } from './engine/input.js';
+import { fullscreen } from './engine/touch.js';
 import { Audio } from './engine/audio.js';
 import { buildWorld } from './world/world.js';
 import { applyAtmosphere } from './world/sky.js';
@@ -34,6 +35,40 @@ let ctx, character, player, tpc, menu, minimap;
 let state = 'loading';
 let time = 0, stateT = 0, fade = 1, fadeTarget = 0, onFaded = null;
 let introPath = null;
+
+// Primeiro toque/tecla: libera o áudio (o iOS exige que seja dentro do evento).
+// No celular, sair da tela "toque para começar" também entra em tela cheia.
+let autoFullscreen = false;
+input.onGesture = kind => {
+  audio.start();
+  if (kind === 'touch' && !autoFullscreen && state === 'title' && menu?.screen === 'press') {
+    autoFullscreen = true;
+    fullscreen.enter();
+  }
+};
+
+// mantém a tela do celular acesa durante o jogo (útil jogando com controle)
+let wakeLock = null;
+function keepAwake() {
+  if (!navigator.wakeLock || wakeLock || document.visibilityState !== 'visible') return;
+  navigator.wakeLock.request('screen').then(l => {
+    wakeLock = l;
+    l.addEventListener('release', () => { wakeLock = null; });
+  }).catch(() => {});
+}
+
+function pauseGame() { menu.open('pause'); setState('pause'); input.unlock(); }
+
+// trocou de aplicativo ou de aba: pausa e silencia
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    if (state === 'play') pauseGame();
+    audio.suspend();
+  } else {
+    audio.resume();
+    if (state !== 'title' && state !== 'loading') keepAwake();
+  }
+});
 
 function applySettings(s, key) {
   R.configure(s);
@@ -105,6 +140,7 @@ function startGame(withIntro = true) {
     hud.showHints();
   }
   audio.setAmbience(true);
+  keepAwake();
 }
 
 function fadeTo(cb, speed = 1.6) { fadeTarget = 1; onFaded = cb; fadeSpeed = speed; }
@@ -116,12 +152,15 @@ function loop(now) {
   requestAnimationFrame(loop);
   let dt = Math.min(0.1, (now - last) / 1000);
   last = now;
-  if (settings.fps === 30) { acc += dt; if (acc < 1 / 30 - 0.002) return; dt = Math.min(0.1, acc); acc = 0; }
+  // 30 FPS quando escolhido; no celular, telas de 90/120 Hz ficam em 60 (bateria e calor)
+  const cap = settings.fps === 30 ? 30 : input.touchPrimary ? 60 : 0;
+  if (cap) { acc += dt; if (acc < 1 / cap - 0.002) return; dt = Math.min(0.1, acc); acc = 0; }
   input.poll();
   time += dt; stateT += dt;
   G.uTime.value = time;
   if (input.hit('F3')) hud.showFps = !hud.showFps;
-  if (input.hit('KeyM') && (state === 'play' || state === 'pause')) { settings.minimap = !settings.minimap; saveSettings(); }
+  if (input.toggleMap() && (state === 'play' || state === 'pause')) { settings.minimap = !settings.minimap; saveSettings(); }
+  if (input.padJoined && state === 'play') hud.toast('CONTROLE CONECTADO');
 
   // fade
   if (fade !== fadeTarget) {
@@ -138,14 +177,16 @@ function loop(now) {
   } else if (state === 'intro') {
     playIntro(dt);
   } else if (state === 'play') {
-    if (input.pause()) { menu.open('pause'); setState('pause'); input.unlock(); }
+    if (input.pause()) pauseGame();
     else {
-      if (input.mouse.clicked && !input.locked) input.lock();
+      if (input.mouse.clicked && !input.locked && input.lastDevice === 'keyboard') input.lock();
       const r = player.update(dt, tpc.yaw, input);
       tpc.update(dt, player, input, settings, r.moving);
     }
   } else if (state === 'pause') {
-    const act = menu.update(dt, mouseInt);
+    // START (ou P) de novo retoma o jogo, qualquer que seja o item marcado
+    const resume = menu.screen === 'pause' && (input.padHit('start') || input.hit('KeyP'));
+    const act = resume ? 'resume' : menu.update(dt, mouseInt);
     if (act === 'resume') { setState('play'); }
     if (act === 'quit') fadeTo(() => { menu.open('main'); setState('title'); audio.setAmbience(false); fadeTarget = 0; fadeSpeed = 1.2; });
   }
@@ -165,6 +206,9 @@ function loop(now) {
 
   R.render(scene, camera);
   drawUI();
+  // controles de toque só no jogo; nos menus e na abertura um toque vale um clique
+  input.touch.setMode(state === 'play' ? 'play' : 'menu');
+  input.touch.draw(R, state === 'play' && input.lastDevice === 'touch', input.touchPrimary);
   input.endFrame();
 }
 
@@ -209,14 +253,21 @@ function drawUI() {
     hud.drawIntro(g, W, H, stateT);
   } else if (state === 'play') {
     const showMap = settings.minimap !== false;
-    if (showMap) minimap.draw(g, W, H, player, tpc.yaw);
-    hud.draw(g, W, H, { pad: input.lastDevice === 'pad', lockHint: !input.locked && input.lastDevice !== 'pad' && stateT > 1, stats: hud.showFps ? `${ctx.stats.triangles} tri` : '', rightPad: showMap ? 96 * (H / 240) : 0 });
+    const device = input.lastDevice, touch = device === 'touch';
+    // no toque o minimapa vai para o alto, longe dos polegares
+    if (showMap) minimap.draw(g, W, H, player, tpc.yaw, touch);
+    hud.draw(g, W, H, {
+      device,
+      lockHint: !input.locked && device === 'keyboard' && stateT > 1,
+      stats: hud.showFps ? `${ctx.stats.triangles} tri` : '',
+      rightPad: showMap && !touch ? 96 * (H / 240) : 0,
+    });
   }
 }
 
 function exposeDebug() {
   window.__teewald = {
-    ctx, player, camera, tpc, settings, scene, renderer: R, G,
+    ctx, player, camera, tpc, settings, scene, renderer: R, G, input, menu,
     get state() { return state; },
     startGame: (intro = false) => { startGame(intro); fade = 0; fadeTarget = 0; },
     teleport: (x, z, heading = 0) => { player.place(x, z, heading); tpc.snap(player); },

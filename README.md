@@ -14,16 +14,26 @@ O navegador abre em `http://localhost:5173`.
 
 ## Controles
 
-| Ação | Teclado / mouse | Controle |
-|---|---|---|
-| Andar | WASD ou setas | analógico esquerdo |
-| Correr | Shift | B / L3 / R2 |
-| Pular | Espaço | A |
-| Câmera | mouse (clique na tela para prender) · Q/E | analógico direito |
-| Zoom | roda do mouse | — |
-| Pausa | Esc ou P | Start |
-| Minimapa (liga/desliga) | M | — |
-| Mostrar FPS | F3 | — |
+| Ação | Teclado / mouse | Controle | Toque (celular/tablet) |
+|---|---|---|---|
+| Andar | WASD ou setas | analógico esquerdo | arrastar no lado esquerdo |
+| Correr | Shift | B / L3 / R2 | botão CORRER (liga/desliga) |
+| Pular | Espaço | A | botão PULAR |
+| Câmera | mouse (clique na tela para prender) · Q/E | analógico direito | arrastar no lado direito |
+| Centralizar câmera | — | R3 | toque duplo no lado direito |
+| Zoom | roda do mouse | direcional ↑↓ | pinça com dois dedos |
+| Pausa | Esc ou P | Start | botão ❚❚ |
+| Minimapa (liga/desliga) | M | Select | Opções |
+| Tela cheia | F11 | — | botão ⛶ (Android e iPad) |
+| Mostrar FPS | F3 | — | — |
+
+Menus: setas/ENTER, direcional/A/B (segurar repete), clique ou toque. Na pausa,
+START ou P de novo voltam ao jogo.
+
+No celular o jogo entra em tela cheia ao tocar na tela inicial (Android) e fica
+melhor deitado; em pé, a imagem fica em 4:3 no alto e os controles embaixo.
+Dá para jogar no celular com controle Bluetooth: os botões da tela somem quando
+o controle é usado e voltam ao tocar na tela.
 
 ## O que já existe
 

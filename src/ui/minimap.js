@@ -73,10 +73,11 @@ export class Minimap {
     this.size = 0;
   }
 
-  draw(g, W, H, player, camYaw) {
+  // top: canto superior direito (controles de toque) em vez do inferior
+  draw(g, W, H, player, camYaw, top = false) {
     const k = H / 240;
     const size = Math.round(86 * k), r = size / 2, m = Math.round(6 * k);
-    const cx = W - m - r, cy = H - m - r;
+    const cx = W - m - r, cy = top ? m + r : H - m - r;
     const meters = 95;                      // raio visível em metros
     const zoom = r / meters;
     g.save();

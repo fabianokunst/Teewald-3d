@@ -7,7 +7,7 @@ export class Audio {
   }
 
   start() {
-    if (this.ctx) { if (this.ctx.state === 'suspended') this.ctx.resume(); return; }
+    if (this.ctx) { if (!this.paused) this.resume(); return; }
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return;
     const c = this.ctx = new AC();
@@ -35,6 +35,13 @@ export class Audio {
     this.riverGain = rg;
     this.ambience = false;
     this.nextBird = 3;
+  }
+
+  // app em segundo plano: silencia; ao voltar, retoma (no iOS pode precisar de um toque)
+  suspend() { this.paused = true; if (this.ctx && this.ctx.state === 'running') this.ctx.suspend().catch(() => {}); }
+  resume() {
+    this.paused = false;
+    if (this.ctx && this.ctx.state !== 'running' && this.ctx.state !== 'closed') this.ctx.resume().catch(() => {});
   }
 
   setVolume(v) { this.volume = v; if (this.master) this.master.gain.value = v; }
