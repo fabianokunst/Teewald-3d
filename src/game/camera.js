@@ -12,6 +12,8 @@ export class ThirdPersonCamera {
     this.target = new THREE.Vector3();
     this.idle = 0;
     this.v = new THREE.Vector3();
+    this.aim = 0;            // 0..1: câmera de mira por cima do ombro
+    this.aimWant = false;    // a arma liga enquanto mira
   }
 
   snap(player) {
@@ -22,7 +24,10 @@ export class ThirdPersonCamera {
   }
 
   update(dt, player, input, settings, moving) {
-    const sens = (settings.sensitivity || 5) / 5;
+    this.aim += ((this.aimWant ? 1 : 0) - this.aim) * Math.min(1, dt * 10);
+    // mirando: mais precisa (menos sensível) e com zoom
+    const sens = ((settings.sensitivity || 5) / 5) * (1 - 0.45 * this.aim);
+    this.cam.fov = 58 - 12 * this.aim;
     let looked = false;
     if (input) {
       const l = input.look();
@@ -54,10 +59,10 @@ export class ThirdPersonCamera {
       this.pitch += (0.32 - this.pitch) * k;
       if (Math.abs(d) < 0.01 && Math.abs(0.32 - this.pitch) < 0.01) this.recentering = false;
     }
-    this.pitch = Math.max(-0.3, Math.min(1.15, this.pitch));
+    this.pitch = Math.max(-0.3 - 0.45 * this.aim, Math.min(1.15 - 0.3 * this.aim, this.pitch));
     this.idle = looked ? 0 : this.idle + dt;
     // volta para trás do personagem quando ele anda e o jogador não mexe na câmera
-    if (moving && this.idle > 1.4) {
+    if (moving && this.idle > 1.4 && this.aim < 0.1) {
       let want = player.heading + Math.PI, d = want - this.yaw;
       while (d > Math.PI) d -= Math.PI * 2;
       while (d < -Math.PI) d += Math.PI * 2;
@@ -73,8 +78,16 @@ export class ThirdPersonCamera {
   _place(dt) {
     const cp = Math.cos(this.pitch), sp = Math.sin(this.pitch);
     const dx = Math.sin(this.yaw) * cp, dy = sp, dz = Math.cos(this.yaw) * cp;
-    const t = this.target;
-    let d = this.dist;
+    // ao mirar, o centro da órbita vai para o ombro direito e a câmera se aproxima
+    const a = this.aim, sh = 0.5 * a;
+    let t = this.target;
+    if (a > 0.001) {
+      const rx = Math.cos(this.yaw), rz = -Math.sin(this.yaw);
+      const hit = this.ctx.collision.raycast(t.x, t.y, t.z, rx, 0, rz, sh + 0.25);
+      const k = hit < sh + 0.25 ? Math.max(0, hit - 0.25) / sh : 1;
+      t = this.v.set(t.x + rx * sh * k, t.y + 0.14 * a, t.z + rz * sh * k);
+    }
+    let d = this.dist + (1.7 - this.dist) * a;
     const hit = this.ctx.collision.raycast(t.x, t.y, t.z, dx, dy, dz, d + 0.4);
     if (hit < d + 0.4) d = Math.max(0.6, hit - 0.4);
     // não entra no chão

@@ -15,6 +15,11 @@ import { ThirdPersonCamera } from './game/camera.js';
 import { Menu } from './ui/menu.js';
 import { Hud } from './ui/hud.js';
 import { Minimap } from './ui/minimap.js';
+import { Inventory, PISTOL_MAG } from './game/items.js';
+import { Pistol } from './game/weapon.js';
+import { Effects } from './game/effects.js';
+import { Targets } from './world/targets.js';
+import { InventoryScreen } from './ui/inventory.js';
 import { loadFonts, drawText, FONT_TITLE } from './ui/overlay.js';
 
 const params = new URLSearchParams(location.search);
@@ -32,6 +37,7 @@ const hud = new Hud();
 G.uSunDir.value.set(-0.62, 0.4, -0.68).normalize();
 
 let ctx, character, player, tpc, menu, minimap;
+let inventory, pistol, effects, targets, invScreen;
 let state = 'loading';
 let time = 0, stateT = 0, fade = 1, fadeTarget = 0, onFaded = null;
 let introPath = null;
@@ -105,6 +111,12 @@ async function boot() {
   scene.add(character.root, character.blob);
   player = new Player(ctx, character, audio);
   tpc = new ThirdPersonCamera(camera, ctx);
+  // inventário (já com a pistola carregada e uma caixa de munição), arma e alvos
+  effects = new Effects(scene);
+  inventory = new Inventory(8);
+  targets = new Targets(scene, ctx, M, { effects, audio, inventory, hud });
+  pistol = new Pistol({ ctx, character, player, tpc, camera, inventory, effects, targets, audio, hud, input, M });
+  invScreen = new InventoryScreen(R, input, audio, inventory, pistol, M);
   menu = new Menu(input, audio, settings, applySettings);
   setupStart();
   exposeDebug();
@@ -126,7 +138,18 @@ function setupStart() {
 
 function setState(s) { state = s; stateT = 0; }
 
+// equipamento inicial: pistola carregada (guardada) e uma caixa de munição
+function resetLoadout() {
+  inventory.slots.fill(null);
+  inventory.equipped = null;
+  inventory.add('pistol', 1, { mag: PISTOL_MAG });
+  inventory.add('ammo9', 36);
+  pistol.reloadT = 0; pistol.aim = 0; pistol.model.visible = false;
+  player.aimYaw = null; tpc.aimWant = false; tpc.aim = 0;
+}
+
 function startGame(withIntro = true) {
+  resetLoadout();
   player.place(START.x, START.z, START.heading);
   tpc.snap(player);
   hud.place = null; hud.card = null;
@@ -178,11 +201,16 @@ function loop(now) {
     playIntro(dt);
   } else if (state === 'play') {
     if (input.pause()) pauseGame();
+    else if (input.inventory()) { invScreen.open(); setState('inventory'); input.unlock(); }
     else {
       if (input.mouse.clicked && !input.locked && input.lastDevice === 'keyboard') input.lock();
+      pistol.pre(dt, input);
       const r = player.update(dt, tpc.yaw, input);
+      pistol.post(dt);
       tpc.update(dt, player, input, settings, r.moving);
     }
+  } else if (state === 'inventory') {
+    if (invScreen.update(dt, mouseInt) === 'close') { invScreen.close(); setState('play'); }
   } else if (state === 'pause') {
     // START (ou P) de novo retoma o jogo, qualquer que seja o item marcado
     const resume = menu.screen === 'pause' && (input.padHit('start') || input.hit('KeyP'));
@@ -200,6 +228,10 @@ function loop(now) {
     audio.update(dt, time, rv.seg ? rv.d : 999);
   } else audio.update(dt, time, 999);
   ctx.leaves.update(dt, focus, time);
+  if (state !== 'inventory' && state !== 'pause') {
+    targets.update(dt, player, state === 'play');
+    effects.update(dt, camera, ctx.groundAt);
+  }
   ctx.sky.update(camera);
   hud.update(dt);
   character.root.visible = character.blob.visible = state !== 'title';
@@ -208,6 +240,7 @@ function loop(now) {
   drawUI();
   // controles de toque só no jogo; nos menus e na abertura um toque vale um clique
   input.touch.setMode(state === 'play' ? 'play' : 'menu');
+  input.touch.weapon = pistol.equipped;
   input.touch.draw(R, state === 'play' && input.lastDevice === 'touch', input.touchPrimary);
   input.endFrame();
 }
@@ -249,6 +282,8 @@ function drawUI() {
   g.clearRect(0, 0, W, H);
   if (state === 'title' || state === 'pause') {
     menu.draw(g, W, H);
+  } else if (state === 'inventory') {
+    invScreen.draw(g, W, H);
   } else if (state === 'intro') {
     hud.drawIntro(g, W, H, stateT);
   } else if (state === 'play') {
@@ -256,6 +291,7 @@ function drawUI() {
     const device = input.lastDevice, touch = device === 'touch';
     // no toque o minimapa vai para o alto, longe dos polegares
     if (showMap) minimap.draw(g, W, H, player, tpc.yaw, touch);
+    pistol.drawHud(g, W, H, device);
     hud.draw(g, W, H, {
       device,
       lockHint: !input.locked && device === 'keyboard' && stateT > 1,
@@ -267,7 +303,7 @@ function drawUI() {
 
 function exposeDebug() {
   window.__teewald = {
-    ctx, player, camera, tpc, settings, scene, renderer: R, G, input, menu,
+    ctx, player, camera, tpc, settings, scene, renderer: R, G, input, menu, inventory, pistol, targets, effects, invScreen,
     get state() { return state; },
     startGame: (intro = false) => { startGame(intro); fade = 0; fadeTarget = 0; },
     teleport: (x, z, heading = 0) => { player.place(x, z, heading); tpc.snap(player); },

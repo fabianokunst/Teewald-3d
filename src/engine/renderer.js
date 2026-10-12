@@ -99,8 +99,23 @@ export class Renderer {
     camera.updateProjectionMatrix();
     this.gl.setRenderTarget(this.rt);
     this.gl.render(scene, camera);
+    if (this.overlay) this._renderOverlay(this.overlay);
     this.gl.setRenderTarget(null);
     this.gl.render(this.postScene, this.postCam);
+  }
+
+  // cena extra num recorte da imagem (prévia 3D do inventário): { scene, camera, rect: [x, y, w, h] em px internos, clear }
+  _renderOverlay(ov) {
+    const gl = this.gl, rt = this.rt, [x, y, w, h] = ov.rect, vy = this.H - y - h;
+    rt.viewport.set(x, vy, w, h); rt.scissor.set(x, vy, w, h); rt.scissorTest = true;
+    gl.setRenderTarget(rt);
+    gl.setClearColor(ov.clear ?? 0x000000, 1);
+    gl.clear(true, true, false);
+    ov.camera.aspect = w / h;
+    ov.camera.updateProjectionMatrix();
+    gl.render(ov.scene, ov.camera);
+    rt.viewport.set(0, 0, this.W, this.H); rt.scissor.set(0, 0, this.W, this.H); rt.scissorTest = false;
+    gl.setClearColor(0x000000, 1);
   }
 
   set fade(v) { this.postMat.uniforms.uFade.value = v; }

@@ -22,6 +22,10 @@ O navegador abre em `http://localhost:5173`.
 | Câmera | mouse (clique na tela para prender) · Q/E | analógico direito | arrastar no lado direito |
 | Centralizar câmera | — | R3 | toque duplo no lado direito |
 | Zoom | roda do mouse | direcional ↑↓ | pinça com dois dedos |
+| Inventário | I ou Tab | Y | botão INV |
+| Mirar (com a pistola na mão) | botão direito (segurar) | L2 ou LB (segurar) | botão MIRAR (liga/desliga) |
+| Atirar | botão esquerdo | R2 mirando · RB | botão ATIRAR |
+| Recarregar | R | X | botão REC |
 | Pausa | Esc ou P | Start | botão ❚❚ |
 | Minimapa (liga/desliga) | M | Select | Opções |
 | Tela cheia | F11 | — | botão ⛶ (Android e iPad) |
@@ -29,6 +33,10 @@ O navegador abre em `http://localhost:5173`.
 
 Menus: setas/ENTER, direcional/A/B (segurar repete), clique ou toque. Na pausa,
 START ou P de novo voltam ao jogo.
+
+Atirar sem mirar levanta a pistola, atira e mantém a mira por um instante.
+Mirando, o personagem anda devagar em qualquer direção e a câmera vai para o
+ombro direito. No controle e no toque, a mira puxa de leve para alvos próximos.
 
 No celular o jogo entra em tela cheia ao tocar na tela inicial (Android) e fica
 melhor deitado; em pé, a imagem fica em 4:3 no alto e os controles embaixo.
@@ -56,6 +64,17 @@ o controle é usado e voltam ao tocar na tela.
   e galpões. Janelas (colonial, madeira com bandeira, alumínio), venezianas e
   portas são desenhadas em pixel art; casas rebocadas têm barrado na base.
 - **Minimapa** no canto inferior direito, girando com a câmera (tecla M).
+- **Inventário** de 8 espaços no estilo dos survival horror de PS1 (pausa o
+  jogo): item girando em 3D, ícones renderizados do próprio modelo, ações
+  EQUIPAR / GUARDAR / CARREGAR / EXAMINAR. Começa com uma **pistola 9 mm**
+  (pente de 12) e uma caixa com 36 balas.
+- **Pistola**: mira por cima do ombro, tiro calculado contra prédios, postes,
+  árvores, chão e água (poeira, faíscas, lascas, respingos e marcas de bala),
+  clarão, cápsulas ejetadas, coice, recarga animada e sons sintetizados com eco.
+- **Tiro ao alvo**: latas e garrafas em três estandes (Calçadão, perto do início;
+  barraca no Pavilhão da Kartoffelfest; atrás de um gol do campo). Lata voa e
+  quica, garrafa quebra; o estande limpo se remonta. Ao lado de cada estande há
+  uma caixa de munição (+12), que reaparece depois de um minuto.
 - **Protagonista** com ~1200 triângulos numa malha única com esqueleto
   (cotovelos e joelhos contínuos ao dobrar), sombreamento suave e um atlas de
   128x128 pintado a partir das texturas da pasta: jaqueta de lona com bolsos e
@@ -69,9 +88,9 @@ o controle é usado e voltam ao tocar na tela.
 
 ```
 src/engine   motor: material PS1, texturas, renderizador, colisão, controles, som
-src/world    cidade: relevo, ruas, rio, prédios, igreja, praça, calçadão, árvores
-src/game     personagem, controle do jogador, câmera
-src/ui       menu, HUD e textos
+src/world    cidade: relevo, ruas, rio, prédios, igreja, praça, calçadão, árvores, alvos
+src/game     personagem, controle do jogador, câmera, itens, pistola e efeitos de tiro
+src/ui       menu, HUD, inventário e textos
 tools/       build-mapdata.mjs (regera os dados do mapa), capturas de teste
 texture/     texturas do projeto (servidas como pasta pública)
 ```

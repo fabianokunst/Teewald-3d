@@ -20,7 +20,8 @@ export class Hud {
     }
   }
 
-  showHints() { this.hintT = 0.001; }
+  // custom: { keyboard, pad, touch } com linhas próprias (ex.: controles da arma)
+  showHints(custom = null) { this.hintT = 0.001; this.customHints = custom; }
 
   // aviso rápido no alto da tela (usa a mesma cartela do nome do lugar)
   toast(text) { this.card = text; this.cardT = 0; }
@@ -50,10 +51,10 @@ export class Hud {
     }
     if (this.hintT > 0) {
       const t = this.hintT, a = t < 1 ? t : t > 9 ? Math.max(0, (11 - t) / 2) : 1;
-      const lines = {
-        pad: ['ANALÓGICO mover   B correr   A pular', 'ANALÓGICO DIR. câmera   R3 centralizar   ↑↓ zoom', 'SELECT mapa   START pausa'],
-        touch: ['ESQUERDA mover   DIREITA girar câmera', 'PINÇA zoom   TOQUE DUPLO centraliza'],
-        keyboard: ['WASD mover   SHIFT correr   ESPAÇO pular', 'MOUSE câmera (clique)   RODA zoom   ESC pausa'],
+      const lines = this.customHints?.[o.device] || {
+        pad: ['ANALÓGICO mover   B correr   A pular', 'ANALÓGICO DIR. câmera   R3 centralizar   ↑↓ zoom', 'Y inventário   SELECT mapa   START pausa'],
+        touch: ['ESQUERDA mover   DIREITA girar câmera', 'PINÇA zoom   TOQUE DUPLO centraliza', 'INV inventário'],
+        keyboard: ['WASD mover   SHIFT correr   ESPAÇO pular', 'MOUSE câmera (clique)   RODA zoom   ESC pausa', 'I inventário   M mapa'],
       }[o.device] || [];
       const hx = (W - (o.rightPad || 0)) / 2 + 4 * k, y0 = H - (20 + lines.length * 12) * k;
       lines.forEach((l, i) => drawText(g, l, hx, y0 + i * 12 * k, 11 * k, { align: 'center', alpha: a, color: '#e8dcc0' }));

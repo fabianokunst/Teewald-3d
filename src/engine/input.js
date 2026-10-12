@@ -9,7 +9,8 @@ export class Input {
     this.target = target;
     this.keys = new Set();
     this.pressed = new Set();
-    this.mouse = { dx: 0, dy: 0, wheel: 0, x: -1, y: -1, clicked: false, moved: false };
+    this.mouse = { dx: 0, dy: 0, wheel: 0, x: -1, y: -1, clicked: false, moved: false, buttons: 0, leftHit: false };
+    this.trig = { l: 0, r: 0, rHit: false };   // gatilhos analógicos L2/R2
     this.locked = false;
     this.pad = null;
     this.padState = {};
@@ -33,12 +34,13 @@ export class Input {
       if (e.code !== 'Escape') this.onGesture?.('key');
     });
     addEventListener('keyup', e => this.keys.delete(e.code));
-    addEventListener('blur', () => this.keys.clear());
+    addEventListener('blur', () => { this.keys.clear(); this.mouse.buttons = 0; });
     addEventListener('mousemove', e => {
       if (this.locked) { this.mouse.dx += e.movementX; this.mouse.dy += e.movementY; }
       this.mouse.x = e.clientX; this.mouse.y = e.clientY; this.mouse.moved = true;
     });
-    addEventListener('mousedown', e => { this.mouse.clicked = true; this.mouse.x = e.clientX; this.mouse.y = e.clientY; this.lastDevice = 'keyboard'; this.onGesture?.('mouse'); });
+    addEventListener('mouseup', e => { this.mouse.buttons = e.buttons; });
+    addEventListener('mousedown', e => { this.mouse.buttons = e.buttons; if (e.button === 0) this.mouse.leftHit = true; this.mouse.clicked = true; this.mouse.x = e.clientX; this.mouse.y = e.clientY; this.lastDevice = 'keyboard'; this.onGesture?.('mouse'); });
     addEventListener('wheel', e => { this.mouse.wheel += Math.sign(e.deltaY); }, { passive: true });
     addEventListener('contextmenu', e => e.preventDefault());
     addEventListener('gesturestart', e => e.preventDefault());   // pinça do Safari
@@ -80,6 +82,11 @@ export class Input {
       if (st.active && mag > bestMag) { bestMag = mag; best = p; }
     }
     this.pad = best;
+    // gatilhos: L2 mira, R2 atira (com borda, para um tiro por aperto)
+    const tb = best ? best.buttons : [];
+    const tl = tb[6] ? tb[6].value : 0, tr = tb[7] ? tb[7].value : 0;
+    this.trig.rHit = tr > 0.5 && this.trig.r <= 0.5;
+    this.trig.l = tl; this.trig.r = tr;
     // direções de menu: direcional ou analógico esquerdo, repetindo ao segurar
     const ax = best ? best.axes : [], sx = ax[0] || 0, sy = ax[1] || 0;
     const held = { up: this.padHeld.has('up') || sy < -0.6, down: this.padHeld.has('down') || sy > 0.6, left: this.padHeld.has('left') || sx < -0.6, right: this.padHeld.has('right') || sx > 0.6 };
@@ -147,6 +154,11 @@ export class Input {
   pause() { return this.hit('Escape', 'KeyP') || this.padHit('start') || this.touch.pauseHit || this.padLost; }
   recenter() { return this.padHit('r3') || this.touch.recenterHit; }
   toggleMap() { return this.hit('KeyM') || this.padHit('select'); }
+  // arma: botão direito / L2 / LB mira; esquerdo (com o mouse preso) / R2 mirando / RB atira
+  aimHeld() { return !!(this.mouse.buttons & 2) || this.trig.l > 0.3 || this.padHeld.has('lb') || !!this.touch.aimOn; }
+  fireHit() { return (this.mouse.leftHit && this.locked) || (this.trig.rHit && this.aimHeld()) || this.padHit('rb') || !!this.touch.fireHit; }
+  reloadHit() { return this.hit('KeyR') || this.padHit('x') || !!this.touch.reloadHit; }
+  inventory() { return this.hit('KeyI', 'Tab') || this.padHit('y') || !!this.touch.invHit; }
   confirm() { return this.hit('Enter', 'Space', 'NumpadEnter') || this.padHit('a', 'start'); }
   back() { return this.hit('Escape', 'Backspace') || this.padHit('b'); }
   up() { return this.hit('ArrowUp', 'KeyW') || this.nav.has('up'); }
@@ -156,7 +168,7 @@ export class Input {
 
   endFrame() {
     this.pressed.clear();
-    this.mouse.dx = 0; this.mouse.dy = 0; this.mouse.wheel = 0; this.mouse.clicked = false; this.mouse.moved = false;
+    this.mouse.dx = 0; this.mouse.dy = 0; this.mouse.wheel = 0; this.mouse.clicked = false; this.mouse.moved = false; this.mouse.leftHit = false;
     this.padLost = false; this.padJoined = false;
     this.touch.endFrame();
   }

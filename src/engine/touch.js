@@ -2,7 +2,8 @@ import { drawText } from '../ui/overlay.js';
 
 // Controles de toque (celular e tablet). No jogo: analógico flutuante à esquerda,
 // arrastar no resto da tela gira a câmera, pinça com dois dedos dá zoom, toque
-// duplo recentra; botões PULAR, CORRER (liga/desliga), pausa e tela cheia.
+// duplo recentra; botões PULAR, CORRER (liga/desliga), pausa, tela cheia e INV
+// (inventário); com a pistola na mão, também ATIRAR, MIRAR (liga/desliga) e REC.
 // Nos menus e na abertura um toque vale um clique do mouse.
 
 const doc = document, root = doc.documentElement;
@@ -56,6 +57,8 @@ export class TouchControls {
     this.pinchD = 0;
     this.runOn = false;
     this.jumpHit = false; this.pauseHit = false; this.recenterHit = false;
+    this.invHit = false; this.fireHit = false; this.reloadHit = false; this.aimOn = false;
+    this.weapon = false;            // o jogo liga quando a pistola está na mão
     this.lastTap = { t: -1e9, x: 0, y: 0 };
     this.L = null;
     const c = this.canvas = doc.createElement('canvas');
@@ -103,7 +106,12 @@ export class TouchControls {
     const bx = Math.max(gr.x, left) + m * 0.6, by = Math.max(gr.y, ins.top) + m * 0.6;
     const pause = { x: bx, y: by, w: S, h: S };
     const fs = fullscreen.supported ? { x: bx + S + 2.5 * u, y: by, w: S, h: S } : null;
-    this.L = { key, s: gr.h / R.H, portrait, gr, u, Rs, Rj, Rr, stick, jump, run, pause, fs, stickZone };
+    const inv = { x: bx + (S + 2.5 * u) * (fs ? 2 : 1), y: by, w: S * 1.3, h: S };
+    // arma: ATIRAR acima de PULAR, MIRAR à esquerda dele, REC pequeno acima
+    const fire = { x: jump.x, y: jump.y - Rj * 2.55 };
+    const aim = { x: fire.x - Rj - Rr - 2.5 * u, y: fire.y + Rj * 0.35 };
+    const reload = { x: fire.x - Rj * 0.2, y: fire.y - Rj - Rr * 0.95 };
+    this.L = { key, s: gr.h / R.H, portrait, gr, u, Rs, Rj, Rr, stick, jump, run, pause, fs, inv, fire, aim, reload, stickZone };
     // mantém o analógico ativo dentro da tela nova
     if (this.stick.id === null) { this.stick.cx = stick.x; this.stick.cy = stick.y; }
     return this.L;
@@ -123,6 +131,10 @@ export class TouchControls {
         continue;
       }
       if (inRect(L.pause, x, y, 2 * L.u)) { T.role = 'pause'; this.pauseHit = true; }
+      else if (inRect(L.inv, x, y, 2 * L.u)) { T.role = 'inv'; this.invHit = true; }
+      else if (this.weapon && near(L.fire, x, y, L.Rj * 1.25)) { T.role = 'fire'; this.fireHit = true; }
+      else if (this.weapon && near(L.aim, x, y, L.Rr * 1.3)) { T.role = 'aim'; this.aimOn = !this.aimOn; }
+      else if (this.weapon && near(L.reload, x, y, L.Rr * 0.9)) { T.role = 'reload'; this.reloadHit = true; }
       else if (inRect(L.fs, x, y, 2 * L.u)) T.role = 'fs';
       else if (near(L.jump, x, y, L.Rj * 1.3)) { T.role = 'jump'; this.jumpHit = true; }
       else if (near(L.run, x, y, L.Rr * 1.3)) { T.role = 'run'; this.runOn = !this.runOn; }
@@ -209,6 +221,8 @@ export class TouchControls {
   endFrame() {
     this.look.dx = 0; this.look.dy = 0; this.zoom = 0;
     this.jumpHit = false; this.pauseHit = false; this.recenterHit = false;
+    this.invHit = false; this.fireHit = false; this.reloadHit = false;
+    if (!this.weapon) this.aimOn = false;
   }
 
   // controls: desenha os controles do jogo · hint: aviso para girar (retrato, menus)
@@ -261,7 +275,19 @@ export class TouchControls {
     ring(L.run.x, L.run.y, L.Rr, this.runOn ? '#c8a060' : '#0d0907', this.runOn ? 0.65 : 0.35, this.runOn ? '#f2c879' : '#d8c8a0');
     label('CORRER', L.run.x, L.run.y, L.Rr * 0.48, this.runOn ? '#140c08' : '#efe2c4');
 
-    // pausa e tela cheia
+    // arma
+    if (this.weapon) {
+      let firing = false;
+      for (const T of this.touches.values()) if (T.role === 'fire') firing = true;
+      ring(L.fire.x, L.fire.y, L.Rj, firing ? '#f2c879' : '#3a1208', firing ? 0.7 : 0.4, '#e8a080');
+      label('ATIRAR', L.fire.x, L.fire.y, L.Rj * 0.45, firing ? '#140c08' : '#efe2c4');
+      ring(L.aim.x, L.aim.y, L.Rr, this.aimOn ? '#c8a060' : '#0d0907', this.aimOn ? 0.65 : 0.35, this.aimOn ? '#f2c879' : '#d8c8a0');
+      label('MIRAR', L.aim.x, L.aim.y, L.Rr * 0.48, this.aimOn ? '#140c08' : '#efe2c4');
+      ring(L.reload.x, L.reload.y, L.Rr * 0.7, '#0d0907', 0.35);
+      label('REC', L.reload.x, L.reload.y, L.Rr * 0.42, '#efe2c4');
+    }
+
+    // pausa, tela cheia e inventário
     const box = (r) => {
       g.globalAlpha = 0.35; g.fillStyle = '#0d0907'; g.fillRect(Math.round(P(r.x)), Math.round(P(r.y)), Math.round(P(r.w)), Math.round(P(r.h)));
       g.globalAlpha = 0.6; g.strokeStyle = '#d8c8a0'; g.lineWidth = lw;
@@ -273,6 +299,11 @@ export class TouchControls {
     const bw = Math.max(1, Math.round(a * 0.16)), bh = Math.round(a * 0.5), by = Math.round(P(pr.y) + a * 0.25);
     g.fillRect(Math.round(P(pr.x) + a * 0.3), by, bw, bh);
     g.fillRect(Math.round(P(pr.x) + a * 0.7) - bw, by, bw, bh);
+    {
+      const r = L.inv;
+      box(r);
+      label('INV', r.x + r.w / 2, r.y + r.h / 2, r.h * 0.5, '#efe2c4');
+    }
     if (L.fs) {
       const f = L.fs, x0 = P(f.x), y0 = P(f.y);
       box(f);

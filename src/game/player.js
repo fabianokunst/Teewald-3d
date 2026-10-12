@@ -16,6 +16,7 @@ export class Player {
     this.speed = 0;
     this.radius = 0.32;
     this.auto = null; // caminhada automática (abertura)
+    this.aimYaw = null; // direção da mira (a arma define enquanto mira)
     character.onStep = run => this.audio.step(this.surface(), run);
   }
 
@@ -58,18 +59,27 @@ export class Player {
     let dx = (fx * iy + rx * ix), dz = (fz * iy + rz * ix);
     const dl = Math.hypot(dx, dz);
     if (dl > 0) { dx /= dl; dz /= dl; }
+    // mirando (aimYaw definido pela arma): sem correr, vira para a mira e anda devagar em qualquer direção
+    const aiming = this.aimYaw != null && !this.auto;
+    if (aiming) run = false;
     // analógico: pouco inclinado anda devagar; tecla SHIFT / botão B corre
-    const target = mag > 0.05 ? (run ? 7.2 : 1.75) * mag : 0;
+    const target = mag > 0.05 ? (run ? 7.2 : aiming ? 1.3 : 1.75) * mag : 0;
     const accel = target > this.speed ? (run ? 10 : 7) : 10;
     this.speed += Math.sign(target - this.speed) * Math.min(Math.abs(target - this.speed), accel * dt);
-    if (mag > 0.05) {
-      const want = Math.atan2(dx, dz);
+    if (aiming || mag > 0.05) {
+      const want = aiming ? this.aimYaw : Math.atan2(dx, dz);
       let d = want - this.heading;
       while (d > Math.PI) d -= Math.PI * 2;
       while (d < -Math.PI) d += Math.PI * 2;
-      this.heading += d * Math.min(1, dt * (run ? 9 : 7));
+      this.heading += d * Math.min(1, dt * (aiming ? 16 : run ? 9 : 7));
     }
-    const hx = Math.sin(this.heading), hz = Math.cos(this.heading);
+    let hx = Math.sin(this.heading), hz = Math.cos(this.heading);
+    if (aiming) {
+      if (mag > 0.05) this.strafe = [dx, dz];
+      if (this.strafe) [hx, hz] = this.strafe;
+    } else this.strafe = null;
+    // de costas para onde anda: as pernas andam para trás
+    const stepDir = aiming && hx * Math.sin(this.heading) + hz * Math.cos(this.heading) < -0.3 ? -1 : 1;
     // move na direção em que o personagem olha (curvas suaves), em passos curtos
     // para não atravessar muros finos quando o quadro demora (até 0,1 s)
     const dist = this.speed * dt, n = Math.max(1, Math.ceil(dist / 0.12));
@@ -96,7 +106,7 @@ export class Player {
 
     // gravidade e chão
     const ground = this.ctx.groundAt(this.pos.x, this.pos.z, this.pos.y);
-    if (input && !this.auto && this.grounded && input.jump()) { this.vel.y = 4.6; this.grounded = false; }
+    if (input && !this.auto && !aiming && this.grounded && input.jump()) { this.vel.y = 4.6; this.grounded = false; }
     if (this.grounded) {
       if (ground < this.pos.y - 0.45) { this.grounded = false; this.vel.y = 0; }
       else this.pos.y += (ground - this.pos.y) * Math.min(1, dt * 18);
@@ -106,7 +116,7 @@ export class Player {
       this.pos.y += this.vel.y * dt;
       if (this.pos.y <= ground) { this.pos.y = ground; this.vel.y = 0; this.grounded = true; }
     }
-    this.ch.update(dt, this.speed, this.grounded, run);
+    this.ch.update(dt, this.speed, this.grounded, run, stepDir);
     this.sync(ground);
     return { moving: mag > 0.05 };
   }

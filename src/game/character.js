@@ -407,15 +407,19 @@ export class Character {
     this.onStep = null;
   }
 
-  update(dt, speed, grounded, running) {
+  // dir = -1 anda de costas (mirando)
+  update(dt, speed, grounded, running, dir = 1) {
     this.t += dt;
+    // a pose de mira gira os ossos em outros eixos: volta tudo ao neutro antes de animar
+    for (const a of this.arms) { a.sh.rotation.y = 0; a.el.rotation.y = a.el.rotation.z = 0; a.hand.rotation.y = a.hand.rotation.z = 0; }
+    this.spine.rotation.z = 0; this.head.rotation.z = 0;
     const targetWalk = Math.min(1, speed / 1.6);
     const targetRun = Math.max(0, Math.min(1, (speed - 2.4) / 2.2));
     this.walk += (targetWalk - this.walk) * Math.min(1, dt * 8);
     this.run += (targetRun - this.run) * Math.min(1, dt * 6);
     this.air += ((grounded ? 0 : 1) - this.air) * Math.min(1, dt * 10);
     const stride = 1.25 + this.run * 2.0;
-    this.phase += (speed / stride) * Math.PI * 2 * dt * (grounded ? 1 : 0.2);
+    this.phase += dir * (speed / stride) * Math.PI * 2 * dt * (grounded ? 1 : 0.2);
     const s = Math.sin(this.phase), c = Math.cos(this.phase);
     const w = this.walk * (1 - this.air), r = this.run;
     const A = 0.42 * w + 0.32 * r * (1 - this.air);
