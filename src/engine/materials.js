@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { ps1Material } from './ps1material.js';
 import { TEX, signTexture } from './textures.js';
+import { makeHeroTexture } from '../game/heroTexture.js';
 
 // Um material PS1 para cada textura carregada, com ajustes por tipo
 const CUTOUT = ['araucaria', 'araucariaBranch', 'crownAutumn', 'crownGreen', 'bush', 'hortensia', 'pine', 'cypress', 'mapleLeaf', 'flags'];
@@ -29,6 +30,7 @@ export function makeMaterials() {
   M.paint = ps1Material({ map: TEX.paint, affine: false, polygonOffset: -1 });
   M.leafFall = ps1Material({ map: TEX.mapleLeaf, cutout: true, foliage: true });
   M.glassLit = ps1Material({ map: TEX.glass, emissive: 0x101010 });
+  M.hero = ps1Material({ map: makeHeroTexture() });
   M.letter = ps1Material({ map: TEX.carPaint, color: new THREE.Color(1.5, 1.5, 1.5), emissive: 0x141414 });
   return M;
 }
