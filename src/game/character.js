@@ -99,7 +99,7 @@ export class Character {
     this.walk += (targetWalk - this.walk) * Math.min(1, dt * 8);
     this.run += (targetRun - this.run) * Math.min(1, dt * 6);
     this.air += ((grounded ? 0 : 1) - this.air) * Math.min(1, dt * 10);
-    const stride = 1.25 + this.run * 1.1;
+    const stride = 1.25 + this.run * 2.0;
     this.phase += (speed / stride) * Math.PI * 2 * dt * (grounded ? 1 : 0.2);
     const s = Math.sin(this.phase), c = Math.cos(this.phase);
     const w = this.walk * (1 - this.air), r = this.run;

@@ -59,8 +59,8 @@ export class Player {
     const dl = Math.hypot(dx, dz);
     if (dl > 0) { dx /= dl; dz /= dl; }
     // analógico: pouco inclinado anda devagar; tecla SHIFT / botão B corre
-    const target = mag > 0.05 ? (run ? 4.8 : 1.75) * mag : 0;
-    const accel = target > this.speed ? 7 : 10;
+    const target = mag > 0.05 ? (run ? 7.2 : 1.75) * mag : 0;
+    const accel = target > this.speed ? (run ? 10 : 7) : 10;
     this.speed += Math.sign(target - this.speed) * Math.min(Math.abs(target - this.speed), accel * dt);
     if (mag > 0.05) {
       const want = Math.atan2(dx, dz);
