@@ -9,6 +9,7 @@ import { placeTownBuildings, placeFootprintBuildings } from './buildings.js';
 import { prepareFootprints } from './footprints.js';
 import { scatterVegetation, buildVegetation } from './vegetation.js';
 import { utilityLines } from './props.js';
+import { buildChupaSites } from './chupaSites.js';
 import { makeSky } from './sky.js';
 import { FallingLeaves } from './leaves.js';
 import { MeshBuilder } from '../engine/builder.js';
@@ -48,6 +49,8 @@ export async function buildWorld(scene, onStep) {
   // contornos reais de prédios; sem eles, casas geradas ao longo das ruas
   ctx.buildings = ctx.footprints.length ? placeFootprintBuildings(ctx, B) : placeTownBuildings(ctx, B);
   placeStopSigns(B, ctx);
+  // missão do chupacabras: galinheiro, trilha, clareira e mural (antes das árvores)
+  buildChupaSites(B, ctx);
 
   await step(0.7, 'postes e fios');
   const wires = utilityLines(ctx, B);

@@ -315,6 +315,15 @@ export class Pistol {
         const angle = c.normalize().angleTo(f);
         if (angle < bestA) { bestA = angle; best = c.clone(); }
       }
+      // alvos que se mexem (o chupacabras): pega um pouco mais longe da mira
+      for (const X of this.targets.extra || []) {
+        const p = X.aimPoint?.();
+        if (!p) continue;
+        const c = v3().copy(p).sub(o), dist = c.length();
+        if (dist > 45) continue;
+        const angle = c.normalize().angleTo(f);
+        if (angle < Math.max(bestA, 0.09)) { bestA = angle; best = c.clone(); }
+      }
       if (best) f.copy(best);
     }
     // pula o trecho entre a câmera e o personagem

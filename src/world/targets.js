@@ -108,6 +108,7 @@ export class Targets {
     this.stands = [];
     this.targets = [];
     this.pickups = [];
+    this.extra = [];   // outros alvos (o chupacabras): raycast(o, d, maxD), hit(alvo, dir, p, from), aimPoint()
     const spots = this._findSpots();
     const nCan = spots.length * LAYOUT.filter(t => t === 'can').length;
     const nBottle = spots.length * LAYOUT.filter(t => t === 'bottle').length;
@@ -249,10 +250,15 @@ export class Targets {
       const th = t - Math.sqrt(Math.max(0, r * r - dist * dist));
       if (!best || th < best.t) best = { t: th, target: T };
     }
+    for (const X of this.extra) {
+      const h = X.raycast(o, d, maxD);
+      if (h && (!best || h.t < best.t)) best = h;
+    }
     return best;
   }
 
   hit(T, dir, p, from) {
+    if (T.owner) { T.owner.hit(T, dir, p, from); return; }
     const { effects, audio } = this.deps;
     const dist = from ? from.distanceTo(p) : 0;
     if (T.type === 'bottle') {

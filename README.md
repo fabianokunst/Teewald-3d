@@ -23,6 +23,7 @@ O navegador abre em `http://localhost:5173`.
 | Centralizar câmera | — | R3 | toque duplo no lado direito |
 | Zoom | roda do mouse | direcional ↑↓ | pinça com dois dedos |
 | Conversar (perto de um morador) | F | A | botão FALAR sobre o morador |
+| Ler / examinar (cartaz, pistas) | F ou E | A | botão LER / EXAMINAR |
 | Inventário | I ou Tab | Y | botão INV |
 | Mirar (com a pistola na mão) | botão direito (segurar) | L2 ou LB (segurar) | botão MIRAR (liga/desliga) |
 | Atirar | botão esquerdo | R2 mirando · RB | botão ATIRAR |
@@ -43,6 +44,31 @@ No celular o jogo entra em tela cheia ao tocar na tela inicial (Android) e fica
 melhor deitado; em pé, a imagem fica em 4:3 no alto e os controles embaixo.
 Dá para jogar no celular com controle Bluetooth: os botões da tela somem quando
 o controle é usado e voltam ao tocar na tela.
+
+## Missão 1: O Chupacabras
+
+O foco do jogo é pegar o chupacabras. Animais aparecem mortos e sem sangue em
+Teewald, e a primeira missão começa assim que a abertura no calçadão termina:
+
+1. **Cartaz de PROCURA-SE** no mural da Praça 10 de Abril, ao lado do fim do calçadão.
+2. **Galinheiro atacado** perto da Igreja Matriz (no terreno atrás da escola, na
+   beira da mata): tela arrancada, galinhas mortas, penas e sangue.
+3. **Pegadas de três dedos**, sempre em pares (o bicho anda aos pulos), entram na mata.
+4. Na **clareira** ao norte do cemitério, o chupacabras come uma ovelha. Ao
+   chegar perto, uma cena curta mostra o bicho se virando e guinchando.
+5. **Luta**: ele rodeia, investe, agacha chiando (o aviso) e dá o bote; um tiro
+   durante o aviso cancela o bote. Na cabeça o tiro vale o dobro. O jogador tem
+   vida (recupera devagar longe do perigo); se cair, volta para a trilha antes
+   da clareira.
+6. Ferido, o bicho **foge mata adentro** deixando rastro de sangue: missão
+   cumprida, com o gancho para as próximas.
+
+O objetivo atual aparece no canto da tela, com uma marca na tela e no minimapa.
+O chupacabras (`src/game/chupacabra.js`) é um bípede corcunda com espinhos nas
+costas, garras e olhos vermelhos que brilham, montado em peças rígidas como nos
+primeiros jogos de PS1, com animação, IA e sons (guincho, chiado, rosnado)
+feitos em código. O cenário fica em `src/world/chupaSites.js` e a missão em
+`src/game/mission.js`.
 
 ## O que já existe
 
@@ -101,8 +127,8 @@ o controle é usado e voltam ao tocar na tela.
 
 ```
 src/engine   motor: material PS1, texturas, renderizador, colisão, controles, som
-src/world    cidade: relevo, ruas, rio, prédios, igreja, praça, calçadão, árvores, alvos
-src/game     personagem, controle do jogador, câmera, itens, pistola, efeitos de tiro e moradores
+src/world    cidade: relevo, ruas, rio, prédios, igreja, praça, calçadão, árvores, alvos, cenário da missão
+src/game     personagem, controle do jogador, câmera, itens, pistola, efeitos de tiro, moradores, missão e chupacabras
 src/ui       menu, HUD, inventário, diálogo e textos
 tools/       build-mapdata.mjs (regera os dados do mapa), capturas de teste
 texture/     texturas do projeto (servidas como pasta pública)

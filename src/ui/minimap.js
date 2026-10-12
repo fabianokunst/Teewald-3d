@@ -73,8 +73,9 @@ export class Minimap {
     this.size = 0;
   }
 
-  // top: canto superior direito (controles de toque) em vez do inferior
-  draw(g, W, H, player, camYaw, top = false) {
+  // top: canto superior direito (controles de toque) em vez do inferior;
+  // marker: { x, z } do objetivo (losango; fora do alcance, seta na borda)
+  draw(g, W, H, player, camYaw, top = false, marker = null) {
     const k = H / 240;
     const size = Math.round(86 * k), r = size / 2, m = Math.round(6 * k);
     const cx = W - m - r, cy = top ? m + r : H - m - r;
@@ -103,6 +104,23 @@ export class Minimap {
       g.fillStyle = '#7a2a1c';
       g.fillRect(Math.round(chx - k), Math.round(chy - 3 * k), Math.max(2, Math.round(2 * k)), Math.round(6 * k));
       g.fillRect(Math.round(chx - 2.5 * k), Math.round(chy - 1.5 * k), Math.round(5 * k), Math.max(2, Math.round(1.6 * k)));
+    }
+    // objetivo da missão
+    if (marker) {
+      let [mx, my] = rot(marker.x, marker.z);
+      let ex = mx - cx, ey = my - cy, e = Math.hypot(ex, ey);
+      const lim = r - 6 * k, inside = e <= lim;
+      if (!inside) { mx = cx + ex / e * lim; my = cy + ey / e * lim; }
+      const s = Math.max(2, Math.round((inside ? 3.5 : 3) * k)), blink = Math.floor(performance.now() / 350) % 2;
+      g.beginPath();
+      if (inside) { g.moveTo(mx, my - s); g.lineTo(mx + s, my); g.lineTo(mx, my + s); g.lineTo(mx - s, my); }
+      else {
+        const ux = ex / e, uy = ey / e;
+        g.moveTo(mx + ux * s * 1.4, my + uy * s * 1.4); g.lineTo(mx - uy * s - ux * s * 0.6, my + ux * s - uy * s * 0.6); g.lineTo(mx + uy * s - ux * s * 0.6, my - ux * s - uy * s * 0.6);
+      }
+      g.closePath();
+      g.fillStyle = blink ? '#f2c879' : '#ffe7a0'; g.fill();
+      g.lineWidth = 1; g.strokeStyle = '#140c08'; g.stroke();
     }
     // borda
     g.beginPath(); g.arc(cx, cy, r - 0.5, 0, Math.PI * 2);

@@ -21,6 +21,7 @@ import { Effects } from './game/effects.js';
 import { Targets } from './world/targets.js';
 import { InventoryScreen } from './ui/inventory.js';
 import { NPCs } from './game/npcs.js';
+import { Mission } from './game/mission.js';
 import { loadFonts, drawText, FONT_TITLE } from './ui/overlay.js';
 
 const params = new URLSearchParams(location.search);
@@ -39,7 +40,7 @@ G.uSunDir.value.set(-0.62, 0.4, -0.68).normalize();
 
 let ctx, character, player, tpc, menu, minimap;
 let inventory, pistol, effects, targets, invScreen;
-let npcs;
+let npcs, mission;
 let state = 'loading';
 let time = 0, stateT = 0, fade = 1, fadeTarget = 0, onFaded = null;
 let introPath = null;
@@ -121,6 +122,8 @@ async function boot() {
   invScreen = new InventoryScreen(R, input, audio, inventory, pistol, M);
   // moradores com falas (F / A / toque em FALAR para conversar)
   npcs = new NPCs({ ctx, scene, M, audio, player, tpc, camera, pistol, R });
+  // missão 1: o chupacabras (cartaz, galinheiro, pegadas, luta na clareira)
+  mission = new Mission({ ctx, scene, audio, input, player, character, tpc, camera, inventory, pistol, targets, effects, hud, R, npcs });
   menu = new Menu(input, audio, settings, applySettings);
   setupStart();
   exposeDebug();
@@ -154,6 +157,7 @@ function resetLoadout() {
 
 function startGame(withIntro = true) {
   resetLoadout();
+  mission.reset();
   player.place(START.x, START.z, START.heading);
   tpc.snap(player);
   hud.place = null; hud.card = null;
@@ -165,6 +169,7 @@ function startGame(withIntro = true) {
     player.auto = null;
     setState('play');
     hud.showHints();
+    mission.begin();
   }
   audio.setAmbience(true);
   keepAwake();
@@ -207,14 +212,17 @@ function loop(now) {
     if (input.pause()) pauseGame();
     else if (input.inventory()) { invScreen.open(); setState('inventory'); input.unlock(); }
     else if (npcs.talkHit(input)) { npcs.startTalk(); setState('talk'); }
+    else if (mission.interactHit(input)) { mission.startRead(); setState('read'); }
     else {
       if (input.mouse.clicked && !input.locked && input.lastDevice === 'keyboard') input.lock();
       pistol.pre(dt, input);
       const r = player.update(dt, tpc.yaw, input);
       pistol.post(dt);
       npcs.pushPlayer();
+      mission.afterPlayer(dt);
       tpc.update(dt, player, input, settings, r.moving);
       R.bars = npcs.applyCamera(dt) * 0.1;
+      mission.afterCamera();
     }
   } else if (state === 'talk') {
     // conversa: o jogador para e vira para o morador; câmera de lado e tarjas
@@ -223,6 +231,16 @@ function loop(now) {
     tpc.update(dt, player, null, settings, false);
     R.bars = npcs.applyCamera(dt) * 0.1;
     if (done) setState('play');
+  } else if (state === 'read') {
+    // lendo o cartaz / examinando o galinheiro
+    const done = mission.updateRead(dt, input) === 'close';
+    player.update(dt, tpc.yaw, null);
+    tpc.update(dt, player, null, settings, false);
+    if (done) setState('play');
+  } else if (state === 'cutscene' || state === 'dying') {
+    // encontro com o chupacabras (a missão move a câmera) ou jogador caído
+    player.update(dt, tpc.yaw, null);
+    if (state === 'dying') { tpc.update(dt, player, null, settings, false); mission.afterCamera(); }
   } else if (state === 'inventory') {
     if (invScreen.update(dt, mouseInt) === 'close') { invScreen.close(); setState('play'); }
   } else if (state === 'pause') {
@@ -245,6 +263,12 @@ function loop(now) {
   if (state !== 'inventory' && state !== 'pause') {
     targets.update(dt, player, state === 'play');
     npcs.update(dt, state);
+    const ev = mission.update(dt, state);
+    if (ev === 'cutscene' || ev === 'read' || ev === 'play') setState(ev);
+    else if (ev === 'dead') {
+      setState('dying');
+      fadeTo(() => { mission.respawn(); setState('play'); fadeTarget = 0; fadeSpeed = 1.2; }, 0.45);
+    }
     effects.update(dt, camera, ctx.groundAt);
   }
   ctx.sky.update(camera);
@@ -289,6 +313,7 @@ function playIntro(dt) {
     tpc.dist = 4.6;
     setState('play');
     hud.showHints();
+    mission.begin();
   }
 }
 
@@ -303,12 +328,18 @@ function drawUI() {
     hud.drawIntro(g, W, H, stateT);
   } else if (state === 'talk') {
     npcs.drawTalk(g, W, H, input.lastDevice);
+  } else if (state === 'read') {
+    mission.drawRead(g, W, H, input.lastDevice);
+  } else if (state === 'cutscene') {
+    mission.drawCutscene(g, W, H);
+  } else if (state === 'dying') {
+    mission.drawDying(g, W, H);
   } else if (state === 'play') {
     const showMap = settings.minimap !== false;
     const device = input.lastDevice, touch = device === 'touch';
     // no toque o minimapa vai para o alto, longe dos polegares
     npcs.drawHud(g, W, H, device);
-    if (showMap) minimap.draw(g, W, H, player, tpc.yaw, touch);
+    if (showMap) minimap.draw(g, W, H, player, tpc.yaw, touch, mission.marker);
     pistol.drawHud(g, W, H, device);
     hud.draw(g, W, H, {
       device,
@@ -316,13 +347,15 @@ function drawUI() {
       stats: hud.showFps ? `${ctx.stats.triangles} tri` : '',
       rightPad: showMap && !touch ? 96 * (H / 240) : 0,
     });
+    mission.drawHud(g, W, H, device);
   }
 }
 
 function exposeDebug() {
   window.__teewald = {
-    ctx, player, camera, tpc, settings, scene, renderer: R, G, input, menu, inventory, pistol, targets, effects, invScreen, npcs,
+    ctx, player, camera, tpc, settings, scene, renderer: R, G, input, menu, inventory, pistol, targets, effects, invScreen, npcs, mission,
     get state() { return state; },
+    setState: s => setState(s),
     startGame: (intro = false) => { startGame(intro); fade = 0; fadeTarget = 0; },
     teleport: (x, z, heading = 0) => { player.place(x, z, heading); tpc.snap(player); },
     view: (x, y, z, lx, ly, lz, fogFar) => {
