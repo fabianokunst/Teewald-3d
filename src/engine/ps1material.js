@@ -108,7 +108,7 @@ void main() {
   if (t.a < uAlphaTest) discard;
   vec3 c = min(t.rgb * vLight, vec3(1.0));
   c = mix(c, uFogColor, vFog);
-  gl_FragColor = vec4(c, uOpacity);
+  gl_FragColor = vec4(c, t.a * uOpacity);
 }
 `;
 

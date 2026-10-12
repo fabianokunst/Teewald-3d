@@ -156,6 +156,7 @@ export function car(B, ctx, x, z, rot, color) {
 export function railing(B, ctx, pts, o = {}) {
   const P = resample(pts, 2.2);
   const h = o.h || 1.0;
+  B.col = [1, 1, 1];
   for (let i = 0; i < P.length; i++) {
     const [x, z] = P[i];
     const y = ctx.terrain.heightAt(x, z);

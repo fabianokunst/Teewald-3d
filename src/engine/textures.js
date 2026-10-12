@@ -90,9 +90,9 @@ const DEFS = [
   ['mud', 'Dirt/Dirt_09-256x256.png', 64, 64, { bright: 0.9 }],
   ['field', 'Grass/Grass_23-256x256.png', 128, 128, { saturate: 0.7, tint: [1.05, 1, 0.8] }],
   // ruas e calçadas
-  ['asphalt', 'Asphalt026C_1K-JPG_Color.jpg', 128, 128, { bright: 0.95 }],
+  ['asphalt', 'Asphalt026C_1K-JPG_Color.jpg', 128, 128, { bright: 1.45, saturate: 0.6 }],
   ['sett', 'PavingStones142_1K-JPG_Color.jpg', 128, 128, {}],
-  ['pavers', 'Tile/Tile_01-256x256.png', 64, 64, { saturate: 0.8 }],
+  ['pavers', 'Tile/Tile_01-256x256.png', 64, 64, { saturate: 0.45, bright: 1.05 }],
   ['stonePath', 'PavingStones138_1K-JPG_Color.jpg', 64, 128, {}],
   ['herring', 'tile2/Tile_17-256x256.png', 64, 64, { saturate: 0.85 }],
   ['concrete', 'Concrete/Mat_Concrete_Gray_01-256x256.png', 64, 64, {}],
@@ -169,7 +169,7 @@ const DEFS = [
   ['stoneRock', 'Rocks025_1K-JPG_Color.jpg', 64, 64, {}],
   ['stoneWarm', 'Stone/Mat_Stone_Tan_01-256x256.png', 64, 64, {}],
   // personagem
-  ['clothBrown', 'Skin.png', 32, 32, { crop: [172, 88, 50, 36], contrast: 1.2, tint: [0.78, 0.66, 0.55] }],
+  ['clothBrown', 'Skin.png', 32, 32, { crop: [172, 88, 50, 36], contrast: 1.25, saturate: 0.55, tint: [0.8, 0.68, 0.56] }],
   ['clothDark', 'Cloth/Cloth_17-256x256.png', 32, 32, { tint: [0.75, 0.6, 0.45] }],
   ['hair', 'person1.jpg', 32, 32, { crop: [236, 96, 128, 128], saturate: 1.1, bright: 1.1 }],
   // fachadas (fotos)
