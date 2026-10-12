@@ -1,0 +1,21 @@
+{
+  "name": "teewald",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Teewald - jogo em terceira pessoa com visual de PS1, inspirado em Santa Maria do Herval (RS)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --open",
+    "build": "vite build",
+    "preview": "vite preview --open",
+    "mapdata": "node tools/build-mapdata.mjs",
+    "shot": "node tools/screenshot.mjs"
+  },
+  "dependencies": {
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^25.13.0",
+    "vite": "^8.3.4"
+  }
+}
