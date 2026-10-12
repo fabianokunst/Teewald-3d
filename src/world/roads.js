@@ -144,17 +144,28 @@ function buildBridge(B, ctx, br) {
   const { terrain, collision } = ctx;
   const r = br.road, [tx, tz] = br.tan, nx = tz, nz = -tx;
   const half = br.len / 2, hw = r.hw + (r.sidewalk ? 2 : 0) + 0.15;
-  const y = terrain.roadHeight(br.x, br.z) + r.off;
   const rot = Math.atan2(tx, tz);
-  for (const side of [1, -1]) {
-    const cx = br.x + nx * hw * side, cz = br.z + nz * hw * side;
-    // mureta de concreto
-    B.box('concreteW', cx, y - 0.9, cz, 0.3, 1.9, br.len, rot, { uvScale: 2 });
-    collision.addBox(cx, cz, 0.15, half, rot, y - 0.9, y + 1.0);
+  // trechos de ~2 m que acompanham o perfil da rua: uma caixa reta afundaria
+  // na cabeceira mais alta e viraria um muro baixo no meio da pista
+  const n = Math.max(1, Math.round(br.len / 2)), seg = br.len / n;
+  for (let i = 0; i < n; i++) {
+    const t = -half + (i + 0.5) * seg;
+    const px = br.x + tx * t, pz = br.z + tz * t;
+    const y = terrain.roadHeight(px, pz) + r.off;
+    for (const side of [1, -1]) {
+      const cx = px + nx * hw * side, cz = pz + nz * hw * side;
+      // na cabeceira a mureta pode cair dentro de outra rua ou do barranco: se mal
+      // aparece, não entra (seria um muro invisível no meio do caminho)
+      const rs = roadSurfaceAt(ctx.roads, terrain, cx, cz);
+      if (Math.max(terrain.heightAt(cx, cz), rs ?? -Infinity) > y + 0.5) continue;
+      // mureta de concreto
+      B.box('concreteW', cx, y - 0.9, cz, 0.3, 1.9, seg + 0.02, rot, { uvScale: 2 });
+      // walk: pela pista bloqueia (1 m), mas se o barranco chega quase no topo dá para pisar nela
+      collision.addBox(cx, cz, 0.15, seg / 2, rot, y - 0.9, y + 1.0, { walk: true });
+    }
+    // tabuleiro (plataforma caminhável); a caixa começa onde o tabuleiro começa,
+    // para quem passa por baixo da ponte não bater no vazio
+    B.box('concrete', px, y - 0.75, pz, hw * 2, 0.7, seg + 0.02, rot, { top: false });
+    collision.addBox(px, pz, hw, seg / 2, rot, y - 0.75, y, { walk: true });
   }
-  // tabuleiro (plataforma caminhável) e face lateral
-  const deckHW = hw;
-  B.box('concrete', br.x, y - 0.75, br.z, deckHW * 2, 0.7, br.len, rot, { top: false });
-  // a caixa começa onde o tabuleiro começa: quem passa por baixo da ponte não bate no vazio
-  collision.addBox(br.x, br.z, deckHW, half, rot, y - 0.75, y, { walk: true });
 }

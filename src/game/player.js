@@ -80,7 +80,8 @@ export class Player {
       this.pos.z += hz * dist / n;
       this.ctx.collision.resolve(this.pos, this.radius, 1.7);
       const g = this.ctx.groundAt(this.pos.x, this.pos.z, this.pos.y);
-      // degrau alto demais (borda de piso elevado, barranco): não sobe sem pular
+      // degrau alto demais (borda de piso elevado, muro de arrimo): não sobe sem pular.
+      // Medido em passos de 12 cm, então ladeiras íngremes do terreno continuam subíveis.
       if (g > Math.max(gPrev, this.pos.y) + 0.5) { this.pos.x = ox; this.pos.z = oz; break; }
       // não entra no rio fundo (exceto pontes)
       if (this.ctx.isDeepWater(this.pos.x, this.pos.z, g)) {

@@ -161,6 +161,8 @@ export function buildChurch(B, ctx, s) {
     const p = P(0, 0, lz);
     const h = ((i + 1) / steps) * C.floor;
     B.box('granite', p[0], y0 - 0.4, p[2], 11, h + 0.4, sd, s.rot, { uvScale: 2 });
+    // cada degrau é um piso (sobe-se um de cada vez; pelos lados, os altos bloqueiam)
+    ctx.collision.addBox(p[0], p[2], 5.5, sd / 2, s.rot, y0 - 1, y0 + h, { walk: true, cam: false });
   }
   B.col = [1, 1, 1];
 
@@ -172,9 +174,6 @@ export function buildChurch(B, ctx, s) {
     const back = P(0, 0, -hl - 3);
     col.addBox(back[0], back[2], 5.5, 3, s.rot, y0, fy + 9);
   }
-  // degraus como rampa caminhável
-  const st = P(0, 0, tz1 + 0.4 + (steps * sd) / 2);
-  col.addBox(st[0], st[2], 5.5, (steps * sd) / 2, s.rot, y0 - 1, y0 + C.floor, { walk: true, ramp: [y0 + C.floor, y0], cam: false });
   return { fy, front: P(0, y0, tz1 + 0.4 + steps * sd) };
 }
 

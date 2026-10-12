@@ -400,6 +400,15 @@ function buildCalcadao(B, ctx, cd) {
       else B.quad('concreteW', e1, o1, o0, e0, [[0, 0], [0.2, 0], [0.2, 1], [0, 1]]);
     }
   }
+  // passarela de madeira onde o caminho cruza o rio (sem ela o caminho afunda na água)
+  const wet = p => { const w = T.waterAt(p[0], p[1]); return w && w.river.width > 5 && T.heightAt(p[0], p[1]) < w.level + 0.2 ? w : null; };
+  for (let i = 1; i < path.length - 1; i++) {
+    if (!wet(path[i]) || wet(path[i - 1])) continue;
+    let j = i;
+    while (j < path.length - 1 && wet(path[j])) j++;
+    footbridge(B, ctx, path, i - 1, j, wet(path[i]).level);
+    i = j;
+  }
   // guarda-corpo na margem do rio
   const bankRail = cd.bank.map((p, i) => {
     const e = cd.edge[i];
@@ -455,6 +464,29 @@ function buildCalcadao(B, ctx, cd) {
   }
   const sp = cd.path[3];
   signPost(B, ctx, sp[0] + 2.5, sp[1] + 1, 0.6, signMaterial('CALÇADÃO DO RIO CADEIA', { bg: '#2f4a2a', fg: '#f2e8c8', w: 128, h: 24 }));
+}
+
+// passarela entre os pontos a e b do caminho: tabuleiro caminhável e guarda-corpos
+function footbridge(B, ctx, path, a, b, level) {
+  const T = ctx.terrain, w = 1.4;
+  const ya = T.heightAt(path[a][0], path[a][1]) + 0.06, yb = T.heightAt(path[b][0], path[b][1]) + 0.06;
+  const L = [];
+  for (let i = a; i < b; i++) L.push(Math.hypot(path[i + 1][0] - path[i][0], path[i + 1][1] - path[i][1]));
+  const tot = L.reduce((s, v) => s + v, 0);
+  let acc = 0;
+  for (let i = a; i < b; i++) {
+    const p = path[i], q = path[i + 1], len = L[i - a];
+    const t = (acc + len / 2) / tot; acc += len;
+    const y = Math.max(ya + (yb - ya) * t, level + 0.45);
+    const cx = (p[0] + q[0]) / 2, cz = (p[1] + q[1]) / 2, rot = Math.atan2(q[0] - p[0], q[1] - p[1]);
+    B.box('woodPlank', cx, y - 0.2, cz, w * 2, 0.2, len + 0.05, rot, { uvScale: 1 });
+    ctx.collision.addBox(cx, cz, w, len / 2, rot, y - 0.2, y, { walk: true, cam: false });
+    for (const s of [1, -1]) {
+      const ox = Math.cos(rot) * w * s, oz = -Math.sin(rot) * w * s;
+      B.box('woodDark', cx + ox, y, cz + oz, 0.1, 1.0, len + 0.05, rot, { uvScale: 1 });
+      ctx.collision.addBox(cx + ox, cz + oz, 0.08, len / 2, rot, y - 0.2, y + 1.0, { cam: false });
+    }
+  }
 }
 
 const tan = (P, i) => {
