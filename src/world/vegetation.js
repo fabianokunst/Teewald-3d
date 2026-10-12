@@ -87,9 +87,16 @@ const GREEN = [[1, 1, 1], [0.9, 1, 0.85], [1.1, 1.02, 0.7], [1.2, 0.95, 0.55], [
 
 export function scatterVegetation(ctx) {
   const R = rng(777);
-  const { terrain, roads, rivers, zones, trees } = ctx;
+  const { terrain, roads, rivers, zones, trees, collision } = ctx;
+  // não nasce dentro de bancos, mesas, postes, muros, cercas, carros...
+  const clear = (x, z, r) => !collision.near(x, z, r + 1).some(it => {
+    if (it.t === 'circle') return Math.hypot(x - it.x, z - it.z) < it.r + r;
+    const dx = x - it.x, dz = z - it.z, lx = dx * it.c - dz * it.s, lz = dx * it.s + dz * it.c;
+    return Math.abs(lx) < it.hx + r && Math.abs(lz) < it.hz + r;
+  });
   const ok = (x, z, r = 1.5, allowBlocked = false) => {
     if (!terrain.inBounds(x, z)) return false;
+    if (!clear(x, z, 0.8)) return false;
     if (roads.index.clearance(x, z).d < r + (roads.index.clearance(x, z).seg?.data.sidewalk ? 2.2 : 0)) return false;
     const rv = rivers.index.nearest(x, z);
     if (rv.seg && rv.d < rv.seg.data.width / 2 + 1.2) return false;
@@ -143,7 +150,7 @@ export function scatterVegetation(ctx) {
       const off = road.hw + (road.sidewalk ? 1.5 : 2.6);
       const tx = x - (dz / l) * off * side, tz = z + (dx / l) * off * side;
       if (!R.chance(0.55)) continue;
-      if (roads.index.clearance(tx, tz, d => d !== road).d < 2 || zones.insideBuilding(tx, tz, 2) || zones.isBlocked(tx, tz)) continue;
+      if (roads.index.clearance(tx, tz, d => d !== road).d < 2 || zones.insideBuilding(tx, tz, 2) || zones.isBlocked(tx, tz) || !clear(tx, tz, 0.8)) continue;
       trees.push({ t: 'platano', x: tx, z: tz, s: R.range(0.8, 1.0) });
     }
   }

@@ -251,12 +251,18 @@ function buildCemetery(B, ctx, cm) {
     const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
     const rot = Math.atan2(b[0] - a[0], b[1] - a[1]);
     const pieces = i === gateI ? [[0, 0.5 - 1.6 / len], [0.5 + 1.6 / len, 1]] : [[0, 1]];
-    for (const [t0, t1] of pieces) {
-      const x0 = a[0] + (b[0] - a[0]) * t0, z0 = a[1] + (b[1] - a[1]) * t0, x1 = a[0] + (b[0] - a[0]) * t1, z1 = a[1] + (b[1] - a[1]) * t1;
-      const cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, l = Math.hypot(x1 - x0, z1 - z0);
-      const y = Math.min(ctx.terrain.heightAt(x0, z0), ctx.terrain.heightAt(x1, z1), ctx.terrain.heightAt(cx, cz)) - 0.4;
-      B.box('plWhite', cx, y, cz, 0.3, 2.0, l, rot, { uvScale: 2, topMat: 'concreteW' });
-      ctx.collision.addBox(cx, cz, 0.15, l / 2, rot, y, y + 2.0);
+    for (const [p0, p1] of pieces) {
+      // trechos de até 3 m acompanhando o terreno (um trecho longo afundaria na subida)
+      const n = Math.max(1, Math.ceil((p1 - p0) * len / 3));
+      for (let k = 0; k < n; k++) {
+        const t0 = p0 + (p1 - p0) * k / n, t1 = p0 + (p1 - p0) * (k + 1) / n;
+        const x0 = a[0] + (b[0] - a[0]) * t0, z0 = a[1] + (b[1] - a[1]) * t0, x1 = a[0] + (b[0] - a[0]) * t1, z1 = a[1] + (b[1] - a[1]) * t1;
+        const cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, l = Math.hypot(x1 - x0, z1 - z0);
+        const hs = [ctx.terrain.heightAt(x0, z0), ctx.terrain.heightAt(x1, z1), ctx.terrain.heightAt(cx, cz)];
+        const y = Math.min(...hs) - 0.4, yTop = Math.max(...hs) + 1.6;
+        B.box('plWhite', cx, y, cz, 0.3, yTop - y, l + 0.02, rot, { uvScale: 2, topMat: 'concreteW' });
+        ctx.collision.addBox(cx, cz, 0.15, l / 2, rot, y, yTop);
+      }
     }
     // pilares do portão
     if (i === gateI) {
@@ -264,6 +270,7 @@ function buildCemetery(B, ctx, cm) {
         const x = a[0] + (b[0] - a[0]) * t, z = a[1] + (b[1] - a[1]) * t, y = ctx.terrain.heightAt(x, z);
         B.box('plWhite', x, y - 0.3, z, 0.6, 2.8, 0.6, rot, { uvScale: 1 });
         pyramid(B, 'concreteW', [x, y + 2.5, z], 0.42, 0.5, rot + Math.PI / 4, 4);
+        ctx.collision.addBox(x, z, 0.3, 0.3, rot, y - 0.3, y + 3.0);
       }
     }
   }
@@ -289,14 +296,19 @@ function buildCemetery(B, ctx, cm) {
     const mat = R.chance(0.6) ? 'marble' : 'granite';
     B.box(mat, x, y - 0.2, z, 0.95, 0.5, 2.0, rot, { uvScale: 1 });
     const hp = P(0, 0, -0.85);
+    let top;
     if (R.chance(0.55)) {
-      B.box('headstone', hp[0], y + 0.3, hp[2], 0.75, R.range(0.6, 1.0), 0.14, rot, { faceUV: true });
+      const h = R.range(0.6, 1.0);
+      B.box('headstone', hp[0], y + 0.3, hp[2], 0.75, h, 0.14, rot, { faceUV: true });
+      top = y + 0.3 + h;
     } else {
       B.box(mat, hp[0], y + 0.3, hp[2], 0.12, 1.2, 0.12, rot, { uvScale: 1 });
       B.box(mat, hp[0], y + 1.1, hp[2], 0.6, 0.12, 0.12, rot, { uvScale: 1 });
+      top = y + 1.5;
     }
     B.col = [1, 1, 1];
-    ctx.collision.addBox(x, z, 0.5, 1.0, rot, y - 0.3, y + 0.35, { walk: true, cam: false });
+    // túmulo inteiro é sólido (lápide/cruz incluídas); os corredores entre as fileiras ficam livres
+    ctx.collision.addBox(x, z, 0.5, 1.0, rot, y - 0.3, top, { cam: false });
   }
   // cruzeiro central e ciprestes
   const y = ctx.terrain.heightAt(c[0], c[1]);
@@ -321,7 +333,11 @@ function buildPraca(B, ctx, pr) {
   const poly = pr.poly, y = pr.y;
   // piso em espinha de peixe com meio-fio
   B.polygon('herring', poly, y, 2.5);
-  for (const [a, b] of outwardEdges(poly)) B.wall('concreteW', a[0], a[1], b[0], b[1], y - 0.4, y, { uvScale: 2, ao: 0.9 });
+  // meio-fio que vira muro de arrimo onde o terreno cai (beira do rio)
+  for (const [a, b] of outwardEdges(poly)) {
+    const lo = Math.min(ctx.terrain.heightAt(a[0], a[1]), ctx.terrain.heightAt(b[0], b[1]), y - 0.3) - 0.1;
+    B.wall('concreteW', a[0], a[1], b[0], b[1], lo, y, { uvScale: 2, ao: 0.9 });
+  }
   ctx.floors.push({ poly, y });
   fountain(B, ctx, pr.c[0], pr.c[1], y);
   // canteiros de hortênsias em volta da fonte
@@ -390,7 +406,13 @@ function buildCalcadao(B, ctx, cd) {
     const dx = e[0] - p[0], dz = e[1] - p[1], l = Math.hypot(dx, dz);
     return [p[0] + dx / l * 1.2, p[1] + dz / l * 1.2];
   });
-  railing(B, ctx, chaikin(bankRail, 2));
+  // interrompe onde a praça (piso elevado) avança sobre a margem
+  const runs = [[]];
+  for (const p of chaikin(bankRail, 2)) {
+    if (pointInPoly(p[0], p[1], ctx.landmarks.praca.poly)) { if (runs[runs.length - 1].length) runs.push([]); }
+    else runs[runs.length - 1].push(p);
+  }
+  for (const r of runs) if (r.length > 1) railing(B, ctx, r);
   // mobiliário ao longo do caminho
   let acc = 0, k = 0;
   for (let i = 1; i < path.length; i++) {
@@ -472,9 +494,9 @@ function buildField(B, ctx, f) {
   for (let i = 0; i < 4; i++) {
     const p = P(hw + 5 + i * 0.8, 0, 0);
     B.box('concrete', p[0], y - 0.3, p[2], 0.8, 0.5 + i * 0.4, 30, ang, { uvScale: 2 });
+    // cada degrau é um piso (0,4 m de um para o outro: dá para subir)
+    ctx.collision.addBox(p[0], p[2], 0.4, 15, ang, y - 0.3, y + 0.2 + i * 0.4, { walk: true, cam: false });
   }
-  const st = P(hw + 6.2, 0, 0);
-  ctx.collision.addBox(st[0], st[2], 1.6, 15, ang, y - 0.3, y + 1.0, { walk: true, ramp: null });
 }
 
 function buildKartoffel(B, ctx, k) {
@@ -483,6 +505,7 @@ function buildKartoffel(B, ctx, k) {
   // chão de concreto
   B.quad('concrete', P(-hw - 1, y + 0.05, hd + 1), P(hw + 1, y + 0.05, hd + 1), P(hw + 1, y + 0.05, -hd - 1), P(-hw - 1, y + 0.05, -hd - 1),
     [[0, 0], [10, 0], [10, 6], [0, 6]], null, 6);
+  ctx.floors.push({ poly: [[-hw - 1, hd + 1], [hw + 1, hd + 1], [hw + 1, -hd - 1], [-hw - 1, -hd - 1]].map(([a, b]) => { const p = P(a, 0, b); return [p[0], p[2]]; }), y: y + 0.05 });
   // pilares
   for (let i = 0; i <= 5; i++) for (const s of [1, -1]) {
     const p = P(-hw + i * (hw * 2 / 5), 0, s * hd);
@@ -598,7 +621,7 @@ function buildSpecials(B, ctx) {
     const a = md.areas.find(x => x.n === 'Museu Professor Laurindo Vier');
     const o = orientToRoad(ctx, polyToOBB(a.p));
     const s = makeSpec(R, 'enxaimel', o.x, o.z, o.rot, Math.max(o.hx * 2, 9), Math.max(o.hz * 2, 9));
-    Object.assign(s, { facade: 'facKleiser', roofType: 'gableFront', sign: sign('MUSEU', { bg: '#3a2a1a', fg: '#f0e0c0', sub: 'Prof. Laurindo Vier' }), signY: undefined, signH: 0.6 });
+    Object.assign(s, { wall: 'enxBranco', floors: 2, roofType: 'gableFront', sign: sign('MUSEU', { bg: '#3a2a1a', fg: '#f0e0c0', sub: 'Prof. Laurindo Vier' }), signY: undefined, signH: 0.6 });
     ctx.zones.addBuilding({ x: o.x, z: o.z, hx: s.w / 2, hz: s.d / 2, rot: o.rot });
     add(s);
   }
@@ -661,6 +684,13 @@ function buildSpecials(B, ctx) {
     const { P } = frame(o);
     const y = groundFor(ctx, { x: o.x, z: o.z, w: o.hx * 2, d: o.hz * 2, rot: o.rot }).yMax;
     B.quad('concrete', P(-o.hx - 3, y + 0.05, o.hz + 2), P(o.hx + 3, y + 0.05, o.hz + 2), P(o.hx + 3, y + 0.05, -o.hz - 2), P(-o.hx - 3, y + 0.05, -o.hz - 2), [[0, 0], [8, 0], [8, 8], [0, 8]], null, 5);
+    const slab = [[-o.hx - 3, o.hz + 2], [o.hx + 3, o.hz + 2], [o.hx + 3, -o.hz - 2], [-o.hx - 3, -o.hz - 2]].map(([a, b]) => { const p = P(a, 0, b); return [p[0], p[2]]; });
+    ctx.floors.push({ poly: slab, y: y + 0.05 });
+    // saia de concreto onde o terreno fica abaixo da laje
+    for (const [a, b] of outwardEdges(slab)) {
+      const lo = Math.min(ctx.terrain.heightAt(a[0], a[1]), ctx.terrain.heightAt(b[0], b[1])) - 0.1;
+      if (lo < y - 0.05) B.wall('concrete', a[0], a[1], b[0], b[1], lo, y + 0.05, { uvScale: 2, ao: 0.9 });
+    }
     const cw = Math.min(o.hx * 2, 18), cd = 9;
     for (const [lx, lz] of [[-cw / 2 + 1, 2], [cw / 2 - 1, 2], [-cw / 2 + 1, 2 + cd - 2], [cw / 2 - 1, 2 + cd - 2]]) {
       const p = P(lx, 0, o.hz - lz);

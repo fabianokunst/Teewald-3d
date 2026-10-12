@@ -30,7 +30,9 @@ O navegador abre em `http://localhost:5173`.
 - **Mapa real**: ruas, Rio Cadeia, arroios, praça, campo, cemitério e prédios
   conhecidos vêm do OpenStreetMap; o relevo vem do SRTM (altitude real).
 - **Igreja Matriz** modelada a partir de `texture/igreja.png`: rosácea, portal
-  e janelas recortados da foto. Posição e orientação conferidas em imagem de
+  com arquivoltas, janelas ogivais com vitral e campanário com venezianas,
+  desenhados em pixel art (`src/engine/archTextures.js`) com pedra, reboco e
+  madeira da pasta `texture`. Posição e orientação conferidas em imagem de
   satélite: fachada a oeste, nave ao longo da Rua 12 de Maio, cemitério atrás.
 - **Praça 10 de Abril**: fonte, hortênsias, bancos, lampiões e orelhão.
 - **Calçadão do Rio Cadeia**: caminho, guarda-corpo, letreiro TEEWALD e
@@ -38,8 +40,9 @@ O navegador abre em `http://localhost:5173`.
 - Cemitério, Kartoffelfest, Sociedade, Prefeitura, Museu (enxaimel), Posto
   Calçadão, fábricas de calçados, escola, hospital e comércio.
 - Cerca de 600 construções nos **contornos reais dos prédios** (Microsoft
-  Building Footprints): alvenaria, madeira, enxaimel (com as fotos de fachada da
-  pasta `texture`), comércio com placas e galpões.
+  Building Footprints): alvenaria, madeira, enxaimel (vigas escuras com reboco
+  branco, creme ou tijolo à vista, alinhadas com portas e janelas), comércio
+  com placas e vitrines, e galpões.
 - **Minimapa** no canto inferior direito, girando com a câmera (tecla M).
 - **Protagonista** com ~1200 triângulos numa malha única com esqueleto
   (cotovelos e joelhos contínuos ao dobrar), sombreamento suave e um atlas de

@@ -1,21 +1,21 @@
 import { rng, obbCorners, clamp } from './geo.js';
 import { signMaterial } from '../engine/materials.js';
+import { roadSurfaceAt } from './roads.js';
 
-// Gerador de construções: casas de alvenaria, de madeira, enxaimel (fotos de
-// fachada da pasta de texturas), comércio, galpões e fábricas de calçados.
+// Gerador de construções: casas de alvenaria, de madeira, enxaimel, comércio,
+// galpões e fábricas de calçados.
 
 export const FLOOR = 2.9;
 
-// fotos de fachada: proporção (largura/altura do recorte) e fração do frontão
-const FACADES = {
-  facWidenka: { aspect: 256 / 320, gable: 0.44 },
-  facKleiser: { aspect: 240 / 279, gable: 0.5 },
-  facWegmann: { aspect: 120 / 292, gable: 0.27 },
-  facMeritt: { aspect: 252 / 212, gable: 0.55 },
-  facGross: { aspect: 96 / 204, gable: 0 },
-  facKulikov: { aspect: 124 / 280, gable: 0 },
-  facWoodBlue: { aspect: 236 / 76, gable: 0 },
-};
+// janelas por face (a frente sempre tem ao menos a porta)
+function openingCount(face, len) {
+  return face === 'front' ? Math.max(1, Math.floor((len - 1.2) / 2.6)) : Math.floor((len - 1.2) / 3.2);
+}
+// enxaimel: uma repetição da textura por vão de janela e por andar
+function bayUV(face, len, v0, v1) {
+  const n = openingCount(face, len) || Math.max(1, Math.round(len / 2.8));
+  return [[0, v0], [n, v0], [n, v1], [0, v1]];
+}
 
 const PLASTER = ['plWhite', 'plCream', 'plYellow', 'plPink', 'plGreen', 'plBlue', 'plBeige', 'plOchre', 'plWhite', 'plCream'];
 const ROOFS = ['roofRed', 'roofOrange', 'roofBrown', 'roofClay', 'roofTerra', 'roofOld', 'roofRed', 'roofClay'];
@@ -47,16 +47,7 @@ export function buildHouse(B, ctx, s) {
   const { yMin, yMax } = groundFor(ctx, s);
   const y0 = s.y0 ?? yMax + (s.plinth ?? 0.25);
   const hw = s.w / 2, hd = s.d / 2;
-  const fac = s.facade ? FACADES[s.facade] : null;
-  let wallH = s.floors * FLOOR + 0.2;
-  let rise = null;
-  if (fac) {
-    const Ht = s.w / fac.aspect;
-    if (fac.gable > 0) { wallH = Ht * (1 - fac.gable); rise = Ht * fac.gable; }
-    else if (s.facadeTile) { wallH = s.floors * FLOOR + 0.2; }
-    else wallH = Ht;
-  }
-  const top = y0 + wallH;
+  const top = y0 + s.floors * FLOOR + 0.2;
   B.col = s.tint || [1, 1, 1];
 
   // alicerce (aparece em terreno inclinado)
@@ -67,22 +58,17 @@ export function buildHouse(B, ctx, s) {
   const faces = [['FL', 'FR', 'front'], ['FR', 'BR', 'right'], ['BR', 'BL', 'back'], ['BL', 'FL', 'left']];
   for (const [a, b, name] of faces) {
     const pa = P(corners[a][0], 0, corners[a][1]), pb = P(corners[b][0], 0, corners[b][1]);
-    if (name === 'front' && fac) {
-      const v1 = fac.gable > 0 ? 1 - fac.gable : 1;
-      const ur = s.facadeTile ? Math.max(1, Math.round(s.w / (wallH * fac.aspect))) : 1;
-      B.wall(s.facade, pa[0], pa[2], pb[0], pb[2], y0, top, { uv: [[0, 0], [ur, 0], [ur, v1], [0, v1]], ao: 0.92, seg: 0 });
-      continue;
-    }
     const mat = (name === 'front' && s.frontWall) || s.wall;
-    B.wall(mat, pa[0], pa[2], pb[0], pb[2], y0, top, { uvScale: s.wallUV || 3, ao: 0.8 });
+    const len = name === 'front' || name === 'back' ? s.w : s.d;
+    B.wall(mat, pa[0], pa[2], pb[0], pb[2], y0, top, s.bays ? { uv: bayUV(name, len, 0, (top - y0) / FLOOR), ao: 0.8 } : { uvScale: s.wallUV || 3, ao: 0.8 });
   }
   B.col = [1, 1, 1];
 
   // telhado
-  const roofTop = buildRoof(B, s, P, top, rise, fac);
+  const roofTop = buildRoof(B, s, P, top, y0);
 
   // aberturas
-  if (s.style !== 'factory' && s.style !== 'pavilion') addOpenings(B, s, P, y0, fac);
+  if (s.style !== 'factory' && s.style !== 'pavilion') addOpenings(B, s, P, y0, ctx);
   if (s.sign) addSign(B, s, P, y0, top);
   if (s.chimney) {
     const cx = hw * 0.45, cz = -hd * 0.3;
@@ -104,12 +90,17 @@ function slopeUV(a, b, c, d, scale = 2.2) {
   return [[0, 0], [lenAB / scale, 0], [(lenAB + off) / scale, lenAD / scale], [-off / scale, lenAD / scale]];
 }
 
-function buildRoof(B, s, P, top, riseFixed, fac) {
+function buildRoof(B, s, P, top, y0) {
   const hw = s.w / 2, hd = s.d / 2, ov = s.ov ?? 0.45;
   const tan = Math.tan((s.pitch ?? 30) * Math.PI / 180);
   const R = s.roof;
   const wallMat = s.gableWall || s.wall;
   const type = s.roofType || 'gable';
+  // UV do oitão: enxaimel segue os vãos das paredes; o resto, metros / 3
+  const gableUV = (face, len, r) => {
+    if (s.bays) { const [a, b, , d] = bayUV(face, len, (top - y0) / FLOOR, (r - y0) / FLOOR); return [a, b, [b[0] / 2, d[1]]]; }
+    return [[0, top / 3], [len / 3, top / 3], [len / 2 / 3, r / 3]];
+  };
   if (type === 'flat') {
     // laje com platibanda
     B.quad('concrete', P(-hw, top, hd), P(hw, top, hd), P(hw, top, -hd), P(-hw, top, -hd), [[0, 0], [s.w / 3, 0], [s.w / 3, s.d / 3], [0, s.d / 3]]);
@@ -143,35 +134,28 @@ function buildRoof(B, s, P, top, riseFixed, fac) {
   }
   if (type === 'gable') {
     // cumeeira ao longo de x (beirais na frente e nos fundos)
-    const rise = riseFixed ?? hd * tan;
+    const rise = hd * tan;
     const e = top - ov * (rise / hd), r = top + rise;
     const X = hw + ov, Z = hd + ov;
     let a = P(-X, e, Z), b = P(X, e, Z), c = P(X, r, 0), d = P(-X, r, 0);
     B.quad(R, a, b, c, d, slopeUV(a, b, c, d));
     a = P(X, e, -Z); b = P(-X, e, -Z); c = P(-X, r, 0); d = P(X, r, 0);
     B.quad(R, a, b, c, d, slopeUV(a, b, c, d));
-    const us = 3;
-    B.tri(wallMat, P(-hw, top, -hd), P(-hw, top, hd), P(-hw, r, 0), [0, top / us], [s.d / us, top / us], [s.d / 2 / us, r / us]);
-    B.tri(wallMat, P(hw, top, hd), P(hw, top, -hd), P(hw, r, 0), [0, top / us], [s.d / us, top / us], [s.d / 2 / us, r / us]);
+    B.tri(wallMat, P(-hw, top, -hd), P(-hw, top, hd), P(-hw, r, 0), ...gableUV('left', s.d, r));
+    B.tri(wallMat, P(hw, top, hd), P(hw, top, -hd), P(hw, r, 0), ...gableUV('right', s.d, r));
     return r;
   }
   if (type === 'gableFront') {
     // cumeeira ao longo de z (frontão virado para a rua)
-    const rise = riseFixed ?? hw * tan;
+    const rise = hw * tan;
     const e = top - ov * (rise / hw), r = top + rise;
     const X = hw + ov, Z = hd + ov;
     let a = P(-X, e, -Z), b = P(-X, e, Z), c = P(0, r, Z), d = P(0, r, -Z);
     B.quad(R, a, b, c, d, slopeUV(a, b, c, d));
     a = P(X, e, Z); b = P(X, e, -Z); c = P(0, r, -Z); d = P(0, r, Z);
     B.quad(R, a, b, c, d, slopeUV(a, b, c, d));
-    const us = 3;
-    if (fac && fac.gable > 0) {
-      const v0 = 1 - fac.gable;
-      B.tri(s.facade, P(-hw, top, hd), P(hw, top, hd), P(0, r, hd), [0, v0], [1, v0], [0.5, 1]);
-    } else {
-      B.tri(wallMat, P(-hw, top, hd), P(hw, top, hd), P(0, r, hd), [0, top / us], [s.w / us, top / us], [s.w / 2 / us, r / us]);
-    }
-    B.tri(wallMat, P(hw, top, -hd), P(-hw, top, -hd), P(0, r, -hd), [0, top / us], [s.w / us, top / us], [s.w / 2 / us, r / us]);
+    B.tri(wallMat, P(-hw, top, hd), P(hw, top, hd), P(0, r, hd), ...gableUV('front', s.w, r));
+    B.tri(wallMat, P(hw, top, -hd), P(-hw, top, -hd), P(0, r, -hd), ...gableUV('back', s.w, r));
     return r;
   }
   // quatro águas
@@ -193,7 +177,7 @@ function buildRoof(B, s, P, top, riseFixed, fac) {
 const xz = p => [p[0], p[2]];
 
 // janelas, portas, venezianas, vitrines
-function addOpenings(B, s, P, y0, fac) {
+function addOpenings(B, s, P, y0, ctx) {
   const hw = s.w / 2, hd = s.d / 2, out = 0.04;
   const win = s.win || 'window1';
   const faces = [
@@ -204,15 +188,12 @@ function addOpenings(B, s, P, y0, fac) {
   ];
   const floors = s.floors;
   for (const f of faces) {
-    if (f.name === 'front' && fac) continue;
-    if (s.style === 'enxaimel' && f.name !== 'front') continue; // textura já tem janelas
     const at = (t, y) => {
       const lx = f.a[0] + (f.b[0] - f.a[0]) * t, lz = f.a[1] + (f.b[1] - f.a[1]) * t;
       return P(lx, y, lz);
     };
     const quadOn = (mat, t0, t1, ya, yb, uv) => B.quad(mat, at(t0, ya), at(t1, ya), at(t1, yb), at(t0, yb), uv);
-    const spacing = f.name === 'front' ? 2.6 : 3.2;
-    const n = Math.max(f.name === 'front' ? 1 : 0, Math.floor((f.len - 1.2) / spacing));
+    const n = openingCount(f.name, f.len);
     for (let fl = 0; fl < floors; fl++) {
       const yb = y0 + fl * FLOOR;
       const ground = fl === 0;
@@ -248,11 +229,15 @@ function addOpenings(B, s, P, y0, fac) {
       }
     }
   }
-  // degrau na porta
-  if (!fac && s.style !== 'commercial') {
+  // degrau na porta: desce até o chão e dá para subir nele
+  if (s.style !== 'commercial') {
     const dz = hd + 0.35, dx = -hw + s.w * (s.doorAt ?? (Math.floor((s.w - 1.2) / 2.6) >= 2 ? 0.5 : 0.3));
     const p = P(dx, 0, dz);
-    B.box('concrete', p[0], y0 - 0.6, p[2], 1.4, 0.6, 0.7, s.rot, { uvScale: 1 });
+    const base = Math.min(...[-0.6, 0.6].map(o => { const q = P(dx + o, 0, dz + 0.3); return ctx.terrain.heightAt(q[0], q[2]); })) - 0.1;
+    if (y0 - base > 0.08) {
+      B.box('concrete', p[0], base, p[2], 1.4, y0 - base, 0.7, s.rot, { uvScale: 1 });
+      ctx.collision.addBox(p[0], p[2], 0.7, 0.35, s.rot, base, y0, { walk: true, cam: false });
+    }
   }
 }
 
@@ -272,22 +257,33 @@ function addSign(B, s, P, y0, top) {
 function addFence(B, ctx, s, P) {
   const f = s.fence, hw = s.w / 2 + 1.2, z = s.d / 2 + f.dist;
   const gateX = -s.w / 2 + s.w * (s.doorAt ?? 0.5);
+  // chão onde se pisa: terreno, rua ou calçada
+  const ground = (x, zz) => {
+    const t = ctx.terrain.heightAt(x, zz), r = roadSurfaceAt(ctx.roads, ctx.terrain, x, zz);
+    return r === null ? t : Math.max(t, r);
+  };
   const segs = [[-hw, gateX - 0.7], [gateX + 0.7, hw]];
   for (const [a, b] of segs) {
     if (b - a < 0.3) continue;
-    const pa = P(a, 0, z), pb = P(b, 0, z);
-    const cx = (pa[0] + pb[0]) / 2, cz = (pa[2] + pb[2]) / 2;
-    const onRoad = [[pa[0], pa[2]], [pb[0], pb[2]], [cx, cz]].some(([x, zz]) => {
-      const rc = ctx.roads.index.clearance(x, zz);
-      return rc.d < (rc.seg && rc.seg.data.sidewalk ? 2.1 : 0.3) || ctx.zones.insideBuilding(x, zz, 0.2);
-    });
-    if (onRoad) continue;
-    const y = Math.min(ctx.terrain.heightAt(pa[0], pa[2]), ctx.terrain.heightAt(pb[0], pb[2]), ctx.terrain.heightAt(cx, cz)) - 0.3;
-    const len = b - a;
-    B.col = f.col || [1, 1, 1];
-    B.box(f.mat, cx, y, cz, len, f.h + 0.3, 0.16, s.rot, { uvScale: 2 });
-    B.col = [1, 1, 1];
-    ctx.collision.addBox(cx, cz, len / 2, 0.12, s.rot, y, y + f.h + 0.3, { cam: false });
+    // trechos curtos que acompanham o terreno (um muro reto afundaria na subida)
+    const n = Math.max(1, Math.ceil((b - a) / 2.5));
+    for (let i = 0; i < n; i++) {
+      const a0 = a + (b - a) * i / n, a1 = a + (b - a) * (i + 1) / n;
+      const pa = P(a0, 0, z), pb = P(a1, 0, z);
+      const cx = (pa[0] + pb[0]) / 2, cz = (pa[2] + pb[2]) / 2;
+      const onRoad = [[pa[0], pa[2]], [pb[0], pb[2]], [cx, cz]].some(([x, zz]) => {
+        const rc = ctx.roads.index.clearance(x, zz);
+        return rc.d < (rc.seg && rc.seg.data.sidewalk ? 2.1 : 0.3) || ctx.zones.insideBuilding(x, zz, 0.2);
+      });
+      if (onRoad) continue;
+      const gs = [ground(pa[0], pa[2]), ground(pb[0], pb[2]), ground(cx, cz)];
+      const y = Math.min(...gs) - 0.3, yTop = Math.max(...gs) + f.h;
+      const len = a1 - a0;
+      B.col = f.col || [1, 1, 1];
+      B.box(f.mat, cx, y, cz, len, yTop - y, 0.16, s.rot, { uvScale: 2 });
+      B.col = [1, 1, 1];
+      ctx.collision.addBox(cx, cz, len / 2, 0.12, s.rot, y, yTop, { cam: false });
+    }
   }
 }
 
@@ -359,20 +355,19 @@ export function makeSpec(R, style, x, z, rot, w, d, o = {}) {
     s.found = 'stoneBase';
     s.chimney = R.chance(0.4);
     s.wallUV = 2.5;
-    if (R.chance(0.35) && w >= 8) { s.facade = 'facWoodBlue'; s.facadeTile = true; }
   } else if (style === 'enxaimel') {
-    const key = R.pick(['facWidenka', 'facKleiser', 'facWegmann', 'facMeritt', 'facKleiser', 'facWidenka']);
-    s.facade = key;
-    s.wall = 'enxaimelWall';
-    s.gableWall = 'enxaimelWall';
-    s.wallUV = 6;
+    // vigas escuras com reboco branco, creme ou tijolo à vista
+    s.wall = R.pick(['enxBranco', 'enxBranco', 'enxTijolo', 'enxCreme']);
+    s.bays = true;
     s.roof = R.pick(['roofOld', 'roofClay', 'roofDark', 'roofBrown']);
-    s.roofType = FACADES[key].gable > 0 ? 'gableFront' : 'gable';
-    s.floors = 2;
+    s.roofType = R.chance(0.6) ? 'gableFront' : 'gable';
+    s.pitch = R.range(38, 46);
+    s.floors = o.floors ?? (R.chance(0.6) ? 2 : 1);
+    s.win = R.pick(['window1', 'window3']);
     s.found = 'stoneWall';
+    s.plinth = R.range(0.3, 0.6);
     s.chimney = R.chance(0.5);
-    if (key === 'facWegmann') s.w = Math.min(w, 6.5);
-    if (key === 'facMeritt') { s.wall = 'woodBlue'; s.gableWall = 'woodBlue'; s.wallUV = 3; }
+    s.tint = [R.range(0.96, 1.03), R.range(0.95, 1.01), R.range(0.92, 0.98)];
   } else if (style === 'commercial') {
     s.floors = o.floors ?? R.int(2, 3);
     s.wall = R.pick(PLASTER);
@@ -522,7 +517,7 @@ export function placeFootprintBuildings(ctx, B) {
     else if (main && dc < 300 && front < 4) style = r < 0.6 ? 'commercial' : r < 0.85 ? 'masonry' : 'enxaimel';
     else if (dc < 230) style = r < 0.1 ? 'commercial' : r < 0.66 ? 'masonry' : r < 0.84 ? 'enxaimel' : 'wood';
     else style = r < 0.55 ? 'masonry' : r < 0.85 ? 'wood' : r < 0.93 ? 'enxaimel' : 'shed';
-    if (style === 'enxaimel' && (w < 6 || w > 11 || d < 6)) style = 'masonry';
+    if (style === 'enxaimel' && (w < 5.5 || w > 14 || d < 5.5)) style = 'masonry';
     if (style === 'masonry' && A > 160) extra.floors = R.chance(0.55) ? 2 : 1;
     if (style === 'factory') extra.floors = A > 1500 ? 3 : 2;
     const s = makeSpec(R, style, o.x, o.z, o.rot, w, d, extra);
@@ -539,4 +534,3 @@ export function placeFootprintBuildings(ctx, B) {
   return placed;
 }
 
-export { FACADES };

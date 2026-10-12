@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { makeArchTextures } from './archTextures.js';
 
 // Carrega as texturas da pasta "texture" do projeto e reduz para resolução de PS1
 // (64/128 px, filtro nearest, cor de 15 bits).
@@ -100,6 +101,7 @@ const DEFS = [
   // paredes
   ['plWhite', 'Plaster/Mat_Plaster_White_01-256x256.png', 64, 64, {}],
   ['plCream', 'Plaster/Plaster_15-256x256.png', 64, 64, {}],
+  ['plChurch', 'Plaster/Mat_Plaster_White_02-256x256.png', 64, 64, { tint: [1.06, 1.02, 0.92], bright: 1.05 }],
   ['plYellow', 'Plaster/Mat_Plaster_Yellow_01-256x256.png', 64, 64, { saturate: 0.8 }],
   ['plPink', 'Plaster/Mat_Plaster_Red_02-256x256.png', 64, 64, { saturate: 0.7, bright: 1.05 }],
   ['plGreen', 'Plaster/Plaster_11-256x256.png', 64, 64, { saturate: 0.45, bright: 1.15 }],
@@ -117,7 +119,6 @@ const DEFS = [
   ['woodDark', 'Wood/Wood_09-256x256.png', 64, 64, {}],
   ['woodBench', 'Wood/Wood_13-256x256.png', 64, 64, { saturate: 0.8, bright: 0.85 }],
   ['woodBlue', 'Wood/Mat_Wood_White_01-256x256.png', 64, 64, { tint: [0.66, 0.8, 0.95] }],
-  ['enxaimelWall', 'alexandra-6JLlgE-8ijY-unsplash.jpg', 128, 128, { crop: [0, 0, 256, 287] }],
   ['metalRoof', 'Metal/Metal_05-256x256.png', 64, 64, {}],
   ['metalWall', 'Metal/Metal_06-256x256.png', 64, 64, { bright: 1.1 }],
   ['metalGray', 'Metal/Metal_19-256x256.png', 64, 64, {}],
@@ -167,15 +168,6 @@ const DEFS = [
   ['granite', 'Stone/Mat_Stone_Gray_01-256x256.png', 64, 64, {}],
   ['stoneRock', 'Rocks025_1K-JPG_Color.jpg', 64, 64, {}],
   ['stoneWarm', 'Stone/Mat_Stone_Tan_01-256x256.png', 64, 64, {}],
-  // fachadas (fotos)
-  ['facKleiser', 'fabian-kleiser-lq65t9NVi4g-unsplash.jpg', 128, 128, { crop: [8, 8, 240, 279] }],
-  ['facWidenka', 'martin-widenka-xY4_JDEKu8g-unsplash.jpg', 128, 128, { crop: [0, 0, 256, 320] }],
-  ['facWegmann', 'immo-wegmann-p7-9ixrQJbw-unsplash.jpg', 64, 128, { crop: [136, 0, 120, 292] }],
-  ['facGross', 'antonio-gross-XiAvOn7iIxk-unsplash.jpg', 64, 128, { crop: [88, 18, 96, 204] }],
-  ['facKulikov', 'alex-kulikov-GW-Tgtaz3z4-unsplash.jpg', 64, 128, { crop: [0, 120, 124, 280] }],
-  ['facWoodBlue', 'redd-f-sejLyCD2UQE-unsplash.jpg', 128, 64, { crop: [10, 112, 236, 76] }],
-  ['facMeritt', 'meritt-thomas-u-Hb93V6IWI-unsplash.jpg', 128, 128, { crop: [2, 6, 252, 212] }],
-  ['stoneWindow', 'daniel-von-appen---8sJ3JSVfM-unsplash.jpg', 64, 64, {}],
 ];
 
 // imagens usadas no atlas do protagonista (game/heroTexture.js)
@@ -186,16 +178,8 @@ export const HERO_FILES = {
   hair: 'person1.jpg',
 };
 
-// recortes da foto da igreja (igreja.png 256x256) para os detalhes da fachada
-const CHURCH_CROPS = {
-  chRose: [88, 139, 28, 28, 32, 32],
-  chPortal: [86, 190, 30, 46, 32, 64],
-  chLancet: [40, 170, 17, 46, 16, 64],
-  chTowerWin: [91, 58, 20, 34, 32, 64],
-};
-
 export async function loadTextures(onProgress) {
-  const files = [...new Set([...DEFS.map(d => d[1]), 'igreja.png', ...Object.values(HERO_FILES)])];
+  const files = [...new Set([...DEFS.map(d => d[1]), ...Object.values(HERO_FILES)])];
   let done = 0;
   await Promise.all(files.map(f => loadImage(f).then(() => { done++; onProgress?.(done / files.length); })));
   for (const [name, file, w, h, o] of DEFS) {
@@ -203,11 +187,8 @@ export async function loadTextures(onProgress) {
     processPixels(c, o);
     TEX[name] = canvasTex(c, !o.alpha || o.repeat);
   }
-  const ig = IMG['igreja.png'];
-  for (const [name, [x, y, w, h, tw, th]] of Object.entries(CHURCH_CROPS)) {
-    TEX[name] = canvasTex(processPixels(shrink(ig, tw, th, [x, y, w, h]), {}), false);
-  }
   generateTextures();
+  makeArchTextures();
   return TEX;
 }
 
@@ -227,14 +208,6 @@ function generateTextures() {
   g1.fillStyle = grd; g1.fillRect(0, 0, 32, 32);
   g1.fillStyle = 'rgba(255,255,255,0.18)'; g1.fillRect(4, 2, 6, 28); g1.fillRect(14, 2, 2, 28);
   TEX.glass = canvasTex(processPixels(gl));
-
-  // vitrine de loja
-  const sh = makeCanvas(64, 32), g2 = sh.getContext('2d');
-  g2.fillStyle = '#2a3036'; g2.fillRect(0, 0, 64, 32);
-  for (let i = 0; i < 6; i++) { g2.fillStyle = ['#a33', '#cc9933', '#3a6', '#468', '#c66', '#ddd'][i]; g2.fillRect(4 + i * 10, 18, 7, 10); }
-  g2.fillStyle = 'rgba(255,255,255,0.2)'; g2.fillRect(0, 0, 64, 3); g2.fillRect(8, 0, 3, 32); g2.fillRect(40, 0, 2, 32);
-  g2.fillStyle = '#9aa'; for (let x = 0; x <= 64; x += 21) g2.fillRect(x, 0, 2, 32);
-  TEX.shop = canvasTex(processPixels(sh));
 
   // porta de madeira com almofadas
   const dr = makeCanvas(32, 64), g3 = dr.getContext('2d');

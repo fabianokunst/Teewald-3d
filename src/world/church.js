@@ -11,7 +11,7 @@ export function buildChurch(B, ctx, s) {
   const C = CHURCH, hw = C.W / 2, hl = C.L / 2;
   const y0 = s.y; // piso do adro
   const fy = y0 + C.floor; // piso da igreja
-  const wall = 'plCream', trim = 'plPink', roof = 'roofSlate';
+  const wall = 'plChurch', trim = 'plPink', roof = 'roofSlate';
   const cream = [1.02, 0.97, 0.88], pink = [1.0, 0.82, 0.74];
 
   // embasamento
@@ -79,6 +79,7 @@ export function buildChurch(B, ctx, s) {
         const p = P(side * (hw + 0.35), 0, zb);
         B.col = pink;
         B.box(trim, p[0], fy, p[2], 0.7, 7.2, 0.8, s.rot, { uvScale: 2 });
+        ctx.collision.addBox(p[0], p[2], 0.35, 0.4, s.rot, y0 - 1, fy + 7.2);
       }
     }
   }
@@ -88,6 +89,7 @@ export function buildChurch(B, ctx, s) {
   for (const side of [1, -1]) {
     const p = P(side * (hw - 0.3), 0, hl + 0.3);
     B.box(trim, p[0], fy, p[2], 0.8, C.wallH + 0.4, 0.7, s.rot, { uvScale: 2 });
+    ctx.collision.addBox(p[0], p[2], 0.4, 0.35, s.rot, y0 - 1, fy + C.wallH + 2.0);
     // pináculo
     B.box(trim, p[0], fy + C.wallH + 0.4, p[2], 0.6, 1.6, 0.6, s.rot, { uvScale: 1 });
     const t = P(side * (hw - 0.3), fy + C.wallH + 2.0, hl + 0.3);

@@ -77,13 +77,15 @@ export class CollisionWorld {
     for (let iter = 0; iter < 3; iter++) {
       let moved = false;
       for (const it of this.near(p.x, p.z, radius + 1)) {
-        if (it.y1 <= p.y + stepUp && (it.walk || it.y1 <= p.y + 0.05)) continue; // dá para subir / está abaixo
         if (it.y0 >= p.y + height) continue; // acima da cabeça
+        // rampa: vale a altura no ponto mais próximo (sobe pela frente, bloqueia pelos lados altos)
+        let top = it.y1;
+        if (it.ramp) top = CollisionWorld.topAt(it, Math.max(-it.hz, Math.min(it.hz, CollisionWorld.local(it, p.x, p.z)[1])));
+        if (top <= p.y + stepUp && (it.walk || top <= p.y + 0.05)) continue; // dá para subir / está abaixo
         if (it.t === 'circle') {
           const dx = p.x - it.x, dz = p.z - it.z, d = Math.hypot(dx, dz), m = it.r + radius;
           if (d < m && d > 1e-6) { p.x = it.x + (dx / d) * m; p.z = it.z + (dz / d) * m; moved = true; }
         } else {
-          if (it.walk && it.ramp) continue; // rampas não bloqueiam
           const [lx, lz] = CollisionWorld.local(it, p.x, p.z);
           const qx = Math.max(-it.hx, Math.min(it.hx, lx)), qz = Math.max(-it.hz, Math.min(it.hz, lz));
           let dx = lx - qx, dz = lz - qz, d = Math.hypot(dx, dz);

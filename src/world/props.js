@@ -102,7 +102,9 @@ export function orelhao(B, ctx, x, z, rot) {
   // aparelho
   const ph = P(0, 0, 0.12);
   B.box('orelhao', ph[0], y + 1.2, ph[2], 0.28, 0.5, 0.16, rot, { faceUV: true });
-  ctx.collision.addCircle(x, z, 0.25, y, y + 2.0);
+  // a concha fica na altura da cabeça: o círculo cobre a concha, não só o poste
+  const sc = P(0, 0, 0.3);
+  ctx.collision.addCircle(sc[0], sc[2], 0.6, y, y + 2.0);
 }
 
 export function stopSign(B, ctx, x, z, rot) {
@@ -134,6 +136,9 @@ export function busStop(B, ctx, x, z, rot) {
   const seat = P(0, 0, -0.4);
   B.box('woodBench', seat[0], y + 0.6, seat[2], 2.4, 0.06, 0.35, rot);
   ctx.collision.addBox(back[0], back[2], 1.6, 0.15, rot, y, y + 2.5);
+  // banco e plataforma (a plataforma é um degrau baixo: dá para subir)
+  ctx.collision.addBox(seat[0], seat[2], 1.2, 0.2, rot, y, y + 0.66, { cam: false });
+  ctx.collision.addBox(x, z, 1.7, 0.9, rot, y - 0.3, y + 0.15, { walk: true, cam: false });
 }
 
 // carro estacionado simples (estilo Fusca/Brasília/pick-up de 1990)
@@ -190,7 +195,9 @@ export function letreiro(B, ctx, x, z, rot, text = 'TEEWALD') {
     glyph(B, P, lx, y + 0.25, 0, cw, H, text[i], rot);
   }
   B.col = [1, 1, 1];
-  ctx.collision.addBox(x, z, total / 2 + 0.5, 0.7, rot, y - 0.5, y + 0.25 + H);
+  // base baixa (dá para subir) e as letras (0,45 m de espessura)
+  ctx.collision.addBox(x, z, total / 2 + 0.5, 0.7, rot, y - 0.5, y + 0.25, { walk: true, cam: false });
+  ctx.collision.addBox(x, z, total / 2, 0.28, rot, y + 0.25, y + 0.25 + H);
 }
 
 // letras em blocos (grade 5x5)

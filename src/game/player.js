@@ -70,14 +70,24 @@ export class Player {
       this.heading += d * Math.min(1, dt * (run ? 9 : 7));
     }
     const hx = Math.sin(this.heading), hz = Math.cos(this.heading);
-    // move na direção em que o personagem olha (curvas suaves)
-    const old = this.pos.clone();
-    this.pos.x += hx * this.speed * dt;
-    this.pos.z += hz * this.speed * dt;
-    this.ctx.collision.resolve(this.pos, this.radius, 1.7);
-    // não entra no rio fundo (exceto pontes)
-    if (this.ctx.isDeepWater(this.pos.x, this.pos.z, this.ctx.groundAt(this.pos.x, this.pos.z, this.pos.y))) {
-      this.pos.x = old.x; this.pos.z = old.z; this.speed *= 0.5;
+    // move na direção em que o personagem olha (curvas suaves), em passos curtos
+    // para não atravessar muros finos quando o quadro demora (até 0,1 s)
+    const dist = this.speed * dt, n = Math.max(1, Math.ceil(dist / 0.12));
+    let gPrev = this.ctx.groundAt(this.pos.x, this.pos.z, this.pos.y);
+    for (let i = 0; i < n; i++) {
+      const ox = this.pos.x, oz = this.pos.z;
+      this.pos.x += hx * dist / n;
+      this.pos.z += hz * dist / n;
+      this.ctx.collision.resolve(this.pos, this.radius, 1.7);
+      const g = this.ctx.groundAt(this.pos.x, this.pos.z, this.pos.y);
+      // degrau alto demais (borda de piso elevado, barranco): não sobe sem pular
+      if (g > Math.max(gPrev, this.pos.y) + 0.5) { this.pos.x = ox; this.pos.z = oz; break; }
+      // não entra no rio fundo (exceto pontes)
+      if (this.ctx.isDeepWater(this.pos.x, this.pos.z, g)) {
+        this.pos.x = ox; this.pos.z = oz; this.speed *= 0.5;
+        break;
+      }
+      gPrev = g;
     }
     const b = PLAY_BOUNDS;
     this.pos.x = Math.max(b.x0, Math.min(b.x1, this.pos.x));

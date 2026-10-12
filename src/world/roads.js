@@ -150,10 +150,11 @@ function buildBridge(B, ctx, br) {
     const cx = br.x + nx * hw * side, cz = br.z + nz * hw * side;
     // mureta de concreto
     B.box('concreteW', cx, y - 0.9, cz, 0.3, 1.9, br.len, rot, { uvScale: 2 });
-    collision.addBox(cx, cz, 0.15, half, rot, y - 1, y + 1.0);
+    collision.addBox(cx, cz, 0.15, half, rot, y - 0.9, y + 1.0);
   }
   // tabuleiro (plataforma caminhável) e face lateral
   const deckHW = hw;
   B.box('concrete', br.x, y - 0.75, br.z, deckHW * 2, 0.7, br.len, rot, { top: false });
-  collision.addBox(br.x, br.z, deckHW, half, rot, y - 1.5, y, { walk: true });
+  // a caixa começa onde o tabuleiro começa: quem passa por baixo da ponte não bate no vazio
+  collision.addBox(br.x, br.z, deckHW, half, rot, y - 0.75, y, { walk: true });
 }
