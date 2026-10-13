@@ -34,8 +34,11 @@ export default {
     G.npcs.stage('bernardo', { x: d.x, z: d.z, h: d.h + Math.PI });
     G.supplies([['ammo9', 12], ['shells', 6], ['cuca', 1]], y.x, y.z, 20, { r0: 6 });
     G.supplies([['oil', 1], ['shells', 6], ['cha', 1]], P.factoryDoor.x, P.factoryDoor.z, 22, { r0: 6 });
-    S.found = 0;
+    S.found = 0; S.foundIds = [];
   },
+  // salvamento: quais objetos da Lúcia já foram achados
+  saveState(G, S) { return { foundIds: S.foundIds }; },
+  loadState(G, S, c) { S.foundIds = [...(c.foundIds || [])]; S.found = S.foundIds.length; },
   exitTo(G) { const f = places(G).factoryDoor; return { x: f.x + Math.sin(f.h + Math.PI) * 2.5, z: f.z + Math.cos(f.h + Math.PI) * 2.5, h: f.h + Math.PI }; },
   onExit(G, S) { if (S.flags.freed) G.complete(); },
   steps: [
@@ -125,7 +128,9 @@ export default {
       id: 'coisas', obj: 'Encontre as coisas da Lúcia (0/3)',
       enter(G, S) {
         const items = [['medal', 'item1'], ['shoe', 'item2'], ['card', 'item3']];
+        G.obj(`Encontre as coisas da Lúcia (${S.found}/3)`);
         for (const [id, key] of items) {
+          if (S.foundIds.includes(id)) continue;
           const p = ipt(G, 'fabrica', key);
           G.pickup(id, p.x, p.z, { y: p.y, onPick: () => G.S.def.found(G, G.S, id) });
         }
@@ -188,6 +193,8 @@ export default {
   // um dos três objetos achado: susto e assombrações
   found(G, S, id) {
     S.found++;
+    S.foundIds.push(id);
+    G.autosave('item', true);
     G.obj(`Encontre as coisas da Lúcia (${S.found}/3)`);
     G.combat.shake = 0.25;
     SFX.whisper(G.audio, 3);

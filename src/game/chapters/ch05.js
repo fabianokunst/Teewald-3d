@@ -122,7 +122,7 @@ export default {
       },
     },
     {
-      id: 'fera', obj: 'Derrube a Fera',
+      id: 'fera', obj: 'Derrube a Fera', resumeAs: 'pavilhao',
       update(G, dt, S) { return S.boss?.dead && S.boss.deadT > 2.5; },
       onRespawn(G, S) { if (S.boss && !S.boss.dead) S.boss.hp = Math.max(S.boss.hp, S.boss.maxHp * 0.6); if (G.inventory.count('dynamite') < 2) G.give('dynamite', 2 - G.inventory.count('dynamite')); },
     },

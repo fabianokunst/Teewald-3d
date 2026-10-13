@@ -45,6 +45,18 @@ export default {
     G.supplies([['ammo9', 12], ['cha', 1], ['pedra', 4]], (st.x + f.x) / 2, (st.z + f.z) / 2, 30);
   },
   tick(G, dt, S) { S.saucer?.update(dt); if (S.fire) { const c = S.crash; if (Math.random() < dt * 30) G.effects.spawn({ p: new THREE.Vector3(c.x + (Math.random() - 0.5) * 6, G.y(c.x, c.z) + 1, c.z + (Math.random() - 0.5) * 6), v: new THREE.Vector3((Math.random() - 0.5) * 0.6, 2 + Math.random() * 2, (Math.random() - 0.5) * 0.6), life: 1.6, s0: 0.3, s1: 1.2, color: [0.2, 0.2, 0.2], drag: 0.6, grav: -0.4 }); G.atmo.light(c.x, G.y(c.x, c.z) + 2, c.z, [1.2, 0.6, 0.25], 14, 4); } },
+  // retomando depois da queda: a nave já está caída no mato; durante a luta no campo, pairando
+  resume(G, S, id) {
+    const Sc = TYPES.Saucer, order = ['marlene', 'campo', 'ets', 'nave', 'guardas', 'arma', 'lider', 'fim'];
+    const k = order.indexOf(id), f = places(G).field, c = S.crash;
+    if (!Sc || k < 2) return;
+    S.saucer = new Sc({ scene: G.scene, atmo: G.atmo, effects: G.effects, audio: G.audio, ctx: G.ctx, player: G.player, combat: G.combat });
+    if (k === 2) { S.saucer.show(f.x, G.y(f.x, f.z) + 22, f.z); S.saucer.beam?.(true); return; }
+    S.saucer.show(c.x, G.y(c.x, c.z) + 2, c.z);
+    S.saucer.crash?.(c.x, c.z, true);
+    const y = G.y(c.x, c.z);
+    G.solidCircle(c.x, c.z, 5.2, y - 1, y + 3.5);
+  },
   cleanup(G, S) { if (S.saucer) { S.saucer.dispose ? S.saucer.dispose() : S.saucer.hide?.(); S.saucer = null; } },
   steps: [
     {
@@ -117,7 +129,7 @@ export default {
       },
     },
     {
-      id: 'guardas', obj: 'Derrote os guardas da nave',
+      id: 'guardas', obj: 'Derrote os guardas da nave', resumeAs: 'nave',
       update(G, dt, S) { return S.flags.guards; },
       onRespawn(G, S) { G.combat.clearEnemies(); const c = S.crash; G.wave([{ type: 'et', n: 3, at: { x: c.x, z: c.z, r0: 4, r1: 9 } }], () => { S.flags.guards = true; }); },
     },

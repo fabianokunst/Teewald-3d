@@ -55,6 +55,9 @@ export default {
     G.supplies([['oil', 1], ['cha', 1]], P.churchYard.x, P.churchYard.z, 15, { r0: 4 });
     S.lit = 0;
   },
+  // salvamento: velas acesas
+  saveState(G, S) { return { lit: (S.graves || []).map(g => g.lit) }; },
+  loadState(G, S, c) { (c.lit || []).forEach((on, i) => { if (S.graves[i]) S.graves[i].lit = !!on; }); S.lit = S.graves.filter(g => g.lit).length; },
   tick(G, dt, S) {
     for (const g of S.graves || []) if (g.lit) G.atmo.light(g.cx, g.cy + 0.3, g.cz, [1.1, 0.75, 0.35], 4.5, 3);
     // névoa rasteira no cemitério
@@ -86,9 +89,12 @@ export default {
       enter(G, S) {
         G.ambient(null);
         G.checkpoint(S.gate.x, S.gate.z, 0);
+        G.obj(`Acenda as velas dos fundadores (${S.lit}/4)`);
         S.graves.forEach((g, i) => {
+          if (g.lit) return;
           G.use('vela' + i, [g.cx, g.cy + 0.6, g.cz], 2.2, 'ACENDER A VELA', () => {
             g.lit = true; S.lit++;
+            G.autosave('vela', true);
             G.obj(`Acenda as velas dos fundadores (${S.lit}/4)`);
             SFX.wail(G.audio, 8, 0.8);
             G.toast(FOUNDERS[i].split(' ')[0] + ' — ' + S.lit + '/4');

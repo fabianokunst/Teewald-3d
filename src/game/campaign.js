@@ -26,13 +26,23 @@ import { CHAPTERS } from './chapters/index.js';
 // conversas, narração em tela preta, cenas de câmera, ondas de criaturas, criaturas
 // soltas pela cidade de noite, pontos de retorno, cartelas e o progresso salvo.
 
+// Progresso salvo no navegador (localStorage):
+//   chapter / unlocked / ranks / finished — capítulo onde parou, maior liberado, melhores notas, fim visto
+//   inv / melee — inventário e arma branca (o status do jogador)
+//   run — onde parou dentro do capítulo: etapa, posição, ponto de retorno, interior, vida,
+//         o que já foi feito na etapa (flags e estado próprio do capítulo) e os números da partida
+//   totals — criaturas derrotadas, quedas e tempo de jogo somados
 const SAVE_KEY = 'teewald.save.v1';
 export function loadSave() {
   try { const s = localStorage.getItem(SAVE_KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; }
 }
 export function writeSave(o) {
-  try { localStorage.setItem(SAVE_KEY, JSON.stringify(o)); } catch (e) { /* sem armazenamento */ }
+  try { o.updated = Date.now(); localStorage.setItem(SAVE_KEY, JSON.stringify(o)); return true; } catch (e) { return false; }
 }
+export function eraseSave() {
+  try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* sem armazenamento */ }
+}
+const freshSave = () => ({ chapter: 1, unlocked: 1, ranks: {}, totals: { kills: 0, deaths: 0, time: 0 }, run: null });
 
 // tipos de criatura (os arquivos são carregados no começo; faltando um, vira cão de fogo)
 export const TYPES = { dog: FireDog, chupa: ChupaCapture };
@@ -85,10 +95,16 @@ export class Campaign {
     this.S = null;             // estado do capítulo 2..10
     this.chip = null; this.touchHit = false;
     this._v = v3();
-    this.save = loadSave() || { chapter: 1, unlocked: 1 };
+    this.save = { ...freshSave(), ...(loadSave() || {}) };
+    this.save.totals ||= { kills: 0, deaths: 0, time: 0 };
+    this.saveT = 0; this.saveShow = 0;
     // relâmpagos dentro da fábrica: trovão abafado
     for (const d of Object.values(this.interiors.defs)) if ('onFlash' in d || d.lightning) d.onFlash = k => this.audio.thunder?.(k, true);
-    this.combat.onKill = (e) => { if (this.S && !e.static) { this.S.stats.kills++; this._drop(e); } };
+    this.combat.onKill = (e) => {
+      if (e.static || e.friendly) return;
+      this.save.totals.kills++;
+      if (this.S) { this.S.stats.kills++; this._drop(e); }
+    };
     addEventListener('touchstart', e => {
       const c = this.chip;
       if (!c) return;
@@ -123,8 +139,9 @@ export class Campaign {
   }
 
   // ---------- começo de capítulo ----------
-  // n = 1..10; opts.fromSave usa o inventário salvo
+  // n = 1..10; opts.fromSave retoma o progresso salvo (inventário, vida e a etapa onde parou)
   startChapter(n, opts = {}) {
+    const run = opts.fromSave && this.save.run && this.save.run.chapter === n ? this.save.run : null;
     // seguindo direto de um capítulo para o outro, o inventário vai junto
     const carry = opts.carry ? { inv: this.inventory.serialize(), melee: this.combat.melee ? { ...this.combat.melee } : null } : null;
     this._cleanup();
@@ -137,8 +154,9 @@ export class Campaign {
       this.inventory.load(src.inv);
       if (src.melee) this.combat.setMelee(src.melee.id, src.melee);
       // itens de passagem do capítulo anterior saem; armas e munição mínimas entram
-      for (const id of ['key', 'medal', 'shoe', 'card', 'silverware', 'crystal']) this.inventory.take(id, 99);
-      for (const [id, k] of Object.entries(LOADOUT[n] || {})) {
+      // (retomando no meio do capítulo, o inventário volta exatamente como estava)
+      if (!run) for (const id of ['key', 'medal', 'shoe', 'card', 'silverware', 'crystal']) this.inventory.take(id, 99);
+      if (!run) for (const [id, k] of Object.entries(LOADOUT[n] || {})) {
         if (!ITEMS[id]) continue;
         const have = this.inventory.count(id);
         if (!ITEMS[id].stack) { if (!have) this.inventory.add(id, 1, id === 'pistol' ? { mag: 12 } : id === 'shotgun' ? { mag: 2 } : id === 'revolver' ? { mag: 6 } : null); }
@@ -158,8 +176,10 @@ export class Campaign {
       this.npcs.showAll();
       this.atmo.set('tarde', 0);
       this.mission.reset();
-      this._writeSave(1);
-      return { mission: true };
+      // a missão 1 retoma depois do begin() (main.js chama begin sem a abertura)
+      this._resume1 = run;
+      if (!run) this._writeSave(1);
+      return { mission: true, resume: !!run };
     }
     // capítulos da noite: o chupacabras da missão 1 some, os moradores ficam em casa
     this.mission.reset();
@@ -178,17 +198,109 @@ export class Campaign {
     this.tpc.snap(this.player);
     S.checkpoint = { x: st.x, z: st.z, h: st.h ?? 0 };
     def.setup?.(this, S);
+    if (run) { this._resume(S, run); return { mission: false, resume: true }; }
     this._writeSave(n);
     this.next();
     return { mission: false };
   }
 
+  // começo de capítulo: progresso zerado dentro dele
   _writeSave(n) {
     this.save.chapter = n;
     this.save.unlocked = Math.max(this.save.unlocked || 1, n);
     this.save.inv = n > 1 ? this.inventory.serialize() : null;
     this.save.melee = this.combat.melee ? { ...this.combat.melee } : null;
+    this.save.run = null;
     writeSave(this.save);
+  }
+
+  // volta para a etapa salva: estado do capítulo, interior, posição, vida e números
+  _resume(S, R) {
+    const def = S.def;
+    S.flags = { ...(R.flags || {}) };
+    S.stats = { kills: R.stats?.kills || 0, deaths: R.stats?.deaths || 0, t0: 0 };
+    S.t = R.stats?.t || 0;
+    S.card = null;
+    def.loadState?.(this, S, R.custom || {});
+    if (R.indoor && this.interiors.defs[R.indoor]) this.interiors.enter(R.indoor);
+    const p = R.pos || R.cp;
+    if (p) { this.player.place(p.x, p.z, p.h ?? 0); this.tpc.snap(this.player); }
+    if (R.cp) S.checkpoint = { ...R.cp };
+    // etapas que dependem de algo criado na etapa anterior (um chefe, por exemplo) recomeçam por ela
+    let id = R.step;
+    const st = def.steps.find(q => q.id === id);
+    if (st?.resumeAs) id = st.resumeAs;
+    let k = def.steps.findIndex(q => q.id === id);
+    if (k < 0) k = 0;
+    def.resume?.(this, S, def.steps[k].id);
+    S.i = k - 1;
+    this.next();
+    this.combat.hp = Math.max(30, Math.min(this.combat.maxHp, R.hp ?? this.combat.maxHp));
+    this.hud.toast('PROGRESSO CARREGADO');
+  }
+
+  // missão 1: depois do begin(), pula para a etapa salva
+  _resumeMission(R) {
+    const M = this.mission, site = this.ctx.chupa;
+    let step = R.step;
+    if (step === 'fight') step = 'trail';
+    if (['coop', 'trail'].includes(step)) M.setStep(step, false);
+    M.card = null;
+    let p = R.pos;
+    if (R.step === 'fight' && site?.checkpoint) p = { x: site.checkpoint.x, z: site.checkpoint.z, h: site.checkpoint.heading };
+    if (p) { this.player.place(p.x, p.z, p.h ?? 0); this.tpc.snap(this.player); }
+    this.combat.hp = Math.max(30, Math.min(this.combat.maxHp, R.hp ?? this.combat.maxHp));
+    this.hud.toast('PROGRESSO CARREGADO');
+  }
+
+  // ---------- salvamento automático ----------
+  // grava o status do jogador e onde ele está; why = motivo (só para depuração)
+  autosave(why = '', force = false) {
+    if (!force && this.saveT < 2) return false;
+    const sv = this.save, P = this.player, C = this.combat;
+    if (C.dead) return false;
+    // posição segura: a atual se não houver perigo; senão, o último ponto de retorno
+    const safe = !C.inFight && P.grounded && !(C.boss && !C.boss.dead);
+    const here = { x: +P.pos.x.toFixed(2), z: +P.pos.z.toFixed(2), h: +P.heading.toFixed(3) };
+    sv.inv = this.inventory.serialize();
+    sv.melee = C.melee ? { ...C.melee } : null;
+    if (this.index === 1) {
+      const M = this.mission;
+      if (!M.step) return false;
+      if (M.step === 'escaped' || M.step === 'done') { sv.chapter = 2; sv.unlocked = Math.max(sv.unlocked || 1, 2); sv.run = null; }
+      else {
+        sv.chapter = 1;
+        sv.run = { chapter: 1, step: M.step, pos: safe ? here : null, hp: Math.round(C.hp) };
+      }
+    } else {
+      const S = this.S;
+      if (!S) return false;
+      if (S.done) {
+        // capítulo terminado: o próximo começa do início
+        if (S.n < 10) { sv.chapter = S.n + 1; sv.unlocked = Math.max(sv.unlocked || 1, S.n + 1); }
+        sv.run = null;
+      } else {
+        const st = S.def.steps[Math.max(0, S.i)];
+        const flags = {};
+        for (const [k, v] of Object.entries(S.flags)) if (['number', 'boolean', 'string'].includes(typeof v)) flags[k] = v;
+        sv.chapter = S.n;
+        sv.run = {
+          chapter: S.n, step: st?.id || null,
+          pos: safe ? here : null, cp: S.checkpoint ? { ...S.checkpoint } : null,
+          indoor: this.interiors.indoor?.name || null,
+          hp: Math.round(C.hp), flags, custom: S.def.saveState?.(this, S) || null,
+          stats: { kills: S.stats.kills, deaths: S.stats.deaths, t: Math.round(S.t) },
+        };
+      }
+    }
+    this.saveT = 0;
+    if (writeSave(sv) && why !== 'quiet') this.saveShow = 1.6;
+    return true;
+  }
+
+  eraseSave() {
+    eraseSave();
+    this.save = freshSave();
   }
 
   // capítulo 1 → interlúdio → capítulo 2 (chamado quando a missão original termina)
@@ -223,7 +335,7 @@ export class Campaign {
     S.marker = st.marker || null;
     for (const u of st.use || []) this.use(u.id, u.at, u.r, u.label, u.run, u);
     st.enter?.(this, S);
-    if (S.i > 0) this.ding();
+    if (S.i > 0) { this.ding(); this._saveSoon = 0.6; }
   }
 
   goto(id) {
@@ -380,7 +492,7 @@ export class Campaign {
 
   boss(e, name = null) { this.combat.boss = e; if (name) e.bossName = name; return e; }
 
-  checkpoint(x, z, h = 0) { this.S.checkpoint = { x, z, h }; }
+  checkpoint(x, z, h = 0) { this.S.checkpoint = { x, z, h }; this._saveSoon = 0.4; }
 
   after(secs, fn) { this.S.timers.push({ t: secs, fn }); }
 
@@ -448,10 +560,15 @@ export class Campaign {
     if (S.n < 10) this.save.unlocked = Math.max(this.save.unlocked || 1, S.n + 1);
     else this.save.finished = true;
     writeSave(this.save);
+    this.autosave('fim', true);
   }
 
   // ---------- respostas do main.js (mesma interface da missão 1) ----------
-  begin() { if (this.index === 1) this.mission.begin(); }
+  begin() {
+    if (this.index !== 1) return;
+    this.mission.begin();
+    if (this._resume1) { this._resumeMission(this._resume1); this._resume1 = null; }
+  }
   reset() { if (this.index === 1) this.mission.reset(); }
 
   get marker() {
@@ -567,13 +684,23 @@ export class Campaign {
       if (this.inventory.find(gun) && this.inventory.count(id) < min) this.inventory.add(id, min - this.inventory.count(id));
     }
     this.hud.toast('VOCÊ CAIU...');
+    this.save.totals.deaths++;
+    this.autosave('queda', true);
   }
 
   // ---------- quadro a quadro ----------
   // devolve 'cutscene' | 'read' | 'dead' | 'play' quando o jogo deve trocar de estado
   update(dt, state) {
     this.lastDt = dt;
+    this.saveT += dt;
+    this.saveShow = Math.max(0, this.saveShow - dt);
+    if (state === 'play' || state === 'read' || state === 'cutscene') this.save.totals.time += dt;
+    if (state === 'play') {
+      if (this._saveSoon !== undefined) { this._saveSoon -= dt; if (this._saveSoon <= 0) { this._saveSoon = undefined; this.autosave('etapa', true); } }
+      else if (this.saveT > 20) this.autosave('relógio');
+    }
     if (this.index === 1) {
+      if (this.mission.step && this.mission.step !== this._lastStep1) { this._lastStep1 = this.mission.step; this._saveSoon = 0.6; }
       const ev = this.mission.update(dt, state);
       // fim da missão 1: interlúdio e a primeira noite
       if (this.mission.step === 'done' && !this._ch1Done && this.mission.card?.kind === 'complete' && this.mission.card.t > 3.2) {
@@ -672,7 +799,20 @@ export class Campaign {
   }
 
   // ---------- tela ----------
+  // ícone de disquete e "PROGRESSO SALVO" (some sozinho)
+  _drawSaved(g, W, H, device) {
+    if (this.saveShow <= 0) return;
+    const k = H / 240, a = Math.min(1, this.saveShow / 0.4), touch = device === 'touch';
+    const x = touch ? W / 2 + 34 * k : W - 8 * k, y = touch ? H - 30 * k : (this.input.locked ? 6 : 18) * k;
+    const s = drawText(g, 'PROGRESSO SALVO', x, y, 9 * k, { align: touch ? 'center' : 'right', alpha: a, color: '#c8b898' });
+    const ix = Math.round((touch ? x - s.w / 2 : x - s.w) - 10 * k), iy = Math.round(y + 1 * k), d = Math.round(7 * k);
+    g.globalAlpha = a; g.fillStyle = '#c8b898'; g.fillRect(ix, iy, d, d);
+    g.fillStyle = '#140c08'; g.fillRect(ix + Math.round(d * 0.25), iy, Math.round(d * 0.5), Math.round(d * 0.35)); g.fillRect(ix + Math.round(d * 0.2), iy + Math.round(d * 0.6), Math.round(d * 0.6), Math.round(d * 0.3));
+    g.globalAlpha = 1;
+  }
+
   drawHud(g, W, H, device) {
+    this._drawSaved(g, W, H, device);
     if (this.index === 1) { this.mission.drawHud(g, W, H, device); return; }
     const S = this.S;
     if (!S) return;

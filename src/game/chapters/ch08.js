@@ -33,6 +33,16 @@ export default {
     G.supplies([['ammo9', 12], ['cha', 1], ['oil', 1]], P.praca.x, P.praca.z, 25, { r0: 6 });
     S.broken = 0;
   },
+  // salvamento: ninhos já destruídos
+  saveState(G, S) { return { broken: S.nests.map(n => n.b.dead) }; },
+  loadState(G, S, c) {
+    (c.broken || []).forEach((dead, i) => {
+      const n = S.nests[i];
+      if (!dead || !n) return;
+      n.b.dead = true; n.b.removed = true; n.b.root.visible = false; n.woke = true;
+    });
+    S.broken = S.nests.filter(n => n.b.dead).length;
+  },
   tick(G, dt, S) { for (const n of S.nests || []) if (!n.b.dead) G.atmo.light(n.x, n.b.pos.y - 0.5, n.z, [0.6, 0.18, 0.12], 6, 2); },
   steps: [
     {
@@ -97,7 +107,7 @@ export default {
       },
     },
     {
-      id: 'rainha', obj: 'Derrube a rainha dos morcegos',
+      id: 'rainha', obj: 'Derrube a rainha dos morcegos', resumeAs: 'torre',
       update(G, dt, S) { return S.boss?.dead && S.boss.deadT > 2.5; },
       onRespawn(G, S) { if (S.boss && !S.boss.dead) S.boss.hp = Math.max(S.boss.hp, S.boss.maxHp * 0.6); },
     },
@@ -121,6 +131,7 @@ export default {
   ],
   nestBroken(G, S) {
     S.broken++;
+    G.autosave('ninho', true);
     G.obj(`Destrua os ninhos de morcego (${S.broken}/3)`);
     SFX.screech(G.audio, 5, 0.7);
     G.toast('NINHO DESTRUÍDO ' + S.broken + '/3');

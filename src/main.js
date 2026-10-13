@@ -84,9 +84,14 @@ const touchUI = () => input.lastDevice === 'touch';
 // celular em pé (imagem em cima, área livre embaixo)
 const invPanel = () => touchUI() && !!input.touch.L?.portrait;
 
-// trocou de aplicativo ou de aba: pausa e silencia
+// jogando: salva o status ao sair da aba ou fechar a página
+const inGame = () => ['play', 'pause', 'inventory', 'read', 'cutscene', 'talk'].includes(state);
+addEventListener('pagehide', () => { if (inGame()) campaign?.autosave('saiu', true); });
+
+// trocou de aplicativo ou de aba: pausa, salva e silencia
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
+    if (inGame()) campaign?.autosave('saiu', true);
     if (state === 'play') pauseGame();
     audio.suspend();
   } else {
@@ -199,8 +204,9 @@ function startGame(o = {}) {
     hud.showHints();
     return;
   }
-  const withIntro = o.intro !== false;
-  campaign.startChapter(1);
+  const r1 = campaign.startChapter(1, { fromSave: o.fromSave });
+  // retomando o capítulo 1 salvo: sem a abertura
+  const withIntro = o.intro !== false && !r1.resume;
   player.place(START.x, START.z, START.heading);
   tpc.snap(player);
   hud.place = null; hud.card = null;
@@ -255,6 +261,7 @@ function frame(now) {
     titleCamera(dt);
     const act = touchUI() ? touchMenu.update(dt) : menu.update(dt, mouseInt);
     if (act === 'newgame' && !onFaded) fadeTo(() => { startGame({ chapter: 1, intro: true }); fadeTarget = 0; fadeSpeed = 0.5; });
+    if (act === 'erase') { campaign.eraseSave(); menu.open('main'); audio.menuBack(); }
     if (act === 'continue' && !onFaded) fadeTo(() => { startGame({ chapter: campaign.save.chapter || 1, fromSave: true }); fadeTarget = 0; fadeSpeed = 0.6; });
     if (typeof act === 'string' && act.startsWith('chapter:') && !onFaded) { const n = +act.slice(8); fadeTo(() => { startGame({ chapter: n, intro: n === 1 }); fadeTarget = 0; fadeSpeed = 0.6; }); }
   } else if (state === 'intro') {
@@ -306,6 +313,7 @@ function frame(now) {
     const resume = menu.screen === 'pause' && (input.padHit('start') || input.hit('KeyP'));
     const act = resume ? 'resume' : touchUI() ? touchMenu.update(dt) : menu.update(dt, mouseInt);
     if (act === 'resume') { setState('play'); }
+    if (act === 'quit') campaign.autosave('menu', true);
     if (act === 'quit') fadeTo(() => { if (ctx.indoor) interiors.exit(); menu.open('main'); setState('title'); audio.setAmbience(false); atmo.set(titleWeather(), 0); fadeTarget = 0; fadeSpeed = 1.2; });
   } else if (state === 'ending') {
     endingT += dt;

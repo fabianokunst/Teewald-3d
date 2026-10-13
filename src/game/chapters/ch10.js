@@ -57,7 +57,7 @@ export default {
       },
     },
     {
-      id: 'bruxa', obj: 'Enfraqueça a bruxa e use a cruz',
+      id: 'bruxa', obj: 'Enfraqueça a bruxa e use a cruz', resumeAs: 'tumulo',
       update(G, dt, S) {
         const w = S.boss;
         if (!w) return false;

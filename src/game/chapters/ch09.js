@@ -35,6 +35,17 @@ export default {
     G.supplies([['ammo9', 12], ['cuca', 1]], cl.x, cl.z, 12, { r0: 3 });
     S.crystals = 0;
   },
+  // salvamento: cristais já quebrados
+  saveState(G, S) { return { cr: (S.cr || []).map(b => b.dead) }; },
+  loadState(G, S, c) { S.crSaved = c.cr || []; },
+  // retomando na hora de amarrar: o bicho já dorme no covil
+  resume(G, S, id) {
+    if (id !== 'amarrar') return;
+    const a = ipt(G, 'gruta', 'arena'), n = ipt(G, 'gruta', 'nest') || a;
+    S.boss = G.spawn('chupa', n.x, n.z, { arena: { x: a.x, z: a.z, r: 10 } });
+    S.boss.place(n.x, n.z, 0);
+    S.boss.sleep();
+  },
   exitTo(G) { const e = G.S.entry; return { x: e.x - Math.sin(G.S.mouthRot) * 1.5, z: e.z - Math.cos(G.S.mouthRot) * 1.5, h: G.S.mouthRot + Math.PI }; },
   onExit(G, S) { if (S.crystals >= 3) G.complete(); },
   steps: [
@@ -106,7 +117,7 @@ export default {
       },
     },
     {
-      id: 'captura', obj: 'Canse o chupacabras e acerte dois dardos',
+      id: 'captura', obj: 'Canse o chupacabras e acerte dois dardos', resumeAs: 'covil',
       update(G, dt, S) { return S.boss?.asleep; },
       onRespawn(G, S) { if (S.boss && !S.boss.asleep) { S.boss.hp = Math.max(S.boss.hp, 4); S.boss.tired = false; S.boss.darts = 0; } if (G.inventory.count('darts') < 2) G.give('darts', 2 - G.inventory.count('darts')); },
     },
@@ -129,9 +140,11 @@ export default {
       marker: G => { const S = G.S; for (let i = 1; i <= 3; i++) if (!S.cr?.[i - 1]?.dead) { const p = ipt(G, 'gruta', 'crystal' + i); if (p) return { x: p.x, y: p.y + 2, z: p.z }; } return null; },
       enter(G, S) {
         S.cr = [];
+        S.crystals = (S.crSaved || []).filter(Boolean).length;
+        G.obj(`Quebre os cristais da pedra do céu (${S.crystals}/3)`);
         for (let i = 1; i <= 3; i++) {
           const p = ipt(G, 'gruta', 'crystal' + i);
-          if (!p) continue;
+          if (!p || S.crSaved?.[i - 1]) { S.cr.push({ dead: true, pos: p || { x: 0, y: 0, z: 0 } }); continue; }
           const m = makeItemModel('crystal');
           m.scale.setScalar(7);
           const b = new Breakable(G, m, p.x, p.y + 0.2, p.z, { hp: 5, r: 0.7, name: 'CRISTAL', color: [0.5, 1, 0.55], resist: { light: 0, melee: 1.5 }, onBreak: () => S.def.crystalBroken(G, S) });
@@ -152,6 +165,7 @@ export default {
   ],
   crystalBroken(G, S) {
     S.crystals++;
+    G.autosave('cristal', true);
     G.obj(`Quebre os cristais da pedra do céu (${S.crystals}/3)`);
     G.combat.shake = 0.3;
     SFX.wail(G.audio, 30, 0.5, 2.5);

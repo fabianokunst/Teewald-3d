@@ -1,5 +1,5 @@
 import { drawText, FONT_TITLE } from './overlay.js';
-import { CREDITS, SITE } from './menu.js';
+import { CREDITS, SITE, statusLine } from './menu.js';
 import { buzz } from '../engine/touch.js';
 
 // Menus no celular: botões grandes (≥ 44 px CSS) desenhados na camada de toque,
@@ -193,14 +193,14 @@ export class TouchMenu {
       return;
     }
 
-    if (M.screen === 'pause' || M.screen === 'confirm') {
+    if (M.screen === 'pause' || M.screen === 'confirm' || M.screen === 'erase') {
       dimAll(M.screen === 'pause' ? 0.55 : 0.72);
       lower();
       const items = M.items(), n = items.length, h = stackH(n);
-      const confirm = M.screen === 'confirm';
+      const confirm = M.screen === 'confirm' || M.screen === 'erase', erase = M.screen === 'erase';
       const headSize = confirm ? Math.max(20, 6.2 * u) : Math.max(30, 10 * u);
-      const head = confirm ? 'VOLTAR AO MENU PRINCIPAL?' : 'PAUSA';
-      const sub = confirm ? 'o progresso desta partida será perdido' : '';
+      const head = erase ? 'APAGAR TODO O PROGRESSO?' : confirm ? 'VOLTAR AO MENU PRINCIPAL?' : 'PAUSA';
+      const sub = erase ? 'capítulos liberados, notas e status salvos' : confirm ? 'o progresso fica salvo para CONTINUAR' : '';
       let hy, y0;
       if (v.portrait) {
         hy = gr.y + gr.h * 0.5 - headSize * 0.7;
@@ -213,7 +213,7 @@ export class TouchMenu {
       text(head, vw / 2, hy, headSize, C.text, { align: 'center' });
       if (sub) text(sub, vw / 2, hy + headSize * 1.35, Math.max(14, 4.2 * u), C.soft, { align: 'center' });
       stack(items.map(it => it.label), (vw - bw) / 2, y0, bw, items.map((_, i) => 'item:' + i),
-        items.map(it => (it.act === 'quit' ? { danger: true } : {})));
+        items.map(it => (it.act === 'quit' || it.act === 'erase' ? { danger: true } : {})));
       return;
     }
 
@@ -223,14 +223,16 @@ export class TouchMenu {
       const hh = bh, top = m * 0.7, backW = Math.max(112, 30 * u);
       button('back', m * 0.7, top, backW, hh, '◀ VOLTAR', { size: hh * 0.4 });
       text('CAPÍTULOS', vw / 2, top + (hh - Math.max(22, hh * 0.55) * 1.15) / 2, Math.max(22, hh * 0.55), C.gold, { align: 'center' });
+      const st = Math.max(12, 3.4 * u);
+      text(statusLine(M.saved), vw / 2, top + hh + gap * 0.3, st, C.soft, { align: 'center' });
       const items = M.items().filter(it => it.act !== 'back');
       const cols = v.portrait ? 1 : 2, rows = Math.ceil(items.length / cols);
-      const y0 = top + hh + gap, availH = vh - y0 - m * 0.6;
+      const y0 = top + hh + gap + st * 1.4, availH = vh - y0 - m * 0.6;
       const bh3 = Math.max(40, Math.min(bh, (availH - (rows - 1) * gap * 0.6) / rows));
       const cw = Math.min(380, (vw - 2 * m - (cols - 1) * gap) / cols), x0 = (vw - (cols * cw + (cols - 1) * gap)) / 2;
       items.forEach((it, i) => {
         const c = cols === 1 ? 0 : Math.floor(i / rows), r = cols === 1 ? i : i % rows;
-        button('item:' + i, x0 + c * (cw + gap), y0 + r * (bh3 + gap * 0.6), cw, bh3, it.label, { size: Math.min(bh3 * 0.36, cw / (it.label.length * 0.52)) });
+        button('item:' + i, x0 + c * (cw + gap), y0 + r * (bh3 + gap * 0.6), cw, bh3, it.label, { size: Math.min(bh3 * 0.36, cw / (it.label.length * 0.52)), color: it.locked ? C.dim : undefined, danger: it.act === 'eraseAsk' });
       });
       return;
     }

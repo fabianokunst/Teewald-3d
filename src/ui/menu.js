@@ -20,6 +20,13 @@ const OPTIONS = [
   { key: 'vibrate', label: 'VIBRAÇÃO', values: [true, false], fmt: v => (v ? 'LIGADA' : 'DESLIGADA'), touchOnly: true, needs: () => !!navigator.vibrate },
 ];
 
+// tempo de jogo, criaturas e quedas somados (tela de capítulos)
+export function statusLine(sv) {
+  const t = Math.round(sv?.totals?.time || 0), h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60);
+  const time = h ? h + 'h' + String(m).padStart(2, '0') : m + ' min';
+  return `TEMPO DE JOGO ${time}   ·   CRIATURAS ${sv?.totals?.kills || 0}   ·   QUEDAS ${sv?.totals?.deaths || 0}`;
+}
+
 export const CREDITS = [
   ['Teewald', 'title'],
   ['', ''],
@@ -49,6 +56,7 @@ export class Menu {
 
   open(screen) {
     if (screen === 'options' || screen === 'credits' || screen === 'chapters') this.returnTo = this.screen === 'pause' ? 'pause' : 'main';
+    if (screen === 'erase') this.returnTo = 'chapters';
     if (screen === 'confirm') this.returnTo = 'pause';
     // nos créditos começa no VOLTAR, para ENTER não abrir o site sem querer
     this.screen = screen; this.sel = screen === 'credits' ? 1 : 0; this.t = 0;
@@ -64,20 +72,26 @@ export class Menu {
   items() {
     if (this.screen === 'main') {
       const sv = this.saved, list = [];
-      if ((sv.chapter || 1) > 1) list.push({ label: 'CONTINUAR  · CAP. ' + sv.chapter, act: 'continue' });
+      if ((sv.chapter || 1) > 1 || sv.run) list.push({ label: 'CONTINUAR  · CAP. ' + (sv.chapter || 1), act: 'continue' });
       list.push({ label: 'NOVO JOGO', act: 'newgame' });
-      if ((sv.unlocked || 1) > 1) list.push({ label: 'CAPÍTULOS', act: 'chapters' });
+      list.push({ label: 'CAPÍTULOS', act: 'chapters' });
       list.push({ label: 'OPÇÕES', act: 'options' }, { label: 'CRÉDITOS', act: 'credits' });
       return list;
     }
+    // os dez capítulos: liberados com a melhor nota, os outros bloqueados
     if (this.screen === 'chapters') {
       const n = Math.min(10, this.saved.unlocked || 1), t = this.chapterTitles || [];
       const list = [];
       const rk = this.saved.ranks || {};
-      for (let i = 1; i <= n; i++) list.push({ label: i + '. ' + (t[i] || 'Capítulo ' + i).toUpperCase() + (rk[i] ? '  [' + rk[i] + ']' : ''), act: 'chapter:' + i });
+      for (let i = 1; i <= 10; i++) {
+        if (i <= n) list.push({ label: i + '. ' + (t[i] || 'Capítulo ' + i).toUpperCase() + (rk[i] ? '  [' + rk[i] + ']' : ''), act: 'chapter:' + i });
+        else list.push({ label: i + '. ???   BLOQUEADO', act: 'locked', locked: true });
+      }
+      if (this.saved.updated) list.push({ label: 'APAGAR PROGRESSO', act: 'eraseAsk' });
       list.push({ label: 'VOLTAR', act: 'back' });
       return list;
     }
+    if (this.screen === 'erase') return [{ label: 'NÃO, VOLTAR', act: 'back' }, { label: 'APAGAR TUDO', act: 'erase' }];
     if (this.screen === 'pause') return [{ label: 'CONTINUAR', act: 'resume' }, { label: 'OPÇÕES', act: 'options' }, { label: 'MENU PRINCIPAL', act: 'confirm' }];
     // sair da partida pede confirmação (o item marcado de início é o seguro)
     if (this.screen === 'confirm') return [{ label: 'CONTINUAR JOGANDO', act: 'back' }, { label: 'SAIR PARA O MENU', act: 'quit' }];
@@ -99,6 +113,8 @@ export class Menu {
   activate(it) {
     this.audio.menuOk();
     if (it.act === 'options' || it.act === 'credits' || it.act === 'confirm' || it.act === 'chapters') { this.open(it.act); return null; }
+    if (it.act === 'eraseAsk') { this.open('erase'); return null; }
+    if (it.act === 'locked') { this.audio.menuBack(); return null; }
     if (it.act === 'back') { this.audio.menuBack(); this.open(this.returnTo); return null; }
     if (it.act === 'site') { window.open(SITE.url, '_blank', 'noopener'); return null; }
     return it.act;
@@ -142,7 +158,7 @@ export class Menu {
       return this.activate(it);
     }
     if (I.back()) {
-      if (this.screen === 'options' || this.screen === 'credits' || this.screen === 'confirm' || this.screen === 'chapters') { this.audio.menuBack(); this.open(this.returnTo); }
+      if (this.screen === 'options' || this.screen === 'credits' || this.screen === 'confirm' || this.screen === 'chapters' || this.screen === 'erase') { this.audio.menuBack(); this.open(this.returnTo); }
       else if (this.screen === 'pause') { this.audio.menuBack(); return 'resume'; }
     }
     return null;
@@ -163,10 +179,18 @@ export class Menu {
       help('DIRECIONAL escolher   A confirmar   START continuar', '↑↓ escolher   ENTER confirmar   ESC continuar', '');
       return;
     }
+    if (this.screen === 'erase') {
+      g.globalAlpha = 0.85; g.fillStyle = '#000'; g.fillRect(0, 0, W, H); g.globalAlpha = 1;
+      drawText(g, 'APAGAR TODO O PROGRESSO?', W / 2, 70 * k, 18 * k, { align: 'center', color: '#e9dcc0' });
+      drawText(g, 'capítulos liberados, notas e status salvos', W / 2, 92 * k, 11 * k, { align: 'center', color: '#a89878' });
+      this._list(g, W, H, k, 124 * k);
+      help('DIRECIONAL escolher   A confirmar   B voltar', '↑↓ escolher   ENTER confirmar   ESC voltar', '');
+      return;
+    }
     if (this.screen === 'confirm') {
       g.globalAlpha = 0.7; g.fillStyle = '#000'; g.fillRect(0, 0, W, H); g.globalAlpha = 1;
       drawText(g, 'VOLTAR AO MENU PRINCIPAL?', W / 2, 70 * k, 18 * k, { align: 'center', color: '#e9dcc0' });
-      drawText(g, 'o progresso desta partida será perdido', W / 2, 92 * k, 11 * k, { align: 'center', color: '#a89878' });
+      drawText(g, 'o progresso fica salvo para CONTINUAR', W / 2, 92 * k, 11 * k, { align: 'center', color: '#a89878' });
       this._list(g, W, H, k, 124 * k);
       help('DIRECIONAL escolher   A confirmar   B voltar', '↑↓ escolher   ENTER confirmar   ESC voltar', '');
       return;
@@ -178,11 +202,12 @@ export class Menu {
 
     if (this.screen === 'chapters') {
       panel(g, W / 2 - 150 * k, 20 * k, 300 * k, 200 * k, 0.78);
-      drawText(g, 'CAPÍTULOS', W / 2, 26 * k, 20 * k, { align: 'center', color: '#f2c879' });
-      const items = this.items(), step = Math.min(15, 160 / items.length) * k;
+      drawText(g, 'CAPÍTULOS', W / 2, 24 * k, 18 * k, { align: 'center', color: '#f2c879' });
+      drawText(g, statusLine(this.saved), W / 2, 42 * k, 9 * k, { align: 'center', color: '#a89878' });
+      const items = this.items(), step = Math.min(15, 150 / items.length) * k;
       items.forEach((it, i) => {
-        const y = 52 * k + i * step, on = i === this.sel;
-        const s2 = drawText(g, it.label, W / 2, y, 13 * k, { align: 'center', color: on ? '#f2c879' : '#c8b898' });
+        const y = 56 * k + i * step, on = i === this.sel;
+        const s2 = drawText(g, it.label, W / 2, y, 12 * k, { align: 'center', color: it.locked ? (on ? '#8a7a60' : '#5e5444') : on ? '#f2c879' : '#c8b898' });
         if (on) drawText(g, '▶', W / 2 - s2.w / 2 - 12 * k, y, 13 * k, { color: '#f2c879' });
         this.rects.push([W / 2 - s2.w / 2 - 14 * k, y, s2.w + 28 * k, step]);
       });

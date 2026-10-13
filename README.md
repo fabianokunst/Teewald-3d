@@ -93,10 +93,24 @@ morcegos, fantasmas, ETs, conforme o capítulo). Derrotadas, às vezes largam mu
 cuca ou querosene. Cada capítulo termina com criaturas derrotadas, quedas, tempo e
 uma avaliação (S, A, B, C). Morrendo, o jogador volta ao último ponto de retorno.
 
-O progresso é salvo no navegador ao começar cada capítulo (com o inventário). No
-menu principal aparecem **CONTINUAR** (do capítulo onde parou) e **CAPÍTULOS**
-(qualquer capítulo já liberado). Para testes: `?chapter=5` na URL começa direto
-num capítulo.
+### Salvamento e capítulos
+
+O status do jogador fica salvo no navegador (localStorage, chave `teewald.save.v1`):
+vida, armas, munição, itens e arma branca, o capítulo e a **etapa** onde parou, a
+posição (ou o último ponto de retorno, se houver criatura por perto), se está dentro
+da fábrica, da cripta ou da gruta, e o que já foi feito na etapa (objetos da Lúcia,
+velas acesas, ninhos queimados, cristais quebrados). Salva sozinho ao trocar de
+etapa, em cada ponto de retorno, a cada 20 s, ao cair e ao fechar ou trocar de aba;
+um ícone de disquete com PROGRESSO SALVO aparece no canto.
+
+- **CONTINUAR** volta exatamente para onde parou. Lutas com chefe recomeçam pela
+  chegada à arena.
+- **CAPÍTULOS** mostra os dez: os liberados com a melhor nota (S, A, B, C) e os outros
+  bloqueados, mais o tempo de jogo, as criaturas derrotadas e as quedas somadas.
+  Dali dá para **apagar o progresso** (pede confirmação).
+- Sair para o menu pela pausa não perde nada.
+
+Para testes: `?chapter=5` na URL começa direto num capítulo.
 
 Arquivos: `src/game/campaign.js` (objetivos, conversas, narração, cenas de câmera,
 ondas, criaturas soltas, pontos de retorno, cartelas, salvamento) e
