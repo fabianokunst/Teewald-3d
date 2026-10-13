@@ -1,7 +1,7 @@
 // Sons da pistola e dos alvos, sintetizados com WebAudio (sem arquivos),
 // usando o contexto e o ruído do Audio do jogo.
 
-function noise(a, t, dur, { type = 'lowpass', f = 1000, f1 = null, q = 0.7, vol = 0.3, attack = 0.001, out = null } = {}) {
+export function noise(a, t, dur, { type = 'lowpass', f = 1000, f1 = null, q = 0.7, vol = 0.3, attack = 0.001, out = null } = {}) {
   const c = a.ctx, src = c.createBufferSource();
   src.buffer = a.white;
   const flt = c.createBiquadFilter();
@@ -16,7 +16,7 @@ function noise(a, t, dur, { type = 'lowpass', f = 1000, f1 = null, q = 0.7, vol 
   src.start(t, Math.random() * 1.5, dur + 0.05);
 }
 
-function osc(a, t, dur, { type = 'sine', f = 440, f1 = null, vol = 0.1, out = null } = {}) {
+export function osc(a, t, dur, { type = 'sine', f = 440, f1 = null, vol = 0.1, out = null } = {}) {
   const c = a.ctx, o = c.createOscillator(), g = c.createGain();
   o.type = type;
   o.frequency.setValueAtTime(f, t);
@@ -131,5 +131,108 @@ export const GunAudio = {
     const t = a.ctx.currentTime;
     osc(a, t, 0.5, { type: 'triangle', f: 1320, vol: 0.06 });
     osc(a, t + 0.12, 0.6, { type: 'triangle', f: 1760, vol: 0.05 });
+  },
+  // eco do vale para os tiros (devolve o barramento)
+  _echoBus(a, delay = 0.32, fbk = 0.32, wetK = 0.35) {
+    const c = a.ctx;
+    const dl = c.createDelay(1), fb = c.createGain(), lp = c.createBiquadFilter(), wet = c.createGain();
+    dl.delayTime.value = delay; fb.gain.value = fbk; lp.type = 'lowpass'; lp.frequency.value = 1000; wet.gain.value = wetK;
+    dl.connect(lp).connect(fb).connect(dl);
+    lp.connect(wet).connect(a.master);
+    const bus = c.createGain(); bus.gain.value = 1;
+    bus.connect(a.master); bus.connect(dl);
+    setTimeout(() => { try { bus.disconnect(); dl.disconnect(); lp.disconnect(); fb.disconnect(); wet.disconnect(); } catch (e) { /* já desligado */ } }, 3200);
+    return bus;
+  },
+
+  // espingarda: estrondo grave e longo
+  shotgun(a) {
+    if (!this.ok(a)) return;
+    const t = a.ctx.currentTime, bus = this._echoBus(a, 0.38, 0.38, 0.45);
+    noise(a, t, 0.55, { f: 2400, f1: 220, vol: 0.75, out: bus });
+    noise(a, t, 0.07, { type: 'highpass', f: 2000, vol: 0.35, out: bus });
+    osc(a, t, 0.32, { f: 110, f1: 32, vol: 0.7, out: bus });
+  },
+  // abrir a espingarda e enfiar os cartuchos
+  breakOpen(a, part) {
+    if (!this.ok(a)) return;
+    const t = a.ctx.currentTime;
+    if (part === 'open') { noise(a, t, 0.06, { type: 'bandpass', f: 1300, q: 2, vol: 0.22 }); osc(a, t, 0.05, { type: 'triangle', f: 600, vol: 0.06 }); }
+    if (part === 'shell') noise(a, t, 0.05, { type: 'bandpass', f: 900, q: 3, vol: 0.18 });
+    if (part === 'close') { noise(a, t, 0.05, { type: 'bandpass', f: 2200, q: 2, vol: 0.25 }); noise(a, t + 0.04, 0.04, { type: 'bandpass', f: 1500, q: 3, vol: 0.16 }); }
+  },
+  // revólver: estalo seco
+  revolver(a) {
+    if (!this.ok(a)) return;
+    const t = a.ctx.currentTime, bus = this._echoBus(a, 0.3, 0.3, 0.3);
+    noise(a, t, 0.28, { f: 4200, f1: 600, vol: 0.6, out: bus });
+    osc(a, t, 0.16, { f: 190, f1: 50, vol: 0.45, out: bus });
+    osc(a, t, 0.05, { type: 'square', f: 2600, f1: 1200, vol: 0.06, out: bus });
+  },
+  // raio: zumbido que desce, com chiado
+  ray(a) {
+    if (!this.ok(a)) return;
+    const t = a.ctx.currentTime;
+    osc(a, t, 0.35, { type: 'sawtooth', f: 1800, f1: 160, vol: 0.09 });
+    osc(a, t, 0.3, { type: 'square', f: 900, f1: 90, vol: 0.05 });
+    noise(a, t, 0.2, { type: 'bandpass', f: 3000, f1: 800, q: 2, vol: 0.12 });
+  },
+  rayHit(a, d = 0) {
+    if (!this.ok(a)) return;
+    const t = a.ctx.currentTime, v = fall(d);
+    if (v <= 0) return;
+    noise(a, t, 0.25, { type: 'bandpass', f: 1600, f1: 300, q: 1.5, vol: 0.2 * v });
+    osc(a, t, 0.2, { type: 'triangle', f: 500, f1: 80, vol: 0.08 * v });
+  },
+  // dardo: sopro de ar comprimido
+  dart(a) {
+    if (!this.ok(a)) return;
+    const t = a.ctx.currentTime;
+    noise(a, t, 0.12, { type: 'bandpass', f: 1400, f1: 700, q: 1, vol: 0.3 });
+    osc(a, t, 0.05, { type: 'triangle', f: 300, vol: 0.08 });
+  },
+  // lampião: chama soprando e crepitando
+  flame(a) {
+    if (!this.ok(a)) return;
+    const t = a.ctx.currentTime;
+    noise(a, t, 0.18, { type: 'bandpass', f: 700 + Math.random() * 300, q: 0.8, vol: 0.08 });
+    if (Math.random() < 0.4) noise(a, t + Math.random() * 0.1, 0.02, { type: 'highpass', f: 3000, vol: 0.08 });
+  },
+  // golpe no ar
+  swing(a, heavy = false) {
+    if (!this.ok(a)) return;
+    const t = a.ctx.currentTime;
+    noise(a, t, heavy ? 0.24 : 0.14, { type: 'bandpass', f: heavy ? 500 : 900, f1: heavy ? 1500 : 2400, q: 1.2, vol: heavy ? 0.16 : 0.1, attack: 0.04 });
+  },
+  // golpe acertando: 'punch' | 'wood' | 'metal' | 'blade' | 'stone'
+  thump(a, kind = 'punch', k = 1) {
+    if (!this.ok(a)) return;
+    const t = a.ctx.currentTime;
+    if (kind === 'metal') { osc(a, t, 0.25, { type: 'triangle', f: 1300, f1: 900, vol: 0.07 * k }); noise(a, t, 0.08, { f: 1600, vol: 0.3 * k }); }
+    else if (kind === 'blade') { noise(a, t, 0.12, { type: 'highpass', f: 2200, vol: 0.22 * k }); noise(a, t, 0.1, { f: 500, vol: 0.25 * k }); }
+    else if (kind === 'wood') { noise(a, t, 0.09, { type: 'bandpass', f: 600, q: 1.5, vol: 0.4 * k }); osc(a, t, 0.08, { f: 180, f1: 90, vol: 0.2 * k }); }
+    else if (kind === 'stone') { noise(a, t, 0.1, { type: 'bandpass', f: 900, q: 1, vol: 0.35 * k }); }
+    else { noise(a, t, 0.08, { f: 700, vol: 0.4 * k }); osc(a, t, 0.1, { f: 140, f1: 60, vol: 0.3 * k }); }
+  },
+  // arma branca quebrando
+  breakWeapon(a) {
+    if (!this.ok(a)) return;
+    const t = a.ctx.currentTime;
+    noise(a, t, 0.18, { type: 'bandpass', f: 1200, q: 0.8, vol: 0.35 });
+    noise(a, t + 0.05, 0.12, { type: 'highpass', f: 2500, vol: 0.18 });
+  },
+  // explosão de dinamite: estalo, ronco e eco
+  explosion(a, d = 0) {
+    if (!this.ok(a)) return;
+    const t = a.ctx.currentTime, v = Math.max(0.15, 1 - d / 140), bus = this._echoBus(a, 0.45, 0.42, 0.5);
+    noise(a, t, 1.4, { f: 1800, f1: 60, vol: 0.9 * v, out: bus });
+    noise(a, t, 0.1, { type: 'highpass', f: 1500, vol: 0.4 * v, out: bus });
+    osc(a, t, 0.8, { f: 70, f1: 22, vol: 0.9 * v, out: bus });
+  },
+  // pavio aceso
+  fuse(a) {
+    if (!this.ok(a)) return;
+    const t = a.ctx.currentTime;
+    noise(a, t, 0.5, { type: 'highpass', f: 3500, vol: 0.06, attack: 0.05 });
   },
 };

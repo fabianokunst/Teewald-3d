@@ -48,7 +48,7 @@ export class Menu {
   }
 
   open(screen) {
-    if (screen === 'options' || screen === 'credits') this.returnTo = this.screen === 'pause' ? 'pause' : 'main';
+    if (screen === 'options' || screen === 'credits' || screen === 'chapters') this.returnTo = this.screen === 'pause' ? 'pause' : 'main';
     if (screen === 'confirm') this.returnTo = 'pause';
     // nos créditos começa no VOLTAR, para ENTER não abrir o site sem querer
     this.screen = screen; this.sel = screen === 'credits' ? 1 : 0; this.t = 0;
@@ -58,8 +58,26 @@ export class Menu {
     return OPTIONS.filter(o => (!o.touchOnly || this.input.touchPrimary) && (!o.needs || o.needs(this.settings)));
   }
 
+  // progresso salvo (capítulo onde parou e o maior capítulo já liberado)
+  get saved() { return this.campaign?.save || { chapter: 1, unlocked: 1 }; }
+
   items() {
-    if (this.screen === 'main') return [{ label: 'NOVO JOGO', act: 'newgame' }, { label: 'OPÇÕES', act: 'options' }, { label: 'CRÉDITOS', act: 'credits' }];
+    if (this.screen === 'main') {
+      const sv = this.saved, list = [];
+      if ((sv.chapter || 1) > 1) list.push({ label: 'CONTINUAR  · CAP. ' + sv.chapter, act: 'continue' });
+      list.push({ label: 'NOVO JOGO', act: 'newgame' });
+      if ((sv.unlocked || 1) > 1) list.push({ label: 'CAPÍTULOS', act: 'chapters' });
+      list.push({ label: 'OPÇÕES', act: 'options' }, { label: 'CRÉDITOS', act: 'credits' });
+      return list;
+    }
+    if (this.screen === 'chapters') {
+      const n = Math.min(10, this.saved.unlocked || 1), t = this.chapterTitles || [];
+      const list = [];
+      const rk = this.saved.ranks || {};
+      for (let i = 1; i <= n; i++) list.push({ label: i + '. ' + (t[i] || 'Capítulo ' + i).toUpperCase() + (rk[i] ? '  [' + rk[i] + ']' : ''), act: 'chapter:' + i });
+      list.push({ label: 'VOLTAR', act: 'back' });
+      return list;
+    }
     if (this.screen === 'pause') return [{ label: 'CONTINUAR', act: 'resume' }, { label: 'OPÇÕES', act: 'options' }, { label: 'MENU PRINCIPAL', act: 'confirm' }];
     // sair da partida pede confirmação (o item marcado de início é o seguro)
     if (this.screen === 'confirm') return [{ label: 'CONTINUAR JOGANDO', act: 'back' }, { label: 'SAIR PARA O MENU', act: 'quit' }];
@@ -80,7 +98,7 @@ export class Menu {
   // item de ação escolhido (teclado, controle, mouse ou toque); devolve a ação do jogo
   activate(it) {
     this.audio.menuOk();
-    if (it.act === 'options' || it.act === 'credits' || it.act === 'confirm') { this.open(it.act); return null; }
+    if (it.act === 'options' || it.act === 'credits' || it.act === 'confirm' || it.act === 'chapters') { this.open(it.act); return null; }
     if (it.act === 'back') { this.audio.menuBack(); this.open(this.returnTo); return null; }
     if (it.act === 'site') { window.open(SITE.url, '_blank', 'noopener'); return null; }
     return it.act;
@@ -124,7 +142,7 @@ export class Menu {
       return this.activate(it);
     }
     if (I.back()) {
-      if (this.screen === 'options' || this.screen === 'credits' || this.screen === 'confirm') { this.audio.menuBack(); this.open(this.returnTo); }
+      if (this.screen === 'options' || this.screen === 'credits' || this.screen === 'confirm' || this.screen === 'chapters') { this.audio.menuBack(); this.open(this.returnTo); }
       else if (this.screen === 'pause') { this.audio.menuBack(); return 'resume'; }
     }
     return null;
@@ -158,6 +176,19 @@ export class Menu {
     grd.addColorStop(0, 'rgba(0,0,0,0.55)'); grd.addColorStop(0.45, 'rgba(0,0,0,0.05)'); grd.addColorStop(0.7, 'rgba(0,0,0,0.25)'); grd.addColorStop(1, 'rgba(0,0,0,0.75)');
     g.fillStyle = grd; g.fillRect(0, 0, W, H);
 
+    if (this.screen === 'chapters') {
+      panel(g, W / 2 - 150 * k, 20 * k, 300 * k, 200 * k, 0.78);
+      drawText(g, 'CAPÍTULOS', W / 2, 26 * k, 20 * k, { align: 'center', color: '#f2c879' });
+      const items = this.items(), step = Math.min(15, 160 / items.length) * k;
+      items.forEach((it, i) => {
+        const y = 52 * k + i * step, on = i === this.sel;
+        const s2 = drawText(g, it.label, W / 2, y, 13 * k, { align: 'center', color: on ? '#f2c879' : '#c8b898' });
+        if (on) drawText(g, '▶', W / 2 - s2.w / 2 - 12 * k, y, 13 * k, { color: '#f2c879' });
+        this.rects.push([W / 2 - s2.w / 2 - 14 * k, y, s2.w + 28 * k, step]);
+      });
+      help('↑↓ escolher   A começar   B voltar', '↑↓ escolher   ENTER começar   ESC voltar', '');
+      return;
+    }
     if (this.screen === 'options' || this.screen === 'credits') {
       panel(g, W / 2 - 150 * k, 20 * k, 300 * k, 200 * k, 0.78);
       drawText(g, this.screen === 'options' ? 'OPÇÕES' : 'CRÉDITOS', W / 2, 26 * k, 20 * k, { align: 'center', color: '#f2c879' });
@@ -186,15 +217,17 @@ export class Menu {
       const prompt = pad ? 'PRESSIONE START' : touch ? 'TOQUE PARA COMEÇAR' : 'PRESSIONE ENTER';
       if (Math.floor(this.t * 1.6) % 2 === 0) drawText(g, prompt, W / 2, 168 * k, 16 * k, { align: 'center', color: '#f2e6c8' });
     } else {
-      this._list(g, W, H, k, 140 * k);
+      const n = this.items().length;
+      this._list(g, W, H, k, (n > 3 ? 132 - (n - 3) * 7 : 140) * k);
       help('DIRECIONAL escolher   A confirmar', '↑↓ escolher   ENTER confirmar', 'TOQUE para escolher');
     }
     drawText(g, 'v0.1', W - 6 * k, H - 14 * k, 10 * k, { align: 'right', color: '#a89878' });
   }
 
   _list(g, W, H, k, y0) {
-    this.items().forEach((it, i) => {
-      const y = y0 + i * 17 * k, on = i === this.sel;
+    const items = this.items(), step = items.length > 3 ? 15 : 17;
+    items.forEach((it, i) => {
+      const y = y0 + i * step * k, on = i === this.sel;
       const s = drawText(g, it.label, W / 2, y, 16 * k, { align: 'center', color: on ? '#f2c879' : '#b8a888' });
       if (on) drawText(g, '▶', W / 2 - s.w / 2 - 12 * k, y, 16 * k, { color: '#f2c879' });
       this.rects.push([W / 2 - s.w / 2 - 14 * k, y, s.w + 28 * k, 16 * k]);

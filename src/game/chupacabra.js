@@ -212,6 +212,21 @@ export class Chupacabra {
     this._t = new THREE.Vector3(); this._t2 = new THREE.Vector3();
     this.P = { crouch: 0, lean: 0.55, armF: 0.4, armOut: 0.15, elbow: 0.9, mouth: 0, headX: 0, headY: 0, tuck: 0 };
     this.phase = 0; this.lift = 0;
+    // interface do combate (a missão atualiza o bicho; o combate só testa golpes)
+    this.radius = 0.42; this.height = 1.25; this.external = true; this.name = 'CHUPACABRAS';
+  }
+
+  get dead() { return !this.active || this.state === 'gone' || this.state === 'flee' || this.state === 'off'; }
+  get untargetable() { return this.dead; }
+  get maxHp() { return CHUPA_HP; }
+
+  // golpe, pedra, luz, explosão (vindo do sistema de combate)
+  damage(amount, info = {}) {
+    if (this.dead) return false;
+    if (info.kind === 'light' || info.kind === 'dart') return false;
+    const p = info.p || this.aimPoint() || this.pos;
+    this.hit({ owner: this, part: info.part || 'body' }, info.dir || new THREE.Vector3(0, 0, 1), p.clone ? p.clone() : new THREE.Vector3(p.x, p.y, p.z), info.from, { dmg: amount, kind: info.kind });
+    return true;
   }
 
   _mesh(geo, mat = this.skin) { const m = new THREE.Mesh(geo, mat); m.frustumCulled = false; return m; }
@@ -393,9 +408,10 @@ export class Chupacabra {
     return this.bones.torso.localToWorld(this._t2.set(0, 0.3, 0.02));
   }
 
-  hit(T, dir, p, from) {
+  hit(T, dir, p, from, w = null) {
     if (!this.active || this.state === 'flee' || this.state === 'gone') return;
-    const dmg = T.part === 'head' ? 2 : 1;
+    if (w?.kind === 'light' || w?.kind === 'dart') return;
+    const dmg = (w?.dmg ?? 1) * (T.part === 'head' ? 2 : 1);
     this.hp -= dmg;
     this.hits = (this.hits || 0) + 1;
     const dist = from ? from.distanceTo(p) : 10;

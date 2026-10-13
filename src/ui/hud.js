@@ -52,9 +52,9 @@ export class Hud {
     if (this.hintT > 0) {
       const t = this.hintT, a = t < 1 ? t : t > 9 ? Math.max(0, (11 - t) / 2) : 1;
       const lines = this.customHints?.[o.device] || {
-        pad: ['ANALÓGICO mover   B correr   A pular/conversar', 'ANALÓGICO DIR. câmera   R3 centralizar   ↑↓ zoom', 'Y inventário   SELECT mapa   START pausa'],
-        touch: ['ESQUERDA mover   DIREITA girar câmera', 'PINÇA zoom   TOQUE DUPLO centraliza', 'INV inventário'],
-        keyboard: ['WASD mover   SHIFT correr   ESPAÇO pular', 'MOUSE câmera (clique)   RODA zoom   ESC pausa', 'I inventário   M mapa   F conversar'],
+        pad: ['ANALÓGICO mover   B correr (toque: esquiva)   A pular/pegar', 'RB golpe   R2 atirar   L2 mirar   ◀▶ armas   ↑↓ zoom', 'Y inventário   SELECT mapa   START pausa'],
+        touch: ['ESQUERDA mover   DIREITA girar câmera', 'GOLPE soca   ESQUIVA desvia   ARMA troca', 'PINÇA zoom   INV inventário'],
+        keyboard: ['WASD mover   SHIFT correr   ESPAÇO pular   C esquiva', 'MOUSE câmera   CLIQUE golpe/tiro   V golpe   RODA zoom', 'I inventário   1-8 armas   H cura   F pegar/falar   ESC pausa'],
       }[o.device] || [];
       const hx = (W - (o.rightPad || 0)) / 2 + 4 * k, y0 = H - (20 + lines.length * 12) * k;
       lines.forEach((l, i) => drawText(g, l, hx, y0 + i * 12 * k, 11 * k, { align: 'center', alpha: a, color: '#e8dcc0' }));

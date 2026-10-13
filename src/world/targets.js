@@ -251,14 +251,16 @@ export class Targets {
       if (!best || th < best.t) best = { t: th, target: T };
     }
     for (const X of this.extra) {
+      if (X.dead || X.removed) continue;
       const h = X.raycast(o, d, maxD);
       if (h && (!best || h.t < best.t)) best = h;
     }
     return best;
   }
 
-  hit(T, dir, p, from) {
-    if (T.owner) { T.owner.hit(T, dir, p, from); return; }
+  // w: { kind, dmg } da arma (bala, prata, raio, dardo...)
+  hit(T, dir, p, from, w = null) {
+    if (T.owner) { T.owner.hit(T, dir, p, from, w); return; }
     const { effects, audio } = this.deps;
     const dist = from ? from.distanceTo(p) : 0;
     if (T.type === 'bottle') {

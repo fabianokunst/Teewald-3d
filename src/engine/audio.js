@@ -42,8 +42,83 @@ export class Audio {
     }
     df.connect(dg).connect(this.master);
     this.droneGain = dg;
+    // chuva: chiado largo + batidas graves (abafada nos interiores)
+    const rn = c.createBufferSource(); rn.buffer = white; rn.loop = true;
+    const rnf = c.createBiquadFilter(); rnf.type = 'bandpass'; rnf.frequency.value = 2400; rnf.Q.value = 0.35;
+    const rnl = c.createBiquadFilter(); rnl.type = 'lowpass'; rnl.frequency.value = 9000;
+    const rng = c.createGain(); rng.gain.value = 0;
+    rn.connect(rnf).connect(rnl).connect(rng).connect(this.master); rn.start();
+    this.rainGain = rng; this.rainLow = rnl;
+    // tensão das lutas: baixo pulsando como batimento + cordas dissonantes no chefe
+    const tg = c.createGain(); tg.gain.value = 0;
+    const tl = c.createBiquadFilter(); tl.type = 'lowpass'; tl.frequency.value = 220;
+    const pulse = c.createGain(); pulse.gain.value = 0.5;
+    const lfo = c.createOscillator(), lfoG = c.createGain(); lfo.frequency.value = 1.9; lfoG.gain.value = 0.5;
+    lfo.connect(lfoG).connect(pulse.gain); lfo.start();
+    for (const f of [55, 58.27]) { const o = c.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f; o.connect(tl); o.start(); }
+    tl.connect(pulse).connect(tg).connect(this.master);
+    const bg = c.createGain(); bg.gain.value = 0;
+    const bl = c.createBiquadFilter(); bl.type = 'bandpass'; bl.frequency.value = 700; bl.Q.value = 0.8;
+    const trem = c.createOscillator(), tremG = c.createGain(); trem.frequency.value = 7; tremG.gain.value = 0.35;
+    const bmod = c.createGain(); bmod.gain.value = 0.6; trem.connect(tremG).connect(bmod.gain); trem.start();
+    for (const f of [220, 233.08, 329.6]) { const o = c.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f; o.connect(bl); o.start(); }
+    bl.connect(bmod).connect(bg).connect(this.master);
+    this.tensionGain = tg; this.bossGain = bg; this.lfo = lfo;
+    this.tension = this.tension || { k: 0, boss: 0 };
     this.ambience = false;
     this.nextOmen = 6;
+    this.nextCricket = 1;
+    this.weather = this.weather || { rain: 0, storm: 0, night: 0, crickets: 0, wind: 0.2, indoor: 0 };
+  }
+
+  // tensão da música: k 0..1 (criaturas por perto), boss 0..1 (luta com chefe)
+  setTension(k, boss = 0) { this.tension = { k, boss }; }
+
+  // clima atual (world/atmosphere.js chama a cada quadro)
+  setWeather(w) { this.weather = w; }
+
+  // trovão: estalo seco (perto) e ronco grave que rola por segundos
+  thunder(k = 1, indoor = false) {
+    if (!this.ctx) return;
+    const c = this.ctx, t = c.currentTime, v = k * (indoor ? 0.5 : 1);
+    const src = c.createBufferSource(); src.buffer = this.noise;
+    const f = c.createBiquadFilter(); f.type = 'lowpass'; f.frequency.setValueAtTime(indoor ? 260 : 900 * k, t); f.frequency.exponentialRampToValueAtTime(90, t + 3.5);
+    const g = c.createGain();
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.5 * v, t + 0.06);
+    g.gain.exponentialRampToValueAtTime(0.25 * v, t + 0.8); g.gain.exponentialRampToValueAtTime(0.0001, t + 4.5);
+    src.connect(f).connect(g).connect(this.master);
+    src.start(t, Math.random(), 4.6);
+    if (k > 0.8 && !indoor) {
+      const s2 = c.createBufferSource(); s2.buffer = this.white;
+      const f2 = c.createBiquadFilter(); f2.type = 'highpass'; f2.frequency.value = 1200;
+      const g2 = c.createGain(); g2.gain.setValueAtTime(0.25, t); g2.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+      s2.connect(f2).connect(g2).connect(this.master); s2.start(t, 0, 0.4);
+    }
+  }
+
+  // grilo: três trinados agudos
+  cricket() {
+    const c = this.ctx, t = c.currentTime, f = 4200 + Math.random() * 600, v = 0.006 + Math.random() * 0.006;
+    for (let i = 0; i < 3; i++) {
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = 'sine'; o.frequency.value = f;
+      const t0 = t + i * 0.07;
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(v, t0 + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.05);
+      o.connect(g).connect(this.master); o.start(t0); o.stop(t0 + 0.06);
+    }
+  }
+
+  // coruja buraqueira ao longe: dois pios curtos
+  owl() {
+    const c = this.ctx, t = c.currentTime;
+    for (let i = 0; i < 2; i++) {
+      const o = c.createOscillator(), g = c.createGain(), f = c.createBiquadFilter();
+      o.type = 'triangle'; const t0 = t + i * 0.32;
+      o.frequency.setValueAtTime(620, t0); o.frequency.exponentialRampToValueAtTime(470, t0 + 0.22);
+      f.type = 'lowpass'; f.frequency.value = 1400;
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.02, t0 + 0.04); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.26);
+      o.connect(f).connect(g).connect(this.master); o.start(t0); o.stop(t0 + 0.3);
+    }
   }
 
   // app em segundo plano: silencia; ao voltar, retoma (no iOS pode precisar de um toque)
@@ -61,15 +136,28 @@ export class Audio {
     if (!this.ctx) return;
     const now = this.ctx.currentTime;
     // vento em rajadas mais longas e frias
-    const target = this.ambience ? 0.2 + Math.sin(t * 0.09) * 0.08 + Math.sin(t * 0.37) * 0.04 : 0.06;
+    const W = this.weather, inside = W.indoor > 0.5;
+    const windK = (0.6 + W.wind * 1.6) * (inside ? 0.25 : 1);
+    const target = this.ambience ? (0.2 + Math.sin(t * 0.09) * 0.08 + Math.sin(t * 0.37) * 0.04) * windK : 0.06;
     this.windGain.gain.setTargetAtTime(target, now, 0.5);
-    this.windFilter.frequency.setTargetAtTime(320 + Math.sin(t * 0.21) * 120, now, 0.5);
-    const rgain = this.ambience ? Math.max(0, 1 - riverDist / 28) * 0.12 : 0;
+    this.windFilter.frequency.setTargetAtTime(320 + Math.sin(t * 0.21) * 120 + W.wind * 200, now, 0.5);
+    const rgain = this.ambience && !inside ? Math.max(0, 1 - riverDist / 28) * 0.12 : 0;
     this.riverGain.gain.setTargetAtTime(rgain, now, 0.3);
-    this.droneGain.gain.setTargetAtTime(this.ambience ? 0.07 + Math.sin(t * 0.06) * 0.03 : 0.035, now, 1.5);
+    this.droneGain.gain.setTargetAtTime(this.ambience ? 0.07 + Math.sin(t * 0.06) * 0.03 + W.night * 0.03 : 0.035, now, 1.5);
+    this.rainGain.gain.setTargetAtTime(this.ambience ? W.rain * (inside ? 0.06 : 0.13) : 0, now, 0.6);
+    const Tn = this.tension || { k: 0, boss: 0 };
+    this.tensionGain.gain.setTargetAtTime(this.ambience ? Tn.k * 0.07 : 0, now, Tn.k > 0.1 ? 0.4 : 2.5);
+    this.bossGain.gain.setTargetAtTime(this.ambience ? Tn.boss * 0.012 : 0, now, Tn.boss > 0.1 ? 0.8 : 2.5);
+    this.lfo.frequency.setTargetAtTime(1.6 + Tn.k * 0.9 + Tn.boss * 0.6, now, 1);
+    this.rainLow.frequency.setTargetAtTime(inside ? 700 : 9000, now, 0.3);
     if (this.ambience) {
       this.nextOmen -= dt;
-      if (this.nextOmen < 0) { this.omen(); this.nextOmen = 10 + Math.random() * 16; }
+      if (this.nextOmen < 0) { this.omen(); this.nextOmen = (W.night > 0.5 ? 7 : 10) + Math.random() * 16; }
+      // grilos nas noites sem chuva
+      if (W.crickets > 0.05 && W.rain < 0.3 && !inside) {
+        this.nextCricket -= dt * W.crickets;
+        if (this.nextCricket < 0) { this.cricket(); this.nextCricket = 0.4 + Math.random() * 1.6; }
+      }
     }
   }
 
@@ -89,7 +177,10 @@ export class Audio {
 
   // um som ao longe, de vez em quando
   omen() {
-    const r = Math.random();
+    const r = Math.random(), W = this.weather || {};
+    if (W.indoor > 0.5) { if (r < 0.5) this.bell(); return; }
+    // de noite: coruja e uivos no lugar dos corvos
+    if (W.night > 0.5) { if (r < 0.4) this.owl(); else if (r < 0.85) this.howl(); else this.bell(); return; }
     if (r < 0.5) this.crow(); else if (r < 0.82) this.howl(); else this.bell();
   }
 
@@ -110,6 +201,7 @@ export class Audio {
 
   // cachorro uivando longe (sobe, segura e cai, com tremido)
   howl() {
+    if (!this.ctx) return;
     const c = this.ctx, t = c.currentTime, k = 0.85 + Math.random() * 0.3;
     const o = c.createOscillator(), lfo = c.createOscillator(), lg = c.createGain(), f = c.createBiquadFilter(), g = c.createGain();
     o.type = 'triangle';
@@ -125,6 +217,7 @@ export class Audio {
 
   // uma badalada do sino da igreja, abafada pela neblina
   bell() {
+    if (!this.ctx) return;
     const c = this.ctx, t = c.currentTime;
     const f = c.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 1200; f.connect(this.master);
     for (const [m, v] of [[1, 0.03], [2.0, 0.014], [2.4, 0.01], [3.0, 0.007], [0.5, 0.012]]) {

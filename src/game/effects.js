@@ -6,7 +6,7 @@ import { canvasTex, makeCanvas, processPixels } from '../engine/textures.js';
 // de bala nas superfícies e o clarão do cano. Partículas são quadrados virados
 // para a câmera que encolhem até sumir (sem transparência, como no PS1).
 
-const MAX_P = 220, MAX_D = 60;
+const MAX_P = 640, MAX_D = 60;
 
 // cores das partículas por superfície
 const DUST = {

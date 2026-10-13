@@ -131,7 +131,16 @@ export class Renderer {
     gl.clear(true, true, false);
     ov.camera.aspect = w / h;
     ov.camera.updateProjectionMatrix();
+    // a prévia não recebe as luzes dinâmicas da cidade (lanterna, postes)
+    // e usa sempre a luz de dia (de noite o item ficaria preto)
+    const lights = G.uLights.value, saved = lights.map(l => l.w);
+    for (const l of lights) l.w = 0;
+    const keep = [G.uSunColor.value.clone(), G.uAmbSky.value.clone(), G.uAmbGround.value.clone(), G.uSunDir.value.clone()];
+    G.uSunColor.value.setRGB(0.5, 0.49, 0.47); G.uAmbSky.value.setRGB(0.47, 0.49, 0.53); G.uAmbGround.value.setRGB(0.3, 0.28, 0.27);
+    if (ov.sunDir) G.uSunDir.value.copy(ov.sunDir);
     gl.render(ov.scene, ov.camera);
+    lights.forEach((l, i) => { l.w = saved[i]; });
+    G.uSunColor.value.copy(keep[0]); G.uAmbSky.value.copy(keep[1]); G.uAmbGround.value.copy(keep[2]); G.uSunDir.value.copy(keep[3]);
     rt.viewport.set(0, 0, this.W, this.H); rt.scissor.set(0, 0, this.W, this.H); rt.scissorTest = false;
     gl.setClearColor(0x000000, 1);
   }

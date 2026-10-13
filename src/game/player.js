@@ -17,6 +17,9 @@ export class Player {
     this.radius = 0.32;
     this.auto = null; // caminhada automática (abertura)
     this.aimYaw = null; // direção da mira (a arma define enquanto mira)
+    this.moveScale = 1;   // golpes e esquiva deixam o passo mais curto
+    this.lockHeading = false;   // durante um golpe o corpo não vira com o analógico
+    this.noJump = false;
     character.onStep = run => this.audio.step(this.surface(), run);
   }
 
@@ -63,10 +66,10 @@ export class Player {
     const aiming = this.aimYaw != null && !this.auto;
     if (aiming) run = false;
     // analógico: pouco inclinado anda devagar; tecla SHIFT / botão B corre
-    const target = mag > 0.05 ? (run ? 7.2 : aiming ? 1.3 : 1.75) * mag : 0;
+    const target = mag > 0.05 ? (run ? 7.2 : aiming ? 1.3 : 1.75) * mag * this.moveScale : 0;
     const accel = target > this.speed ? (run ? 10 : 7) : 10;
     this.speed += Math.sign(target - this.speed) * Math.min(Math.abs(target - this.speed), accel * dt);
-    if (aiming || mag > 0.05) {
+    if ((aiming || mag > 0.05) && !this.lockHeading) {
       const want = aiming ? this.aimYaw : Math.atan2(dx, dz);
       let d = want - this.heading;
       while (d > Math.PI) d -= Math.PI * 2;
@@ -106,7 +109,7 @@ export class Player {
 
     // gravidade e chão
     const ground = this.ctx.groundAt(this.pos.x, this.pos.z, this.pos.y);
-    if (input && !this.auto && !aiming && this.grounded && input.jump()) { this.vel.y = 4.6; this.grounded = false; }
+    if (input && !this.auto && !aiming && !this.noJump && this.grounded && input.jump()) { this.vel.y = 4.6; this.grounded = false; }
     if (this.grounded) {
       if (ground < this.pos.y - 0.45) { this.grounded = false; this.vel.y = 0; }
       else this.pos.y += (ground - this.pos.y) * Math.min(1, dt * 18);

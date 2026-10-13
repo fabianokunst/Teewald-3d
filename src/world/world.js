@@ -80,18 +80,25 @@ export async function buildWorld(scene, onStep) {
   scene.add(ctx.leaves.mesh);
 
   // altura do chão para o jogador: terreno, ruas, calçadas, pisos e plataformas
+  ctx.indoor = null;   // interior atual (world/interiors.js)
   ctx.groundAt = (x, z, feetY) => {
+    if (ctx.indoor) {
+      const f = ctx.collision.floorAt(x, z, feetY + 0.45);
+      return f > -Infinity ? f : ctx.indoor.floorY;
+    }
     let y = ctx.surfaceAt(x, z);
     const fl = ctx.collision.floorAt(x, z, feetY + 0.45);
     if (fl > y) y = fl;
     return y;
   };
   ctx.isDeepWater = (x, z, y) => {
+    if (ctx.indoor) return false;
     const w = ctx.terrain.waterAt(x, z);
     return w && w.river.width > 5 && y < w.level + 0.2;
   };
-  ctx.placeName = (x, z) => ctx.zones.placeAt(x, z);
+  ctx.placeName = (x, z) => (ctx.indoor ? ctx.indoor.title : ctx.zones.placeAt(x, z));
   ctx.streetName = (x, z) => {
+    if (ctx.indoor) return null;
     const q = ctx.roads.index.nearest(x, z, d => d.name && d.rank >= 2);
     if (!q.seg || q.d > q.seg.data.hw + 4) return null;
     const n = q.seg.data.name;

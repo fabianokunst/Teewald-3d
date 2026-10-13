@@ -2,7 +2,11 @@
 
 Jogo de terror em terceira pessoa com visual de PlayStation 1, ambientado numa
 versão de Santa Maria do Herval (RS) no outono: neblina, céu encoberto e uma
-cidade com medo do que anda no mato. Roda no navegador (Three.js + Vite).
+cidade com medo do que anda no mato. São dez capítulos: o chupacabras, os cães de
+fogo, a moça da fábrica, os ETs de Varginha, a Fera da madrugada, o lobisomem, o
+cemitério em Finados, os morcegos-vampiro e a bruxa Otília, com luta corpo a corpo,
+armas especiais, noite, chuva, tempestade, neblina e lua cheia. Roda no navegador
+(Three.js + Vite).
 
 ## Como rodar
 
@@ -22,17 +26,21 @@ outros e objetos no meio da pista.
 | Ação | Teclado / mouse | Controle | Toque (celular/tablet) |
 |---|---|---|---|
 | Andar | WASD ou setas | analógico esquerdo | arrastar no lado esquerdo |
-| Correr | Shift | B / L3 / R2 | botão CORRER (liga/desliga) |
+| Correr | Shift | B (segurar) / L3 | botão CORRER (liga/desliga) |
 | Pular | Espaço | A | botão PULAR |
+| Esquiva | C ou Ctrl | B (toque rápido) | botão ESQUIVA |
 | Câmera | mouse (clique na tela para prender) · Q/E | analógico direito | arrastar no lado direito |
 | Centralizar câmera | — | R3 | toque duplo no lado direito |
 | Zoom | roda do mouse | direcional ↑↓ | pinça com dois dedos |
 | Conversar (perto de um morador) | F | A | botão FALAR sobre o morador |
-| Ler / examinar (cartaz, pistas) | F ou E | A | botão LER / EXAMINAR |
+| Ler / examinar / pegar / entrar | F ou E | A | botão sobre o objeto (LER, PEGAR, ENTRAR...) |
 | Inventário | I ou Tab | Y | botão INV |
-| Mirar (com a pistola na mão) | botão direito (segurar) | L2 ou LB (segurar) | botão MIRAR (liga/desliga) |
-| Atirar | botão esquerdo | R2 mirando · RB | botão ATIRAR |
-| Recarregar | R | X | botão REC |
+| Golpe (soco, arma branca, arremesso) | V · botão esquerdo sem arma de fogo | RB | botão GOLPE |
+| Trocar de arma | 1 a 8 (1 = mãos) | direcional ◀▶ | botão ARMA |
+| Comer / beber (cura) | H | inventário | inventário |
+| Mirar (com arma de fogo) | botão direito (segurar) | L2 ou LB (segurar) | botão MIRAR (liga/desliga) |
+| Atirar (segurar: luz do lampião) | botão esquerdo | R2 | botão ATIRAR |
+| Recarregar / reabastecer | R | X | botão REC |
 | Pausa | Esc ou P | Start | botão ❚❚ |
 | Minimapa (liga/desliga) | M | Select | Opções |
 | Tela cheia | F11 | — | botão ⛶ (Android e iPad) |
@@ -57,6 +65,82 @@ só do celular: **tamanho dos botões** (pequeno, médio, grande) e **vibração
 (Android). Sair da partida pela pausa pede confirmação. Em pé, o inventário
 mostra as ações do item em botões grandes na parte de baixo; em EXAMINAR,
 arrastar gira o item.
+
+## Campanha: a noite que não termina
+
+O jogo tem dez capítulos. O primeiro é a caçada ao chupacabras numa tarde de
+neblina. Depois dele, o sangue do bicho ferido escorre sobre um túmulo esquecido
+no mato: o da **Bruxa Otília** (Otília Kranz, a curandeira que os colonos enterraram
+viva em 1878 com uma cruz de ferro em cima). Ela acorda, e **o sol não nasce mais**
+em Teewald. As criaturas que aparecem pela cidade, cada lenda com o seu capítulo,
+são dela ou vêm atrás dela.
+
+| # | Capítulo | Clima | O que acontece | Arma especial (conseguir faz parte da missão) |
+|---|---|---|---|---|
+| 1 | O Chupacabras | tarde, neblina | cartaz, galinheiro, pegadas e a luta na clareira | pistola 9 mm |
+| 2 | Os Cães de Fogo | anoitecer → noite | o sino toca sozinho; cães em brasa; defender a igreja enquanto o padre toca o sino | espingarda de dois canos (armário dos atiradores, na Sociedade) |
+| 3 | A Moça da Fábrica | chuva | dentro da fábrica de calçados: achar a medalhinha, o sapato de noiva e o cartão-ponto da Lúcia, enfrentar o capataz e bater o ponto de saída que ela nunca bateu | lampião bento (sacristia da igreja) |
+| 4 | Luzes no Céu | tempestade | círculo queimado no campo, disco voador, ETs de Varginha; um raio derruba a nave no mato | pistola de raios (na nave caída) |
+| 5 | A Fera da Madrugada | neblina fechada | o rastro do bicho enorme até a Prefeitura e a luta entre as colunas do pavilhão da Kartoffelfest (batendo nelas, ela fica tonta) | dinamite (almoxarifado da Prefeitura) |
+| 6 | Lua Cheia | lua cheia, céu limpo | o sétimo filho dos Hoffmann; revólver do museu, prata dos castiçais da igreja fundida na forja do Seu Arno; a caçada ao lobisomem | revólver .38 com balas de prata |
+| 7 | Finados | garoa e neblina | acender as velas dos quatro fundadores com o cemitério cheio de fantasmas, descer à cripta e trazer a cruz de ferro | cruz de ferro (e a pá do coveiro) |
+| 8 | Asas da Noite | noite de vento | a bruxa aparece no telhado da igreja; queimar os três ninhos de morcegos-vampiro gigantes e derrubar a rainha deles na torre | — |
+| 9 | O Covil | chuva | rifle de dardos na agropecuária, o rastro de sangue até a gruta, cansar o chupacabras e capturá-lo vivo; quebrar os cristais da pedra do céu | rifle de dardos (só derruba bicho cansado) |
+| 10 | A Bruxa | lua de sangue | a última luta no túmulo dela: invocações, círculos de fogo, rituais; de joelhos e fraca, a cruz sela a bruxa. O amanhecer e os créditos | todas |
+
+Entre os objetivos, de noite, criaturas soltas aparecem pela cidade (cães de fogo,
+morcegos, fantasmas, ETs, conforme o capítulo). Derrotadas, às vezes largam munição,
+cuca ou querosene. Cada capítulo termina com criaturas derrotadas, quedas, tempo e
+uma avaliação (S, A, B, C). Morrendo, o jogador volta ao último ponto de retorno.
+
+O progresso é salvo no navegador ao começar cada capítulo (com o inventário). No
+menu principal aparecem **CONTINUAR** (do capítulo onde parou) e **CAPÍTULOS**
+(qualquer capítulo já liberado). Para testes: `?chapter=5` na URL começa direto
+num capítulo.
+
+Arquivos: `src/game/campaign.js` (objetivos, conversas, narração, cenas de câmera,
+ondas, criaturas soltas, pontos de retorno, cartelas, salvamento) e
+`src/game/chapters/` (um arquivo por capítulo; `common.js` tem os lugares da cidade
+e peças de cenário).
+
+## Combate
+
+- **Soco** em combo de três golpes, sempre disponível. O golpe vira sozinho para a
+  criatura mais perto à frente, dá um pequeno avanço e um tranco ao acertar.
+- **Armas brancas** achadas no chão: pedaço de pau, cano de ferro, pá, foice e
+  machado. Batem mais forte e mais longe, mas gastam e quebram (a barrinha embaixo
+  do nome). Pegar outra larga a atual no chão.
+- **Pedras e tijolos** para arremessar (o golpe joga; a pedra caída pode ser pega
+  de novo). Com arma de fogo na mão, V / RB dá uma **coronhada**.
+- **Esquiva** rápida com um instante de invencibilidade.
+- **Armas de fogo e especiais**: pistola, espingarda (chumbo espalhado), revólver
+  com prata, pistola de raios (a carga volta sozinha), rifle de dardos, lampião
+  bento (segurar o gatilho solta a luz que queima fantasmas) e dinamite (acende e
+  joga; a explosão fere tudo em volta, inclusive o jogador).
+- Cada criatura resiste de um jeito: bala atravessa fantasma, só prata fere o
+  lobisomem, o escudo do ET grande cai com a pistola de raios, a Fera sente a
+  dinamite. Vida do jogador: 100, com cura por **cuca** e **chá de marcela**.
+- Inventário com 16 espaços: EQUIPAR, CARREGAR (cada arma com sua munição), USAR
+  (comida) e EXAMINAR.
+
+Arquivos: `src/game/combat.js`, `src/game/weapon.js` (armas de fogo),
+`src/game/items.js`, `src/game/itemModels.js` e `src/game/creatures/` (a base
+`base.js` com movimento, acerto, resistências e morte, mais uma criatura por arquivo).
+
+## Clima, hora e luz
+
+`src/world/atmosphere.js` controla a hora e o clima: tarde encoberta, anoitecer,
+noite, lua cheia (com estrelas e a lua enorme), madrugada de neblina fechada, chuva,
+garoa, tempestade (raios com clarão e trovão que chega depois), lua de sangue,
+amanhecer e interiores escuros. A troca é suave. O material PS1 ganhou **luzes
+dinâmicas por pixel** (8 ao mesmo tempo): a lanterna do protagonista à noite (em
+foco, seguindo a mira), os lampiões da praça acesos, o fogo dos cães, o clarão dos
+tiros e das explosões, velas e cristais. A chuva tem gotas, respingos no chão e som
+(abafado dentro de casa); de noite há grilos e coruja no lugar dos corvos.
+
+Interiores (`src/world/interiors.js` e `src/world/interiors/`): a fábrica de
+calçados, a cripta dos fundadores e a gruta do chupacabras são montados longe da
+cidade, com colisão e luzes próprias; entrar e sair passa por uma tela preta.
 
 ## Missão 1: O Chupacabras
 
@@ -168,9 +252,12 @@ feitos em código. O cenário fica em `src/world/chupaSites.js` e a missão em
 ## Estrutura
 
 ```
-src/engine   motor: material PS1, texturas, renderizador, colisão, controles, som
-src/world    cidade: relevo, ruas, rio, prédios, igreja, praça, calçadão, árvores, alvos, cenário da missão
-src/game     personagem, controle do jogador, câmera, itens, pistola, efeitos de tiro, moradores, missão e chupacabras
+src/engine   motor: material PS1 (com luzes dinâmicas), texturas, renderizador, colisão, controles, som
+src/world    cidade: relevo, ruas, rio, prédios, igreja, praça, calçadão, árvores, alvos, cenário da missão,
+             clima e hora (atmosphere.js), interiores (interiors.js e interiors/: fábrica, cripta, gruta)
+src/game     personagem, controle do jogador, câmera, itens, armas, combate, efeitos, moradores, missão 1,
+             campanha (campaign.js) e capítulos (chapters/)
+src/game/creatures  chupacabras na gruta, cão de fogo, morcegos, fantasmas, ETs e disco, Fera, lobisomem, bruxa
 src/ui       menu, HUD, inventário, diálogo e textos
 tools/       build-mapdata.mjs (regera os dados do mapa), capturas de teste
 texture/     texturas do projeto (servidas como pasta pública)

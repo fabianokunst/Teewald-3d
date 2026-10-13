@@ -47,12 +47,12 @@ const wrapA = a => { while (a > Math.PI) a -= Math.PI * 2; while (a < -Math.PI) 
 export class Mission {
   // o: { ctx, scene, audio, input, player, character, tpc, camera, inventory, pistol, targets, effects, hud, R, npcs }
   constructor(o) {
-    Object.assign(this, o);
+    Object.assign(this, o);   // inclui combat (vida do jogador, golpes)
     this.site = this.ctx.chupa;
     this.dialogue = new Dialogue(this.audio);
     this.creature = new Chupacabra({ ctx: this.ctx, scene: this.scene, effects: this.effects, audio: this.audio, player: this.player });
     this.creature.onHit = () => { this.stats.hits++; };
-    (this.targets.extra ||= []).push(this.creature);
+    this.combat.spawn(this.creature);
     // a presa na clareira
     if (this.site) {
       const s = this.site.sheep, sheep = makeSheep();
@@ -76,13 +76,13 @@ export class Mission {
 
   reset() {
     this.step = null; this.t = 0; this.stepT = 0;
-    this.hp = MAX_HP; this.hurtT = 99; this.flash = 0; this.shake = 0; this.knock = null; this.hpShow = 0;
     this.card = null; this.cut = null; this.dying = 0; this.escT = 0; this.teased = false;
     this.focus = null; this.reading = null; this.far = false;
     this.trailI = 0; this.lastRecoil = 0; this.prevPos = null; this.pvel = { x: 0, z: 0 };
     this.stats = { shots: 0, hits: 0, t0: 0, t1: 0, deaths: 0 };
     this.creature.hide(); this.creature.clearBlood();
     this.character.root.rotation.x = 0;
+    if (!this.combat.enemies.has(this.creature)) this.combat.spawn(this.creature);
   }
 
   // depois da abertura: cartela da missão e o bicho já na clareira
@@ -93,6 +93,13 @@ export class Mission {
     this.card = { kind: 'mission', t: -1.2 };
     const f = this.site.feed;
     this.creature.spawnFeeding(f.x, f.z, f.heading);
+    // um pedaço de pau e pedras perto do galinheiro, e munição pelo caminho
+    const c = this.site.coop, tr = this.site.trail, cp = this.site.checkpoint;
+    this.combat.addPickup('pau', c.x - 2.5, c.z + 3.2);
+    this.combat.addPickup('pedra', c.x + 2.8, c.z + 3.5, { n: 3 });
+    const mid = tr[Math.floor(tr.length * 0.6)];
+    this.combat.addPickup('ammo9', mid[0] + 1.2, mid[1] + 0.8, { n: 12 });
+    this.combat.addPickup('cuca', cp.x + 1, cp.z + 1);
     this._sting();
   }
 
@@ -173,50 +180,24 @@ export class Mission {
     if (have < n) this.inventory.add('ammo9', n - have);
   }
 
+  // a vida do jogador é do sistema de combate
+  get hp() { return this.combat.hp; }
+  get shake() { return this.combat.shake; }
+  set shake(v) { this.combat.shake = Math.max(this.combat.shake, v); }
+
   _hitPlayer(dmg, dx, dz) {
-    if (this.hp <= 0) return;
-    this.hp = Math.max(0, this.hp - dmg);
-    this.hurtT = 0; this.flash = 1; this.shake = 0.45; this.hpShow = 4;
-    this.knock = { x: dx * 5.5, z: dz * 5.5 };
-    ChupaAudio.playerHurt(this.audio);
-    ChupaAudio.claw(this.audio);
-    // sangue do jogador
-    const p = this.player.pos;
-    for (let i = 0; i < 8; i++) {
-      this.effects.spawn({ p: this._v.set(p.x, p.y + 1.2, p.z), v: this._v2.set(dx * 1.5 + (Math.random() - 0.5) * 2, 0.8 + Math.random() * 1.5, dz * 1.5 + (Math.random() - 0.5) * 2), life: 0.6, s0: 0.04, s1: 0.02, color: [0.55, 0.05, 0.04], grav: 9.8, bounce: 0.1 });
-    }
+    if (this.combat.hurt(dmg, dx, dz)) ChupaAudio.claw(this.audio);
   }
 
-  // depois do movimento do jogador: empurrão do bote
-  afterPlayer(dt) {
-    const k = this.knock;
-    if (!k) return;
-    const P = this.player;
-    P.pos.x += k.x * dt; P.pos.z += k.z * dt;
-    this.ctx.collision.resolve(P.pos, P.radius, 1.7);
-    const g = this.ctx.groundAt(P.pos.x, P.pos.z, P.pos.y);
-    if (!this.ctx.isDeepWater(P.pos.x, P.pos.z, g)) P.pos.y = Math.max(P.pos.y, g);
-    else { P.pos.x -= k.x * dt; P.pos.z -= k.z * dt; }
-    const f = Math.exp(-dt * 7);
-    k.x *= f; k.z *= f;
-    if (Math.hypot(k.x, k.z) < 0.1) this.knock = null;
-    P.sync();
-  }
-
-  // tremor da câmera depois do golpe
-  afterCamera() {
-    if (this.shake <= 0) return;
-    const s = this.shake * this.shake * 0.35;
-    this.camera.position.x += (Math.random() - 0.5) * s;
-    this.camera.position.y += (Math.random() - 0.5) * s;
-    this.camera.position.z += (Math.random() - 0.5) * s;
-  }
+  // empurrão e tremor ficam no combate
+  afterPlayer() {}
+  afterCamera() {}
 
   // caiu: volta na trilha antes da clareira, com vida cheia
   respawn() {
     const cp = this.site.checkpoint, C = this.creature, cl = this.site.clearing;
     this.character.root.rotation.x = 0;
-    this.hp = MAX_HP; this.dying = 0; this.flash = 0; this.knock = null; this.shake = 0; this.hurtT = 99;
+    this.combat.revive(); this.dying = 0;
     this.player.place(cp.x, cp.z, cp.heading);
     this.tpc.snap(this.player);
     this._ammoAtLeast(30);
@@ -274,7 +255,7 @@ export class Mission {
       const k = clamp((c.t - 1.9) / 2, 0, 1), e = k * k * (3 - 2 * k);
       place(pp.x - ux * lerp(2.6, 2.0, e) + sx * 0.8, pp.y + 1.75, pp.z - uz * lerp(2.6, 2.0, e) + sz * 0.8, cp.x, cp.y + 0.75, cp.z);
     }
-    this.afterCamera();
+    this.combat.afterCamera();
     const end = 4.4;
     this.R.bars = 0.12 * Math.min(1, c.t / 0.4, Math.max(0, (end - c.t) / 0.4));
     const skip = c.t > 1.2 && (this.input.confirm() || this.input.mouse.clicked || this.input.pause());
@@ -288,9 +269,6 @@ export class Mission {
     if (!this.step || !this.site || state === 'title') return null;
     this.t += dt; this.stepT += dt;
     if (this.card) { this.card.t += dt; if (this.card.t > (this.card.kind === 'complete' ? 8 : 6.5)) this.card = null; }
-    this.flash = Math.max(0, this.flash - dt * 2.2);
-    this.shake = Math.max(0, this.shake - dt);
-    this.hpShow = Math.max(0, this.hpShow - dt);
     const P = this.player, S = this.site, C = this.creature;
     // velocidade do jogador (para o bicho prever o bote)
     if (this.prevPos && dt > 0) { this.pvel.x = lerp(this.pvel.x, (P.pos.x - this.prevPos.x) / dt, 0.3); this.pvel.z = lerp(this.pvel.z, (P.pos.z - this.prevPos.z) / dt, 0.3); }
@@ -316,9 +294,6 @@ export class Mission {
     const rec = this.pistol.recoil ?? 0;
     if (rec > this.lastRecoil + 0.3 && this.step === 'fight') this.stats.shots++;
     this.lastRecoil = rec;
-    // vida volta devagar longe do perigo
-    this.hurtT += dt;
-    if (this.hp > 0 && this.hp < MAX_HP && this.hurtT > 6) this.hp = Math.min(MAX_HP, this.hp + dt * 6);
 
     if (this.step === 'poster' || this.step === 'coop' || this.step === 'trail') {
       // progresso na trilha (para a marca de objetivo)
@@ -338,7 +313,7 @@ export class Mission {
     } else if (this.step === 'fight') {
       this.far = dc > 34;
       if (C.gone) { this.setStep('escaped', false); this.escT = 0; this.stats.t1 = this.t; }
-      if (this.hp <= 0) { this.stats.deaths++; this.dying = 0.0001; return 'dead'; }
+      if (this.combat.dead) { this.stats.deaths++; this.dying = 0.0001; return 'dead'; }
       if (this.pistol.mag + this.inventory.count('ammo9') < 4) this._ammoAtLeast(12);
     } else if (this.step === 'escaped') {
       this.escT += dt;
@@ -375,15 +350,6 @@ export class Mission {
   drawHud(g, W, H, device) {
     if (!this.step) return;
     const k = H / 240, touch = device === 'touch';
-    // golpe: tela vermelha; vida baixa: borda pulsando
-    if (this.flash > 0) { g.globalAlpha = this.flash * 0.45; g.fillStyle = '#a00808'; g.fillRect(0, 0, W, H); g.globalAlpha = 1; }
-    if (this.hp > 0 && this.hp < 35) {
-      const a = (0.25 + Math.sin(this.t * 6) * 0.12) * (1 - this.hp / 35);
-      const b = Math.round(14 * k);
-      g.globalAlpha = a; g.fillStyle = '#8a0606';
-      g.fillRect(0, 0, W, b); g.fillRect(0, H - b, W, b); g.fillRect(0, 0, b, H); g.fillRect(W - b, 0, b, H);
-      g.globalAlpha = 1;
-    }
     const fightBar = this.step === 'fight' && this.creature.active && !this.creature.fleeing && !this.far;
     // objetivo (escondido enquanto uma cartela grande está na tela)
     const obj = this.objective;
@@ -457,8 +423,6 @@ export class Mission {
       g.fillStyle = '#3a1010'; g.fillRect(x, y, bw, bh);
       g.fillStyle = '#c02818'; g.fillRect(x, y, Math.round(bw * Math.max(0, this.creature.hp) / CHUPA_HP), bh);
     }
-    // vida do jogador (na luta ou depois de um golpe)
-    if (this.step === 'fight' || this.hp < MAX_HP || this.hpShow > 0) this._drawHp(g, W, H, k, touch);
     this._drawCard(g, W, H, k);
   }
 

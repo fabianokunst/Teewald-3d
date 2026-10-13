@@ -65,7 +65,8 @@ export class TouchControls {
     this.runOn = false;
     this.jumpHit = false; this.pauseHit = false; this.recenterHit = false;
     this.invHit = false; this.fireHit = false; this.reloadHit = false; this.aimOn = false;
-    this.weapon = false;            // o jogo liga quando a pistola está na mão
+    this.meleeHit = false; this.dodgeHit = false; this.weaponHit = false;
+    this.weapon = false;            // o jogo liga quando uma arma de fogo está na mão
     this.lastTap = { t: -1e9, x: 0, y: 0 };
     // menus: dedo na tela (tap), dedo solto neste quadro (tapUp) e arrasto acumulado
     this.tap = null; this.tapUp = null; this.tapDX = 0; this.tapDY = 0;
@@ -125,7 +126,12 @@ export class TouchControls {
     const fire = { x: jump.x, y: jump.y - Rj * 2.55 };
     const aim = { x: fire.x - Rj - Rr - 2.5 * u, y: fire.y + Rj * 0.35 };
     const reload = { x: fire.x - Rj * 0.2, y: fire.y - Rj - Rr * 0.95 };
-    this.L = { key, s: gr.h / R.H, portrait, gr, u, Rs, Rj, Rr, stick, jump, run, pause, fs, inv, fire, aim, reload, stickZone };
+    // golpe: sem arma de fogo fica no lugar do ATIRAR; com arma, pequeno acima do MIRAR
+    const melee2 = { x: aim.x - Rr * 0.3, y: aim.y - Rr * 2.5 };
+    // em pé, embaixo do CORRER (longe do analógico); deitado, à esquerda dele
+    const dodge = portrait ? { x: run.x, y: run.y + Rr * 2.3 } : { x: run.x - Rr * 2.3, y: run.y + Rr * 0.7 };
+    const weap = { x: inv.x + inv.w + 2.5 * u, y: by, w: S * 1.6, h: S };
+    this.L = { key, s: gr.h / R.H, portrait, gr, u, Rs, Rj, Rr, stick, jump, run, pause, fs, inv, fire, aim, reload, melee2, dodge, weap, stickZone };
     // mantém o analógico ativo dentro da tela nova
     if (this.stick.id === null) { this.stick.cx = stick.x; this.stick.cy = stick.y; }
     return this.L;
@@ -148,7 +154,11 @@ export class TouchControls {
       }
       if (inRect(L.pause, x, y, 2 * L.u)) { T.role = 'pause'; this.pauseHit = true; buzz(); }
       else if (inRect(L.inv, x, y, 2 * L.u)) { T.role = 'inv'; this.invHit = true; buzz(); }
+      else if (inRect(L.weap, x, y, 2 * L.u)) { T.role = 'weap'; this.weaponHit = true; buzz(); }
       else if (this.weapon && near(L.fire, x, y, L.Rj * 1.25)) { T.role = 'fire'; this.fireHit = true; buzz(14); }
+      else if (!this.weapon && near(L.fire, x, y, L.Rj * 1.25)) { T.role = 'melee'; this.meleeHit = true; buzz(14); }
+      else if (this.weapon && near(L.melee2, x, y, L.Rr * 1.1)) { T.role = 'melee'; this.meleeHit = true; buzz(12); }
+      else if (near(L.dodge, x, y, L.Rr * 1.1)) { T.role = 'dodge'; this.dodgeHit = true; buzz(10); }
       else if (this.weapon && near(L.aim, x, y, L.Rr * 1.3)) { T.role = 'aim'; this.aimOn = !this.aimOn; buzz(); }
       else if (this.weapon && near(L.reload, x, y, L.Rr * 0.9)) { T.role = 'reload'; this.reloadHit = true; buzz(); }
       else if (inRect(L.fs, x, y, 2 * L.u)) T.role = 'fs';
@@ -244,11 +254,14 @@ export class TouchControls {
   }
 
   get stickActive() { return this.stick.id !== null; }
+  // dedo segurando ATIRAR (lampião)
+  get fireHeld() { for (const T of this.touches.values()) if (T.role === 'fire') return true; return false; }
 
   endFrame() {
     this.look.dx = 0; this.look.dy = 0; this.zoom = 0;
     this.jumpHit = false; this.pauseHit = false; this.recenterHit = false;
     this.invHit = false; this.fireHit = false; this.reloadHit = false;
+    this.meleeHit = false; this.dodgeHit = false; this.weaponHit = false;
     if (!this.weapon) this.aimOn = false;
     this.tapUp = null; this.tapDX = 0; this.tapDY = 0;
   }
@@ -319,6 +332,21 @@ export class TouchControls {
     ring(L.run.x, L.run.y, L.Rr, this.runOn ? '#c8a060' : '#0d0907', this.runOn ? 0.65 : 0.35, this.runOn ? '#f2c879' : '#d8c8a0');
     label('CORRER', L.run.x, L.run.y, L.Rr * 0.48, this.runOn ? '#140c08' : '#efe2c4');
 
+    // golpe e esquiva
+    let punching = false;
+    for (const T of this.touches.values()) if (T.role === 'melee') punching = true;
+    if (!this.weapon) {
+      ring(L.fire.x, L.fire.y, L.Rj, punching ? '#f2c879' : '#3a1208', punching ? 0.7 : 0.4, '#e8a080');
+      label('GOLPE', L.fire.x, L.fire.y, L.Rj * 0.45, punching ? '#140c08' : '#efe2c4');
+    } else {
+      ring(L.melee2.x, L.melee2.y, L.Rr * 0.8, punching ? '#f2c879' : '#0d0907', punching ? 0.65 : 0.35);
+      label('GOLPE', L.melee2.x, L.melee2.y, L.Rr * 0.38, punching ? '#140c08' : '#efe2c4');
+    }
+    let dodging = false;
+    for (const T of this.touches.values()) if (T.role === 'dodge') dodging = true;
+    ring(L.dodge.x, L.dodge.y, L.Rr * 0.8, dodging ? '#f2c879' : '#0d0907', dodging ? 0.65 : 0.3);
+    label('ESQUIVA', L.dodge.x, L.dodge.y, L.Rr * 0.32, dodging ? '#140c08' : '#efe2c4');
+
     // arma
     if (this.weapon) {
       let firing = false;
@@ -347,6 +375,9 @@ export class TouchControls {
       const r = L.inv;
       box(r);
       label('INV', r.x + r.w / 2, r.y + r.h / 2, r.h * 0.5, '#efe2c4');
+      const w = L.weap;
+      box(w);
+      label('ARMA', w.x + w.w / 2, w.y + w.h / 2, w.h * 0.45, '#efe2c4');
     }
     if (L.fs) {
       const f = L.fs, x0 = P(f.x), y0 = P(f.y);

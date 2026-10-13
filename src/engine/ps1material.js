@@ -12,7 +12,13 @@ export const G = {
   uSunColor: { value: new THREE.Color(0.5, 0.49, 0.47) },
   uAmbSky: { value: new THREE.Color(0.47, 0.49, 0.53) },
   uAmbGround: { value: new THREE.Color(0.3, 0.28, 0.27) },
+  // luzes dinâmicas (lanterna, postes acesos, fogo, clarões): xyz = posição, w = alcance (0 = apagada)
+  uLights: { value: Array.from({ length: 8 }, () => new THREE.Vector4(0, 0, 0, 0)) },
+  uLightCols: { value: Array.from({ length: 8 }, () => new THREE.Vector3(0, 0, 0)) },
+  // a luz 0 pode ser um foco (lanterna): xyz = direção, w = cosseno do corte (< -1.5 = luz redonda)
+  uSpot: { value: new THREE.Vector4(0, 0, 1, -2) },
 };
+export const NUM_LIGHTS = 8;
 
 const VERT = /* glsl */`
 uniform float uFogNear;
@@ -35,6 +41,9 @@ varying vec3 vUvAff;
 varying vec2 vUv;
 varying vec3 vLight;
 varying float vFog;
+varying vec3 vWP;
+varying vec3 vN;
+varying vec3 vBase;
 
 #include <skinning_pars_vertex>
 
@@ -77,6 +86,10 @@ void main() {
     vc *= instanceColor;
   #endif
   vLight = mix(vec3(1.0), L, uLit) * vc * uColor + uEmissive;
+  // base para as luzes dinâmicas (materiais sem luz não recebem)
+  vBase = vc * uColor * uLit;
+  vWP = wp.xyz;
+  vN = n;
 
   // neblina por vértice (depth cueing)
   float d = length(vp.xyz);
@@ -95,11 +108,18 @@ uniform float uAffineMat;
 uniform float uAlphaTest;
 uniform vec3 uFogColor;
 uniform float uOpacity;
+uniform float uFoliage;
+uniform vec4 uLights[8];
+uniform vec3 uLightCols[8];
+uniform vec4 uSpot;
 
 varying vec3 vUvAff;
 varying vec2 vUv;
 varying vec3 vLight;
 varying float vFog;
+varying vec3 vWP;
+varying vec3 vN;
+varying vec3 vBase;
 
 void main() {
   // mapeamento afim (sem correção de perspectiva), como no PS1
@@ -107,7 +127,25 @@ void main() {
   vec2 uv = mix(vUv, uvA, uAffine * uAffineMat);
   vec4 t = texture2D(map, uv);
   if (t.a < uAlphaTest) discard;
-  vec3 c = min(t.rgb * vLight, vec3(1.0));
+  // luzes dinâmicas por pixel (queda quadrática; folhagem ilumina dos dois lados)
+  vec3 dyn = vec3(0.0);
+  if (vBase.r + vBase.g + vBase.b > 0.0) {
+    vec3 N = normalize(vN);
+    for (int i = 0; i < 8; i++) {
+      vec4 Lp = uLights[i];
+      if (Lp.w <= 0.0) continue;
+      vec3 dv = Lp.xyz - vWP;
+      float d = length(dv);
+      if (d >= Lp.w) continue;
+      vec3 l = dv / max(d, 1e-4);
+      float att = 1.0 - d / Lp.w;
+      att *= att;
+      float ndl = mix(max(dot(N, l), 0.0) * 0.8 + 0.2, 0.85, uFoliage);
+      if (i == 0 && uSpot.w > -1.5) att *= smoothstep(uSpot.w, uSpot.w + 0.1, dot(-l, uSpot.xyz));
+      dyn += uLightCols[i] * att * ndl;
+    }
+  }
+  vec3 c = min(t.rgb * (vLight + dyn * vBase), vec3(1.0));
   c = mix(c, uFogColor, vFog);
   gl_FragColor = vec4(c, t.a * uOpacity);
 }

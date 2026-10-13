@@ -268,6 +268,8 @@ class NPC {
 
   // a próxima conversa (com um comentário sobre a arma na primeira vez que ela aparece)
   nextTalk(sys) {
+    // falas da campanha (capítulos 2 a 10)
+    if (this.storyTalks) return [...this.storyTalks[Math.min(this.storyIdx++, this.storyTalks.length - 1)]];
     if (this.fear > 0) return [pick(GENERIC.afraid)];
     const lines = [...this.def.talks[this.talkIdx++ % this.def.talks.length]];
     if (sys.pistol?.equipped && !this.gunNoted) { this.gunNoted = true; lines.unshift(this.def.gun || pick(GENERIC.gun)); }
@@ -289,6 +291,8 @@ class NPC {
     const dx = F.x - this.pos.x, dz = F.z - this.pos.z;
     this.dist = Math.hypot(dx, dz);
     if (this.bark) { this.bark.t += dt; if (this.bark.t > this.bark.dur) this.bark = null; }
+    // de noite os moradores ficam em casa (a campanha esconde)
+    if (this.hidden) { this._show(false); this.dist = 999; return; }
     if (this.dist > SIM_R && this.mode !== 'follow') { this._show(false); return; }
     for (const k of ['flinch', 'fear', 'aimedT', 'afterTalk']) this[k] = Math.max(0, this[k] - dt);
     if (this.aimedT > 0) this.handsT = Math.max(this.handsT, 0.9); else this.handsT = Math.max(0, this.handsT - dt);
@@ -600,6 +604,23 @@ export class NPCs {
     if (mode !== 'play') this.touchTalk = false;
   }
 
+  // campanha: esconde todos (noite) menos os da cena; stage põe um morador num lugar com falas próprias
+  hideAll(except = []) {
+    for (const n of this.list) { n.hidden = !except.includes(n.id); if (n.hidden) { n.storyTalks = null; n.onTalkEnd = null; } }
+  }
+
+  showAll() { for (const n of this.list) { n.hidden = false; n.storyTalks = null; n.onTalkEnd = null; } }
+
+  stage(id, o = {}) {
+    const n = this.byId[id];
+    if (!n) return null;
+    n.hidden = false;
+    if (o.x !== undefined) { n.place({ mode: 'stand', x: o.x, z: o.z, h: o.h ?? 0 }, this); n.fear = 0; }
+    if (o.talks) { n.storyTalks = o.talks; n.storyIdx = 0; }
+    n.onTalkEnd = o.onTalkEnd || null;
+    return n;
+  }
+
   _onShot() {
     let barks = 0;
     const near = this.list.filter(n => n.dist < 32).sort((a, b) => a.dist - b.dist);
@@ -669,6 +690,7 @@ export class NPCs {
     if (this.dialogue.update(dt, input) === 'close') {
       n.talking = false; n.afterTalk = 2.5; n.barkT = Math.max(n.barkT, 12);
       this.talkNpc = null;
+      n.onTalkEnd?.(n);
       return 'close';
     }
     return null;

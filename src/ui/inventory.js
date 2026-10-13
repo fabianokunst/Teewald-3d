@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { drawText, panel } from './overlay.js';
-import { ITEMS, PISTOL_MAG } from '../game/items.js';
+import { ITEMS } from '../game/items.js';
+import { GUNS } from '../game/weapon.js';
 import { makeItemModel } from '../game/itemModels.js';
 import { G } from '../engine/ps1material.js';
 
@@ -8,12 +9,12 @@ import { G } from '../engine/ps1material.js';
 // nome, descrição e ações (equipar, guardar, carregar, examinar).
 // A prévia 3D é desenhada pelo Renderer num recorte da tela (R.overlay).
 
-const COLS = 4, ROWS = 2;
+const COLS = 4, ROWS = 4;
 const ICON = 48;
 
 export class InventoryScreen {
-  constructor(R, input, audio, inventory, pistol, M) {
-    this.R = R; this.input = input; this.audio = audio; this.inv = inventory; this.pistol = pistol;
+  constructor(R, input, audio, inventory, pistol, M, combat = null) {
+    this.R = R; this.input = input; this.audio = audio; this.inv = inventory; this.pistol = pistol; this.combat = combat;
     this.sel = 0; this.menu = null; this.menuSel = 0; this.examine = false;
     this.t = 0; this.rot = { x: 0.25, y: 0 }; this.rects = [];
     this.scene = new THREE.Scene();
@@ -23,6 +24,7 @@ export class InventoryScreen {
     this.cam.position.set(sun.x, 0.35, sun.z).normalize().multiplyScalar(0.62);
     this.cam.lookAt(0, 0, 0);
     this.yaw0 = Math.atan2(sun.x, sun.z);
+    this.sunDir = sun.clone();
     this.pivot = new THREE.Group();
     this.scene.add(this.pivot);
     this.models = {};
@@ -33,7 +35,8 @@ export class InventoryScreen {
       m.position.sub(c);
       wrap.add(m);
       wrap.scale.setScalar(0.24 / Math.max(size.x, size.y, size.z));
-      wrap.userData.tilt = id === 'pistol' ? -Math.PI / 2 : 0;   // pistola de lado
+      // armas de lado
+      wrap.userData.tilt = ['pistol', 'shotgun', 'revolver', 'raygun', 'dartgun'].includes(id) ? -Math.PI / 2 : 0;
       this.models[id] = wrap;
     }
     this.icons = this._makeIcons();
@@ -75,23 +78,36 @@ export class InventoryScreen {
 
   slot() { return this.inv.slots[this.sel]; }
 
+  // a arma precisa de munição? (pente/querosene não cheios e munição no inventário)
+  _canLoad(id) {
+    const c = GUNS[id], s = this.inv.find(id);
+    if (!c || !s || c.throw || c.energy) return false;
+    if (c.beam) return (s.data?.fuel ?? 100) < 99 && this.inv.count('oil') > 0;
+    return (s.data?.mag ?? 0) < c.mag && this.inv.count(c.ammo) > 0;
+  }
+
   actions(s) {
     if (!s) return [];
-    const p = this.pistol, list = [];
-    if (s.id === 'pistol') {
-      list.push(this.inv.equipped === 'pistol' ? { label: 'GUARDAR', act: 'unequip' } : { label: 'EQUIPAR', act: 'equip' });
-      if (p.mag < PISTOL_MAG && p.ammo > 0) list.push({ label: 'CARREGAR', act: 'load' });
+    const def = ITEMS[s.id], list = [];
+    if (def.kind === 'gun') {
+      list.push(this.inv.equipped === s.id ? { label: 'GUARDAR', act: 'unequip' } : { label: 'EQUIPAR', act: 'equip' });
+      if (this._canLoad(s.id)) list.push({ label: GUNS[s.id].beam ? 'REABASTECER' : 'CARREGAR', act: 'load:' + s.id });
     }
-    if (s.id === 'ammo9' && this.inv.find('pistol') && p.mag < PISTOL_MAG) list.push({ label: 'CARREGAR PISTOLA', act: 'load' });
+    if (def.kind === 'ammo' && this._canLoad(def.for)) list.push({ label: 'CARREGAR ' + ITEMS[def.for].name, act: 'load:' + def.for });
+    if (def.kind === 'heal' && this.combat && this.combat.hp < this.combat.maxHp) list.push({ label: 'USAR', act: 'use' });
     list.push({ label: 'EXAMINAR', act: 'examine' });
     return list;
   }
 
   _do(act) {
-    const p = this.pistol;
-    if (act === 'equip') p.equip(true);
+    const p = this.pistol, s = this.slot();
+    if (act === 'equip') { p.equip(s.id); }
     else if (act === 'unequip') p.equip(false);
-    else if (act === 'load') { if (!p.reloadNow()) this.audio.menuBack(); }
+    else if (act.startsWith('load:')) { if (!p.reloadGun(act.slice(5))) this.audio.menuBack(); }
+    else if (act === 'use' && s && this.combat) {
+      this.inv.take(s.id, 1); this.combat.heal(ITEMS[s.id].heal);
+      this.audio.tone(523, 0.2, 'triangle', 0.06); setTimeout(() => this.audio.tone(784, 0.3, 'triangle', 0.05), 120);
+    }
     else if (act === 'examine') { this.examine = true; this.rot = { x: 0.25, y: 0 }; this.audio.menuOk(); }
     this.menu = null;
   }
@@ -171,9 +187,9 @@ export class InventoryScreen {
       this.pivot.add(m);
       if (this.examine) this.pivot.rotation.set(this.rot.x, this.yaw0 + m.userData.tilt + this.rot.y, 0);
       else this.pivot.rotation.set(0.15 + Math.sin(this.t * 0.7) * 0.08, this.yaw0 + m.userData.tilt + this.t * 0.9, 0);
-      this.R.overlay = { scene: this.scene, camera: this.cam, rect: box.map(R), clear: 0x231a12 };
+      this.R.overlay = { scene: this.scene, camera: this.cam, rect: box.map(R), clear: 0x231a12, sunDir: this.sunDir };
     } else {
-      this.R.overlay = { scene: this.scene, camera: this.cam, rect: box.map(R), clear: 0x231a12 };
+      this.R.overlay = { scene: this.scene, camera: this.cam, rect: box.map(R), clear: 0x231a12, sunDir: this.sunDir };
       drawText(g, 'VAZIO', box[0] + box[2] / 2, box[1] + box[3] / 2 - 6 * k, 12 * k, { align: 'center', color: '#6b5a40' });
     }
 
@@ -195,11 +211,15 @@ export class InventoryScreen {
 
     // texto do item
     const ty = this.examine ? py + 160 * k : py + 132 * k;
-    if (def) {
+    if (def && !this.menu) {
       drawText(g, def.name, px + 10 * k, ty, 14 * k, { color: '#f2e6c8' });
       def.desc.forEach((l, i) => drawText(g, l, px + 10 * k, ty + (16 + i * 11) * k, 11 * k, { color: '#c8b898' }));
-      const info = s.id === 'pistol' ? `BALAS ${this.pistol.mag}/${PISTOL_MAG}` + (this.inv.equipped === 'pistol' ? '  ·  NA MÃO' : '')
-        : `QUANTIDADE ${s.n}`;
+      const g2 = GUNS[s.id], hand = this.inv.equipped === s.id ? '  ·  NA MÃO' : '';
+      const info = !g2 ? `QUANTIDADE ${s.n}`
+        : g2.beam ? `QUEROSENE ${Math.round(s.data?.fuel ?? 100)}%` + hand
+          : g2.energy ? `CARGA ${Math.round(100 * (s.data?.mag ?? g2.mag) / g2.mag)}%` + hand
+            : g2.throw ? `QUANTIDADE ${s.n}` + hand
+              : `BALAS ${s.data?.mag ?? 0}/${g2.mag}` + hand;
       drawText(g, info, px + 10 * k, ty + 40 * k, 11 * k, { color: '#f2c879' });
     }
     if (this.examine) {
@@ -209,7 +229,8 @@ export class InventoryScreen {
     }
 
     // grade
-    const sz = 33 * k, gap = 3 * k, gx = px + 150 * k, gy = py + 28 * k;
+    // 4 x 4 espaços à direita da prévia, terminando antes do texto do item
+    const sz = 23 * k, gap = 3 * k, gx = px + 176 * k, gy = py + 26 * k;
     for (let i = 0; i < COLS * ROWS; i++) {
       const x = R(gx + (i % COLS) * (sz + gap)), y = R(gy + Math.floor(i / COLS) * (sz + gap)), w = R(sz);
       const on = i === this.sel, sl = this.inv.slots[i];
@@ -219,30 +240,33 @@ export class InventoryScreen {
       if (sl) {
         g.imageSmoothingEnabled = false;
         g.drawImage(this.icons[sl.id], x + 1, y + 1, w - 2, w - 2);
+        const gg = GUNS[sl.id];
         if (ITEMS[sl.id].stack) drawText(g, String(sl.n), x + w - 2 * k, y + w - 11 * k, 10 * k, { align: 'right', color: '#f2e6c8' });
-        if (sl.id === 'pistol') drawText(g, String(this.pistol.mag), x + w - 2 * k, y + w - 11 * k, 10 * k, { align: 'right', color: this.pistol.mag ? '#9fe08a' : '#ff7060' });
+        else if (gg && !gg.beam && !gg.energy) { const m = sl.data?.mag ?? 0; drawText(g, String(m), x + w - 2 * k, y + w - 11 * k, 10 * k, { align: 'right', color: m ? '#9fe08a' : '#ff7060' }); }
         if (this.inv.equipped === sl.id) drawText(g, 'E', x + 3 * k, y + 2 * k, 10 * k, { color: '#f2c879' });
       }
       this.rects.push({ kind: 'slot', i, x, y, w, h: w });
     }
     // mão
-    const eq = this.inv.equipped ? ITEMS[this.inv.equipped].name : 'NADA';
-    drawText(g, 'NA MÃO: ' + eq, gx, gy + 2 * (sz + gap) + 4 * k, 10 * k, { color: '#a89878' });
+    const eq = this.inv.equipped ? ITEMS[this.inv.equipped].name : (this.combat ? this.combat.meleeName() : 'NADA');
+    drawText(g, 'NA MÃO: ' + eq, gx, gy + ROWS * (sz + gap) + 1 * k, 10 * k, { color: '#a89878' });
 
     // ações do item
     if (this.menu && device === 'touch') {
       // no toque, cada ação é um botão alto (dá para acertar com o dedo)
-      const mx = gx, my = gy + 2 * (sz + gap) + 18 * k, mw = 141 * k, bh = 21 * k, step = 24 * k;
+      // as ações cobrem o texto do item (à esquerda), para caber com a grade de 3 linhas
+      const mx = px + 8 * k, my = py + 128 * k, mw = 141 * k, bh = 18 * k, step = 20 * k;
+      panel(g, mx - 2 * k, my - 2 * k, mw + 4 * k, this.menu.length * step + 2 * k, 0.95);
       this.menu.forEach((it, i) => {
         const y = R(my + i * step);
         g.globalAlpha = 0.92; g.fillStyle = '#18120c'; g.fillRect(R(mx), y, R(mw), R(bh)); g.globalAlpha = 1;
         g.fillStyle = '#4a3a28'; g.fillRect(R(mx) + 1, y + 1, R(mw) - 2, Math.max(1, R(k)));
         g.strokeStyle = '#d8c8a0'; g.strokeRect(R(mx) + 0.5, y + 0.5, R(mw) - 1, R(bh) - 1);
-        drawText(g, it.label, mx + mw / 2, y + 4 * k, 13 * k, { align: 'center', color: '#efe2c4' });
+        drawText(g, it.label, mx + mw / 2, y + 2 * k, 13 * k, { align: 'center', color: '#efe2c4' });
         this.rects.push({ kind: 'menu', i, x: mx, y, w: mw, h: bh });
       });
     } else if (this.menu) {
-      const mx = gx, my = gy + 2 * (sz + gap) + 20 * k, mw = 141 * k, mh = (this.menu.length * 14 + 6) * k;
+      const mx = px + 8 * k, my = py + 128 * k, mw = 141 * k, mh = (this.menu.length * 14 + 6) * k;
       panel(g, mx, my, mw, mh, 0.9);
       this.menu.forEach((it, i) => {
         const y = my + (4 + i * 14) * k, on = i === this.menuSel;

@@ -82,6 +82,11 @@ export class Input {
       if (st.active && mag > bestMag) { bestMag = mag; best = p; }
     }
     this.pad = best;
+    // B: toque curto (solto em menos de 0,25 s) = esquiva; segurado = corre
+    this.bTap = false;
+    const tNow = performance.now();
+    if (this.padPressed.has('b')) this.bDownAt = tNow;
+    if (this.bDownAt && !this.padHeld.has('b')) { if (tNow - this.bDownAt < 250) this.bTap = true; this.bDownAt = 0; }
     // gatilhos: L2 mira, R2 atira (com borda, para um tiro por aperto)
     const tb = best ? best.buttons : [];
     const tl = tb[6] ? tb[6].value : 0, tr = tb[7] ? tb[7].value : 0;
@@ -146,17 +151,24 @@ export class Input {
   running() {
     if (this.down('ShiftLeft', 'ShiftRight')) return true;
     if (this.padHeld.has('b') || this.padHeld.has('l3')) return true;
-    if (this.pad) { const b = this.pad.buttons; if (b[7] && b[7].value > 0.3) return true; }
     return this.lastDevice === 'touch' && this.touch.runOn;
   }
 
   jump() { return this.hit('Space') || this.padHit('a') || this.touch.jumpHit; }
+  // consome um aperto (ex.: A usado para pegar um item não pula)
+  eat(...k) { for (const x of k) { this.padPressed.delete(x); this.pressed.delete(x); } }
   pause() { return this.hit('Escape', 'KeyP') || this.padHit('start') || this.touch.pauseHit || this.padLost; }
   recenter() { return this.padHit('r3') || this.touch.recenterHit; }
   toggleMap() { return this.hit('KeyM') || this.padHit('select'); }
-  // arma: botão direito / L2 / LB mira; esquerdo (com o mouse preso) / R2 mirando / RB atira
+  // arma: botão direito / L2 / LB mira; esquerdo (com o mouse preso) / R2 atira; RB / V golpe
   aimHeld() { return !!(this.mouse.buttons & 2) || this.trig.l > 0.3 || this.padHeld.has('lb') || !!this.touch.aimOn; }
-  fireHit() { return (this.mouse.leftHit && this.locked) || (this.trig.rHit && this.aimHeld()) || this.padHit('rb') || !!this.touch.fireHit; }
+  fireHit() { return (this.mouse.leftHit && this.locked) || this.trig.rHit || !!this.touch.fireHit; }
+  fireHeld() { return (!!(this.mouse.buttons & 1) && this.locked) || this.trig.r > 0.5 || !!this.touch.fireHeld; }
+  meleeHit() { return this.hit('KeyV') || this.padHit('rb') || !!this.touch.meleeHit; }
+  dodgeHit() { return this.hit('KeyC', 'ControlLeft') || this.bTap || !!this.touch.dodgeHit; }
+  // troca de arma: ◀▶ no direcional, ARMA no toque (1) · teclas 1-8 escolhem direto (weaponKey)
+  weaponCycle() { return this.padHit('right') || this.touch.weaponHit ? 1 : this.padHit('left') ? -1 : 0; }
+  weaponKey() { for (let i = 1; i <= 8; i++) if (this.pressed.has('Digit' + i) || this.pressed.has('Numpad' + i)) return i; return 0; }
   reloadHit() { return this.hit('KeyR') || this.padHit('x') || !!this.touch.reloadHit; }
   inventory() { return this.hit('KeyI', 'Tab') || this.padHit('y') || !!this.touch.invHit; }
   confirm() { return this.hit('Enter', 'Space', 'NumpadEnter') || this.padHit('a', 'start'); }

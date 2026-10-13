@@ -181,9 +181,13 @@ export class TouchMenu {
         if (Math.floor(M.t * 1.6) % 2 === 0) text('TOQUE PARA COMEÇAR', vw / 2, cy, Math.max(20, 6 * u), '#f2e6c8', { align: 'center' });
       } else {
         const items = M.items();
-        const n = items.length, h = stackH(n);
+        const n = items.length;
+        // com CONTINUAR e CAPÍTULOS a pilha pode não caber: encolhe os botões
+        const room = v.portrait ? area.h - 2 * m : vh - m - (tY + tSize * 1.3 + gap);
+        const bh2 = Math.max(40, Math.min(bh, (room - (n - 1) * gap * 0.7) / n)), gap2 = bh2 < bh ? gap * 0.7 : gap;
+        const h = n * bh2 + (n - 1) * gap2;
         const y0 = v.portrait ? area.y + (area.h - h) * 0.42 : Math.max(tY + tSize * 1.3 + gap, vh - m - h);
-        stack(items.map(it => it.label), (vw - bw) / 2, y0, bw, items.map((_, i) => 'item:' + i));
+        items.forEach((it, i) => button('item:' + i, (vw - bw) / 2, y0 + i * (bh2 + gap2), bw, bh2, it.label));
       }
       text('v0.1', vw - m * 0.6, vh - m * 0.6 - 12, 12, C.soft, { align: 'right' });
       return;
@@ -210,6 +214,24 @@ export class TouchMenu {
       if (sub) text(sub, vw / 2, hy + headSize * 1.35, Math.max(14, 4.2 * u), C.soft, { align: 'center' });
       stack(items.map(it => it.label), (vw - bw) / 2, y0, bw, items.map((_, i) => 'item:' + i),
         items.map(it => (it.act === 'quit' ? { danger: true } : {})));
+      return;
+    }
+
+    if (M.screen === 'chapters') {
+      // capítulos em grade (duas colunas deitado, uma em pé)
+      dimAll(0.86);
+      const hh = bh, top = m * 0.7, backW = Math.max(112, 30 * u);
+      button('back', m * 0.7, top, backW, hh, '◀ VOLTAR', { size: hh * 0.4 });
+      text('CAPÍTULOS', vw / 2, top + (hh - Math.max(22, hh * 0.55) * 1.15) / 2, Math.max(22, hh * 0.55), C.gold, { align: 'center' });
+      const items = M.items().filter(it => it.act !== 'back');
+      const cols = v.portrait ? 1 : 2, rows = Math.ceil(items.length / cols);
+      const y0 = top + hh + gap, availH = vh - y0 - m * 0.6;
+      const bh3 = Math.max(40, Math.min(bh, (availH - (rows - 1) * gap * 0.6) / rows));
+      const cw = Math.min(380, (vw - 2 * m - (cols - 1) * gap) / cols), x0 = (vw - (cols * cw + (cols - 1) * gap)) / 2;
+      items.forEach((it, i) => {
+        const c = cols === 1 ? 0 : Math.floor(i / rows), r = cols === 1 ? i : i % rows;
+        button('item:' + i, x0 + c * (cw + gap), y0 + r * (bh3 + gap * 0.6), cw, bh3, it.label, { size: Math.min(bh3 * 0.36, cw / (it.label.length * 0.52)) });
+      });
       return;
     }
 

@@ -9,6 +9,8 @@ import { fullscreen } from './engine/touch.js';
 import { Audio } from './engine/audio.js';
 import { buildWorld } from './world/world.js';
 import { applyAtmosphere } from './world/sky.js';
+import { Atmosphere } from './world/atmosphere.js';
+import { Interiors } from './world/interiors.js';
 import { Character } from './game/character.js';
 import { Player } from './game/player.js';
 import { ThirdPersonCamera } from './game/camera.js';
@@ -16,13 +18,16 @@ import { Menu } from './ui/menu.js';
 import { TouchMenu } from './ui/touchMenu.js';
 import { Hud } from './ui/hud.js';
 import { Minimap } from './ui/minimap.js';
-import { Inventory, PISTOL_MAG } from './game/items.js';
+import { Inventory } from './game/items.js';
 import { Pistol } from './game/weapon.js';
 import { Effects } from './game/effects.js';
+import { Combat } from './game/combat.js';
 import { Targets } from './world/targets.js';
 import { InventoryScreen } from './ui/inventory.js';
 import { NPCs } from './game/npcs.js';
 import { Mission } from './game/mission.js';
+import { Campaign, loadCreatureTypes, loadInteriors } from './game/campaign.js';
+import { CHAPTERS } from './game/chapters/index.js';
 import { loadFonts, drawText, FONT_TITLE } from './ui/overlay.js';
 
 const params = new URLSearchParams(location.search);
@@ -44,8 +49,9 @@ const hud = new Hud();
 G.uSunDir.value.set(-0.62, 0.4, -0.68).normalize();
 
 let ctx, character, player, tpc, menu, minimap, touchMenu;
-let inventory, pistol, effects, targets, invScreen;
-let npcs, mission;
+let inventory, pistol, effects, targets, invScreen, combat;
+let npcs, mission, atmo, interiors, campaign;
+let endingT = 0;
 let state = 'loading';
 let time = 0, stateT = 0, fade = 1, fadeTarget = 0, onFaded = null;
 let introPath = null;
@@ -95,7 +101,7 @@ function applySettings(s, key) {
     setTextureQuality(visualMode(s));
   }
   R.configure(s);
-  applyAtmosphere(s.drawDistance);
+  if (atmo) atmo.setDrawDistance(s.drawDistance); else applyAtmosphere(s.drawDistance);
   audio.setVolume((s.volume / 10) * 0.8);
 }
 
@@ -130,21 +136,37 @@ async function boot() {
   tpc = new ThirdPersonCamera(camera, ctx);
   // inventário (já com a pistola carregada e uma caixa de munição), arma e alvos
   effects = new Effects(scene);
-  inventory = new Inventory(8);
+  // hora do dia, clima e luzes dinâmicas
+  atmo = new Atmosphere({ scene, sky: ctx.sky, audio, ctx });
+  atmo.setDrawDistance(settings.drawDistance);
+  atmo.effects = effects;
+  inventory = new Inventory(16);
   targets = new Targets(scene, ctx, M, { effects, audio, inventory, hud });
-  pistol = new Pistol({ ctx, character, player, tpc, camera, inventory, effects, targets, audio, hud, input, M });
-  invScreen = new InventoryScreen(R, input, audio, inventory, pistol, M);
+  // combate: vida, soco, armas brancas, arremesso, explosões, itens no chão e criaturas
+  combat = new Combat({ ctx, scene, audio, player, character, tpc, camera, inventory, effects, hud, input, atmo, M, targets, R });
+  interiors = new Interiors({ ctx, scene, atmo, player, tpc, hud });
+  pistol = new Pistol({ ctx, character, player, tpc, camera, inventory, effects, targets, audio, hud, input, M, atmo, combat });
+  combat.guns = pistol;
+  invScreen = new InventoryScreen(R, input, audio, inventory, pistol, M, combat);
   // moradores com falas (F / A / toque em FALAR para conversar)
   npcs = new NPCs({ ctx, scene, M, audio, player, tpc, camera, pistol, R });
   // missão 1: o chupacabras (cartaz, galinheiro, pegadas, luta na clareira)
-  mission = new Mission({ ctx, scene, audio, input, player, character, tpc, camera, inventory, pistol, targets, effects, hud, R, npcs });
+  mission = new Mission({ ctx, scene, audio, input, player, character, tpc, camera, inventory, pistol, targets, effects, hud, R, npcs, combat, atmo });
+  // campanha: capítulo 1 = a missão acima; do 2 ao 10, a noite que não termina
+  await loadCreatureTypes();
+  await loadInteriors(interiors);
+  campaign = new Campaign({ ctx, scene, audio, input, player, character, tpc, camera, inventory, pistol, targets, effects, hud, R, npcs, combat, atmo, interiors, mission,
+    fadeTo: (cb, speed = 1.6) => fadeTo(() => { cb(); fadeTarget = 0; fadeSpeed = 1.2; }, speed) });
+  campaign.onEnding = () => { setState('ending'); endingT = 0; atmo.set('amanhecer', 0); fadeTarget = 0; };
   menu = new Menu(input, audio, settings, applySettings);
+  menu.campaign = campaign; menu.chapterTitles = CHAPTERS.map(c => c?.title);
   // no toque, as mesmas telas com botões grandes na tela inteira
   touchMenu = new TouchMenu(menu, input, audio);
   setupStart();
   exposeDebug();
-  if (params.get('skip') === '1') { startGame(false); fade = 0; }
-  else { setState('title'); fade = 1; fadeTarget = 0; }
+  if (params.get('chapter')) { startGame({ chapter: +params.get('chapter') }); fade = 0; }
+  else if (params.get('skip') === '1') { startGame({ intro: false }); fade = 0; }
+  else { setState('title'); atmo.set(titleWeather(), 0); fade = 1; fadeTarget = 0; }
   last = performance.now();
   requestAnimationFrame(loop);
 }
@@ -161,19 +183,24 @@ function setupStart() {
 
 function setState(s) { state = s; stateT = 0; }
 
-// equipamento inicial: pistola carregada (guardada) e uma caixa de munição
-function resetLoadout() {
-  inventory.slots.fill(null);
-  inventory.equipped = null;
-  inventory.add('pistol', 1, { mag: PISTOL_MAG });
-  inventory.add('ammo9', 36);
-  pistol.reloadT = 0; pistol.aim = 0; pistol.model.visible = false;
-  player.aimYaw = null; tpc.aimWant = false; tpc.aim = 0;
-}
+// a tela título acompanha o progresso: depois da primeira noite, ela também é de noite
+const titleWeather = () => ((campaign?.save?.unlocked || 1) > 1 ? 'noite' : 'tarde');
 
-function startGame(withIntro = true) {
-  resetLoadout();
-  mission.reset();
+// o: { chapter (1..10), intro (abertura do capítulo 1), fromSave (inventário salvo) }
+function startGame(o = {}) {
+  const n = Math.max(1, Math.min(10, o.chapter || 1));
+  hud.place = null; hud.card = null;
+  audio.setAmbience(true);
+  keepAwake();
+  if (n > 1) {
+    campaign.startChapter(n, { fromSave: o.fromSave });
+    player.auto = null;
+    setState('play');
+    hud.showHints();
+    return;
+  }
+  const withIntro = o.intro !== false;
+  campaign.startChapter(1);
   player.place(START.x, START.z, START.heading);
   tpc.snap(player);
   hud.place = null; hud.card = null;
@@ -185,10 +212,8 @@ function startGame(withIntro = true) {
     player.auto = null;
     setState('play');
     hud.showHints();
-    mission.begin();
+    campaign.begin();
   }
-  audio.setAmbience(true);
-  keepAwake();
 }
 
 function fadeTo(cb, speed = 1.6) { fadeTarget = 1; onFaded = cb; fadeSpeed = speed; }
@@ -196,10 +221,18 @@ let fadeSpeed = 1.6;
 
 // ---------- laço principal ----------
 let last = 0, acc = 0;
+const aimDirV = new THREE.Vector3();
+// simulação rápida para testes (sem desenhar): __teewald.simulate(segundos)
+let noRender = false;
 function loop(now) {
   requestAnimationFrame(loop);
-  let dt = Math.min(0.1, (now - last) / 1000);
-  last = now;
+  frame(now);
+}
+
+function frame(now) {
+  // o carimbo do quadro pode vir antes do último (primeiro quadro, aba voltando): nunca negativo
+  let dt = Math.max(0, Math.min(0.1, (now - last) / 1000));
+  last = Math.max(last, now);
   // 30 FPS quando escolhido; no celular, telas de 90/120 Hz ficam em 60 (bateria e calor)
   const cap = settings.fps === 30 ? 30 : input.touchPrimary ? 60 : 0;
   if (cap) { acc += dt; if (acc < 1 / cap - 0.002) return; dt = Math.min(0.1, acc); acc = 0; }
@@ -221,24 +254,31 @@ function loop(now) {
   if (state === 'title') {
     titleCamera(dt);
     const act = touchUI() ? touchMenu.update(dt) : menu.update(dt, mouseInt);
-    if (act === 'newgame' && !onFaded) fadeTo(() => { startGame(true); fadeTarget = 0; fadeSpeed = 0.5; });
+    if (act === 'newgame' && !onFaded) fadeTo(() => { startGame({ chapter: 1, intro: true }); fadeTarget = 0; fadeSpeed = 0.5; });
+    if (act === 'continue' && !onFaded) fadeTo(() => { startGame({ chapter: campaign.save.chapter || 1, fromSave: true }); fadeTarget = 0; fadeSpeed = 0.6; });
+    if (typeof act === 'string' && act.startsWith('chapter:') && !onFaded) { const n = +act.slice(8); fadeTo(() => { startGame({ chapter: n, intro: n === 1 }); fadeTarget = 0; fadeSpeed = 0.6; }); }
   } else if (state === 'intro') {
     playIntro(dt);
   } else if (state === 'play') {
     if (input.pause()) pauseGame();
     else if (input.inventory()) { invScreen.open(); setState('inventory'); input.unlock(); }
     else if (npcs.talkHit(input)) { npcs.startTalk(); setState('talk'); }
-    else if (mission.interactHit(input)) { mission.startRead(); setState('read'); }
+    else if (campaign.interactHit(input)) { campaign.startRead(); setState('read'); }
     else {
+      combat.pickHit(input);
       if (input.mouse.clicked && !input.locked && input.lastDevice === 'keyboard') input.lock();
       pistol.pre(dt, input);
+      combat.pre(dt, input);
       const r = player.update(dt, tpc.yaw, input);
       pistol.post(dt);
+      combat.post(dt);
       npcs.pushPlayer();
-      mission.afterPlayer(dt);
+      combat.afterPlayer(dt);
+      campaign.afterPlayer(dt);
       tpc.update(dt, player, input, settings, r.moving);
       R.bars = npcs.applyCamera(dt) * 0.1;
-      mission.afterCamera();
+      combat.afterCamera();
+      campaign.afterCamera();
     }
   } else if (state === 'talk') {
     // conversa: o jogador para e vira para o morador; câmera de lado e tarjas
@@ -249,14 +289,14 @@ function loop(now) {
     if (done) setState('play');
   } else if (state === 'read') {
     // lendo o cartaz / examinando o galinheiro
-    const done = mission.updateRead(dt, input) === 'close';
+    const done = campaign.updateRead(dt, input) === 'close';
     player.update(dt, tpc.yaw, null);
     tpc.update(dt, player, null, settings, false);
     if (done) setState('play');
   } else if (state === 'cutscene' || state === 'dying') {
     // encontro com o chupacabras (a missão move a câmera) ou jogador caído
     player.update(dt, tpc.yaw, null);
-    if (state === 'dying') { tpc.update(dt, player, null, settings, false); mission.afterCamera(); }
+    if (state === 'dying') { tpc.update(dt, player, null, settings, false); combat.afterCamera(); }
   } else if (state === 'inventory') {
     // em pé no celular, as ações do item viram botões grandes na parte de baixo
     const panelClose = invPanel() && touchMenu.updateInventory(invScreen) === 'close';
@@ -266,33 +306,47 @@ function loop(now) {
     const resume = menu.screen === 'pause' && (input.padHit('start') || input.hit('KeyP'));
     const act = resume ? 'resume' : touchUI() ? touchMenu.update(dt) : menu.update(dt, mouseInt);
     if (act === 'resume') { setState('play'); }
-    if (act === 'quit') fadeTo(() => { menu.open('main'); setState('title'); audio.setAmbience(false); fadeTarget = 0; fadeSpeed = 1.2; });
+    if (act === 'quit') fadeTo(() => { if (ctx.indoor) interiors.exit(); menu.open('main'); setState('title'); audio.setAmbience(false); atmo.set(titleWeather(), 0); fadeTarget = 0; fadeSpeed = 1.2; });
+  } else if (state === 'ending') {
+    endingT += dt;
+    titleCamera(dt);
+    if (endingT > 3 && !onFaded && (input.confirm() || input.pause() || input.mouse.clicked || endingT > 75)) fadeTo(() => { menu.open('main'); setState('title'); audio.setAmbience(false); atmo.set(titleWeather(), 0); fadeTarget = 0; fadeSpeed = 1.2; });
   }
 
   // mundo
-  const focus = state === 'title' ? camera.position : player.pos;
-  if (state !== 'title') {
+  const focus = state === 'title' || state === 'ending' ? camera.position : player.pos;
+  if (state !== 'title' && state !== 'ending') {
     hud.setPlace(state === 'intro' ? hud.place : ctx.placeName(player.pos.x, player.pos.z), dt);
     if (state === 'play') hud.setStreet(ctx.streetName(player.pos.x, player.pos.z), dt);
+    if (ctx.indoor) hud.street = null;
     const rv = ctx.rivers.index.nearest(player.pos.x, player.pos.z);
+    // música de tensão: criaturas por perto e chefe
+    const boss = combat.boss && !combat.boss.dead ? 1 : 0;
+    audio.setTension(state === 'play' || state === 'dying' ? (combat.inFight ? 1 : 0) : 0, boss);
     audio.update(dt, time, rv.seg ? rv.d : 999);
   } else audio.update(dt, time, 999);
-  ctx.leaves.update(dt, focus, time);
+  ctx.leaves.mesh.visible = !ctx.indoor;
+  if (!ctx.indoor) ctx.leaves.update(dt, focus, time);
+  interiors.update(dt);
   if (state !== 'inventory' && state !== 'pause') {
     targets.update(dt, player, state === 'play');
+    combat.update(dt, state);
+    pistol.lights(dt);
     npcs.update(dt, state);
-    const ev = mission.update(dt, state);
+    const ev = state === 'ending' ? null : campaign.update(dt, state);
     if (ev === 'cutscene' || ev === 'read' || ev === 'play') setState(ev);
     else if (ev === 'dead') {
       setState('dying');
-      fadeTo(() => { mission.respawn(); setState('play'); fadeTarget = 0; fadeSpeed = 1.2; }, 0.45);
+      fadeTo(() => { campaign.respawn(); setState('play'); fadeTarget = 0; fadeSpeed = 1.2; }, 0.45);
     }
     effects.update(dt, camera, ctx.groundAt);
   }
+  atmo.update(dt, camera, state === 'title' ? null : player, pistol.aim > 0.5 ? camera.getWorldDirection(aimDirV) : null);
   ctx.sky.update(camera);
   hud.update(dt);
-  character.root.visible = character.blob.visible = state !== 'title';
+  character.root.visible = character.blob.visible = state !== 'title' && state !== 'ending';
 
+  if (noRender) { input.endFrame(); return; }
   R.render(scene, camera);
   drawUI();
   // controles de toque só no jogo; nos menus e na abertura um toque vale um clique
@@ -334,7 +388,7 @@ function playIntro(dt) {
     tpc.dist = 4.6;
     setState('play');
     hud.showHints();
-    mission.begin();
+    campaign.begin();
   }
 }
 
@@ -351,34 +405,67 @@ function drawUI() {
   } else if (state === 'talk') {
     npcs.drawTalk(g, W, H, input.lastDevice);
   } else if (state === 'read') {
-    mission.drawRead(g, W, H, input.lastDevice);
+    campaign.drawRead(g, W, H, input.lastDevice);
   } else if (state === 'cutscene') {
-    mission.drawCutscene(g, W, H);
+    campaign.drawCutscene(g, W, H);
   } else if (state === 'dying') {
-    mission.drawDying(g, W, H);
+    campaign.drawDying(g, W, H);
+  } else if (state === 'ending') {
+    drawEnding(g, W, H);
   } else if (state === 'play') {
-    const showMap = settings.minimap !== false;
+    const showMap = settings.minimap !== false && !ctx.indoor;
     const device = input.lastDevice, touch = device === 'touch';
     // no toque o minimapa vai para o alto, longe dos polegares
     npcs.drawHud(g, W, H, device);
-    if (showMap) minimap.draw(g, W, H, player, tpc.yaw, touch, mission.marker);
+    if (showMap) minimap.draw(g, W, H, player, tpc.yaw, touch, campaign.marker);
     pistol.drawHud(g, W, H, device);
+    combat.drawHud(g, W, H, device);
     hud.draw(g, W, H, {
       device,
       lockHint: !input.locked && device === 'keyboard' && stateT > 1,
       stats: hud.showFps ? `${ctx.stats.triangles} tri` : '',
       rightPad: showMap && !touch ? 96 * (H / 240) : 0,
     });
-    mission.drawHud(g, W, H, device);
+    campaign.drawHud(g, W, H, device);
   }
+}
+
+// créditos do fim: amanhecer sobre a igreja e o texto subindo
+const ENDING = [
+  ['Teewald', 'title'], ['', ''],
+  ['O sol nasceu atrás do morro às 6h12.', ''], ['Os galos cantaram pela primeira vez em muitos dias.', ''], ['', ''],
+  ['O chupacabras foi levado numa jaula para a universidade, em Porto Alegre.', 'dim'],
+  ['O Rudi carteiro voltou a entregar as cartas. Nunca mais saiu em noite de lua cheia.', 'dim'],
+  ['Na fábrica, o relógio de ponto marca 23h47. Ninguém teve coragem de mexer.', 'dim'],
+  ['A cruz de ferro voltou para cima de uma pedra no mato, presa com cimento.', 'dim'],
+  ['E a Marlene publicou a reportagem. Ninguém acreditou.', 'dim'], ['', ''],
+  ['FIM', 'title2'], ['', ''],
+  ['Uma história de Santa Maria do Herval - RS', ''], ['', ''],
+  ['Ruas, rio e lugares: © OpenStreetMap (ODbL)', 'dim'], ['Prédios: Microsoft Building Footprints (ODbL)', 'dim'], ['Relevo: SRTM 30m (NASA)', 'dim'], ['', ''],
+  ['Criado por Fabiano Kunst', 'name'],
+];
+function drawEnding(g, W, H) {
+  const k = H / 240, t = endingT;
+  g.globalAlpha = 0.45; g.fillStyle = '#000'; g.fillRect(0, 0, W, H); g.globalAlpha = 1;
+  const y0 = H + 10 * k - t * 14 * k;
+  ENDING.forEach(([line, st], i) => {
+    const y = y0 + i * 16 * k;
+    if (!line || y < -40 * k || y > H + 20 * k) return;
+    if (st === 'title' || st === 'title2') drawText(g, line, W / 2, y, (st === 'title' ? 34 : 26) * k, { align: 'center', font: FONT_TITLE, color: '#efe2c4', shadow: '#4a0d08' });
+    else drawText(g, line, W / 2, y, (st === 'name' ? 14 : 11) * k, { align: 'center', color: st === 'dim' ? '#d8c8a8' : '#f2e6c8' });
+  });
+  if (t > 3) drawText(g, input.lastDevice === 'pad' ? 'A  menu' : input.lastDevice === 'touch' ? 'toque para voltar' : 'ENTER  menu', W - 8 * k, H - 14 * k, 10 * k, { align: 'right', color: '#a89878' });
 }
 
 function exposeDebug() {
   window.__teewald = {
-    ctx, player, camera, tpc, settings, scene, renderer: R, G, input, menu, touchMenu, inventory, pistol, targets, effects, invScreen, npcs, mission,
+    ctx, player, camera, tpc, settings, atmo, combat, interiors, audio, character, scene, renderer: R, G, input, menu, touchMenu, inventory, pistol, targets, effects, invScreen, npcs, mission,
     get state() { return state; },
     setState: s => setState(s),
-    startGame: (intro = false) => { startGame(intro); fade = 0; fadeTarget = 0; },
+    startGame: (intro = false) => { startGame({ intro }); fade = 0; fadeTarget = 0; },
+    chapter: (n) => { startGame({ chapter: n }); fade = 0; fadeTarget = 0; },
+    campaign,
+    simulate: (secs, step = 1 / 30) => { noRender = true; try { for (let t = 0; t < secs; t += step) { last -= step * 1000; frame(performance.now()); } } finally { noRender = false; } return state; },
     teleport: (x, z, heading = 0) => { player.place(x, z, heading); tpc.snap(player); },
     view: (x, y, z, lx, ly, lz, fogFar) => {
       state = 'debug'; camera.position.set(x, y, z); camera.lookAt(lx, ly, lz);
