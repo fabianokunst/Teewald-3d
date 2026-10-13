@@ -16,7 +16,6 @@ const OBJ = {
   fight: 'Enfrente o chupacabras',
   back: 'Volte para a clareira',
   escaped: 'O chupacabras fugiu ferido...',
-  done: 'Pegue o chupacabras  (continua)',
 };
 
 const TEXTS = {
@@ -268,7 +267,7 @@ export class Mission {
   update(dt, state) {
     if (!this.step || !this.site || state === 'title') return null;
     this.t += dt; this.stepT += dt;
-    if (this.card) { this.card.t += dt; if (this.card.t > (this.card.kind === 'complete' ? 8 : 6.5)) this.card = null; }
+    if (this.card) { this.card.t += dt; if (this.card.t > (this.card.kind === 'complete' ? 4.5 : 6.5)) this.card = null; }
     const P = this.player, S = this.site, C = this.creature;
     // velocidade do jogador (para o bicho prever o bote)
     if (this.prevPos && dt > 0) { this.pvel.x = lerp(this.pvel.x, (P.pos.x - this.prevPos.x) / dt, 0.3); this.pvel.z = lerp(this.pvel.z, (P.pos.z - this.prevPos.z) / dt, 0.3); }
@@ -442,7 +441,7 @@ export class Mission {
   _drawCard(g, W, H, k) {
     const c = this.card;
     if (!c || c.t < 0) return;
-    const dur = c.kind === 'complete' ? 8 : 6.5;
+    const dur = c.kind === 'complete' ? 4.5 : 6.5;
     const a = Math.min(1, c.t / 0.8, Math.max(0, (dur - c.t) / 1));
     if (a <= 0) return;
     const y = H * 0.3;
@@ -457,7 +456,6 @@ export class Mission {
       drawText(g, 'MISSÃO CUMPRIDA', W / 2, y - 16 * k, 11 * k, { align: 'center', alpha: a, color: '#f2c879' });
       drawText(g, 'O Chupacabras', W / 2, y - 4 * k, 28 * k, { align: 'center', font: FONT_TITLE, alpha: a, color: '#efe2c4', shadow: '#2a0806' });
       drawText(g, `TIROS ${s.shots}   ACERTOS ${s.hits}   PRECISÃO ${acc}%   LUTA ${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}`, W / 2, y + 34 * k, 10 * k, { align: 'center', alpha: a, color: '#d8c8a8' });
-      drawText(g, 'CONTINUA...', W / 2, y + 46 * k, 10 * k, { align: 'center', alpha: a, color: '#c86848' });
     }
   }
 

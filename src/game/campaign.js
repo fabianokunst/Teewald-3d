@@ -576,7 +576,7 @@ export class Campaign {
     if (this.index === 1) {
       const ev = this.mission.update(dt, state);
       // fim da missão 1: interlúdio e a primeira noite
-      if (this.mission.step === 'done' && !this._ch1Done && this.mission.card?.kind === 'complete' && this.mission.card.t > 6.5) {
+      if (this.mission.step === 'done' && !this._ch1Done && this.mission.card?.kind === 'complete' && this.mission.card.t > 3.2) {
         this._ch1Done = true;
         this.save.unlocked = Math.max(this.save.unlocked || 1, 2); writeSave(this.save);
         this.fadeTo(() => { this.startChapter(2, { carry: true }); this._interlude = true; }, 0.6);
@@ -586,7 +586,7 @@ export class Campaign {
     const S = this.S;
     if (!S || state === 'title') return null;
     S.t += dt; S.stepT += dt;
-    if (S.card) { S.card.t += dt; if (S.card.t > (S.card.kind === 'complete' ? 7.5 : 6)) { const k = S.card.kind; S.card = null; if (k === 'complete') this._nextChapter(); } }
+    if (S.card) { S.card.t += dt; if (S.card.t > (S.card.kind === 'complete' ? 4.5 : 6)) { const k = S.card.kind; S.card = null; if (k === 'complete') this._nextChapter(); } }
     if (this._interlude) { this._interlude = false; this._interludeNarration(); }
     if (state === 'cutscene') return this._cutscene(dt);
     if (state === 'dying') {
@@ -755,7 +755,7 @@ export class Campaign {
   _drawCard(g, W, H, k) {
     const S = this.S, c = S.card;
     if (!c || c.t < 0) return;
-    const dur = c.kind === 'complete' ? 7.5 : 6;
+    const dur = c.kind === 'complete' ? 4.5 : 6;
     const a = Math.min(1, c.t / 0.8, Math.max(0, (dur - c.t) / 1));
     if (a <= 0) return;
     const y = H * 0.3;
@@ -771,7 +771,7 @@ export class Campaign {
       drawText(g, def.title, W / 2, y - 4 * k, 26 * k, { align: 'center', font: FONT_TITLE, alpha: a, color: '#efe2c4', shadow: '#2a0806' });
       const rank = st.deaths === 0 && st.kills >= 12 ? 'S' : st.deaths === 0 ? 'A' : st.deaths <= 2 ? 'B' : 'C';
       drawText(g, `CRIATURAS ${st.kills}   QUEDAS ${st.deaths}   TEMPO ${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}   AVALIAÇÃO ${rank}`, W / 2, y + 34 * k, 10 * k, { align: 'center', alpha: a, color: '#d8c8a8' });
-      drawText(g, S.n < 10 ? 'CONTINUA...' : 'FIM', W / 2, y + 46 * k, 10 * k, { align: 'center', alpha: a, color: '#c86848' });
+      if (S.n >= 10) drawText(g, 'FIM', W / 2, y + 46 * k, 10 * k, { align: 'center', alpha: a, color: '#c86848' });
     }
   }
 
