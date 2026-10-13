@@ -1,10 +1,10 @@
 import { drawText, panel, FONT_UI } from './overlay.js';
 
-// Caixa de diálogo no pé da tela: nome de quem fala, texto letra a letra com
-// "voz" de bipes (cada morador tem um tom) e setinha piscando no fim da página.
+// Caixa de diálogo no pé da tela: nome de quem fala, texto letra a letra, devagar,
+// com "voz" de bipes graves e abafados (cada morador tem um tom) e setinha no fim da página.
 // Falas longas quebram em páginas de até 3 linhas.
 
-const SPEED = 46;       // letras por segundo
+const SPEED = 32;       // letras por segundo
 const LINES = 3;
 
 let measureCtx = null;
@@ -64,7 +64,7 @@ export class Dialogue {
       // um bipe a cada duas letras (espaços e pontuação ficam mudos)
       if (now !== before && now - this.lastBlip >= 2 && /[\p{L}\d]/u.test(this.pageText[now - 1] || '')) {
         this.lastBlip = now;
-        this.audio.tone(this.voice * (0.9 + Math.random() * 0.25), 0.04, 'square', 0.022);
+        this.audio.tone(this.voice * 0.72 * (0.92 + Math.random() * 0.16), 0.06, 'triangle', 0.035);
       }
     }
     if (input.back()) { this.open = false; this.audio.menuBack(); return 'close'; }
@@ -84,26 +84,26 @@ export class Dialogue {
     const k = H / 240, size = 13 * k;
     const boxW = Math.min(W - 24 * k, 340 * k), boxH = (LINES * 14 + 14) * k;
     const x0 = Math.round((W - boxW) / 2), y0 = Math.round(H - boxH - 12 * k);
-    panel(g, x0, y0, boxW, boxH, 0.88);
+    panel(g, x0, y0, boxW, boxH, 0.92);
     // plaquinha com o nome
     const nameSize = 11 * k;
     panel(g, x0 + 8 * k, y0 - 12 * k, measure(this.name, nameSize) + 14 * k, 15 * k, 0.9);
-    drawText(g, this.name, x0 + 13 * k, y0 - 11 * k, nameSize, { color: '#f2c879' });
+    drawText(g, this.name, x0 + 13 * k, y0 - 11 * k, nameSize, { color: '#b8a890' });
     // texto até a letra atual, linha a linha
     let left = Math.floor(this.chars);
     this.pages[this.page].forEach((row, r) => {
       if (left <= 0) return;
       const part = row.slice(0, left);
       left -= row.length + 1;
-      drawText(g, part, x0 + 11 * k, y0 + 8 * k + r * 14 * k, size, { color: '#f4ead2' });
+      drawText(g, part, x0 + 11 * k, y0 + 8 * k + r * 14 * k, size, { color: '#ded6c6' });
     });
     // setinha piscando quando a página terminou
     if (this.chars >= this.pageText.length && Math.floor(this.t * 2.5) % 2 === 0) {
       const ax = Math.round(x0 + boxW - 14 * k), ay = Math.round(y0 + boxH - 10 * k), s = Math.max(1, Math.round(k));
-      g.fillStyle = '#f2c879';
+      g.fillStyle = '#8a2a20';
       for (let i = 0; i < 4; i++) g.fillRect(ax - (3 - i) * s, ay + i * s, (7 - 2 * i) * s, s);
     }
     const hint = device === 'pad' ? 'A  continuar   B  sair' : device === 'touch' ? 'toque para continuar' : 'F  continuar   ESC  sair';
-    drawText(g, hint, x0 + boxW - 22 * k, y0 + boxH + 1 * k, 9 * k, { align: 'right', color: '#a89878' });
+    drawText(g, hint, x0 + boxW - 22 * k, y0 + boxH + 1 * k, 9 * k, { align: 'right', color: '#7a7064' });
   }
 }

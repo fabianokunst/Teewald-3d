@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import { G } from './ps1material.js';
 
 // Renderiza em baixa resolução (ex.: 320x240) e amplia sem suavização.
-// Passo final: dithering ordenado 4x4 + cor de 15 bits + fade.
+// Passo final: cor de terror (menos saturada, fria, bordas escuras, grão de filme),
+// dithering ordenado 4x4 + cor de 15 bits + fade.
 export class Renderer {
   constructor(container) {
     this.container = container;
@@ -20,15 +21,22 @@ export class Renderer {
     this.ui.style.pointerEvents = 'none';
     this.rt = new THREE.WebGLRenderTarget(320, 240, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, depthBuffer: true, generateMipmaps: false });
     this.postMat = new THREE.ShaderMaterial({
-      uniforms: { tDiffuse: { value: this.rt.texture }, uDither: { value: 1 }, uFade: { value: 0 }, uBars: { value: 0 } },
+      uniforms: { tDiffuse: { value: this.rt.texture }, uDither: { value: 1 }, uFade: { value: 0 }, uBars: { value: 0 }, uTime: G.uTime },
       vertexShader: 'varying vec2 vUv; void main(){ vUv = position.xy * 0.5 + 0.5; gl_Position = vec4(position.xy, 0.0, 1.0); }',
       fragmentShader: /* glsl */`
-        uniform sampler2D tDiffuse; uniform float uDither; uniform float uFade; uniform float uBars;
+        uniform sampler2D tDiffuse; uniform float uDither; uniform float uFade; uniform float uBars; uniform float uTime;
         varying vec2 vUv;
         float bayer2(vec2 a) { a = floor(a); return fract(dot(a, vec2(0.5, a.y * 0.75))); }
         float bayer4(vec2 a) { return bayer2(0.5 * a) * 0.25 + bayer2(a); }
         void main() {
           vec3 c = texture2D(tDiffuse, vUv).rgb;
+          float l = dot(c, vec3(0.3, 0.59, 0.11));
+          c = mix(vec3(l), c, 0.6) * vec3(0.95, 1.0, 0.98);
+          c = (c - 0.5) * 1.1 + 0.48;
+          vec2 q = vUv - 0.5;
+          c *= clamp(1.0 - dot(q, q) * 1.25, 0.0, 1.0);
+          float n = fract(sin(dot(floor(gl_FragCoord.xy) + floor(uTime * 24.0) * 7.31, vec2(12.9898, 78.233))) * 43758.5453);
+          c += (n - 0.5) * 0.04;
           c *= 1.0 - uFade;
           if (uDither > 0.5) {
             c += (bayer4(gl_FragCoord.xy) - 0.5) / 31.0 * 1.4;

@@ -188,7 +188,8 @@ export function railing(B, ctx, pts, o = {}) {
 export function letreiro(B, ctx, x, z, rot, text = 'TEEWALD') {
   const y = ctx.terrain.heightAt(x, z);
   const P = rotP(x, z, rot);
-  const colors = [[0.85, 0.2, 0.15], [0.95, 0.75, 0.15], [0.2, 0.55, 0.3], [0.2, 0.45, 0.75], [0.9, 0.45, 0.15], [0.6, 0.25, 0.55], [0.85, 0.2, 0.15]];
+  // tinta velha, desbotada e encardida
+  const colors = [[0.46, 0.22, 0.19], [0.52, 0.45, 0.26], [0.25, 0.36, 0.28], [0.26, 0.32, 0.4], [0.5, 0.33, 0.22], [0.36, 0.26, 0.33], [0.46, 0.22, 0.19]];
   const cw = 1.5, H = 1.8, gap = 0.25;
   const total = text.length * (cw + gap) - gap;
   B.col = [0.9, 0.9, 0.9];

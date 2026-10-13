@@ -262,10 +262,11 @@ function noiseFill(w, h, [r, g, b], amp) {
   x.putImageData(d, 0, 0); return c;
 }
 
+// céu encoberto de fim de tarde (terror): cinza frio, a neblina usa o horizonte
 export const SKY = {
-  top: [0.42, 0.52, 0.66],
-  mid: [0.74, 0.70, 0.68],
-  horizon: [0.88, 0.72, 0.56],
+  top: [0.27, 0.29, 0.32],
+  mid: [0.45, 0.46, 0.47],
+  horizon: [0.56, 0.56, 0.54],
 };
 
 function makeSky() {
@@ -292,9 +293,10 @@ function makeSky() {
       const y = Math.floor(i / W);
       const fade = Math.sin((y / 48) * Math.PI) * 0.85;
       const k = white * fade;
-      sky.data[i * 4] += (250 - sky.data[i * 4]) * k * 0.9;
-      sky.data[i * 4 + 1] += (226 - sky.data[i * 4 + 1]) * k * 0.9;
-      sky.data[i * 4 + 2] += (200 - sky.data[i * 4 + 2]) * k * 0.9;
+      // nuvens carregadas: mais escuras que o céu
+      sky.data[i * 4] += (96 - sky.data[i * 4]) * k * 0.8;
+      sky.data[i * 4 + 1] += (98 - sky.data[i * 4 + 1]) * k * 0.8;
+      sky.data[i * 4 + 2] += (102 - sky.data[i * 4 + 2]) * k * 0.8;
     }
     g.putImageData(sky, 0, 8);
   }

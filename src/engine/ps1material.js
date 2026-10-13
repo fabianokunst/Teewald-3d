@@ -10,9 +10,10 @@ export const G = {
   uFogNear: { value: 40 },
   uFogFar: { value: 300 },
   uSunDir: { value: new THREE.Vector3(-0.6, 0.4, -0.6).normalize() },
-  uSunColor: { value: new THREE.Color(1.0, 0.82, 0.6) },
-  uAmbSky: { value: new THREE.Color(0.52, 0.55, 0.62) },
-  uAmbGround: { value: new THREE.Color(0.42, 0.36, 0.3) },
+  // luz fraca e fria de dia encoberto
+  uSunColor: { value: new THREE.Color(0.5, 0.49, 0.47) },
+  uAmbSky: { value: new THREE.Color(0.47, 0.49, 0.53) },
+  uAmbGround: { value: new THREE.Color(0.3, 0.28, 0.27) },
 };
 
 const VERT = /* glsl */`

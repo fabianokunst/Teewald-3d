@@ -247,6 +247,13 @@ export function makeItem(kind, M, color = [200, 200, 200]) {
       face(B, 'flat', a, b, d, m);
     }
   }
+  // mala de viagem no chão (origem embaixo)
+  if (kind === 'mala') {
+    cube(B, 'flat', 0, 0.2, 0, 0.56, 0.38, 0.17);
+    B.col = k3(c, 0.6);
+    cube(B, 'flat', 0, 0.2, 0, 0.58, 0.04, 0.18);
+    cube(B, 'flat', 0, 0.41, 0, 0.14, 0.03, 0.03);
+  }
   // vara de pescar: ao longo de +z (o morador inclina para cima)
   if (kind === 'vara') {
     B.col = [0.42, 0.3, 0.18];
@@ -281,8 +288,9 @@ export function makeThermos(M) {
   return toGroup(B, M);
 }
 
-// banca de rua (pinhão, cuca e pão caseiro); frente para +z, origem no chão
-export function makeStall(M, text) {
+// banca de rua (pinhão, cuca e pão caseiro); frente para +z, origem no chão.
+// closed: banca sendo desmontada, só com os sacos de pinhão em cima
+export function makeStall(M, text, closed = false) {
   const B = new MeshBuilder(0);
   B.col = [1, 1, 1];
   B.box('woodBench', 0, 0.82, 0, 1.7, 0.05, 0.72, 0, { uvScale: 1 });
@@ -290,7 +298,9 @@ export function makeStall(M, text) {
   // toalha xadrez caindo na frente
   B.box('awnRed', 0, 0.6, 0.35, 1.72, 0.27, 0.02, 0, { faceUV: true });
   // placa
-  const sign = signMaterial(text, { bg: '#f2e6c8', fg: '#7a2a1c', w: 128, h: 32, sub: 'FEITO EM CASA' });
+  const sign = closed
+    ? signMaterial(text, { bg: '#3a3430', fg: '#b8ac98', w: 128, h: 32, borderColor: '#5a5048' })
+    : signMaterial(text, { bg: '#f2e6c8', fg: '#7a2a1c', w: 128, h: 32, sub: 'FEITO EM CASA' });
   // placa no alto, acima da cabeça de quem vende
   B.box('woodDark', -0.86, 0.85, 0.33, 0.04, 1.42, 0.04, 0, { uvScale: 1 });
   B.box('woodDark', 0.86, 0.85, 0.33, 0.04, 1.42, 0.04, 0, { uvScale: 1 });
@@ -302,6 +312,7 @@ export function makeStall(M, text) {
   lathe(B, 'awnCream', [[0.87, 0.11], [0.98, 0.12], [1.03, 0.09]], 7, { x: -0.2, z: -0.1 });
   B.col = [0.52, 0.3, 0.18];
   for (const [x, z] of [[-0.5, 0], [-0.2, -0.1]]) lathe(B, 'flat', [[1.0, 0.09], [1.06, 0.07], [1.08, 0]], 7, { x, z });
+  if (closed) return toGroup(B, M);
   for (const [x, z] of [[0.25, 0.08], [0.6, -0.05]]) {
     B.col = [0.8, 0.58, 0.3];
     lathe(B, 'flat', [[0.845, 0.16], [0.9, 0.16], [0.92, 0.12], [0.925, 0]], 9, { x, z });

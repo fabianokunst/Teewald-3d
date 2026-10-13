@@ -13,7 +13,7 @@ const OBJ = {
   poster: 'Leia o cartaz na Praça 10 de Abril',
   coop: 'Investigue o galinheiro perto da Igreja Matriz',
   trail: 'Siga as pegadas mata adentro',
-  fight: 'Enfrente o chupacabras!',
+  fight: 'Enfrente o chupacabras',
   back: 'Volte para a clareira',
   escaped: 'O chupacabras fugiu ferido...',
   done: 'Pegue o chupacabras  (continua)',
@@ -24,7 +24,7 @@ const TEXTS = {
     'PROCURA-SE: CHUPACABRAS!',
     'Nas últimas noites, galinhas, patos e até ovelhas apareceram mortos em Teewald. Todos com dois furos no pescoço e sem uma gota de sangue.',
     'Último ataque: um galinheiro perto da Igreja Matriz, na beira da mata.',
-    'Não ande sozinho perto do mato. Quem souber de alguma coisa, procure a Prefeitura. RECOMPENSA!',
+    'Não ande sozinho perto do mato. Quem souber de alguma coisa, procure a Prefeitura. Paga-se recompensa.',
   ], 150],
   coop: ['GALINHEIRO', [
     'A tela do cercado foi arrancada de fora para dentro.',
@@ -225,7 +225,7 @@ export class Mission {
     const a = Math.atan2(cl.x - cp.x, cl.z - cp.z);
     C.spawnFight(cl.x + Math.sin(a) * 6, cl.z + Math.cos(a) * 6, a + Math.PI);
     this.setStep('fight', false);
-    this.hud.toast('TENTE DE NOVO');
+    this.hud.toast('VOCÊ CAIU...');
   }
 
   _complete() {

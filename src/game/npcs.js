@@ -9,10 +9,11 @@ import { makeHat, makeHair, makeSkirt, makeItem, makeLine, makeThermos, makeStal
 import { Dialogue } from '../ui/dialogue.js';
 import { drawText, textSprite, panel, FONT_UI } from '../ui/overlay.js';
 
-// Moradores de Teewald: andam pelo calçadão e pela praça, sentam nos bancos,
-// pescam, vendem cuca... Chegando perto, cumprimentam e soltam comentários;
-// com F / A / toque em FALAR abre a conversa. Tiro por perto assusta (agacham e
-// fogem), arma apontada faz levantar as mãos. Ninguém se machuca.
+// Moradores de Teewald, com medo do que anda no mato: andam pelo calçadão e pela
+// praça, sentam nos bancos, alguns ficam parados encarando quem passa. Chegando
+// perto, murmuram alguma coisa; com F / A / toque em FALAR abre a conversa. Tiro
+// por perto assusta (agacham e fogem), arma apontada faz levantar as mãos.
+// Ninguém se machuca.
 
 const TAU = Math.PI * 2;
 const TALK_R = 2.4;
@@ -192,10 +193,10 @@ class NPC {
     this.pos = new THREE.Vector3();
     this.heading = 0; this.speed = 0; this.t = Math.random() * 10;
     this.talkIdx = 0; this.talking = false; this.afterTalk = 0;
-    this.flinch = 0; this.fear = 0; this.aimedT = 0; this.handsT = 0; this.waveT = 0;
-    this.bark = null; this.barkT = 4 + Math.random() * 10; this.greeted = false; this.gunNoted = false;
+    this.flinch = 0; this.fear = 0; this.aimedT = 0; this.handsT = 0;
+    this.bark = null; this.barkT = 6 + Math.random() * 14; this.greeted = false; this.gunNoted = false;
     this.pause = 0; this.wait = 0; this.stuck = 0; this.sip = 6 + Math.random() * 6;
-    this.w = { pose: 1, sit: 0, talk: 0, wave: 0, hands: 0, flinch: 0, look: 0 };
+    this.w = { pose: 1, sit: 0, talk: 0, hands: 0, flinch: 0, look: 0 };
     this.dist = 999; this.visible = true;
   }
 
@@ -211,6 +212,11 @@ class NPC {
       const [x, z] = at(this.def.thermos ? -0.3 : 0, 0.02);
       this.pos.set(x, st.y, z);
       this.heading = this.home = st.rot;
+      if (this.def.luggage) {
+        const mala = makeItem('mala', sys.M, [74, 52, 38]), [mx, mz] = at(0.62, 0.32);
+        mala.position.set(mx, st.y, mz); mala.rotation.y = st.rot + 0.2;
+        sys.scene.add(mala);
+      }
       if (this.def.thermos) {
         const th = makeThermos(sys.M), [tx, tz] = at(0.42, -0.04);
         th.position.set(tx, st.y + st.seat, tz);
@@ -236,7 +242,7 @@ class NPC {
     }
     if (spec.stall) {
       const st = spec.stall, y = ctx.groundAt(st.x, st.z, ctx.terrain.heightAt(st.x, st.z) + 1);
-      const m = makeStall(sys.M, st.text);
+      const m = makeStall(sys.M, st.text, st.closed);
       m.position.set(st.x, y, st.z); m.rotation.y = st.rot;
       sys.scene.add(m);
       ctx.collision.addBox(st.x, st.z, 0.88, 0.38, st.rot, y, y + 0.9, { cam: false });
@@ -284,7 +290,7 @@ class NPC {
     this.dist = Math.hypot(dx, dz);
     if (this.bark) { this.bark.t += dt; if (this.bark.t > this.bark.dur) this.bark = null; }
     if (this.dist > SIM_R && this.mode !== 'follow') { this._show(false); return; }
-    for (const k of ['flinch', 'fear', 'aimedT', 'afterTalk', 'waveT']) this[k] = Math.max(0, this[k] - dt);
+    for (const k of ['flinch', 'fear', 'aimedT', 'afterTalk']) this[k] = Math.max(0, this[k] - dt);
     if (this.aimedT > 0) this.handsT = Math.max(this.handsT, 0.9); else this.handsT = Math.max(0, this.handsT - dt);
     if (this.handsT <= 0) this.aimBarked = false;
     const play = sys.mode === 'play';
@@ -351,23 +357,25 @@ class NPC {
 
     // ---------- para onde olhar parado ----------
     if (this.speed < 0.2) {
-      let want = null;
+      let want = null, rate = 4;
       if (this.talking || this.handsT > 0 || this.afterTalk > 0 || (this.fear > 0 && !this.mobile)) want = toPlayer;
-      else if (this.mode === 'stand' && !this.returnTo && this.home !== undefined) want = this.home;
+      // os que encaram viram o corpo devagar, acompanhando quem passa
+      else if (this.def.stare && this.dist < 9 && sys.mode !== 'title' && this.fear <= 0 && !this.returnTo) { want = toPlayer; rate = 1.1; }
+      else if (this.mode === 'stand' && !this.returnTo && this.home !== undefined) { want = this.home; rate = 1.5; }
       if (this.mode === 'sit') want = this.home;
-      if (want !== null) this.heading += wrapA(want - this.heading) * Math.min(1, dt * 4);
+      if (want !== null) this.heading += wrapA(want - this.heading) * Math.min(1, dt * rate);
     }
 
     // ---------- falas soltas ----------
     if (play && !this.talking) {
-      if (this.dist < 4.5 && !this.greeted && this.fear <= 0 && sys.barkCool <= 0) {
-        this.greeted = true; this.say(this.def.hi, sys, 2.6); this.waveT = 1.6;
+      if (this.dist < 3.5 && !this.greeted && this.fear <= 0 && sys.barkCool <= 0) {
+        this.greeted = true; this.say(this.def.hi, sys, 2.4);
       } else if (this.dist > 14) this.greeted = false;
-      if (this.dist < 9) {
+      if (this.dist < 10) {
         this.barkT -= dt;
         if (this.barkT <= 0 && sys.barkCool <= 0 && !this.bark && this.fear <= 0) {
           this.say(pick(this.def.barks), sys);
-          this.barkT = 10 + Math.random() * 14;
+          this.barkT = 16 + Math.random() * 20;
         }
       }
     }
@@ -480,13 +488,6 @@ class NPC {
       }
       ch.head.rotation.x += Math.sin(t * 7) * 0.04 * kt;
     }
-    // aceno de cumprimento (braço direito livre)
-    const rFree = !['fish', 'photo', 'cane', 'rake', 'phone'].includes(def.pose) && !(this.item && this.itemArm === 0);
-    const kw = ease('wave', this.waveT > 0 && rFree && !this.busy && this.mode !== 'sit' || (this.waveT > 0 && this.mode === 'sit' && rFree), 8);
-    if (kw > 0.01) {
-      arm(Rr, -0.25, -2.55, -0.35, kw);
-      Rr.el.rotation.z = lerp(Rr.el.rotation.z, Math.sin(t * 11) * 0.45, kw);
-    }
     // mãos para o alto (arma apontada)
     const kh = ease('hands', this.handsT > 0, 9);
     if (kh > 0.01) { arm(Rr, -2.75, -0.35, -0.35, kh); arm(Lf, -2.75, 0.35, -0.35, kh); }
@@ -500,9 +501,9 @@ class NPC {
         for (const l of ch.legs) { l.hip.rotation.x = lerp(l.hip.rotation.x, -0.45, kf); l.knee.rotation.x = lerp(l.knee.rotation.x, 0.85, kf); l.ankle.rotation.x = lerp(l.ankle.rotation.x, -0.35, kf); }
       }
     }
-    // cabeça vira para o jogador quando ele chega perto
+    // cabeça acompanha o jogador de longe, devagar
     const rel = wrapA(toPlayer - this.heading);
-    const kl = ease('look', (this.dist < 6 && Math.abs(rel) < 2.0 && sys.mode !== 'title') || this.talking, 4);
+    const kl = ease('look', (this.dist < 11 && Math.abs(rel) < 2.0 && sys.mode !== 'title') || this.talking, 2);
     if (kl > 0.01) ch.head.rotation.y = lerp(ch.head.rotation.y, clamp(rel, -1.1, 1.1), kl);
   }
 
@@ -714,12 +715,13 @@ export class NPCs {
       if (!s) continue;
       const b = n.bark, a = Math.min(1, b.t * 5, (b.dur - b.t) * 3) * clamp((16 - n.dist) / 4, 0, 1);
       if (a <= 0) continue;
-      const size = Math.round(10 * k), sp = textSprite(b.text, size, FONT_UI, '#f4ead2', '#140c08', true);
+      // falas soltas em voz baixa: texto apagado sobre fundo bem leve
+      const size = Math.round(10 * k), sp = textSprite(b.text, size, FONT_UI, '#c4bcae', '#140c08', true);
       const x = Math.round(clamp(s[0] - sp.w / 2, 4 * k, W - sp.w - 4 * k)), y = Math.round(Math.max(4 * k, s[1] - sp.h - 4 * k));
-      g.globalAlpha = 0.55 * a; g.fillStyle = '#0d0907';
+      g.globalAlpha = 0.42 * a; g.fillStyle = '#0d0907';
       g.fillRect(x - 3 * k, y - 1 * k, sp.w + 6 * k, sp.h + 1 * k);
       g.globalAlpha = 1;
-      drawText(g, b.text, x, y, size, { color: '#f4ead2', alpha: a });
+      drawText(g, b.text, x, y, size, { color: '#c4bcae', alpha: a });
     }
     const f = this.focus;
     this.chip = null;

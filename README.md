@@ -1,7 +1,8 @@
 # Teewald
 
-Jogo em terceira pessoa com visual de PlayStation 1, ambientado numa versão de
-Santa Maria do Herval (RS) no outono. Roda no navegador (Three.js + Vite).
+Jogo de terror em terceira pessoa com visual de PlayStation 1, ambientado numa
+versão de Santa Maria do Herval (RS) no outono: neblina, céu encoberto e uma
+cidade com medo do que anda no mato. Roda no navegador (Three.js + Vite).
 
 ## Como rodar
 
@@ -110,24 +111,31 @@ feitos em código. O cenário fica em `src/world/chupaSites.js` e a missão em
   barraca no Pavilhão da Kartoffelfest; atrás de um gol do campo). Lata voa e
   quica, garrafa quebra; o estande limpo se remonta. Ao lado de cada estande há
   uma caixa de munição (+12), que reaparece depois de um minuto.
-- **23 moradores com falas** (`src/game/npcData.js`): pescador no Rio Cadeia,
-  caminhante e corredor no calçadão, turista fotografando o letreiro, professor
-  no Monumento ao Imigrante, Seu Valdir com chimarrão no banco da praça, banca
-  de pinhão e cuca, piá correndo, casal de idosos, padre e beata na Igreja
-  Matriz, zelador do cemitério, carteiro, prefeitura, Kartoffelfest, campo,
-  floricultura e loja. Cada um tem roupa própria no mesmo esqueleto do
-  protagonista (suéter, camisa xadrez, batina, terno, jardineira, vestido com
-  avental, uniforme), chapéu, lenço, cabelo comprido ou objeto na mão. Andam,
-  sentam, cumprimentam e comentam quando o jogador passa; a conversa abre com
-  câmera de lado, texto letra a letra e voz em bipes. Com a pistola na mão
-  eles comentam; mirada, levantam as mãos; um tiro por perto os faz encolher
-  e fugir. Ninguém se machuca.
+- **23 moradores com falas** (`src/game/npcData.js`), todos com medo e cada um
+  com um pedaço da história: o pescador que viu olhos vermelhos na outra margem,
+  a senhora procurando a gata, o rapaz atrás do cachorro que sumiu, a repórter
+  de Porto Alegre, o professor que conta do Blutsauger dos colonos e de 1978,
+  Seu Valdir sozinho na praça com o chimarrão, a banca de cuca fechada, o piá
+  parado na fonte, a moça ligando para a tia que não atende, o casal que teve a
+  janela arranhada, o padre do sino que tocou sozinho, a beata, o zelador do
+  cemitério, o carteiro das casas que ninguém atende, a Prefeitura que diz que
+  é graxaim, a festa adiada, o campo vazio, a floricultura e a loja fechando
+  cedo. Roupa própria no mesmo esqueleto do protagonista (suéter, camisa xadrez,
+  batina, terno, jardineira, vestido com avental, uniforme), chapéu, lenço,
+  cabelo comprido ou objeto na mão. Andam, sentam, murmuram quando o jogador
+  passa e alguns ficam parados encarando; a conversa abre com câmera de lado,
+  texto lento letra a letra e voz grave em bipes. Com a pistola na mão eles
+  comentam; mirada, levantam as mãos; um tiro por perto os faz encolher e
+  fugir. Ninguém se machuca.
 - **Protagonista** com ~1200 triângulos numa malha única com esqueleto
   (cotovelos e joelhos contínuos ao dobrar), sombreamento suave e um atlas de
   128x128 pintado a partir das texturas da pasta: jaqueta de lona com bolsos e
   zíper, calça marrom, botas com cadarço, cabelo loiro em mechas e olhos azuis.
 - Milhares de árvores (araucárias, plátanos de outono, nativas, pinheiros,
   ciprestes) e folhas caindo.
+- **Clima de terror**: céu encoberto, neblina fechada, luz fria, cores sem
+  saturação, bordas escuras e grão de filme; som de vento, zumbido grave e, ao
+  longe, corvos, cachorro uivando e o sino da igreja.
 - Efeitos de PS1: 320x240, tremor de vértices, dithering, cor de 15 bits,
   neblina e iluminação por vértice. Tudo isso pode ser ajustado em **Opções**.
 
