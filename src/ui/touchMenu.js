@@ -174,7 +174,7 @@ export class TouchMenu {
       lower();
       const tSize = v.portrait ? gr.h * 0.26 : Math.min(vh * 0.22, vw * 0.11);
       const tY = v.portrait ? gr.y + gr.h * 0.18 : Math.max(m * 0.6, vh * 0.05);
-      text('Teewald', vw / 2, tY + Math.sin(M.t * 0.8) * 1.5 * s, tSize, C.text, { align: 'center', font: FONT_TITLE, shadow: '#4a0d08' });
+      text('Teewald', vw / 2, tY, tSize, C.text, { align: 'center', font: FONT_TITLE, shadow: '#4a0d08' });
       fill(vw / 2 - tSize * 1.2, tY + tSize * 1.3, tSize * 2.4, Math.max(s, 1.5), '#b89a62', 1);
       if (M.screen === 'press') {
         const cy = v.portrait ? area.y + area.h * 0.45 : vh * 0.72;

@@ -170,7 +170,8 @@ export class Menu {
       return;
     }
     // título
-    const ty = 44 * k + Math.sin(this.t * 0.8) * 1.5 * k;
+    // logo parado (a flutuação de 1,5 px virava um pulo de pixel de vez em quando)
+    const ty = 44 * k;
     drawText(g, 'Teewald', W / 2, ty, 58 * k, { align: 'center', font: FONT_TITLE, color: '#efe2c4', shadow: '#4a0d08' });
     g.fillStyle = '#b89a62';
     g.fillRect(Math.round(W / 2 - 70 * k), Math.round(ty + 74 * k), Math.round(140 * k), Math.max(1, Math.round(k)));
