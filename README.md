@@ -13,6 +13,10 @@ Precisa do Node.js instalado.
 
 O navegador abre em `http://localhost:5173`.
 
+Com o jogo rodando, `npm run audit` faz uma revisão técnica do mundo: lista
+superfícies enterradas no terreno, pisos flutuando, objetos encaixados uns nos
+outros e objetos no meio da pista.
+
 ## Controles
 
 | Ação | Teclado / mouse | Controle | Toque (celular/tablet) |

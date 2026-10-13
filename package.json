@@ -9,7 +9,8 @@
     "build": "vite build",
     "preview": "vite preview --open",
     "mapdata": "node tools/build-mapdata.mjs",
-    "shot": "node tools/screenshot.mjs"
+    "shot": "node tools/screenshot.mjs",
+    "audit": "node tools/audit.mjs"
   },
   "dependencies": {
     "three": "^0.186.1"

@@ -260,15 +260,28 @@ function addOpenings(B, s, P, y0, ctx) {
       const p = P(dx, 0, hd + 0.55);
       B.box('concrete', p[0], base, p[2], 1.4, h, 1.1, s.rot, { uvScale: 1 });
       ctx.collision.addBox(p[0], p[2], 0.7, 0.55, s.rot, base, y0, { walk: true, cam: false });
-      const dir = dx > 0 ? -1 : 1, n = Math.ceil(h / 0.19), run = n * 0.28, rise = h / (n + 1);
-      for (let i = 0; i < n; i++) {
-        const lx = dx + dir * (0.7 + 0.28 * (i + 0.5)), q = P(lx, 0, hd + 0.55);
-        const g = Math.min(ground(lx, hd + 0.1), ground(lx, hd + 1.0)) - 0.1;
-        const top = y0 - (i + 1) * rise;
-        if (top > g) B.box('concrete', q[0], g, q[2], 0.29, top - g, 1.0, s.rot, { uvScale: 1 });
+      // degraus de 19 cm para o lado em que a escada chega ao chão antes (ladeira abaixo)
+      const RISE = 0.19, TREAD = 0.28;
+      const plan = dir => {
+        const steps = [];
+        for (let i = 0; i < 40; i++) {
+          const lx = dx + dir * (0.7 + TREAD * (i + 0.5));
+          const g = Math.max(ground(lx, hd + 0.1), ground(lx, hd + 1.0));
+          const top = y0 - (i + 1) * RISE;
+          if (top < g + 0.02) return { dir, steps, ok: true };
+          steps.push({ lx, top, g: Math.min(ground(lx, hd + 0.1), ground(lx, hd + 1.0)) - 0.1 });
+        }
+        return { dir, steps, ok: false };
+      };
+      const [best] = [plan(1), plan(-1)].sort((p, q) => (q.ok - p.ok) || (p.steps.length - q.steps.length));
+      for (const st of best.steps) {
+        const q = P(st.lx, 0, hd + 0.55);
+        B.box('concrete', q[0], st.g, q[2], TREAD + 0.01, st.top - st.g, 1.0, s.rot, { uvScale: 1 });
       }
-      const c = P(dx + dir * (0.7 + run / 2), 0, hd + 0.55);
-      ctx.collision.addBox(c[0], c[2], 0.5, run / 2, s.rot + dir * Math.PI / 2, base, y0, { walk: true, cam: false, ramp: [y0, y0 - n * rise] });
+      if (best.steps.length) {
+        const run = best.steps.length * TREAD, c = P(dx + best.dir * (0.7 + run / 2), 0, hd + 0.55);
+        ctx.collision.addBox(c[0], c[2], 0.5, run / 2, s.rot + best.dir * Math.PI / 2, base, y0, { walk: true, cam: false, ramp: [y0, best.steps[best.steps.length - 1].top] });
+      }
     }
   }
 }
