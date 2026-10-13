@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { makeArchTextures } from './archTextures.js';
+import { makeCarTextures } from './carTextures.js';
 
 // Carrega as texturas da pasta "texture" do projeto e reduz para resolução de PS1
 // (64/128 px, filtro nearest, cor de 15 bits).
@@ -24,15 +25,52 @@ export function makeCanvas(w, h) {
   return c;
 }
 
+// qualidade das texturas: 'clean' (3D limpo: filtro suave, mipmaps, mais resolução)
+// ou 'ps1' (64/128 px, filtro nearest, cor de 15 bits)
+let QUALITY = 'ps1';
+let ANISO = 1;
+const ALL = new Set();
+const DEF_TEX = {};
+export function setAnisotropy(n) { ANISO = Math.max(1, Math.min(8, n || 1)); }
+
+function applyFilter(t) {
+  if (QUALITY === 'clean') {
+    t.magFilter = THREE.LinearFilter;
+    t.minFilter = THREE.LinearMipmapLinearFilter;
+    t.generateMipmaps = true;
+    t.anisotropy = ANISO;
+  } else {
+    t.magFilter = THREE.NearestFilter;
+    t.minFilter = THREE.NearestFilter;
+    t.generateMipmaps = false;
+    t.anisotropy = 1;
+  }
+}
+
 export function canvasTex(canvas, repeat = true) {
   const t = new THREE.CanvasTexture(canvas);
-  t.magFilter = THREE.NearestFilter;
-  t.minFilter = THREE.NearestFilter;
-  t.generateMipmaps = false;
+  applyFilter(t);
   t.wrapS = t.wrapT = repeat ? THREE.RepeatWrapping : THREE.ClampToEdgeWrapping;
   t.colorSpace = THREE.NoColorSpace;
   t.needsUpdate = true;
+  ALL.add(t);
   return t;
+}
+
+// troca a qualidade de todas as texturas (as da pasta são refeitas no tamanho novo)
+export function setTextureQuality(q) {
+  QUALITY = q;
+  const f = q === 'clean' ? 2 : 1;
+  for (const [name, file, w, h, o] of DEFS) {
+    const t = DEF_TEX[name], img = IMG[file];
+    if (!t || !img) continue;
+    const cw = o.crop ? o.crop[2] : img.width, ch = o.crop ? o.crop[3] : img.height;
+    const c = shrink(img, Math.max(1, Math.min(Math.round(w * f), cw)), Math.max(1, Math.min(Math.round(h * f), ch)), o.crop);
+    processPixels(c, o);
+    t.dispose();
+    t.image = c;
+  }
+  for (const t of ALL) { t.dispose(); applyFilter(t); t.needsUpdate = true; }
 }
 
 // reduz uma imagem (ou recorte) para w x h com média de área
@@ -69,10 +107,11 @@ export function processPixels(canvas, o = {}) {
     if (contrast !== 1) { r = 128 + (r - 128) * contrast; gg = 128 + (gg - 128) * contrast; b = 128 + (b - 128) * contrast; }
     if (tint) { r *= tint[0]; gg *= tint[1]; b *= tint[2]; }
     r *= bright; gg *= bright; b *= bright;
-    // 15 bits (5 por canal)
-    p[i] = Math.min(255, Math.max(0, Math.round(r / 8) * 8));
-    p[i + 1] = Math.min(255, Math.max(0, Math.round(gg / 8) * 8));
-    p[i + 2] = Math.min(255, Math.max(0, Math.round(b / 8) * 8));
+    // 15 bits (5 por canal) só no estilo PS1
+    const q = QUALITY === 'ps1' ? 8 : 1;
+    p[i] = Math.min(255, Math.max(0, Math.round(r / q) * q));
+    p[i + 1] = Math.min(255, Math.max(0, Math.round(gg / q) * q));
+    p[i + 2] = Math.min(255, Math.max(0, Math.round(b / q) * q));
     if (o.alpha) p[i + 3] = p[i + 3] > (o.alphaCut ?? 120) ? 255 : 0;
     else p[i + 3] = 255;
   }
@@ -173,17 +212,22 @@ export const HERO_FILES = {
   hair: 'person1.jpg',
 };
 
-export async function loadTextures(onProgress) {
+export async function loadTextures(onProgress, wanted = 'ps1') {
   const files = [...new Set([...DEFS.map(d => d[1]), ...Object.values(HERO_FILES)])];
   let done = 0;
   await Promise.all(files.map(f => loadImage(f).then(() => { done++; onProgress?.(done / files.length); })));
+  // as texturas geradas (janelas, portas, enxaimel...) partem sempre das versões PS1
+  const quality = wanted;
+  QUALITY = 'ps1';
   for (const [name, file, w, h, o] of DEFS) {
     const c = shrink(IMG[file], w, h, o.crop);
     processPixels(c, o);
-    TEX[name] = canvasTex(c, !o.alpha || o.repeat);
+    TEX[name] = DEF_TEX[name] = canvasTex(c, !o.alpha || o.repeat);
   }
   generateTextures();
   makeArchTextures();
+  makeCarTextures();
+  if (quality !== 'ps1') setTextureQuality(quality);
   return TEX;
 }
 

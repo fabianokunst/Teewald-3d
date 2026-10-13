@@ -1,6 +1,8 @@
 // Texto em pixels nítidos (estilo PS1) desenhado num canvas 2D na resolução interna.
 // Cada texto vira um "sprite" com alfa binário e fica em cache.
 
+import { VISUAL } from '../engine/ps1material.js';
+
 const cache = new Map();
 export const FONT_TITLE = '"UnifrakturMaguntia", "Old English Text MT", Georgia, serif';
 export const FONT_UI = '"VT323", "Lucida Console", monospace';
@@ -42,7 +44,9 @@ export function textSprite(text, size, font = FONT_UI, color = '#e8dcc0', shadow
 
 // desenha texto; align: 'left' | 'center' | 'right'
 export function drawText(g, text, x, y, size, o = {}) {
-  const s = textSprite(text, Math.round(size), o.font || FONT_UI, o.color || '#e8dcc0', o.shadow === undefined ? '#140c08' : o.shadow, o.crisp !== false);
+  // pixels nítidos no estilo PS1; no 3D limpo o texto fica suavizado
+  const crisp = o.crisp ?? VISUAL.mode === 'ps1';
+  const s = textSprite(text, Math.round(size), o.font || FONT_UI, o.color || '#e8dcc0', o.shadow === undefined ? '#140c08' : o.shadow, crisp);
   let dx = x;
   if (o.align === 'center') dx = x - s.w / 2;
   else if (o.align === 'right') dx = x - s.w;

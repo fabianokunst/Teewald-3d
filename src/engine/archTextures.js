@@ -6,7 +6,7 @@ import { TEX, makeCanvas, canvasTex, processPixels } from './textures.js';
 // forma é desenhada aqui, sem recortes de fotos.
 
 // lê uma textura já reduzida para amostrar com repetição; swap = veio na horizontal
-function sampler(name, scale = 1, swap = false) {
+export function sampler(name, scale = 1, swap = false) {
   const c = TEX[name].image, w = c.width, h = c.height;
   const d = c.getContext('2d').getImageData(0, 0, w, h).data;
   return (x, y) => {
@@ -17,11 +17,11 @@ function sampler(name, scale = 1, swap = false) {
   };
 }
 
-const mul = (c, k) => [c[0] * k, c[1] * k, c[2] * k];
-const tint = (c, t) => [c[0] * t[0], c[1] * t[1], c[2] * t[2]];
+export const mul = (c, k) => [c[0] * k, c[1] * k, c[2] * k];
+export const tint = (c, t) => [c[0] * t[0], c[1] * t[1], c[2] * t[2]];
 
 // f(x, y) devolve [r, g, b] ou null (transparente)
-function paint(w, h, f) {
+export function paint(w, h, f) {
   const c = makeCanvas(w, h), g = c.getContext('2d'), img = g.createImageData(w, h), p = img.data;
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
     const v = f(x, y), i = (y * w + x) * 4;
@@ -31,7 +31,7 @@ function paint(w, h, f) {
   return c;
 }
 
-const finish = (c, alpha) => canvasTex(processPixels(c, alpha ? { alpha: true } : {}), !alpha);
+export const finish = (c, alpha) => canvasTex(processPixels(c, alpha ? { alpha: true } : {}), !alpha);
 
 // dentro de um arco ogival equilátero de xl a xr, nascença em ys, recuado i px
 function inArch(x, y, xl, xr, ys, i = 0) {

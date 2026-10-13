@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { settings, saveSettings, START } from './config.js';
 import { Renderer } from './engine/renderer.js';
-import { loadTextures } from './engine/textures.js';
+import { loadTextures, setTextureQuality, setAnisotropy } from './engine/textures.js';
 import { makeMaterials, M } from './engine/materials.js';
-import { G } from './engine/ps1material.js';
+import { G, setMaterialStyle } from './engine/ps1material.js';
 import { Input } from './engine/input.js';
 import { fullscreen } from './engine/touch.js';
 import { Audio } from './engine/audio.js';
@@ -26,6 +26,10 @@ import { Mission } from './game/mission.js';
 import { loadFonts, drawText, FONT_TITLE } from './ui/overlay.js';
 
 const params = new URLSearchParams(location.search);
+// estilo visual: 3D limpo (padrão) ou PS1 retrô; ?visual=ps1 força pela URL
+if (params.get('visual')) settings.visual = params.get('visual') === 'ps1' ? 'ps1' : 'clean';
+const visualMode = s => (s.visual === 'ps1' ? 'ps1' : 'clean');
+setMaterialStyle(visualMode(settings));
 const app = document.getElementById('app');
 const R = new Renderer(app);
 R.configure(settings);
@@ -86,10 +90,13 @@ document.addEventListener('visibilitychange', () => {
 });
 
 function applySettings(s, key) {
+  if (key === 'visual') {
+    setMaterialStyle(visualMode(s));
+    setTextureQuality(visualMode(s));
+  }
   R.configure(s);
   applyAtmosphere(s.drawDistance);
   audio.setVolume((s.volume / 10) * 0.8);
-  void key;
 }
 
 // ---------- carregamento ----------
@@ -111,7 +118,8 @@ async function boot() {
   drawLoading();
   await loadFonts();
   drawLoading();
-  await loadTextures(p => { loadP = p * 0.25; drawLoading(); });
+  setAnisotropy(R.gl.capabilities.getMaxAnisotropy());
+  await loadTextures(p => { loadP = p * 0.25; drawLoading(); }, visualMode(settings));
   makeMaterials();
   applyAtmosphere(settings.drawDistance);
   ctx = await buildWorld(scene, (f, t) => { loadP = 0.25 + f * 0.75; loadLabel = t; drawLoading(); });

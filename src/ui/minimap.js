@@ -1,6 +1,7 @@
 import { PLAY_BOUNDS } from '../config.js';
 import { drawText } from './overlay.js';
 import { CHURCH } from '../world/church.js';
+import { VISUAL } from '../engine/ps1material.js';
 
 // Minimapa no canto inferior direito: o mapa da cidade é desenhado uma vez
 // (1 px = 1 m) e depois recortado/girado em volta do jogador a cada quadro.
@@ -85,7 +86,7 @@ export class Minimap {
     g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.closePath();
     g.fillStyle = '#000'; g.fill();
     g.clip();
-    g.imageSmoothingEnabled = false;
+    g.imageSmoothingEnabled = VISUAL.mode !== 'ps1';
     g.translate(cx, cy);
     g.rotate(camYaw);
     g.scale(zoom, zoom);

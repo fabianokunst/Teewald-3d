@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { G } from './ps1material.js';
 
-// Renderiza em baixa resolução (ex.: 320x240) e amplia sem suavização.
-// Passo final: cor de terror (menos saturada, fria, bordas escuras, grão de filme),
-// dithering ordenado 4x4 + cor de 15 bits + fade.
+// Dois estilos: 3D limpo (resolução da tela com antisserrilhado) ou PS1 (baixa
+// resolução, ex.: 320x240, ampliada sem suavização, com dithering 4x4 + cor de 15 bits).
+// Passo final: cor de terror (menos saturada, fria, bordas escuras, grão de filme) + fade.
 export class Renderer {
   constructor(container) {
     this.container = container;
@@ -62,12 +62,23 @@ export class Renderer {
     window.addEventListener('orientationchange', () => { this.layout(); setTimeout(() => this.layout(), 250); setTimeout(() => this.layout(), 700); });
   }
 
+  // estilo visual: 'clean' = 3D limpo (resolução da tela, antisserrilhado, sem dithering)
+  //                'ps1'   = retrô (resolução baixa ampliada sem suavização, dithering)
   configure(settings) {
-    this.lines = settings.resolution;
+    const clean = settings.visual !== 'ps1';
+    this.visual = clean ? 'clean' : 'ps1';
+    this.lines = clean ? 0 : settings.resolution;
     this.aspect = settings.aspect;
-    this.postMat.uniforms.uDither.value = settings.dither ? 1 : 0;
-    G.uJitter.value = settings.jitter ? 1 : 0;
-    G.uAffine.value = [0, 0.45, 1][settings.affine] ?? 0.45;
+    this.postMat.uniforms.uDither.value = !clean && settings.dither ? 1 : 0;
+    G.uAffine.value = clean ? 0 : ([0, 0.45, 1][settings.affine] ?? 0);
+    const samples = clean ? 4 : 0;
+    if (this.rt.samples !== samples) {
+      const filter = clean ? THREE.LinearFilter : THREE.NearestFilter;
+      this.rt.dispose();
+      this.rt = new THREE.WebGLRenderTarget(this.rt.width, this.rt.height, { minFilter: filter, magFilter: filter, depthBuffer: true, generateMipmaps: false, samples });
+      this.postMat.uniforms.tDiffuse.value = this.rt.texture;
+    }
+    for (const c of [this.canvas, this.ui]) c.style.imageRendering = clean ? 'auto' : 'pixelated';
     this.layout();
   }
 
@@ -80,7 +91,8 @@ export class Renderer {
     if (top === null) top = (vh - cssH) / 2;
     // 0 = nativa (pixels reais da tela); as demais nunca passam da nativa para não reduzir com serrilhado
     const native = Math.max(240, Math.round(cssH * (window.devicePixelRatio || 1)));
-    const H = this.lines > 0 ? Math.min(this.lines, native) : native;
+    // no 3D limpo limita a 1440 linhas (telas 4K ficariam pesadas com antisserrilhado)
+    const H = this.lines > 0 ? Math.min(this.lines, native) : Math.min(native, this.visual === 'clean' ? 1440 : 4320);
     const W = Math.max(2, Math.round((H * cssW / cssH) / 2) * 2);
     this.W = W; this.H = H;
     this.gl.setSize(W, H, false);
@@ -90,8 +102,6 @@ export class Renderer {
       c.style.width = cssW + 'px'; c.style.height = cssH + 'px';
       c.style.left = (vw - cssW) / 2 + 'px'; c.style.top = top + 'px';
     }
-    // grade de encaixe dos vértices sempre equivalente a 240 linhas
-    G.uSnap.value.set((W * (240 / H)) / 2, 120);
     this.cssRect = { x: (vw - cssW) / 2, y: top, w: cssW, h: cssH };
     this.onLayout?.(W, H);
   }

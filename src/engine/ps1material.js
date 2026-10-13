@@ -3,9 +3,7 @@ import * as THREE from 'three';
 // Uniforms compartilhados por todos os materiais PS1
 export const G = {
   uTime: { value: 0 },
-  uSnap: { value: new THREE.Vector2(160, 120) },
-  uJitter: { value: 1 },
-  uAffine: { value: 0.55 },
+  uAffine: { value: 0 },
   uFogColor: { value: new THREE.Color(0.8, 0.7, 0.6) },
   uFogNear: { value: 40 },
   uFogFar: { value: 300 },
@@ -17,8 +15,6 @@ export const G = {
 };
 
 const VERT = /* glsl */`
-uniform vec2 uSnap;
-uniform float uJitter;
 uniform float uFogNear;
 uniform float uFogFar;
 uniform vec3 uSunDir;
@@ -66,11 +62,6 @@ void main() {
   vec3 n = normalize(mat3(m) * objectNormal);
   vec4 vp = viewMatrix * wp;
   vec4 cp = projectionMatrix * vp;
-
-  // tremor de vértices: encaixa na grade de pixels do PS1
-  if (uJitter > 0.5 && cp.w > 0.0) {
-    cp.xy = floor(cp.xy / cp.w * uSnap + 0.5) / uSnap * cp.w;
-  }
   gl_Position = cp;
 
   // iluminação por vértice (Gouraud)
@@ -141,7 +132,23 @@ export function rawColor(c) {
   return new THREE.Color().setHex(c, THREE.LinearSRGBColorSpace);
 }
 
+// estilo visual atual ('clean' = 3D limpo, 'ps1' = retrô) e todos os materiais criados,
+// para trocar o recorte das folhagens quando o estilo muda
+export const VISUAL = { mode: 'clean' };
+const CUTOUT_MATS = new Set();
+const cutoutTest = () => (VISUAL.mode === 'clean' ? 0.32 : 0.5);
+
+export function setMaterialStyle(mode) {
+  VISUAL.mode = mode;
+  for (const m of CUTOUT_MATS) {
+    m.uniforms.uAlphaTest.value = cutoutTest();
+    m.alphaToCoverage = mode === 'clean';
+    m.needsUpdate = true;
+  }
+}
+
 export function ps1Material(o = {}) {
+  const cutout = o.alphaTest === undefined && !!o.cutout;
   const mat = new THREE.ShaderMaterial({
     uniforms: {
       ...G,
@@ -154,7 +161,7 @@ export function ps1Material(o = {}) {
       uScroll: { value: new THREE.Vector2(...(o.scroll || [0, 0])) },
       uWave: { value: o.wave || 0 },
       uSway: { value: o.sway || 0 },
-      uAlphaTest: { value: o.alphaTest ?? (o.cutout ? 0.5 : 0) },
+      uAlphaTest: { value: o.alphaTest ?? (o.cutout ? cutoutTest() : 0) },
       uAffineMat: { value: o.affine === false ? 0 : 1 },
       uOpacity: { value: o.opacity ?? 1 },
     },
@@ -170,6 +177,11 @@ export function ps1Material(o = {}) {
     mat.polygonOffset = true;
     mat.polygonOffsetFactor = o.polygonOffset;
     mat.polygonOffsetUnits = o.polygonOffset;
+  }
+  // folhagem recortada: no 3D limpo usa a cobertura do antisserrilhado (bordas suaves)
+  if (cutout && !o.transparent) {
+    mat.alphaToCoverage = VISUAL.mode === 'clean';
+    CUTOUT_MATS.add(mat);
   }
   return mat;
 }
@@ -190,13 +202,11 @@ export function ps1LineMaterial(color = 0x1a1a1a) {
   return new THREE.ShaderMaterial({
     uniforms: { ...G, uColor: { value: rawColor(color) } },
     vertexShader: /* glsl */`
-      uniform vec2 uSnap; uniform float uJitter; uniform float uFogNear; uniform float uFogFar;
+      uniform float uFogNear; uniform float uFogFar;
       varying float vFog;
       void main() {
         vec4 vp = modelViewMatrix * vec4(position, 1.0);
-        vec4 cp = projectionMatrix * vp;
-        if (uJitter > 0.5 && cp.w > 0.0) cp.xy = floor(cp.xy / cp.w * uSnap + 0.5) / uSnap * cp.w;
-        gl_Position = cp;
+        gl_Position = projectionMatrix * vp;
         vFog = clamp((length(vp.xyz) - uFogNear) / (uFogFar - uFogNear), 0.0, 1.0);
       }`,
     fragmentShader: /* glsl */`

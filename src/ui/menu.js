@@ -2,12 +2,13 @@ import { drawText, panel, FONT_TITLE, FONT_UI } from './overlay.js';
 import { saveSettings } from '../config.js';
 
 // Tela título, menu principal, opções, créditos e pausa
+const ps1Only = s => s.visual === 'ps1';
 const OPTIONS = [
-  { key: 'resolution', label: 'RESOLUÇÃO', values: [240, 360, 480, 720, 1080, 0], fmt: v => (v === 0 ? 'NATIVA' : v + 'p' + (v === 240 ? ' (PS1)' : '')) },
+  { key: 'visual', label: 'ESTILO VISUAL', values: ['clean', 'ps1'], fmt: v => (v === 'ps1' ? 'PS1 RETRÔ' : '3D LIMPO') },
+  { key: 'resolution', label: 'RESOLUÇÃO (PS1)', values: [240, 360, 480, 720, 1080, 0], fmt: v => (v === 0 ? 'NATIVA' : v + 'p' + (v === 240 ? ' (PS1)' : '')), needs: ps1Only },
   { key: 'aspect', label: 'PROPORÇÃO', values: ['wide', '4:3'], fmt: v => (v === 'wide' ? 'TELA CHEIA' : '4:3') },
-  { key: 'jitter', label: 'TREMOR DE VÉRTICES', values: [true, false], fmt: v => (v ? 'LIGADO' : 'DESLIGADO') },
-  { key: 'affine', label: 'DISTORÇÃO DE TEXTURA', values: [0, 1, 2], fmt: v => ['DESLIGADA', 'SUTIL', 'TOTAL'][v] },
-  { key: 'dither', label: 'DITHERING', values: [true, false], fmt: v => (v ? 'LIGADO' : 'DESLIGADO') },
+  { key: 'affine', label: 'DISTORÇÃO DE TEXTURA', values: [0, 1, 2], fmt: v => ['DESLIGADA', 'SUTIL', 'TOTAL'][v], needs: ps1Only },
+  { key: 'dither', label: 'DITHERING', values: [true, false], fmt: v => (v ? 'LIGADO' : 'DESLIGADO'), needs: ps1Only },
   { key: 'drawDistance', label: 'DISTÂNCIA DE VISÃO', values: [0, 1, 2], fmt: v => ['CURTA', 'MÉDIA', 'LONGA'][v] },
   { key: 'sensitivity', label: 'SENSIBILIDADE', values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], fmt: v => '▮'.repeat(v) + '▯'.repeat(10 - v) },
   { key: 'invertY', label: 'INVERTER EIXO Y', values: [false, true], fmt: v => (v ? 'SIM' : 'NÃO') },
@@ -51,7 +52,7 @@ export class Menu {
   }
 
   options() {
-    return OPTIONS.filter(o => (!o.touchOnly || this.input.touchPrimary) && (!o.needs || o.needs()));
+    return OPTIONS.filter(o => (!o.touchOnly || this.input.touchPrimary) && (!o.needs || o.needs(this.settings)));
   }
 
   items() {

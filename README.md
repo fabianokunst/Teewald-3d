@@ -136,8 +136,14 @@ feitos em código. O cenário fica em `src/world/chupaSites.js` e a missão em
 - **Clima de terror**: céu encoberto, neblina fechada, luz fria, cores sem
   saturação, bordas escuras e grão de filme; som de vento, zumbido grave e, ao
   longe, corvos, cachorro uivando e o sino da igreja.
-- Efeitos de PS1: 320x240, tremor de vértices, dithering, cor de 15 bits,
-  neblina e iluminação por vértice. Tudo isso pode ser ajustado em **Opções**.
+- **Estilo visual** (em **Opções**):
+  - **3D LIMPO** (padrão): resolução da própria tela, antisserrilhado, texturas
+    suaves com o dobro da resolução e sem pixel nem dithering; os polígonos
+    low poly aparecem nítidos.
+  - **PS1 RETRÔ**: 320x240 ampliado sem suavização, dithering, cor de 15 bits e,
+    se quiser, distorção de textura.
+  - O tremor de vértices (a malha "se mexendo") foi removido do jogo. Dá para
+    forçar o estilo pela URL com `?visual=ps1` ou `?visual=clean`.
 
 ## Estrutura
 

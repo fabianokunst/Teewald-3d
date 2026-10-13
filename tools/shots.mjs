@@ -15,7 +15,7 @@ const page = await browser.newPage();
 const logs = [];
 page.on('console', m => logs.push(`[${m.type()}] ${m.text()}`));
 page.on('pageerror', e => logs.push(`[pageerror] ${e.message}\n${e.stack}`));
-await page.goto('http://localhost:5173/' + query, { waitUntil: 'load', timeout: 120000 });
+await page.goto((process.env.TEEWALD_URL || 'http://localhost:5173/') + query, { waitUntil: 'load', timeout: 120000 });
 await page.waitForFunction(() => window.__teewald, { timeout: 240000, polling: 500 }).catch(() => logs.push('[timeout]'));
 for (const s of shots) {
   if (s.keys) for (const k of s.keys) await page.keyboard.down(k);

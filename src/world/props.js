@@ -145,21 +145,7 @@ export function busStop(B, ctx, x, z, rot) {
   (ctx.seats ||= []).push({ x: seat[0], z: seat[2], rot, y: y + 0.15, seat: 0.51, kind: 'bus' });
 }
 
-// carro estacionado simples (estilo Fusca/Brasília/pick-up de 1990)
-export function car(B, ctx, x, z, rot, color) {
-  const y = ctx.terrain.heightAt(x, z);
-  const P = rotP(x, z, rot);
-  B.col = color;
-  B.box('carPaint', x, y + 0.35, z, 1.65, 0.6, 3.9, rot, { uvScale: 2 });
-  const cab = P(0, 0, -0.2);
-  B.box('carPaint', cab[0], y + 0.95, cab[2], 1.5, 0.5, 2.0, rot, { top: true, side: 'glass', faceUV: true });
-  B.col = [1, 1, 1];
-  for (const [lx, lz] of [[-0.8, 1.25], [0.8, 1.25], [-0.8, -1.25], [0.8, -1.25]]) {
-    const p = P(lx, 0, lz);
-    B.box('tire', p[0], y, p[2], 0.22, 0.55, 0.55, rot, { uvScale: 1 });
-  }
-  ctx.collision.addBox(x, z, 0.85, 1.95, rot, y, y + 1.45);
-}
+export { car } from './vehicles.js';
 
 // guarda-corpo de madeira ao longo de uma polilinha
 export function railing(B, ctx, pts, o = {}) {
