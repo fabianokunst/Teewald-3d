@@ -1,6 +1,11 @@
 import * as THREE from 'three';
 
-// Câmera em terceira pessoa com órbita, colisão e acompanhamento automático
+// Câmera em terceira pessoa com órbita, colisão e acompanhamento automático.
+// Mirando, a câmera vai para o ombro direito e fica nivelada: a câmera normal olha
+// de cima para o personagem e, sem isso, a mira apontava para o chão.
+export const AIM_DROP = 0.3;            // quanto a câmera desce (rad) com a mira ligada
+const DISTS = [2.8, 4.6, 6.8];          // direcional ▼: perto, normal, longe
+
 export class ThirdPersonCamera {
   constructor(camera, ctx) {
     this.cam = camera;
@@ -10,10 +15,16 @@ export class ThirdPersonCamera {
     this.dist = 4.6;
     this.curDist = 4.6;
     this.target = new THREE.Vector3();
+    this.camPos = new THREE.Vector3();   // posição sem o tremor (mira assistida)
     this.idle = 0;
     this.v = new THREE.Vector3();
     this.aim = 0;            // 0..1: câmera de mira por cima do ombro
     this.aimWant = false;    // a arma liga enquanto mira
+    this.kickP = 0; this.kickY = 0;      // coice: sobe e volta sozinho
+    this.turnT = 0;          // analógico no máximo há quanto tempo (giro acelera)
+    // mira assistida (controle e toque): a arma escreve antes do update de cada quadro
+    this.lookScale = 1;      // atrito sobre o alvo (giro mais lento)
+    this.assistYaw = 0; this.assistPitch = 0;
   }
 
   snap(player) {
@@ -23,11 +34,17 @@ export class ThirdPersonCamera {
     this._place(1);
   }
 
+  // coice do tiro (rad): a câmera sobe e volta em ~0,2 s
+  kick(p, y = 0) { this.kickP += p; this.kickY += y; }
+
   update(dt, player, input, settings, moving) {
     this.aim += ((this.aimWant ? 1 : 0) - this.aim) * Math.min(1, dt * 10);
     // mirando: mais precisa (menos sensível) e com zoom
-    const sens = ((settings.sensitivity || 5) / 5) * (1 - 0.45 * this.aim);
+    const base = (settings.sensitivity || 5) / 5, fr = this.lookScale;
+    const sens = base * (1 - 0.45 * this.aim) * fr;
     this.cam.fov = 58 - 12 * this.aim;
+    const kd = Math.exp(-dt * 11);
+    this.kickP *= kd; this.kickY *= kd;
     let looked = false;
     if (input) {
       const l = input.look();
@@ -37,19 +54,31 @@ export class ThirdPersonCamera {
         this.pitch += l.my * 0.0026 * sens * inv;
         looked = true;
       }
+      // analógico direito (já com zona morta e curva): segurado no máximo, fora da
+      // mira, o giro acelera para dar meia-volta rápido
       if (l.px || l.py) {
-        this.yaw -= l.px * dt * 2.6 * sens;
-        this.pitch += l.py * dt * 1.8 * sens * inv;
+        this.turnT = Math.abs(l.px) > 0.85 && this.aim < 0.2 ? this.turnT + dt : 0;
+        const boost = 1 + 0.75 * Math.min(1, Math.max(0, (this.turnT - 0.15) / 0.3));
+        const ps = base * (1 - 0.5 * this.aim) * fr;
+        this.yaw -= l.px * dt * 3.2 * ps * boost;
+        this.pitch += l.py * dt * 2.0 * ps * inv;
         looked = true;
-      }
+      } else this.turnT = 0;
       const zd = input.zoom(dt);
       if (zd) this.dist = Math.max(2.2, Math.min(9, this.dist + zd));
+      if (input.camDist()) this.dist = DISTS.find(v => v > this.dist + 0.2) ?? DISTS[0];
       if (input.down('KeyQ')) { this.yaw += dt * 2; looked = true; }
       if (input.down('KeyE')) { this.yaw -= dt * 2; looked = true; }
       // R3 / toque duplo: volta para trás do personagem
       if (input.recenter()) this.recentering = true;
       else if (looked) this.recentering = false;
     }
+    // mira assistida: puxão para o alvo e acompanhamento (calculados pela arma)
+    if (this.assistYaw || this.assistPitch) {
+      this.yaw += this.assistYaw; this.pitch += this.assistPitch;
+      this.assistYaw = this.assistPitch = 0;
+    }
+    this.lookScale = 1;
     if (this.recentering) {
       let d = player.heading + Math.PI - this.yaw;
       while (d > Math.PI) d -= Math.PI * 2;
@@ -59,7 +88,8 @@ export class ThirdPersonCamera {
       this.pitch += (0.32 - this.pitch) * k;
       if (Math.abs(d) < 0.01 && Math.abs(0.32 - this.pitch) < 0.01) this.recentering = false;
     }
-    this.pitch = Math.max(-0.3 - 0.45 * this.aim, Math.min(1.15 - 0.3 * this.aim, this.pitch));
+    // limites do ângulo que a câmera mostra (de -0,3 a 1,15; mirando, de -0,75 a 0,85)
+    this.pitch = Math.max(-0.3 - (0.45 - AIM_DROP) * this.aim, Math.min(1.15 - (0.3 - AIM_DROP) * this.aim, this.pitch));
     this.idle = looked ? 0 : this.idle + dt;
     // volta para trás do personagem quando ele anda e o jogador não mexe na câmera
     if (moving && this.idle > 1.4 && this.aim < 0.1) {
@@ -76,13 +106,15 @@ export class ThirdPersonCamera {
   }
 
   _place(dt) {
-    const cp = Math.cos(this.pitch), sp = Math.sin(this.pitch);
-    const dx = Math.sin(this.yaw) * cp, dy = sp, dz = Math.cos(this.yaw) * cp;
+    // mirando, a câmera desce para o nível do ombro sem mudar o ângulo guardado
+    const pitch = this.pitch - AIM_DROP * this.aim - this.kickP, yaw = this.yaw + this.kickY;
+    const cp = Math.cos(pitch), sp = Math.sin(pitch);
+    const dx = Math.sin(yaw) * cp, dy = sp, dz = Math.cos(yaw) * cp;
     // ao mirar, o centro da órbita vai para o ombro direito e a câmera se aproxima
     const a = this.aim, sh = 0.5 * a;
     let t = this.target;
     if (a > 0.001) {
-      const rx = Math.cos(this.yaw), rz = -Math.sin(this.yaw);
+      const rx = Math.cos(yaw), rz = -Math.sin(yaw);
       const hit = this.ctx.collision.raycast(t.x, t.y, t.z, rx, 0, rz, sh + 0.25);
       const k = hit < sh + 0.25 ? Math.max(0, hit - 0.25) / sh : 1;
       t = this.v.set(t.x + rx * sh * k, t.y + 0.14 * a, t.z + rz * sh * k);
@@ -102,5 +134,6 @@ export class ThirdPersonCamera {
     const g = this.ctx.terrain.heightAt(this.cam.position.x, this.cam.position.z);
     if (this.cam.position.y < g + 0.35) this.cam.position.y = g + 0.35;
     this.cam.lookAt(t.x, t.y - 0.1, t.z);
+    this.camPos.copy(this.cam.position);
   }
 }

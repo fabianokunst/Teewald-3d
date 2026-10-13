@@ -1,8 +1,14 @@
 import { TouchControls } from './touch.js';
+import { settings } from '../config.js';
 
 // Teclado, mouse (pointer lock), controle (Gamepad API) e toque
 const PAD_MAP = { a: 0, b: 1, x: 2, y: 3, lb: 4, rb: 5, select: 8, start: 9, l3: 10, r3: 11, up: 12, down: 13, left: 14, right: 15 };
 const DIRS = ['up', 'down', 'left', 'right'];
+// analógico direito: zona morta circular (controle gasto fica parado em até ~0,15),
+// borda e curva (pouco inclinado = giro bem lento)
+const LOOK_DZ = 0.15, LOOK_EDGE = 0.95, LOOK_EXP = 1.8;
+// gatilho analógico (valor) ou digital (alguns controles só dizem "apertado")
+const trigVal = b => (b ? (b.value > 0 ? b.value : b.pressed ? 1 : 0) : 0);
 
 export class Input {
   constructor(target) {
@@ -10,9 +16,15 @@ export class Input {
     this.keys = new Set();
     this.pressed = new Set();
     this.mouse = { dx: 0, dy: 0, wheel: 0, x: -1, y: -1, clicked: false, moved: false, buttons: 0, leftHit: false };
-    this.trig = { l: 0, r: 0, rHit: false };   // gatilhos analógicos L2/R2
+    // gatilhos analógicos L2/R2 (lOn/rOn com folga: liga a 30/40 %, solta abaixo de 15/22 %)
+    this.trig = { l: 0, r: 0, lOn: false, rOn: false, rHit: false };
     this.locked = false;
     this.pad = null;
+    this.padIndex = -1;              // controle em uso (só troca quando outro é mexido)
+    this.padRumble = false;          // algum controle com vibração já apareceu
+    this.aimLock = false;            // a arma avisa que está mirando (B esquiva na hora)
+    this.sprint = false;             // L3: corre até o analógico esquerdo voltar ao centro
+    this.sprintIdle = 0; this.lastPoll = 0;
     this.padState = {};
     this.padPressed = new Set();
     this.padHeld = new Set();
@@ -66,34 +78,57 @@ export class Input {
     try { pads = navigator.getGamepads ? [...navigator.getGamepads()].filter(p => p && p.connected) : []; } catch (e) { /* sem permissão */ }
     this.padPressed.clear();
     this.padHeld.clear();
-    let best = null, bestMag = -1;
+    let cur = null, woken = null, first = null;
     for (const p of pads) {
-      const st = this.padState[p.index] ||= { prev: null, active: false };
+      const st = this.padState[p.index] ||= { prev: null, active: false, hot: false };
       const now = {};
+      let woke = false;
       for (const [k, i] of Object.entries(PAD_MAP)) now[k] = !!(p.buttons[i] && p.buttons[i].pressed);
       if (st.prev) {
-        for (const k in PAD_MAP) if (now[k] && !st.prev[k]) { this.padPressed.add(k); st.active = true; this.lastDevice = 'pad'; }
+        for (const k in PAD_MAP) if (now[k] && !st.prev[k]) { this.padPressed.add(k); st.active = true; woke = true; this.lastDevice = 'pad'; }
       }
       st.prev = now;
       if (st.active) for (const k in PAD_MAP) if (now[k]) this.padHeld.add(k);
       const ax = p.axes;
       const mag = Math.max(Math.hypot(ax[0] || 0, ax[1] || 0), Math.hypot(ax[2] || 0, ax[3] || 0));
-      if (mag > 0.5) { st.active = true; this.lastDevice = 'pad'; }
-      if (st.active && mag > bestMag) { bestMag = mag; best = p; }
+      // analógico ou gatilho bem apertado também contam como uso
+      const hot = mag > 0.5 || Math.max(trigVal(p.buttons[6]), trigVal(p.buttons[7])) > 0.5;
+      if (hot) { st.active = true; this.lastDevice = 'pad'; if (!st.hot) woke = true; }
+      st.hot = hot;
+      if (!st.active) continue;
+      if (p.index === this.padIndex) cur = p;
+      else if (woke) woken = p;
+      first ||= p;
     }
-    this.pad = best;
-    // B: toque curto (solto em menos de 0,25 s) = esquiva; segurado = corre
+    // fica no controle em uso; troca só quando outro é mexido
+    const pad = this.pad = woken || cur || first;
+    this.padIndex = pad ? pad.index : -1;
+    if (pad && (pad.vibrationActuator || pad.hapticActuators?.length)) this.padRumble = true;
+    const tNow = performance.now(), dtp = Math.min(0.1, Math.max(0, (tNow - (this.lastPoll || tNow)) / 1000));
+    this.lastPoll = tNow;
+    // B: toque curto (solto em menos de 0,25 s) = esquiva; segurado = corre.
+    // Mirando não dá para correr: a esquiva sai na hora do aperto.
     this.bTap = false;
-    const tNow = performance.now();
-    if (this.padPressed.has('b')) this.bDownAt = tNow;
+    if (this.padPressed.has('b')) {
+      if (this.aimLock) { this.bTap = true; this.bDownAt = 0; } else this.bDownAt = tNow;
+    }
     if (this.bDownAt && !this.padHeld.has('b')) { if (tNow - this.bDownAt < 250) this.bTap = true; this.bDownAt = 0; }
-    // gatilhos: L2 mira, R2 atira (com borda, para um tiro por aperto)
-    const tb = best ? best.buttons : [];
-    const tl = tb[6] ? tb[6].value : 0, tr = tb[7] ? tb[7].value : 0;
-    this.trig.rHit = tr > 0.5 && this.trig.r <= 0.5;
+    // L3 liga a corrida; ela para quando o analógico esquerdo fica no centro
+    const ax = pad ? pad.axes : [], sx = ax[0] || 0, sy = ax[1] || 0;
+    if (this.padPressed.has('l3')) { this.sprint = !this.sprint; this.sprintIdle = 0; }
+    if (this.sprint) {
+      this.sprintIdle = Math.hypot(sx, sy) < 0.25 ? this.sprintIdle + dtp : 0;
+      if (this.sprintIdle > 0.35 || this.lastDevice !== 'pad') this.sprint = false;
+    }
+    // gatilhos: L2 mira, R2 atira (um tiro por aperto; a folga evita tiro duplo)
+    const tb = pad ? pad.buttons : [];
+    const tl = trigVal(tb[6]), tr = trigVal(tb[7]);
+    this.trig.lOn = this.trig.lOn ? tl > 0.15 : tl > 0.3;
+    const rOn = this.trig.rOn ? tr > 0.22 : tr > 0.4;
+    this.trig.rHit = rOn && !this.trig.rOn;
+    this.trig.rOn = rOn;
     this.trig.l = tl; this.trig.r = tr;
     // direções de menu: direcional ou analógico esquerdo, repetindo ao segurar
-    const ax = best ? best.axes : [], sx = ax[0] || 0, sy = ax[1] || 0;
     const held = { up: this.padHeld.has('up') || sy < -0.6, down: this.padHeld.has('down') || sy > 0.6, left: this.padHeld.has('left') || sx < -0.6, right: this.padHeld.has('right') || sx > 0.6 };
     const t = performance.now();
     this.nav.clear();
@@ -128,30 +163,41 @@ export class Input {
     return { x, y };
   }
 
+  // câmera: mouse e arrasto do dedo em px; analógico direito de -1 a 1, com zona morta
+  // circular (sem o pulo ao sair dela) e curva: pouco inclinado gira bem devagar (mira fina)
   look() {
     // arrasto do dedo vale como movimento do mouse (um pouco mais sensível)
     const x = this.mouse.dx + this.touch.look.dx * 1.9, y = this.mouse.dy + this.touch.look.dy * 1.9;
     let px = 0, py = 0;
     if (this.pad) {
-      const ax = this.pad.axes, rx = ax[2] || 0, ry = ax[3] || 0;
-      if (Math.abs(rx) > 0.15) px = rx;
-      if (Math.abs(ry) > 0.15) py = ry;
+      const ax = this.pad.axes, rx = ax[2] || 0, ry = ax[3] || 0, m = Math.hypot(rx, ry);
+      if (m > LOOK_DZ) {
+        const n = Math.min(1, (m - LOOK_DZ) / (LOOK_EDGE - LOOK_DZ)), k = Math.pow(n, LOOK_EXP) / m;
+        px = rx * k; py = ry * k;
+      }
     }
     return { mx: x, my: y, px, py };
   }
 
-  // variação da distância da câmera: roda do mouse, pinça, direcional ↑↓
-  zoom(dt) {
-    let z = this.mouse.wheel * 0.5 + this.touch.zoom;
-    if (this.padHeld.has('up')) z -= dt * 5;
-    if (this.padHeld.has('down')) z += dt * 5;
-    return z;
-  }
+  // variação da distância da câmera: roda do mouse e pinça
+  zoom() { return this.mouse.wheel * 0.5 + this.touch.zoom; }
+  // direcional ▼: alterna a câmera entre perto, normal e longe
+  camDist() { return this.padHit('down'); }
 
   running() {
     if (this.down('ShiftLeft', 'ShiftRight')) return true;
-    if (this.padHeld.has('b') || this.padHeld.has('l3')) return true;
+    if (this.padHeld.has('b') || this.sprint) return true;
     return this.lastDevice === 'touch' && this.touch.runOn;
+  }
+
+  // vibração do controle (forte = motor grande, fraco = motor pequeno, de 0 a 1)
+  rumble(strong, weak = strong, ms = 80) {
+    if (settings.vibrate === false || this.lastDevice !== 'pad' || !this.pad) return;
+    const p = this.pad, a = p.vibrationActuator;
+    try {
+      if (a?.playEffect) a.playEffect('dual-rumble', { duration: ms, strongMagnitude: Math.min(1, strong), weakMagnitude: Math.min(1, weak) })?.catch?.(() => {});
+      else p.hapticActuators?.[0]?.pulse?.(Math.min(1, Math.max(strong, weak)), ms)?.catch?.(() => {});
+    } catch (e) { /* ignora */ }
   }
 
   jump() { return this.hit('Space') || this.padHit('a') || this.touch.jumpHit; }
@@ -161,9 +207,11 @@ export class Input {
   recenter() { return this.padHit('r3') || this.touch.recenterHit; }
   toggleMap() { return this.hit('KeyM') || this.padHit('select'); }
   // arma: botão direito / L2 / LB mira; esquerdo (com o mouse preso) / R2 atira; RB / V golpe
-  aimHeld() { return !!(this.mouse.buttons & 2) || this.trig.l > 0.3 || this.padHeld.has('lb') || !!this.touch.aimOn; }
+  aimHeld() { return !!(this.mouse.buttons & 2) || this.trig.lOn || this.padHeld.has('lb') || !!this.touch.aimOn; }
   fireHit() { return (this.mouse.leftHit && this.locked) || this.trig.rHit || !!this.touch.fireHit; }
-  fireHeld() { return (!!(this.mouse.buttons & 1) && this.locked) || this.trig.r > 0.5 || !!this.touch.fireHeld; }
+  fireHeld() { return (!!(this.mouse.buttons & 1) && this.locked) || this.trig.rOn || !!this.touch.fireHeld; }
+  // cura rápida: H, direcional ▲, botão CURA no toque
+  healHit() { return this.hit('KeyH') || this.padHit('up') || !!this.touch.healHit; }
   meleeHit() { return this.hit('KeyV') || this.padHit('rb') || !!this.touch.meleeHit; }
   dodgeHit() { return this.hit('KeyC', 'ControlLeft') || this.bTap || !!this.touch.dodgeHit; }
   // troca de arma: ◀▶ no direcional, ARMA no toque (1) · teclas 1-8 escolhem direto (weaponKey)

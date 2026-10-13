@@ -1,5 +1,10 @@
 import * as THREE from 'three';
 
+// mapa de sombra de 1x1 até as sombras existirem (o shader exige uma textura de profundidade com comparação)
+const noShadow = new THREE.DepthTexture(1, 1);
+noShadow.compareFunction = THREE.LessEqualCompare;
+noShadow.needsUpdate = true;
+
 // Uniforms compartilhados por todos os materiais PS1
 export const G = {
   uTime: { value: 0 },
@@ -17,6 +22,20 @@ export const G = {
   uLightCols: { value: Array.from({ length: 8 }, () => new THREE.Vector3(0, 0, 0)) },
   // a luz 0 pode ser um foco (lanterna): xyz = direção, w = cosseno do corte (< -1.5 = luz redonda)
   uSpot: { value: new THREE.Vector4(0, 0, 1, -2) },
+  // luz avançada (na clássica ficam todos zerados e a imagem é a mesma de antes):
+  // neblina mais quente olhando para o sol, sol que "abraça" o chão quando está baixo
+  uSunFog: { value: new THREE.Color(0.8, 0.7, 0.6) },
+  uSunFogK: { value: 0 },
+  uSunWrap: { value: 0 },
+  // sombras projetadas (engine/shadows.js): mapa de profundidade visto do sol/lua
+  uShadowMap: { value: noShadow },
+  uShadowMatrix: { value: new THREE.Matrix4() },
+  uShadowOn: { value: 0 },                                   // força da sombra (0 = desligada)
+  uShadowFade: { value: new THREE.Vector4(0, 0, 30, 40) },   // xy = centro (x, z), z..w = some aos poucos
+  uShadowTexel: { value: 1 / 2048 },
+  uShadowBias: { value: new THREE.Vector2(0.06, 0.0001) },   // afastamento na normal (m), viés de profundidade
+  // saturação do passo final (terror = 0.6)
+  uSat: { value: 0.6 },
 };
 export const NUM_LIGHTS = 8;
 
@@ -36,11 +55,19 @@ uniform float uFogMul;
 uniform vec2 uScroll;
 uniform float uWave;
 uniform float uSway;
+uniform float uSunFogK;
+uniform float uSunWrap;
+uniform mat4 uShadowMatrix;
+uniform float uShadowOn;
+uniform vec2 uShadowBias;
 
 varying vec3 vUvAff;
 varying vec2 vUv;
 varying vec3 vLight;
+varying vec3 vSun;
+varying vec4 vShadow;
 varying float vFog;
+varying float vSunFog;
 varying vec3 vWP;
 varying vec3 vN;
 varying vec3 vBase;
@@ -73,11 +100,13 @@ void main() {
   vec4 cp = projectionMatrix * vp;
   gl_Position = cp;
 
-  // iluminação por vértice (Gouraud)
-  float ndl = dot(n, uSunDir);
-  ndl = mix(max(ndl, 0.0), 0.55 + 0.45 * abs(ndl), uFoliage);
+  // iluminação por vértice (Gouraud); o sol fica separado para a sombra tirar só ele
+  float ndl0 = dot(n, uSunDir);
+  float lit = max(ndl0, 0.0);
+  lit = mix(lit, sqrt(lit), uSunWrap);
+  float ndl = mix(lit, 0.55 + 0.45 * abs(ndl0), uFoliage);
   float hemi = n.y * 0.5 + 0.5;
-  vec3 L = mix(uAmbGround, uAmbSky, mix(hemi, 0.75, uFoliage)) + uSunColor * ndl;
+  vec3 amb = mix(uAmbGround, uAmbSky, mix(hemi, 0.75, uFoliage));
   vec3 vc = vec3(1.0);
   #ifdef USE_COLOR
     vc = color;
@@ -85,15 +114,25 @@ void main() {
   #ifdef USE_INSTANCING_COLOR
     vc *= instanceColor;
   #endif
-  vLight = mix(vec3(1.0), L, uLit) * vc * uColor + uEmissive;
+  vec3 base = vc * uColor;
+  vLight = mix(vec3(1.0), amb, uLit) * base + uEmissive;
+  vSun = uSunColor * ndl * base * uLit;
   // base para as luzes dinâmicas (materiais sem luz não recebem)
-  vBase = vc * uColor * uLit;
+  vBase = base * uLit;
   vWP = wp.xyz;
   vN = n;
+  // posição no mapa de sombra, afastada um pouco da superfície (evita manchas)
+  vShadow = vec4(0.0);
+  if (uShadowOn > 0.0) {
+    vec3 sp = wp.xyz + n * (ndl0 >= 0.0 ? 1.0 : -1.0) * uShadowBias.x * (1.0 + uFoliage) + uSunDir * uShadowBias.x * 0.5;
+    vShadow = uShadowMatrix * vec4(sp, 1.0);
+  }
 
   // neblina por vértice (depth cueing)
   float d = length(vp.xyz);
   vFog = clamp((d - uFogNear) / (uFogFar - uFogNear), 0.0, 1.0) * uFogMul;
+  vSunFog = 0.0;
+  if (uSunFogK > 0.0) vSunFog = pow(max(dot(normalize(wp.xyz - cameraPosition), uSunDir), 0.0), 5.0) * uSunFogK;
 
   vec2 uv2 = uv + uScroll * uTime;
   vUv = uv2;
@@ -112,14 +151,36 @@ uniform float uFoliage;
 uniform vec4 uLights[8];
 uniform vec3 uLightCols[8];
 uniform vec4 uSpot;
+uniform vec3 uSunFog;
+uniform sampler2DShadow uShadowMap;
+uniform float uShadowOn;
+uniform float uShadowTexel;
+uniform vec4 uShadowFade;
 
 varying vec3 vUvAff;
 varying vec2 vUv;
 varying vec3 vLight;
+varying vec3 vSun;
+varying vec4 vShadow;
 varying float vFog;
+varying float vSunFog;
 varying vec3 vWP;
 varying vec3 vN;
 varying vec3 vBase;
+
+// sombra suave: 4 amostras com comparação por hardware (cada uma já filtra 2x2)
+float sunShadow() {
+  vec3 s = vShadow.xyz;
+  if (s.x <= 0.0 || s.x >= 1.0 || s.y <= 0.0 || s.y >= 1.0 || s.z >= 1.0) return 1.0;
+  float d = uShadowTexel * 1.25;
+  float k = texture(uShadowMap, vec3(s.xy + vec2(-d, -0.35 * d), s.z));
+  k += texture(uShadowMap, vec3(s.xy + vec2(0.35 * d, -d), s.z));
+  k += texture(uShadowMap, vec3(s.xy + vec2(d, 0.35 * d), s.z));
+  k += texture(uShadowMap, vec3(s.xy + vec2(-0.35 * d, d), s.z));
+  // some aos poucos longe do jogador (a borda do mapa nunca aparece)
+  float fade = smoothstep(uShadowFade.z, uShadowFade.w, length(vWP.xz - uShadowFade.xy));
+  return mix(k * 0.25, 1.0, fade);
+}
 
 void main() {
   // mapeamento afim (sem correção de perspectiva), como no PS1
@@ -145,8 +206,11 @@ void main() {
       dyn += uLightCols[i] * att * ndl;
     }
   }
-  vec3 c = min(t.rgb * (vLight + dyn * vBase), vec3(1.0));
-  c = mix(c, uFogColor, vFog);
+  float sh = 1.0;
+  // na folhagem a sombra pesa menos (as folhas se sombreiam entre si e virariam manchas)
+  if (uShadowOn > 0.0 && vSun.r + vSun.g + vSun.b > 0.002) sh = mix(1.0, sunShadow(), uShadowOn * (1.0 - 0.45 * uFoliage));
+  vec3 c = min(t.rgb * (vLight + vSun * sh + dyn * vBase), vec3(1.0));
+  c = mix(c, mix(uFogColor, uSunFog, vSunFog), vFog);
   gl_FragColor = vec4(c, t.a * uOpacity);
 }
 `;
@@ -216,6 +280,8 @@ export function ps1Material(o = {}) {
     mat.polygonOffsetFactor = o.polygonOffset;
     mat.polygonOffsetUnits = o.polygonOffset;
   }
+  // projeta sombra na luz avançada: só os opacos iluminados (decalques, água e efeitos não)
+  mat.userData.caster = o.shadow ?? (!o.transparent && o.lit !== false && !o.polygonOffset);
   // folhagem recortada: no 3D limpo usa a cobertura do antisserrilhado (bordas suaves)
   if (cutout && !o.transparent) {
     mat.alphaToCoverage = VISUAL.mode === 'clean';

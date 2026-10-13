@@ -4,6 +4,7 @@ import { GunAudio } from './gunAudio.js';
 import { ITEMS } from './items.js';
 import { castRay, GUNS } from './weapon.js';
 import { drawText, textSprite, panel, FONT_UI } from '../ui/overlay.js';
+import { settings } from '../config.js';
 
 // Combate corpo a corpo e tudo que é comum às lutas:
 // - vida do jogador (golpe com empurrão, tela vermelha, invencível por um instante);
@@ -155,7 +156,8 @@ export class Combat {
     for (let i = 0; i < 8; i++) {
       this.effects.spawn({ p: this._v.set(p.x, p.y + 1.2, p.z), v: this._v2.set(dx * 1.5 + (Math.random() - 0.5) * 2, 0.8 + Math.random() * 1.5, dz * 1.5 + (Math.random() - 0.5) * 2), life: 0.6, s0: 0.04, s1: 0.02, color: [0.55, 0.05, 0.04], grav: 9.8, bounce: 0.1 });
     }
-    if (navigator.vibrate && this.input.lastDevice === 'touch') { try { navigator.vibrate(60); } catch (e) { /* ignora */ } }
+    if (navigator.vibrate && this.input.lastDevice === 'touch' && settings.vibrate !== false) { try { navigator.vibrate(60); } catch (e) { /* ignora */ } }
+    this.input.rumble(0.9, 0.5, 220);
     if (this.hp <= 0) { this.dead = true; this.atk = null; this.dodge = null; }
     return true;
   }
@@ -226,7 +228,8 @@ export class Combat {
     }
     const cyc = input.weaponCycle();
     if (cyc) { this.guns.cycle(cyc); this.guns.teach(); }
-    if (input.hit('KeyH')) this.quickHeal();
+    // cura rápida: H, direcional ▲ ou CURA no toque
+    if (input.healHit()) this.quickHeal();
     // ataque: V / RB / GOLPE sempre; o clique/R2/ATIRAR também, se não houver arma de fogo
     const wantAtk = input.meleeHit() || (!gun && input.fireHit());
     if (wantAtk) {
@@ -406,6 +409,7 @@ export class Combat {
       this.hitStop = A.def.heavy || A.combo === 2 ? 0.09 : 0.055;
       this.shake = Math.max(this.shake, A.def.heavy ? 0.3 : 0.16);
       GunAudio.thump(this.audio, e.armored ? 'metal' : def.sound || 'punch', 1);
+      this.input.rumble(A.def.heavy ? 0.6 : 0.3, 0.35, A.def.heavy ? 120 : 70);
       // gasta a arma branca
       if (this.melee && A.kind === 'swing') {
         this.melee.dur--;
@@ -430,14 +434,15 @@ export class Combat {
     if (m.n <= 0) this.melee = null;
   }
 
-  // a arma (dinamite) pede um arremesso; dir = direção da mira (ou null: mira assistida)
-  throwItem(id, dir) {
+  // a arma (dinamite) pede um arremesso; dir = direção da mira (ou null: mira assistida);
+  // target = bicho já mirado (controle e toque), recebe o arremesso em arco
+  throwItem(id, dir, target = null) {
     if (this.atk || this.dead) return false;
     // animação de arremesso do braço direito
     this.atk = { kind: 'throw', id, def: { dmg: 0 }, t: 0, dur: 0.46, combo: 0, hit: new Set(), thrown: true, swung: true };
     const P = this.player;
-    let target = null;
-    if (!dir) {
+    if (target) { dir = null; P.heading = Math.atan2(target.pos.x - P.pos.x, target.pos.z - P.pos.z); }
+    else if (!dir) {
       target = this.nearestEnemy(P.pos.x, P.pos.z, 22, e => Math.abs(wrapA(Math.atan2(e.pos.x - P.pos.x, e.pos.z - P.pos.z) - P.heading)) < 0.8);
       if (target) P.heading = Math.atan2(target.pos.x - P.pos.x, target.pos.z - P.pos.z);
     } else P.heading = Math.atan2(dir.x, dir.z);
@@ -601,6 +606,8 @@ export class Combat {
     this.shake = Math.max(this.shake, clamp(1.1 - pd / 30, 0.15, 0.9));
     this.hitStop = 0.06;
     GunAudio.explosion(this.audio, pd);
+    const rk = clamp(1.2 - pd / 25, 0, 1);
+    if (rk > 0.05) this.input.rumble(rk, rk * 0.7, 160 + rk * 260);
     const fx = this.effects;
     for (let i = 0; i < 26; i++) {
       const a = Math.random() * Math.PI * 2, s = 2 + Math.random() * 5;
@@ -823,7 +830,8 @@ export class Combat {
       g.fillStyle = f > 0.6 ? '#6aa84a' : f > 0.3 ? '#d8b040' : (Math.floor(this.t * 4) % 2 ? '#c83020' : '#f05030');
       g.fillRect(x, y, Math.round(bw * f), bh);
       const heals = this.inventory.count('cuca') + this.inventory.count('cha');
-      if (heals && this.hp < this.maxHp) drawText(g, (touch ? '' : 'H ') + 'cura ×' + heals, x + bw + 5 * k, y - 4 * k, 9 * k, { color: '#c8b898' });
+      // no toque o botão CURA fica no alto
+      if (heals && this.hp < this.maxHp && !touch) drawText(g, (device === 'pad' ? '↑ ' : 'H ') + 'cura ×' + heals, x + bw + 5 * k, y - 4 * k, 9 * k, { color: '#c8b898' });
     }
     if (!this.guns?.equipped && (this.melee || this.inFight)) {
       const yy = touch ? y + 8 * k : y - (showHp ? 22 : 10) * k;

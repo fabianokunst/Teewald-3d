@@ -4,6 +4,7 @@ import { Renderer } from './engine/renderer.js';
 import { loadTextures, setTextureQuality, setAnisotropy } from './engine/textures.js';
 import { makeMaterials, M } from './engine/materials.js';
 import { G, setMaterialStyle } from './engine/ps1material.js';
+import { Shadows } from './engine/shadows.js';
 import { Input } from './engine/input.js';
 import { fullscreen } from './engine/touch.js';
 import { Audio } from './engine/audio.js';
@@ -34,6 +35,9 @@ const params = new URLSearchParams(location.search);
 // estilo visual: 3D limpo (padrão) ou PS1 retrô; ?visual=ps1 força pela URL
 if (params.get('visual')) settings.visual = params.get('visual') === 'ps1' ? 'ps1' : 'clean';
 const visualMode = s => (s.visual === 'ps1' ? 'ps1' : 'clean');
+// iluminação: avançada (padrão: sol avermelhado, sombras, estrelas) ou clássica; ?light=classic pela URL
+if (params.get('light')) settings.lighting = params.get('light') === 'classic' ? 'classic' : 'advanced';
+const advancedLight = s => s.lighting !== 'classic';
 setMaterialStyle(visualMode(settings));
 const app = document.getElementById('app');
 const R = new Renderer(app);
@@ -44,6 +48,9 @@ audio.setVolume((settings.volume / 10) * 0.8);
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(58, 4 / 3, 0.25, 2600);
 const hud = new Hud();
+// sombras projetadas da luz avançada (no celular, mapa menor e área menor)
+const coarse = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+const shadows = new Shadows(R.gl, coarse ? { size: 1024, radius: 40 } : { size: 2048, radius: 50 });
 
 // sol de fim de tarde vindo do noroeste (hemisfério sul)
 G.uSunDir.value.set(-0.62, 0.4, -0.68).normalize();
@@ -107,6 +114,7 @@ function applySettings(s, key) {
   }
   R.configure(s);
   if (atmo) atmo.setDrawDistance(s.drawDistance); else applyAtmosphere(s.drawDistance);
+  if (atmo && key === 'lighting') atmo.setAdvanced(advancedLight(s));
   audio.setVolume((s.volume / 10) * 0.8);
 }
 
@@ -144,6 +152,7 @@ async function boot() {
   // hora do dia, clima e luzes dinâmicas
   atmo = new Atmosphere({ scene, sky: ctx.sky, audio, ctx });
   atmo.setDrawDistance(settings.drawDistance);
+  atmo.setAdvanced(advancedLight(settings));
   atmo.effects = effects;
   inventory = new Inventory(16);
   targets = new Targets(scene, ctx, M, { effects, audio, inventory, hud });
@@ -167,6 +176,11 @@ async function boot() {
   menu.campaign = campaign; menu.chapterTitles = CHAPTERS.map(c => c?.title);
   // no toque, as mesmas telas com botões grandes na tela inteira
   touchMenu = new TouchMenu(menu, input, audio);
+  // dedo num botão do jogo sobre a imagem (PEGAR, FALAR, LER...) não gira a câmera nem anda
+  input.touch.uiHit = (x, y) => {
+    const [ix, iy] = R.toInternal(x, y), pad = 6 * (R.H / 240);
+    return [combat.chip, npcs.chip, campaign.chip, mission.chip].some(c => c && ix >= c.x - pad && ix <= c.x + c.w + pad && iy >= c.y - pad && iy <= c.y + c.h + pad);
+  };
   setupStart();
   exposeDebug();
   if (params.get('chapter')) { startGame({ chapter: +params.get('chapter') }); fade = 0; }
@@ -349,23 +363,31 @@ function frame(now) {
     }
     effects.update(dt, camera, ctx.groundAt);
   }
+  atmo.viewH = R.H;
   atmo.update(dt, camera, state === 'title' ? null : player, pistol.aim > 0.5 ? camera.getWorldDirection(aimDirV) : null);
   ctx.sky.update(camera);
   hud.update(dt);
   character.root.visible = character.blob.visible = state !== 'title' && state !== 'ending';
 
   if (noRender) { input.endFrame(); return; }
+  // sombras em volta do jogador (na tela título e no fim, em volta da igreja)
+  shadows.update(scene, state === 'title' || state === 'ending' ? churchFocus() : player.pos, atmo.shadowStrength);
   R.render(scene, camera);
   drawUI();
   // controles de toque só no jogo; nos menus e na abertura um toque vale um clique
   input.touch.setMode(state === 'play' ? 'play' : 'menu');
   input.touch.weapon = pistol.equipped;
+  // botão CURA: ferido e com comida ou chá no inventário
+  input.touch.heal = combat.hp < combat.maxHp && !combat.dead ? inventory.count('cuca') + inventory.count('cha') : 0;
   const menuOnTouch = touchUI() && (state === 'title' || state === 'pause');
   input.touch.draw(R, state === 'play' && input.lastDevice === 'touch', input.touchPrimary,
     menuOnTouch ? (g, v) => touchMenu.draw(g, v)
       : state === 'inventory' && invPanel() ? (g, v) => touchMenu.drawInventory(g, v, invScreen) : null);
   input.endFrame();
 }
+
+const churchV = new THREE.Vector3();
+const churchFocus = () => { const c = ctx.landmarks.church; return churchV.set(c.x, c.y, c.z); };
 
 // câmera da tela título: passeia lentamente diante da fachada da igreja
 let titleT = 0;
@@ -467,7 +489,7 @@ function drawEnding(g, W, H) {
 
 function exposeDebug() {
   window.__teewald = {
-    ctx, player, camera, tpc, settings, atmo, combat, interiors, audio, character, scene, renderer: R, G, input, menu, touchMenu, inventory, pistol, targets, effects, invScreen, npcs, mission,
+    ctx, player, camera, tpc, settings, atmo, shadows, combat, interiors, audio, character, scene, renderer: R, G, input, menu, touchMenu, inventory, pistol, targets, effects, invScreen, npcs, mission,
     get state() { return state; },
     setState: s => setState(s),
     startGame: (intro = false) => { startGame({ intro }); fade = 0; fadeTarget = 0; },

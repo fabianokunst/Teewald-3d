@@ -258,6 +258,15 @@ export class Targets {
     return best;
   }
 
+  // alvos em pé, para a mira assistida: cb(alvo, x, y, z, raio)
+  aimPoints(cb) {
+    for (const T of this.targets) {
+      if (T.state !== 'idle' || T.grow < 0.5) continue;
+      const can = T.type === 'can';
+      cb(T, T.pos.x, T.pos.y + (can ? CAN.h : BOTTLE.h) * 0.45, T.pos.z, (can ? CAN.hit : BOTTLE.hit) * 1.3);
+    }
+  }
+
   // w: { kind, dmg } da arma (bala, prata, raio, dardo...)
   hit(T, dir, p, from, w = null) {
     if (T.owner) { T.owner.hit(T, dir, p, from, w); return; }

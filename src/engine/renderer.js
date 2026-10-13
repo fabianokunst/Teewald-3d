@@ -21,17 +21,17 @@ export class Renderer {
     this.ui.style.pointerEvents = 'none';
     this.rt = new THREE.WebGLRenderTarget(320, 240, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, depthBuffer: true, generateMipmaps: false });
     this.postMat = new THREE.ShaderMaterial({
-      uniforms: { tDiffuse: { value: this.rt.texture }, uDither: { value: 1 }, uFade: { value: 0 }, uBars: { value: 0 }, uTime: G.uTime },
+      uniforms: { tDiffuse: { value: this.rt.texture }, uDither: { value: 1 }, uFade: { value: 0 }, uBars: { value: 0 }, uTime: G.uTime, uSat: G.uSat },
       vertexShader: 'varying vec2 vUv; void main(){ vUv = position.xy * 0.5 + 0.5; gl_Position = vec4(position.xy, 0.0, 1.0); }',
       fragmentShader: /* glsl */`
-        uniform sampler2D tDiffuse; uniform float uDither; uniform float uFade; uniform float uBars; uniform float uTime;
+        uniform sampler2D tDiffuse; uniform float uDither; uniform float uFade; uniform float uBars; uniform float uTime; uniform float uSat;
         varying vec2 vUv;
         float bayer2(vec2 a) { a = floor(a); return fract(dot(a, vec2(0.5, a.y * 0.75))); }
         float bayer4(vec2 a) { return bayer2(0.5 * a) * 0.25 + bayer2(a); }
         void main() {
           vec3 c = texture2D(tDiffuse, vUv).rgb;
           float l = dot(c, vec3(0.3, 0.59, 0.11));
-          c = mix(vec3(l), c, 0.6) * vec3(0.95, 1.0, 0.98);
+          c = mix(vec3(l), c, uSat) * vec3(0.95, 1.0, 0.98);
           c = (c - 0.5) * 1.1 + 0.48;
           vec2 q = vUv - 0.5;
           c *= clamp(1.0 - dot(q, q) * 1.25, 0.0, 1.0);
@@ -136,11 +136,15 @@ export class Renderer {
     const lights = G.uLights.value, saved = lights.map(l => l.w);
     for (const l of lights) l.w = 0;
     const keep = [G.uSunColor.value.clone(), G.uAmbSky.value.clone(), G.uAmbGround.value.clone(), G.uSunDir.value.clone()];
+    // nem sombra, nem neblina do sol, nem o sol baixo da luz avançada
+    const keepAdv = [G.uShadowOn.value, G.uSunFogK.value, G.uSunWrap.value];
+    G.uShadowOn.value = 0; G.uSunFogK.value = 0; G.uSunWrap.value = 0;
     G.uSunColor.value.setRGB(0.5, 0.49, 0.47); G.uAmbSky.value.setRGB(0.47, 0.49, 0.53); G.uAmbGround.value.setRGB(0.3, 0.28, 0.27);
     if (ov.sunDir) G.uSunDir.value.copy(ov.sunDir);
     gl.render(ov.scene, ov.camera);
     lights.forEach((l, i) => { l.w = saved[i]; });
     G.uSunColor.value.copy(keep[0]); G.uAmbSky.value.copy(keep[1]); G.uAmbGround.value.copy(keep[2]); G.uSunDir.value.copy(keep[3]);
+    [G.uShadowOn.value, G.uSunFogK.value, G.uSunWrap.value] = keepAdv;
     rt.viewport.set(0, 0, this.W, this.H); rt.scissor.set(0, 0, this.W, this.H); rt.scissorTest = false;
     gl.setClearColor(0x000000, 1);
   }

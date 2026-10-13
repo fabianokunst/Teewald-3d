@@ -74,6 +74,8 @@ export async function buildWorld(scene, onStep) {
   await step(0.25, 'ruas e rio');
   const B = new MeshBuilder(200);
   const terrainMesh = ctx.terrain.buildMesh(M, ctx.zones);
+  // o chão recebe sombra mas não projeta (o relevo já escurece pela inclinação)
+  terrainMesh.userData.noShadow = true;
   scene.add(terrainMesh);
   ctx.bridges = buildRoads(B, ctx);
   buildWater(B, ctx.rivers);
@@ -91,21 +93,26 @@ export async function buildWorld(scene, onStep) {
 
   await step(0.7, 'postes e fios');
   const wires = utilityLines(ctx, B);
+  wires.userData.noShadow = true;
   scene.add(wires);
 
   await step(0.78, 'malhas');
   const statics = B.build(M);
+  // parte fixa da cidade: a sombra dela fica guardada (engine/shadows.js)
+  statics.userData.shadowStatic = true;
   scene.add(statics);
 
   await step(0.85, 'árvores');
   scatterVegetation(ctx);
   const veg = buildVegetation(ctx, M);
+  veg.userData.shadowStatic = true;
   scene.add(veg);
 
   await step(0.95, 'céu');
   ctx.sky = makeSky(M);
   scene.add(ctx.sky);
   ctx.leaves = new FallingLeaves(M.leafFall, ctx.terrain);
+  ctx.leaves.mesh.userData.noShadow = true;
   scene.add(ctx.leaves.mesh);
 
   // altura do chão para o jogador: terreno, ruas, calçadas, pisos e plataformas

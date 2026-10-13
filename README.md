@@ -29,20 +29,20 @@ caminhável), senão as pernas somem dentro dele.
 | Ação | Teclado / mouse | Controle | Toque (celular/tablet) |
 |---|---|---|---|
 | Andar | WASD ou setas | analógico esquerdo | arrastar no lado esquerdo |
-| Correr | Shift | B (segurar) / L3 | botão CORRER (liga/desliga) |
+| Correr | Shift | B (segurar) · L3 (liga até soltar o analógico) | botão CORRER (liga/desliga; desliga a mira) |
 | Pular | Espaço | A | botão PULAR |
-| Esquiva | C ou Ctrl | B (toque rápido) | botão ESQUIVA |
-| Câmera | mouse (clique na tela para prender) · Q/E | analógico direito | arrastar no lado direito |
+| Esquiva | C ou Ctrl | B (toque rápido; mirando, na hora) | botão ESQUIVA |
+| Câmera | mouse (clique na tela para prender) · Q/E | analógico direito | arrastar no lado direito ou no ATIRAR |
 | Centralizar câmera | — | R3 | toque duplo no lado direito |
-| Zoom | roda do mouse | direcional ↑↓ | pinça com dois dedos |
+| Distância da câmera | roda do mouse | direcional ↓ (perto, normal, longe) | pinça com dois dedos |
 | Conversar (perto de um morador) | F | A | botão FALAR sobre o morador |
 | Ler / examinar / pegar / entrar | F ou E | A | botão sobre o objeto (LER, PEGAR, ENTRAR...) |
 | Inventário | I ou Tab | Y | botão INV |
 | Golpe (soco, arma branca, arremesso) | V · botão esquerdo sem arma de fogo | RB | botão GOLPE |
 | Trocar de arma | 1 a 8 (1 = mãos) | direcional ◀▶ | botão ARMA |
-| Comer / beber (cura) | H | inventário | inventário |
+| Comer / beber (cura) | H | direcional ↑ | botão CURA (aparece ferido) · inventário |
 | Mirar (com arma de fogo) | botão direito (segurar) | L2 ou LB (segurar) | botão MIRAR (liga/desliga) |
-| Atirar (segurar: luz do lampião) | botão esquerdo | R2 | botão ATIRAR |
+| Atirar (segurar: luz do lampião) | botão esquerdo | R2 (segurar: continua atirando) | botão ATIRAR (segurar: continua) |
 | Recarregar / reabastecer | R | X | botão REC |
 | Pausa | Esc ou P | Start | botão ❚❚ |
 | Minimapa (liga/desliga) | M | Select | Opções |
@@ -54,7 +54,26 @@ START ou P de novo voltam ao jogo.
 
 Atirar sem mirar levanta a pistola, atira e mantém a mira por um instante.
 Mirando, o personagem anda devagar em qualquer direção e a câmera vai para o
-ombro direito. No controle e no toque, a mira puxa de leve para alvos próximos.
+ombro direito, nivelada (a câmera normal olha de cima; sem isso a mira apontava
+para o chão). O coice sobe a câmera e ela volta sozinha. Um aperto no intervalo
+entre tiros fica guardado e sai assim que a arma deixa.
+
+**Mira assistida** (`src/game/aimAssist.js`, só controle e toque; opção MIRA
+ASSISTIDA: desligada, normal ou forte):
+- L2 / MIRAR puxa a mira até o bicho mais perto do centro da tela.
+- Atirar sem mirar trava no bicho à frente e o tiro vai nele.
+- Sobre o alvo a câmera gira mais devagar e acompanha o bicho que anda (e o
+  jogador que anda de lado); perto dele a mira escorrega até a esfera de acerto
+  mais próxima, cabeça incluída.
+- A bala que passaria raspando vai no ponto de acerto mais perto; se o tiro já
+  pega em algo (a cabeça, por exemplo), vai onde está mirado.
+- Segurar R2 / ATIRAR continua atirando, mais devagar do que apertando.
+
+O analógico direito tem zona morta circular e curva de precisão: pouco inclinado
+gira bem devagar (mira fina); segurado no máximo fora da mira, o giro acelera
+para dar meia-volta. O controle vibra nos tiros, golpes, dano e explosões
+(opção VIBRAÇÃO). No toque, arrastar o dedo que está no ATIRAR também gira a
+câmera: mira e tiro com o mesmo polegar.
 
 No celular o jogo entra em tela cheia ao tocar na tela inicial (Android) e fica
 melhor deitado; em pé, a imagem fica em 4:3 no alto e os controles embaixo.
@@ -65,7 +84,8 @@ Os menus no toque (`src/ui/touchMenu.js`) usam botões grandes na tela inteira:
 o botão acende ao encostar e só age ao soltar em cima dele. Em Opções cada linha
 tem ◀ e ▶ (deitado, em duas colunas; arrastar rola se não couber), e há opções
 só do celular: **tamanho dos botões** (pequeno, médio, grande) e **vibração**
-(Android). Sair da partida pela pausa pede confirmação. Em pé, o inventário
+(Android; também aparece com controle que vibra). Sair da partida pela pausa
+pede confirmação. Em pé, o inventário
 mostra as ações do item em botões grandes na parte de baixo; em EXAMINAR,
 arrastar gira o item.
 
@@ -280,8 +300,8 @@ feitos em código. O cenário fica em `src/world/chupaSites.js` e a missão em
 src/engine   motor: material PS1 (com luzes dinâmicas), texturas, renderizador, colisão, controles, som
 src/world    cidade: relevo, ruas, rio, prédios, igreja, praça, calçadão, árvores, alvos, cenário da missão,
              clima e hora (atmosphere.js), interiores (interiors.js e interiors/: fábrica, cripta, gruta)
-src/game     personagem, controle do jogador, câmera, itens, armas, combate, efeitos, moradores, missão 1,
-             campanha (campaign.js) e capítulos (chapters/)
+src/game     personagem, controle do jogador, câmera, itens, armas, mira assistida, combate, efeitos,
+             moradores, missão 1, campanha (campaign.js) e capítulos (chapters/)
 src/game/creatures  chupacabras na gruta, cão de fogo, morcegos, fantasmas, ETs e disco, Fera, lobisomem, bruxa
 src/ui       menu, HUD, inventário, diálogo e textos
 tools/       build-mapdata.mjs (regera os dados do mapa), capturas de teste

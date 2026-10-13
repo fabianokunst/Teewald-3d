@@ -5,10 +5,14 @@ import { drawText } from '../ui/overlay.js';
 import { makeItemModel, GUN_POINTS } from './itemModels.js';
 import { GunAudio } from './gunAudio.js';
 import { ITEMS } from './items.js';
+import { AimAssist } from './aimAssist.js';
 
 // Armas de fogo e especiais. Ficam na mão direita quando equipadas (cano ao longo
 // dos dedos), miram por cima do ombro e atiram com raio contra o mundo.
-// Tiro sem mirar levanta a arma, atira e mantém a mira por um instante.
+// Tiro sem mirar levanta a arma, atira e mantém a mira por um instante; no controle
+// e no toque ele trava no bicho à frente (mira assistida, aimAssist.js), e segurar o
+// gatilho continua atirando num ritmo mais lento. Aperto no intervalo entre tiros fica
+// guardado e sai assim que a arma deixa.
 // - pistola 9 mm, espingarda de dois canos (chumbo espalhado), revólver com balas de prata;
 // - pistola de raios (projétil verde, carga que volta sozinha);
 // - rifle de dardos (sedativo: só derruba bicho cansado);
@@ -17,6 +21,8 @@ import { ITEMS } from './items.js';
 
 const v3 = () => new THREE.Vector3();
 const lerp = (a, b, t) => a + (b - a) * t;
+// vibração do controle a cada tiro: [motor grande, motor pequeno, ms]
+const RUMBLE = { pistol: [0.12, 0.38, 70], shotgun: [0.75, 0.6, 150], revolver: [0.32, 0.55, 100], raygun: [0.08, 0.3, 60], dartgun: [0.05, 0.25, 50] };
 
 export const GUNS = {
   pistol: { label: 'PISTOLA 9MM', mag: 12, ammo: 'ammo9', dmg: 1, kind: 'bullet', cool: 0.17, reload: 1.35, spread: 0.0015, bloom: 0.007, pellets: 1, range: 160, sound: 'shot', kick: 1 },
@@ -168,7 +174,18 @@ export class Guns {
     this.beam = beamMesh();
     this.models.lantern.add(this.beam);
     this.beam.position.set(...GUN_POINTS.lantern.muzzle);
-    this.aim = 0; this.aiming = false; this.autoAim = 0; this.queued = false;
+    this.aim = 0; this.aiming = false; this.autoAim = 0; this.queued = false; this.queuedT = 0;
+    this.wasHeld = false; this.hipLock = null; this.repT = 0;
+    // mira assistida (controle e toque); a linha de visão ignora os alvos, só o mundo
+    const losV = v3();
+    this.assist = new AimAssist({
+      targets: this.targets, camera: this.camera, tpc: this.tpc,
+      los: (o, p) => {
+        const d = losV.copy(p).sub(o), L = d.length();
+        const hit = castRay(this.ctx, null, o, d.divideScalar(L || 1), L);
+        return !hit || hit.t > L - 0.3;
+      },
+    });
     this.cool = 0; this.reloadT = 0; this.reloadPart = 0; this.reloadDelay = 0;
     this.recoil = 0; this.bloom = 0; this.flashT = 0; this.hitMark = 0; this.overTarget = false;
     this.beamOn = false; this.flameT = 0;
@@ -201,7 +218,8 @@ export class Guns {
     if (id && !this.inventory.find(id)) return;
     if (this.inventory.equipped !== id) GunAudio.equip(this.audio);
     this.inventory.equipped = id;
-    this.reloadT = 0; this.queued = false;
+    this.reloadT = 0; this.queued = false; this.hipLock = null;
+    this.assist.reset();
     if (!id) this.aiming = false;
     // pente cheio na primeira vez
     const s = this.slot, c = this.cfg;
@@ -230,19 +248,19 @@ export class Guns {
       this.hud.showHints({
         keyboard: ['BOTÃO DIREITO mirar   SEGURE O ESQUERDO para a luz', 'A luz queima fantasmas   R reabastece'],
         pad: ['L2 mirar   SEGURE R2 para a luz', 'X reabastece   ◀▶ troca de arma'],
-        touch: ['SEGURE ATIRAR para soltar a luz', 'REC reabastece   ARMA troca'],
+        touch: ['SEGURE ATIRAR para soltar a luz', 'Arraste o dedo para mover a luz   REC reabastece'],
       });
     } else if (c.throw) {
       this.hud.showHints({
         keyboard: ['ESQUERDO acende e joga a dinamite', 'Corra depois de jogar!'],
-        pad: ['R2 acende e joga a dinamite', 'Corra depois de jogar!'],
+        pad: ['R2 acende e joga   com L2, no bicho mirado', 'Corra depois de jogar!'],
         touch: ['ATIRAR acende e joga a dinamite', 'Corra depois de jogar!'],
       });
     } else {
       this.hud.showHints({
         keyboard: ['BOTÃO DIREITO mirar   ESQUERDO atirar', 'R recarregar   1-8 armas   V golpe'],
-        pad: ['L2 mirar   R2 atirar   X recarregar', 'RB golpe   ◀▶ troca de arma'],
-        touch: ['MIRAR liga a mira   ATIRAR dispara', 'REC recarrega   ARMA troca   GOLPE soca'],
+        pad: ['L2 mira no bicho   R2 atira (segure: continua)', 'X recarrega   RB golpe   ◀▶ troca de arma'],
+        touch: ['ATIRAR mira sozinho no bicho à frente', 'Arraste o dedo no ATIRAR para mirar   MIRAR liga a mira', 'REC recarrega   ARMA troca'],
       });
     }
   }
@@ -295,24 +313,33 @@ export class Guns {
 
   // antes do jogador: decide se está mirando (o jogador vira para a mira e anda devagar)
   pre(dt, input) {
-    const id = this.id, c = this.cfg;
+    const id = this.id, c = this.cfg, A = this.assist;
     for (const k in this.models) this.models[k].visible = k === id;
     if (!id) {
-      this.aiming = false; this.queued = false; this.autoAim = 0; this.beamOn = false;
-      this.player.aimYaw = null; this.tpc.aimWant = false;
+      this.aiming = false; this.queued = false; this.autoAim = 0; this.beamOn = false; this.hipLock = null;
+      this.player.aimYaw = null; this.tpc.aimWant = false; input.aimLock = false;
+      this.wasHeld = false; A.reset();
       return;
     }
     if (input.reloadHit()) this.reload();
     const held = input.aimHeld();
-    // dinamite: o gatilho joga (mirando ou não)
+    // começou a mirar (L2 / MIRAR): no controle e no toque a mira vai até o bicho mais perto
+    const aimStart = held && !this.wasHeld;
+    this.wasHeld = held;
+    if (aimStart) A.pick(input, 'snap', c.range);
+    // dinamite: o gatilho joga (mirando ou não); mirando num bicho, joga nele
     if (c.throw) {
       this.aiming = held;
       if (input.fireHit() && this.cool <= 0 && this.combat) {
-        const dir = held ? this.camera.getWorldDirection(this._v).clone() : null;
-        if (this.combat.throwItem('dynamite', dir)) { this.inventory.take('dynamite', 1); this.cool = 0.9; }
+        let tgt = held ? (A.snap?.can === false ? A.snap.X : A.cur && !A.cur.can ? A.cur.X : null) : null;
+        // longe demais: o pavio acabaria no ar
+        if (tgt && Math.hypot(tgt.pos.x - this.player.pos.x, tgt.pos.z - this.player.pos.z) > 22) tgt = null;
+        const dir = held && !tgt ? this.camera.getWorldDirection(this._v).clone() : null;
+        if (this.combat.throwItem('dynamite', dir, tgt)) { this.inventory.take('dynamite', 1); this.cool = 0.9; }
       }
       this.player.aimYaw = this.aiming ? this.tpc.yaw + Math.PI : null;
       this.tpc.aimWant = this.aiming;
+      input.aimLock = this.aiming;
       return;
     }
     if (c.beam) {
@@ -320,17 +347,28 @@ export class Guns {
       const fire = input.fireHeld();
       this.beamOn = fire && this.fuel > 0 && this.reloadT <= 0;
       if (fire && this.fuel <= 0 && input.fireHit()) { GunAudio.dry(this.audio); this.hud.toast(this.inventory.count('oil') ? 'R: REABASTECER' : 'SEM QUEROSENE'); }
+      if (input.fireHit() && !held && this.beamOn) A.pick(input, 'hip', c.range);
       this.aiming = held || this.beamOn;
     } else {
       if (input.fireHit() && this.reloadT <= 0) {
-        this.queued = true;
-        if (!held) this.autoAim = Math.max(this.autoAim, 1.1);
+        this.queued = true; this.queuedT = 0; this.repT = 0;
+        if (!held) {
+          this.autoAim = Math.max(this.autoAim, 1.1);
+          // sem mirar: trava no bicho à frente (controle e toque)
+          this.hipLock = A.pick(input, 'hip', c.range);
+        }
+      } else if (input.lastDevice !== 'keyboard' && input.fireHeld() && this.aiming && this.reloadT <= 0) {
+        // controle e toque: segurando o gatilho, continua atirando (mais devagar que apertando)
+        this.repT += dt;
+        if (!held) this.autoAim = Math.max(this.autoAim, 0.5);
+        if (!this.queued && this.repT >= Math.max(0.26, c.cool * 1.45)) { this.repT = 0; this.queued = true; this.queuedT = 0; }
       }
       this.autoAim = Math.max(0, this.autoAim - dt);
       this.aiming = this.reloadT <= 0 && (held || this.autoAim > 0);
     }
     this.player.aimYaw = this.aiming ? this.tpc.yaw + Math.PI : null;
     this.tpc.aimWant = this.aiming;
+    input.aimLock = this.aiming;
   }
 
   // depois do jogador (personagem já animado): pose, tiro, recarga
@@ -353,14 +391,20 @@ export class Guns {
     this._pose();
     if (c.beam) this._beam(dt);
     else this.beam.visible = false;
+    // mira assistida (controle e toque): puxão, atrito e acompanhamento antes da câmera
+    if (this.aiming) this.assist.update(dt, this.input);
+    else this.assist.reset();
     if (c.throw) return;
     if (this.aiming) this._scanTargets();
-    if (this.queued && this.aim > 0.85) {
+    // tiro na fila: sai quando a arma subiu (travado num bicho, antes: a bala vai nele de
+    // qualquer jeito) e o intervalo entre tiros acabou; espera no máximo 0,6 s
+    if (this.queued && this.cool <= 0 && this.aim > (this.hipLock ? 0.55 : 0.85)) {
       this.queued = false;
       this._fire();
-      if (this.autoAim > 0) this.autoAim = 0.9;
+      if (this.autoAim > 0) this.autoAim = Math.max(this.autoAim, 0.9);
     }
-    if (this.queued && !this.aiming) this.queued = false;
+    if (this.queued) { this.queuedT += dt; if (!this.aiming || this.queuedT > 0.6) this.queued = false; }
+    if (!this.queued) this.hipLock = null;
   }
 
   _reloadStep(dt, c) {
@@ -497,8 +541,9 @@ export class Guns {
     const base = this._aimDir(v3());
     this.model.updateMatrixWorld(true);
     const muzzle = this.model.localToWorld(v3().set(...GUN_POINTS[id].muzzle));
-    // controle e toque: puxa de leve para um alvo perto da mira
-    if (this.input.lastDevice !== 'keyboard') this._assist(o0, base);
+    // controle e toque: travado num bicho (tiro sem mirar) ou bala que passaria raspando
+    const sd = this.assist.shotDir(this.input, o0, base, this.hipLock, c.range || 120);
+    if (sd) base.copy(sd);
     const pellets = c.pellets || 1;
     let worldFx = 0;
     for (let k = 0; k < pellets; k++) {
@@ -561,32 +606,13 @@ export class Guns {
     }
     this.recoil = 1;
     this.bloom = Math.min(0.03, this.bloom + (c.bloom || 0));
-    this.tpc.pitch -= 0.014 * (c.kick || 1);
-    this.tpc.yaw += (Math.random() - 0.5) * 0.008 * (c.kick || 1);
+    // coice: a câmera sobe e volta sozinha (a mira não fica mais alta a cada tiro)
+    const kick = c.kick || 1;
+    this.tpc.kick(0.028 * kick, (Math.random() - 0.5) * 0.012 * kick);
     if (c.kick > 2 && this.combat) this.combat.shake = Math.max(this.combat.shake, 0.18);
+    const rb = RUMBLE[id];
+    if (rb) this.input.rumble(rb[0], rb[1], rb[2]);
     if (Math.floor(this.mag) === 0 && this.ammo > 0 && !c.energy) this.reloadDelay = 0.35;
-  }
-
-  // mira assistida: puxa a direção para o alvo mais perto da mira
-  _assist(o, f) {
-    let best = null, bestA = 0.04;
-    for (const T of this.targets.targets) {
-      if (T.state === 'broken' || T.grow < 0.5) continue;
-      const cc = v3().copy(T.pos).add(this._v3.set(0, T.type === 'can' ? 0.06 : 0.13, 0)).sub(o);
-      if (cc.length() > 45) continue;
-      const angle = cc.normalize().angleTo(f);
-      if (angle < bestA) { bestA = angle; best = cc.clone(); }
-    }
-    // criaturas: pega um pouco mais longe da mira
-    for (const X of this.targets.extra || []) {
-      const p = X.aimPoint?.();
-      if (!p) continue;
-      const cc = v3().copy(p).sub(o), dist = cc.length();
-      if (dist > 45) continue;
-      const angle = cc.normalize().angleTo(f);
-      if (angle < Math.max(bestA, 0.09)) { bestA = angle; best = cc.clone(); }
-    }
-    if (best) f.copy(best);
   }
 
   // clarão do tiro continua iluminando por alguns quadros

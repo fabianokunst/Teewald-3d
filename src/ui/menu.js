@@ -9,15 +9,19 @@ const OPTIONS = [
   { key: 'aspect', label: 'PROPORÇÃO', values: ['wide', '4:3'], fmt: v => (v === 'wide' ? 'TELA CHEIA' : '4:3') },
   { key: 'affine', label: 'DISTORÇÃO DE TEXTURA', values: [0, 1, 2], fmt: v => ['DESLIGADA', 'SUTIL', 'TOTAL'][v], needs: ps1Only },
   { key: 'dither', label: 'DITHERING', values: [true, false], fmt: v => (v ? 'LIGADO' : 'DESLIGADO'), needs: ps1Only },
+  { key: 'lighting', label: 'ILUMINAÇÃO', values: ['advanced', 'classic'], fmt: v => (v === 'classic' ? 'CLÁSSICA' : 'AVANÇADA') },
   { key: 'drawDistance', label: 'DISTÂNCIA DE VISÃO', values: [0, 1, 2], fmt: v => ['CURTA', 'MÉDIA', 'LONGA'][v] },
   { key: 'sensitivity', label: 'SENSIBILIDADE', values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], fmt: v => '▮'.repeat(v) + '▯'.repeat(10 - v) },
   { key: 'invertY', label: 'INVERTER EIXO Y', values: [false, true], fmt: v => (v ? 'SIM' : 'NÃO') },
+  // controle e toque: puxa a mira para o bicho, segura sobre ele e acompanha
+  { key: 'aimAssist', label: 'MIRA ASSISTIDA', values: [0, 1, 2], fmt: v => ['DESLIGADA', 'NORMAL', 'FORTE'][v] ?? 'NORMAL' },
   { key: 'volume', label: 'VOLUME', values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], fmt: v => '▮'.repeat(v) + '▯'.repeat(10 - v) },
   { key: 'fps', label: 'QUADROS POR SEGUNDO', values: [60, 30], fmt: v => v + ' FPS' },
   { key: 'minimap', label: 'MINIMAPA (TECLA M)', values: [true, false], fmt: v => (v ? 'LIGADO' : 'DESLIGADO') },
   // só no celular/tablet
   { key: 'touchSize', label: 'TAMANHO DOS BOTÕES', values: [0, 1, 2], fmt: v => ['PEQUENO', 'MÉDIO', 'GRANDE'][v], touchOnly: true },
-  { key: 'vibrate', label: 'VIBRAÇÃO', values: [true, false], fmt: v => (v ? 'LIGADA' : 'DESLIGADA'), touchOnly: true, needs: () => !!navigator.vibrate },
+  // celular com vibração (Android) ou controle com vibração
+  { key: 'vibrate', label: 'VIBRAÇÃO', values: [true, false], fmt: v => (v ? 'LIGADA' : 'DESLIGADA'), needs: (s, I) => (I.touchPrimary && !!navigator.vibrate) || I.padRumble },
 ];
 
 // tempo de jogo, criaturas e quedas somados (tela de capítulos)
@@ -63,7 +67,7 @@ export class Menu {
   }
 
   options() {
-    return OPTIONS.filter(o => (!o.touchOnly || this.input.touchPrimary) && (!o.needs || o.needs(this.settings)));
+    return OPTIONS.filter(o => (!o.touchOnly || this.input.touchPrimary) && (!o.needs || o.needs(this.settings, this.input)));
   }
 
   // progresso salvo (capítulo onde parou e o maior capítulo já liberado)
@@ -262,20 +266,20 @@ export class Menu {
   // touch: setas em todas as linhas, para tocar direto no lado que quer mudar
   _options(g, W, H, k, touch = false) {
     const items = this.items();
-    // com as opções do celular a lista fica maior: aperta um pouco as linhas
-    const step = Math.min(13, 160 / (items.length - 1)) * k;
+    // lista grande (estilo PS1, opções do celular ou do controle): aperta as linhas e a letra
+    const step = Math.min(13, 154 / (items.length - 1)) * k, fs = Math.min(13 * k, step), y0 = (step < 12 * k ? 46 : 50) * k;
     items.forEach((it, i) => {
-      const y = 50 * k + i * step, on = i === this.sel;
+      const y = y0 + i * step, on = i === this.sel;
       const color = on ? '#f2c879' : '#c8b898';
       if (it.opt) {
-        drawText(g, it.label, W / 2 - 140 * k, y, 13 * k, { color });
+        drawText(g, it.label, W / 2 - 140 * k, y, fs, { color });
         const v = it.opt.fmt(this.settings[it.opt.key]), arrows = on || touch;
-        const s = drawText(g, (arrows ? '◀ ' : '') + v + (arrows ? ' ▶' : ''), W / 2 + 140 * k, y, 13 * k, { align: 'right', color: on ? '#fff2d0' : '#a89878', font: FONT_UI });
+        const s = drawText(g, (arrows ? '◀ ' : '') + v + (arrows ? ' ▶' : ''), W / 2 + 140 * k, y, fs, { align: 'right', color: on ? '#fff2d0' : '#a89878', font: FONT_UI });
         const right = W / 2 + 140 * k;
-        this.rects.push([W / 2 - 140 * k, y, 280 * k, 13 * k, { lo: right - s.w - 10 * k, mid: right - s.w / 2 }]);
+        this.rects.push([W / 2 - 140 * k, y, 280 * k, step, { lo: right - s.w - 10 * k, mid: right - s.w / 2 }]);
       } else {
-        const s = drawText(g, it.label, W / 2, y + 6 * k, 15 * k, { align: 'center', color });
-        this.rects.push([W / 2 - s.w / 2, y + 6 * k, s.w, 15 * k]);
+        const s = drawText(g, it.label, W / 2, y + 4 * k, 15 * k, { align: 'center', color });
+        this.rects.push([W / 2 - s.w / 2, y + 4 * k, s.w, 15 * k]);
       }
     });
   }

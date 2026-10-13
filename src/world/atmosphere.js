@@ -16,7 +16,14 @@ const BASE = {
   sun: [-0.62, 0.4, -0.68], sunC: C(0.5, 0.49, 0.47), sky: C(0.47, 0.49, 0.53), gnd: C(0.3, 0.28, 0.27),
   fog: SKY.horizon, fogK: 1, skyTint: C(1, 1, 1), sunGlow: 1, moon: 0, moonC: C(1, 1, 1), moonSize: 150, stars: 0,
   lamps: 0, rain: 0, storm: 0, wind: 0.2, flashlight: 0, night: 0, crickets: 0, indoor: 0,
+  // só na luz avançada: sombra, neblina do lado do sol, sol que abraça o chão, saturação
+  // e o céu calculado (zênite, brilho e disco do sol, nuvens, Via Láctea)
+  shadow: 0, fogSun: SKY.horizon, fogSunK: 0, sunWrap: 0, sat: 0.6,
+  zenith: C(0.27, 0.29, 0.32), glow: C(0, 0, 0), disc: C(0, 0, 0), cloudC: C(0.38, 0.39, 0.41), cloudLit: C(0, 0, 0),
+  cover: 0.85, opaque: 1, milky: 0,
 };
+// direção da lua no céu (as noites claras usam ela como luz principal)
+const MOON = [0.5, 0.45, -0.7];
 
 export const PRESETS = {
   // fim de tarde encoberto (o jogo começa assim)
@@ -82,6 +89,74 @@ export const PRESETS = {
 };
 for (const k in PRESETS) PRESETS[k] = { ...BASE, ...PRESETS[k] };
 
+// Luz avançada: as mesmas horas, com sol de verdade, sombras e céu calculado
+const ADV = {
+  // entardecer: sol baixo e avermelhado no oeste, sombras compridas, céu em brasa do lado do sol
+  tarde: {
+    sun: [-0.86, 0.24, -0.45], sunC: C(1.0, 0.56, 0.32), sky: C(0.3, 0.31, 0.4), gnd: C(0.21, 0.17, 0.15),
+    fog: C(0.47, 0.42, 0.44), fogSun: C(0.98, 0.6, 0.36), fogSunK: 0.9, fogK: 1.05,
+    zenith: C(0.2, 0.23, 0.36), glow: C(0.85, 0.42, 0.18), disc: C(1.6, 0.85, 0.45),
+    cloudC: C(0.3, 0.27, 0.33), cloudLit: C(0.95, 0.45, 0.2), cover: 0.85, opaque: 1,
+    shadow: 0.85, sunWrap: 0.55, sat: 0.8,
+  },
+  // crepúsculo: o sol encostando no morro, vermelho; as primeiras estrelas e os postes acendendo
+  anoitecer: {
+    sun: [-0.9, 0.07, -0.42], sunC: C(0.9, 0.32, 0.16), sky: C(0.2, 0.19, 0.28), gnd: C(0.11, 0.09, 0.1),
+    fog: C(0.27, 0.21, 0.26), fogSun: C(0.88, 0.36, 0.18), fogSunK: 1, fogK: 0.9,
+    zenith: C(0.07, 0.08, 0.18), glow: C(0.75, 0.25, 0.1), disc: C(1.4, 0.5, 0.22),
+    cloudC: C(0.15, 0.12, 0.16), cloudLit: C(0.9, 0.3, 0.12), cover: 0.8, opaque: 0.55, stars: 0.35,
+    shadow: 0.7, sunWrap: 0.7, sat: 0.82,
+  },
+  // noite clara: lua, estrelas, Via Láctea; luar azulado com sombra suave
+  noite: {
+    sun: MOON, sunC: C(0.16, 0.2, 0.33), sky: C(0.07, 0.08, 0.125), gnd: C(0.032, 0.035, 0.048),
+    fog: C(0.035, 0.045, 0.07), fogSun: C(0.11, 0.13, 0.19), fogSunK: 0.7, fogK: 0.65,
+    zenith: C(0.008, 0.012, 0.032), glow: C(0.12, 0.14, 0.2), cloudC: C(0.045, 0.05, 0.07), cloudLit: C(0.2, 0.22, 0.28),
+    cover: 0.5, opaque: 0, moon: 1, moonSize: 140, stars: 1, milky: 0.06,
+    shadow: 0.55, sunWrap: 0.4, sat: 0.72,
+  },
+  // lua cheia enorme, céu quase limpo, sombras azuladas bem marcadas
+  luaCheia: {
+    sun: MOON, sunC: C(0.25, 0.29, 0.42), sky: C(0.095, 0.11, 0.165), gnd: C(0.04, 0.045, 0.06),
+    fog: C(0.065, 0.085, 0.125), fogSun: C(0.2, 0.24, 0.33), fogSunK: 0.8,
+    zenith: C(0.015, 0.025, 0.06), glow: C(0.22, 0.25, 0.33), cloudC: C(0.07, 0.08, 0.11), cloudLit: C(0.35, 0.38, 0.46),
+    cover: 0.35, opaque: 0, moon: 1, moonSize: 260, stars: 0.85, milky: 0.04,
+    shadow: 0.8, sunWrap: 0.4, sat: 0.72,
+  },
+  // neblina fechada: sem céu, os postes viram bolas de luz
+  madrugada: {
+    zenith: C(0.1, 0.11, 0.13), cloudC: C(0.12, 0.13, 0.15), cover: 1, opaque: 1, fogSun: C(0.13, 0.14, 0.16),
+  },
+  chuva: {
+    zenith: C(0.05, 0.055, 0.075), cloudC: C(0.07, 0.075, 0.095), cloudLit: C(0.03, 0.03, 0.04), cover: 1, opaque: 1,
+  },
+  tempestade: {
+    zenith: C(0.04, 0.045, 0.065), cloudC: C(0.06, 0.065, 0.085), cloudLit: C(0.03, 0.03, 0.04), cover: 1, opaque: 1,
+  },
+  // garoa: nuvens baixas com a lua aparecendo nos rasgos
+  garoa: {
+    sun: MOON, zenith: C(0.06, 0.065, 0.085), glow: C(0.08, 0.09, 0.11), cloudC: C(0.1, 0.11, 0.13), cloudLit: C(0.14, 0.15, 0.18),
+    cover: 0.95, opaque: 0.2, moon: 0.6, stars: 0.15, shadow: 0.2, sunWrap: 0.3,
+  },
+  luaSangue: {
+    sun: MOON, sunC: C(0.36, 0.08, 0.05), sky: C(0.12, 0.045, 0.045), gnd: C(0.05, 0.02, 0.02),
+    fog: C(0.11, 0.03, 0.03), fogSun: C(0.3, 0.06, 0.04), fogSunK: 0.8,
+    zenith: C(0.03, 0.006, 0.01), glow: C(0.35, 0.06, 0.04), cloudC: C(0.07, 0.02, 0.02), cloudLit: C(0.45, 0.08, 0.05),
+    cover: 0.55, opaque: 0, stars: 0.45, milky: 0.02, shadow: 0.6, sunWrap: 0.4, sat: 0.85,
+  },
+  // amanhecer dourado (o fim)
+  amanhecer: {
+    sunC: C(1.0, 0.68, 0.45), sky: C(0.42, 0.42, 0.5), gnd: C(0.27, 0.23, 0.21),
+    fog: C(0.66, 0.56, 0.54), fogSun: C(1.0, 0.75, 0.52), fogSunK: 0.9,
+    zenith: C(0.3, 0.38, 0.56), glow: C(0.9, 0.55, 0.3), disc: C(1.6, 1.0, 0.6),
+    cloudC: C(0.5, 0.42, 0.48), cloudLit: C(1.0, 0.62, 0.42), cover: 0.7, opaque: 1,
+    shadow: 0.85, sunWrap: 0.5, sat: 0.85,
+  },
+  interior: { zenith: C(0, 0, 0), cloudC: C(0, 0, 0), opaque: 1 },
+};
+const ADV_PRESETS = {};
+for (const k in PRESETS) ADV_PRESETS[k] = { ...PRESETS[k], ...ADV[k] };
+
 const lerp = (a, b, t) => a + (b - a) * t;
 const mixV = (a, b, t) => a.map((v, i) => lerp(v, b[i], t));
 
@@ -93,6 +168,47 @@ function streakTex() {
   }
   g.putImageData(d, 0, 0);
   return canvasTex(c, false);
+}
+
+// halo quente em volta dos lampiões acesos (luz avançada): placas viradas para a câmera,
+// somadas à imagem e apagadas pela neblina
+function lampHalos(lights) {
+  const g = new THREE.InstancedBufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute([-1, -1, 0, 1, -1, 0, 1, 1, 0, -1, 1, 0], 3));
+  g.setIndex([0, 1, 2, 0, 2, 3]);
+  g.setAttribute('aPos', new THREE.InstancedBufferAttribute(new Float32Array(lights.flat()), 3));
+  g.instanceCount = lights.length;
+  const mat = new THREE.ShaderMaterial({
+    uniforms: { uK: { value: 0 }, uFogNear: G.uFogNear, uFogFar: G.uFogFar },
+    vertexShader: /* glsl */`
+      attribute vec3 aPos;
+      uniform float uK, uFogNear, uFogFar;
+      varying vec2 vP; varying float vK;
+      void main() {
+        vec4 mv = viewMatrix * vec4(aPos, 1.0);
+        float d = length(mv.xyz);
+        vK = uK * (1.0 - clamp((d - uFogNear) / (uFogFar - uFogNear), 0.0, 1.0)) * smoothstep(1.0, 4.0, d);
+        mv.xyz += normalize(-mv.xyz) * 0.4;
+        mv.xy += position.xy * 1.6;
+        vP = position.xy;
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: /* glsl */`
+      varying vec2 vP; varying float vK;
+      void main() {
+        float r2 = dot(vP, vP);
+        float a = (exp(-r2 * 9.0) * 0.7 + exp(-r2 * 2.5) * 0.3) * clamp(1.0 - r2, 0.0, 1.0);
+        gl_FragColor = vec4(vec3(1.0, 0.7, 0.4) * a * vK, 1.0);
+      }`,
+    transparent: true, depthWrite: false,
+    blending: THREE.CustomBlending, blendSrc: THREE.OneFactor, blendDst: THREE.OneFactor,
+  });
+  const mesh = new THREE.Mesh(g, mat);
+  mesh.frustumCulled = false;
+  mesh.renderOrder = 5;
+  mesh.visible = false;
+  mesh.userData.noShadow = true;
+  return mesh;
 }
 
 const RAIN_MAX = 1100, BOX = 12, TOP = 7;
@@ -121,12 +237,30 @@ export class Atmosphere {
     for (let i = 0; i < RAIN_MAX; i++) this.drops.push([(Math.random() - 0.5) * BOX * 2, Math.random() * TOP * 2 - TOP, (Math.random() - 0.5) * BOX * 2, 15 + Math.random() * 6]);
     this.scene.add(this.rainMesh);
     this._m = new THREE.Matrix4(); this._q = new THREE.Quaternion(); this._e = new THREE.Euler(0, 0, 0, 'YXZ'); this._s = new THREE.Vector3(1, 1, 1);
+    // luz avançada (opção ILUMINAÇÃO): sombras, céu calculado, halos dos postes
+    this.adv = false;
+    this.shadowStrength = 0;
+    this.viewH = 720;
+    if (this.ctx?.lights?.length) { this.halos = lampHalos(this.ctx.lights); this.scene.add(this.halos); }
+    this._apply();
+  }
+
+  _preset(name) { return (this.adv ? ADV_PRESETS : PRESETS)[name]; }
+
+  // liga/desliga a luz avançada (troca na hora, mantendo a hora do dia atual)
+  setAdvanced(on) {
+    on = !!on;
+    if (this.adv === on) return;
+    this.adv = on;
+    this.sky?.setAdvanced?.(on);
+    const p = this._preset(this.name);
+    this.cur = { ...p, sun: [...p.sun] }; this.to = null;
     this._apply();
   }
 
   // troca o clima (em segundos; 0 = na hora)
   set(name, dur = 4) {
-    const p = PRESETS[name];
+    const p = this._preset(name);
     if (!p) return;
     this.name = name;
     if (dur <= 0) { this.cur = { ...p, sun: [...p.sun] }; this.to = null; this._apply(); return; }
@@ -156,17 +290,42 @@ export class Atmosphere {
     // postes: o vidro do lampião acende
     if (M.lamp) M.lamp.uniforms.uEmissive.value.setRGB(lerp(0.133, 0.95, c.lamps), lerp(0.125, 0.82, c.lamps), lerp(0.094, 0.55, c.lamps));
     if (M.glassLit) M.glassLit.uniforms.uEmissive.value.setRGB(lerp(0.06, 0.32, c.lamps), lerp(0.06, 0.25, c.lamps), lerp(0.06, 0.12, c.lamps));
+    // luz avançada: neblina do lado do sol, sol baixo que ainda ilumina o chão, saturação, sombra
+    const adv = this.adv, out = c.indoor < 0.5;
+    G.uSunFogK.value = adv ? c.fogSunK : 0;
+    G.uSunFog.value.setRGB(c.fogSun[0] + flash * 0.25, c.fogSun[1] + flash * 0.27, c.fogSun[2] + flash * 0.33);
+    G.uSunWrap.value = adv ? c.sunWrap : 0;
+    G.uSat.value = adv ? c.sat : 0.6;
+    this.shadowStrength = adv && out ? c.shadow * (1 - Math.min(1, c.rain * 2)) : 0;
     const S = this.sky;
     if (S) {
+      const stars = c.stars * (1 - Math.min(1, c.rain * 3));
       S.sun.material.opacity = Math.min(1, c.sunGlow);
       S.sun.scale.setScalar(Math.max(0.5, c.sunGlow));
-      S.sun.visible = c.sunGlow > 0.01 && c.indoor < 0.5;
-      S.moon.material.opacity = c.moon * (c.indoor > 0.5 ? 0 : 1);
-      S.moon.visible = c.moon > 0.01 && c.indoor < 0.5;
+      S.sun.visible = !adv && c.sunGlow > 0.01 && out;
+      S.moon.material.opacity = c.moon * (out ? 1 : 0);
+      S.moon.visible = !adv && c.moon > 0.01 && out;
       S.moon.material.color.setRGB(...c.moonC);
       S.moonSize = c.moonSize;
-      S.stars.material.opacity = c.stars * (1 - Math.min(1, c.rain * 3));
-      S.stars.visible = c.stars > 0.01 && c.indoor < 0.5;
+      S.stars.material.opacity = stars;
+      S.stars.visible = !adv && c.stars > 0.01 && out;
+      if (S.adv) {
+        S.starsHD.visible = adv && stars > 0.01 && out;
+        S.starsHD.material.uniforms.uStars.value = stars;
+        S.starsHD.material.uniforms.uScale.value = Math.max(0.5, this.viewH / 720);
+        S.moonHD.visible = adv && c.moon > 0.01 && out;
+        S.moonHD.material.opacity = Math.min(1, c.moon);
+        S.moonHD.material.color.setRGB(...c.moonC);
+        const u = S.adv.uniforms;
+        u.uZenith.value.setRGB(...c.zenith); u.uGlow.value.setRGB(...c.glow); u.uDisc.value.setRGB(...c.disc);
+        u.uCloudC.value.setRGB(...c.cloudC); u.uCloudLit.value.setRGB(...c.cloudLit);
+        u.uCover.value = c.cover; u.uOpaque.value = c.opaque; u.uMilky.value = c.milky * (1 - Math.min(1, c.rain * 3)); u.uFlash.value = flash;
+      }
+    }
+    if (this.halos) {
+      const k = adv && out ? c.lamps : 0;
+      this.halos.material.uniforms.uK.value = k;
+      this.halos.visible = k > 0.01;
     }
     this.audio?.setWeather?.({ rain: c.rain, storm: c.storm, night: c.night, crickets: c.crickets, wind: c.wind, indoor: c.indoor });
   }

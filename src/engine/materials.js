@@ -22,7 +22,7 @@ export function makeMaterials() {
       side: cut || double ? THREE.DoubleSide : THREE.FrontSide,
     });
   }
-  M.water = ps1Material({ map: TEX.water, scroll: [0.02, -0.18], wave: 0.04 });
+  M.water = ps1Material({ map: TEX.water, scroll: [0.02, -0.18], wave: 0.04, shadow: false });
   M.sky = ps1Material({ map: TEX.sky, lit: false, fog: false, side: THREE.BackSide, depthWrite: false, affine: false });
   M.lamp = ps1Material({ map: TEX.lamp, lit: false, emissive: 0x222018 });
   M.farForest = ps1Material({ map: TEX.grassDry, color: 0xd0c098 });

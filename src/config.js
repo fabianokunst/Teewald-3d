@@ -7,14 +7,16 @@ export const DEFAULTS = {
   aspect: 'wide',       // 'wide' ocupa a tela toda, '4:3' usa barras laterais
   affine: 0,            // só no estilo PS1: distorção de textura (0 desligada, 1 sutil, 2 total)
   dither: true,         // só no estilo PS1: dithering + cor de 15 bits
+  lighting: 'advanced', // 'advanced' = sol avermelhado, sombras projetadas, céu de estrelas | 'classic' = luz antiga
   drawDistance: 1,      // 0 curta, 1 média, 2 longa
   sensitivity: 5,       // 1..10
   invertY: false,
+  aimAssist: 1,         // controle e toque: mira assistida (0 desligada, 1 normal, 2 forte)
   volume: 7,            // 0..10
   fps: 60,              // 30 ou 60
   minimap: true,        // minimapa no canto inferior direito (tecla M)
   touchSize: 1,         // celular: tamanho dos botões na tela (0 pequeno, 1 médio, 2 grande)
-  vibrate: true,        // celular: vibração curta ao apertar botões (Android)
+  vibrate: true,        // vibração: botões do celular (Android) e controle (tiros, golpes, dano)
 };
 
 function load() {

@@ -52,8 +52,8 @@ export class Hud {
     if (this.hintT > 0) {
       const t = this.hintT, a = t < 1 ? t : t > 9 ? Math.max(0, (11 - t) / 2) : 1;
       const lines = this.customHints?.[o.device] || {
-        pad: ['ANALÓGICO mover   B correr (toque: esquiva)   A pular/pegar', 'RB golpe   R2 atirar   L2 mirar   ◀▶ armas   ↑↓ zoom', 'Y inventário   SELECT mapa   START pausa'],
-        touch: ['ESQUERDA mover   DIREITA girar câmera', 'GOLPE soca   ESQUIVA desvia   ARMA troca', 'PINÇA zoom   INV inventário'],
+        pad: ['ANALÓGICO mover   B correr (toque: esquiva)   A pular/pegar', 'RB golpe   L2 mirar   R2 atirar   ◀▶ armas   ↑ cura', 'Y inventário   ↓ câmera   SELECT mapa   START pausa'],
+        touch: ['ESQUERDA mover   DIREITA girar câmera', 'GOLPE soca   ESQUIVA desvia   ARMA troca', 'PINÇA zoom   INV inventário   CURA quando ferido'],
         keyboard: ['WASD mover   SHIFT correr   ESPAÇO pular   C esquiva', 'MOUSE câmera   CLIQUE golpe/tiro   V golpe   RODA zoom', 'I inventário   1-8 armas   H cura   F pegar/falar   ESC pausa'],
       }[o.device] || [];
       const hx = (W - (o.rightPad || 0)) / 2 + 4 * k, y0 = H - (20 + lines.length * 12) * k;

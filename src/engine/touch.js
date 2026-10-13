@@ -3,8 +3,10 @@ import { settings } from '../config.js';
 
 // Controles de toque (celular e tablet). No jogo: analógico flutuante à esquerda,
 // arrastar no resto da tela gira a câmera, pinça com dois dedos dá zoom, toque
-// duplo recentra; botões PULAR, CORRER (liga/desliga), pausa, tela cheia e INV
-// (inventário); com a pistola na mão, também ATIRAR, MIRAR (liga/desliga) e REC.
+// duplo recentra; botões PULAR, CORRER (liga/desliga), pausa, tela cheia, INV
+// (inventário) e CURA (ferido, com comida ou chá); com a arma na mão, também
+// ATIRAR, MIRAR (liga/desliga) e REC. Arrastar o dedo no ATIRAR também gira a
+// câmera (mira e tiro com o mesmo polegar, como nos jogos de tiro de celular).
 // Nos menus e na abertura um toque vale um clique do mouse.
 
 const doc = document, root = doc.documentElement;
@@ -65,8 +67,10 @@ export class TouchControls {
     this.runOn = false;
     this.jumpHit = false; this.pauseHit = false; this.recenterHit = false;
     this.invHit = false; this.fireHit = false; this.reloadHit = false; this.aimOn = false;
-    this.meleeHit = false; this.dodgeHit = false; this.weaponHit = false;
+    this.meleeHit = false; this.dodgeHit = false; this.weaponHit = false; this.healHit = false;
     this.weapon = false;            // o jogo liga quando uma arma de fogo está na mão
+    this.heal = 0;                  // itens de cura (o botão CURA só aparece ferido e com algum)
+    this.uiHit = null;              // (x, y) → true se o dedo caiu num botão do jogo (PEGAR, FALAR...)
     this.lastTap = { t: -1e9, x: 0, y: 0 };
     // menus: dedo na tela (tap), dedo solto neste quadro (tapUp) e arrasto acumulado
     this.tap = null; this.tapUp = null; this.tapDX = 0; this.tapDY = 0;
@@ -131,7 +135,8 @@ export class TouchControls {
     // em pé, embaixo do CORRER (longe do analógico); deitado, à esquerda dele
     const dodge = portrait ? { x: run.x, y: run.y + Rr * 2.3 } : { x: run.x - Rr * 2.3, y: run.y + Rr * 0.7 };
     const weap = { x: inv.x + inv.w + 2.5 * u, y: by, w: S * 1.6, h: S };
-    this.L = { key, s: gr.h / R.H, portrait, gr, u, Rs, Rj, Rr, stick, jump, run, pause, fs, inv, fire, aim, reload, melee2, dodge, weap, stickZone };
+    const heal = { x: weap.x + weap.w + 2.5 * u, y: by, w: S * 1.75, h: S };
+    this.L = { key, s: gr.h / R.H, portrait, gr, u, Rs, Rj, Rr, stick, jump, run, pause, fs, inv, fire, aim, reload, melee2, dodge, weap, heal, stickZone };
     // mantém o analógico ativo dentro da tela nova
     if (this.stick.id === null) { this.stick.cx = stick.x; this.stick.cy = stick.y; }
     return this.L;
@@ -155,6 +160,7 @@ export class TouchControls {
       if (inRect(L.pause, x, y, 2 * L.u)) { T.role = 'pause'; this.pauseHit = true; buzz(); }
       else if (inRect(L.inv, x, y, 2 * L.u)) { T.role = 'inv'; this.invHit = true; buzz(); }
       else if (inRect(L.weap, x, y, 2 * L.u)) { T.role = 'weap'; this.weaponHit = true; buzz(); }
+      else if (this.heal > 0 && inRect(L.heal, x, y, 2 * L.u)) { T.role = 'heal'; this.healHit = true; buzz(); }
       else if (this.weapon && near(L.fire, x, y, L.Rj * 1.25)) { T.role = 'fire'; this.fireHit = true; buzz(14); }
       else if (!this.weapon && near(L.fire, x, y, L.Rj * 1.25)) { T.role = 'melee'; this.meleeHit = true; buzz(14); }
       else if (this.weapon && near(L.melee2, x, y, L.Rr * 1.1)) { T.role = 'melee'; this.meleeHit = true; buzz(12); }
@@ -163,7 +169,10 @@ export class TouchControls {
       else if (this.weapon && near(L.reload, x, y, L.Rr * 0.9)) { T.role = 'reload'; this.reloadHit = true; buzz(); }
       else if (inRect(L.fs, x, y, 2 * L.u)) T.role = 'fs';
       else if (near(L.jump, x, y, L.Rj * 1.3)) { T.role = 'jump'; this.jumpHit = true; buzz(); }
-      else if (near(L.run, x, y, L.Rr * 1.3)) { T.role = 'run'; this.runOn = !this.runOn; buzz(); }
+      // mirando não dá para correr: CORRER desliga a mira (e liga a corrida)
+      else if (near(L.run, x, y, L.Rr * 1.3)) { T.role = 'run'; if (this.aimOn) { this.aimOn = false; this.runOn = true; } else this.runOn = !this.runOn; buzz(); }
+      // botão do jogo sobre a imagem (PEGAR, FALAR, LER...): não mexe na câmera nem anda
+      else if (this.uiHit?.(x, y)) T.role = 'ignore';
       else if (this.stick.id === null && inZone(L.stickZone, x, y)) {
         T.role = 'stick';
         const s = this.stick, R = L.Rs;
@@ -201,6 +210,8 @@ export class TouchControls {
         }
       } else if (T.role === 'stick') this._stickTo(x, y);
       else if (T.role === 'look' && looks.length === 1) { this.look.dx += dx; this.look.dy += dy; }
+      // dedo no ATIRAR que arrasta: gira a câmera (passada uma folga, para o toque não tremer a mira)
+      else if (T.role === 'fire' && (T.aimDrag || Math.hypot(x - T.x0, y - T.y0) > 6)) { T.aimDrag = true; this.look.dx += dx; this.look.dy += dy; }
     }
     // pinça com dois dedos na área da câmera: afastar aproxima
     if (looks.length >= 2) {
@@ -261,7 +272,7 @@ export class TouchControls {
     this.look.dx = 0; this.look.dy = 0; this.zoom = 0;
     this.jumpHit = false; this.pauseHit = false; this.recenterHit = false;
     this.invHit = false; this.fireHit = false; this.reloadHit = false;
-    this.meleeHit = false; this.dodgeHit = false; this.weaponHit = false;
+    this.meleeHit = false; this.dodgeHit = false; this.weaponHit = false; this.healHit = false;
     if (!this.weapon) this.aimOn = false;
     this.tapUp = null; this.tapDX = 0; this.tapDY = 0;
   }
@@ -378,6 +389,15 @@ export class TouchControls {
       const w = L.weap;
       box(w);
       label('ARMA', w.x + w.w / 2, w.y + w.h / 2, w.h * 0.45, '#efe2c4');
+      // cura rápida (ferido, com comida ou chá no inventário)
+      if (this.heal > 0) {
+        const h = L.heal;
+        let on = false;
+        for (const T of this.touches.values()) if (T.role === 'heal') on = true;
+        box(h);
+        if (on) { g.globalAlpha = 0.7; g.fillStyle = '#f2c879'; g.fillRect(Math.round(P(h.x)), Math.round(P(h.y)), Math.round(P(h.w)), Math.round(P(h.h))); }
+        label('CURA ' + this.heal, h.x + h.w / 2, h.y + h.h / 2, h.h * 0.4, on ? '#140c08' : '#f2c879');
+      }
     }
     if (L.fs) {
       const f = L.fs, x0 = P(f.x), y0 = P(f.y);
