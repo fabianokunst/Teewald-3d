@@ -86,14 +86,17 @@ feitos em código. O cenário fica em `src/world/chupaSites.js` e a missão em
 ## O que já existe
 
 - **Mapa real**: ruas, Rio Cadeia, arroios, praça, campo, cemitério e prédios
-  conhecidos vêm do OpenStreetMap; o relevo vem do SRTM (altitude real).
+  conhecidos vêm do OpenStreetMap; o relevo vem do SRTM (altitude real). Perto
+  dos rios o terreno usa uma grade 4x mais fina, com taludes que se alargam
+  onde a margem é alta (sem paredões) e o arroio desaguando no nível do rio.
 - **Igreja Matriz** modelada a partir de `texture/igreja.png`: rosácea, portal
   com arquivoltas, janelas ogivais com vitral e campanário com venezianas,
   desenhados em pixel art (`src/engine/archTextures.js`) com pedra, reboco e
   madeira da pasta `texture`. Posição e orientação conferidas em imagem de
   satélite: fachada a oeste, nave ao longo da Rua 12 de Maio, cemitério atrás.
 - **Praça 10 de Abril**: fonte, hortênsias, bancos, lampiões e orelhão.
-- **Calçadão do Rio Cadeia**: caminho, guarda-corpo, letreiro TEEWALD e
+- **Calçadão do Rio Cadeia**: na margem do lado da VRS-873, entre o rio e a
+  avenida, sem cruzar a água; caminho, guarda-corpo, letreiro TEEWALD e
   Monumento ao Imigrante. O jogo começa aqui.
 - Cemitério, Kartoffelfest, Sociedade, Prefeitura, Museu (enxaimel), Posto
   Calçadão, fábricas de calçados, escola, hospital e comércio.
@@ -106,6 +109,9 @@ feitos em código. O cenário fica em `src/world/chupaSites.js` e a missão em
   com placas e vitrines, fábricas com janelas industriais e portão de enrolar,
   e galpões. Janelas (colonial, madeira com bandeira, alumínio), venezianas e
   portas são desenhadas em pixel art; casas rebocadas têm barrado na base.
+  Lotes com muro rebocado, mureta com grade, tijolo, pedra ou cerca de ripas,
+  sempre com portão diante da porta, calçadinha até a entrada e laterais que
+  voltam até os fundos da casa.
 - **Minimapa** no canto inferior direito, girando com a câmera (tecla M).
 - **Inventário** de 8 espaços no estilo dos survival horror de PS1 (pausa o
   jogo): item girando em 3D, ícones renderizados do próprio modelo, ações

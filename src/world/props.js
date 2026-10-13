@@ -10,6 +10,76 @@ const rotP = (x, z, rot) => {
   return (lx, y, lz) => [x + lx * c + lz * s, y, z - lx * s + lz * c];
 };
 
+// ---------------- espaço livre para o mobiliário ----------------
+// Uma peça só entra onde não encosta em nada: colisores (postes, lixeiras, muros,
+// guarda-corpos, placas...), árvores e canteiros já pedidos, e as áreas
+// reservadas na frente dos bancos, das mesas e da parada (onde fica quem senta).
+
+const TREE_R = { hortensia: 0.75, arbusto: 0.9, cipreste: 0.6 };
+export const treeRadius = t => TREE_R[t.t] ?? 0.45 * (t.s || 1);
+
+// área que tem de ficar vazia (caixa girada, mesmo formato dos colisores)
+export function reserve(ctx, x, z, hx, hz, rot) {
+  (ctx.keepOut ||= []).push({ t: 'box', x, z, hx, hz, c: Math.cos(rot), s: Math.sin(rot) });
+}
+
+// distância do ponto até a borda da forma (0 ou menos: dentro)
+function gap(it, x, z) {
+  if (it.t === 'circle') return Math.hypot(x - it.x, z - it.z) - it.r;
+  const dx = x - it.x, dz = z - it.z, lx = dx * it.c - dz * it.s, lz = dx * it.s + dz * it.c;
+  return Math.hypot(Math.max(Math.abs(lx) - it.hx, 0), Math.max(Math.abs(lz) - it.hz, 0));
+}
+
+export function inKeepOut(ctx, x, z, m = 0) {
+  return (ctx.keepOut || []).some(k => gap(k, x, z) < m);
+}
+
+// pontos de amostra de uma caixa girada (a cada ~0,3 m, bordas incluídas)
+export function boxPts(x, z, hx, hz, rot) {
+  const P = rotP(x, z, rot), out = [];
+  const nx = Math.max(1, Math.ceil(hx * 2 / 0.3)), nz = Math.max(1, Math.ceil(hz * 2 / 0.3));
+  for (let i = 0; i <= nx; i++) for (let j = 0; j <= nz; j++) {
+    const p = P(-hx + (2 * hx * i) / nx, 0, -hz + (2 * hz * j) / nz);
+    out.push([p[0], p[2]]);
+  }
+  return out;
+}
+
+// todos os pontos ficam a mais de m de qualquer obstáculo acima do chão?
+// o.trees = false ignora as árvores; o.keep = false ignora as áreas reservadas
+export function spotFree(ctx, pts, m, o = {}) {
+  let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity;
+  for (const [x, z] of pts) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); z0 = Math.min(z0, z); z1 = Math.max(z1, z); }
+  const cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, rad = Math.hypot(x1 - x0, z1 - z0) / 2 + m + 2;
+  const ground = ctx.surfaceAt(cx, cz);
+  const cols = ctx.collision.near(cx, cz, rad).filter(it => it.y1 > ground + 0.1);
+  const trees = o.trees === false ? [] : ctx.trees.filter(t => !t.far && Math.abs(t.x - cx) < rad + 1 && Math.abs(t.z - cz) < rad + 1);
+  const keep = o.keep === false ? [] : (ctx.keepOut || []).filter(k => Math.abs(k.x - cx) < rad + 3 && Math.abs(k.z - cz) < rad + 3);
+  for (const [x, z] of pts) {
+    for (const it of cols) if (gap(it, x, z) < m) return false;
+    for (const t of trees) if (Math.hypot(t.x - x, t.z - z) - treeRadius(t) < m) return false;
+    for (const k of keep) if (gap(k, x, z) < m) return false;
+  }
+  return true;
+}
+
+// chão firme e quase plano (sem água nem degrau) em todos os pontos
+export function groundOk(ctx, pts, y, dy = 0.3) {
+  return pts.every(([x, z]) => {
+    const w = ctx.terrain.waterAt(x, z);
+    if (w && ctx.terrain.heightAt(x, z) < w.level + 0.15) return false;
+    return Math.abs(ctx.surfaceAt(x, z) - y) < dy;
+  });
+}
+
+// o banco cabe aqui? assento livre e, na frente, `reach` metros desimpedidos
+// (sem poste, canteiro, lixeira ou grade entre o banco e quem passa)
+export function benchFits(ctx, x, z, rot, reach = 1.5) {
+  const P = rotP(x, z, rot), f = P(0, 0, 0.3 + reach / 2);
+  const body = boxPts(x, z, 0.95, 0.3, rot), front = boxPts(f[0], f[2], 0.85, reach / 2, rot);
+  return spotFree(ctx, body, 0.15) && spotFree(ctx, front, 0.05) && groundOk(ctx, [...body, ...front], ctx.surfaceAt(x, z));
+}
+
 export function bench(B, ctx, x, z, rot) {
   const y = ctx.surfaceAt(x, z);
   const P = rotP(x, z, rot);
@@ -29,6 +99,9 @@ export function bench(B, ctx, x, z, rot) {
     B.box('woodBench', p[0], y + 0.6 + i * 0.2, p[2], 1.8, 0.12, 0.05, rot, { uvScale: 1 });
   }
   ctx.collision.addBox(x, z, 0.95, 0.3, rot, y, y + 0.9, { cam: false });
+  // frente livre (pernas de quem senta): nada é colocado ali depois
+  const f = P(0, 0, 0.95);
+  reserve(ctx, f[0], f[2], 0.85, 0.65, rot);
   // assento (os moradores sentam aqui): frente para +z local, tampo a 0,47 m
   (ctx.seats ||= []).push({ x, z, rot, y, seat: 0.47, kind: 'bench' });
 }
@@ -44,6 +117,7 @@ export function picnicTable(B, ctx, x, z, rot) {
     for (const lx of [-0.7, 0.7]) { const q = P(lx, 0, lz); B.box('woodBench', q[0], y, q[2], 0.08, 0.42, 0.08, rot, { uvScale: 1 }); }
   }
   ctx.collision.addBox(x, z, 1.0, 1.0, rot, y, y + 0.8, { cam: false });
+  reserve(ctx, x, z, 1.4, 1.6, rot);   // espaço para sentar dos dois lados
 }
 
 export function bin(B, ctx, x, z) {
@@ -149,6 +223,9 @@ export function busStop(B, ctx, x, z, rot) {
   // banco e plataforma (a plataforma é um degrau baixo: dá para subir)
   ctx.collision.addBox(seat[0], seat[2], 1.2, 0.2, rot, y, y + 0.66, { cam: false });
   ctx.collision.addBox(x, z, 1.7, 0.9, rot, y - 0.3, y + 0.15, { walk: true, cam: false });
+  // embarque: da plataforma até a rua fica livre
+  const f = P(0, 0, 1.6);
+  reserve(ctx, f[0], f[2], 1.8, 0.8, rot);
   (ctx.seats ||= []).push({ x: seat[0], z: seat[2], rot, y: y + 0.15, seat: 0.51, kind: 'bus' });
 }
 

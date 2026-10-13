@@ -148,7 +148,7 @@ function buildCoop(B, ctx, at, rot, gy) {
 
 // mural de avisos com telhadinho (frente = +z local)
 function buildBoard(B, ctx, x, z, rot) {
-  const at = frame(x, z, rot), y = ctx.terrain.heightAt(x, z) - 0.05;
+  const at = frame(x, z, rot), y = ctx.surfaceAt(x, z) - 0.05;
   for (const lx of [-0.8, 0.8]) { const p = at(lx, 0); B.box('woodDark', p[0], y, p[1], 0.1, 2.15, 0.1, rot, { uvScale: 1 }); }
   let p = at(0, 0.02);
   B.box('woodPlank', p[0], y + 0.95, p[1], 1.7, 1.05, 0.06, rot, { uvScale: 1 });
@@ -188,6 +188,19 @@ function boardSpot(ctx) {
     if (!clearSpot(ctx, x, z, 1.4)) continue;
     const score = Math.abs(de - 6) + Math.abs(dp - 3.2);
     if (!best || score < best.score) best = { x, z, score, rot: Math.atan2(p[0] - x, p[1] - z) };
+  }
+  if (best) return best;
+  // o calçadão não chega na praça: mural na borda da praça mais perto dele, virado para dentro
+  for (let i = 0; i < poly.length; i++) {
+    const a = poly[i], b = poly[(i + 1) % poly.length];
+    for (let t = 0.1; t < 1; t += 0.1) {
+      const ex = a[0] + (b[0] - a[0]) * t, ez = a[1] + (b[1] - a[1]) * t;
+      const dx = c[0] - ex, dz = c[1] - ez, l = Math.hypot(dx, dz) || 1;
+      const x = ex + dx / l * 2.2, z = ez + dz / l * 2.2;
+      if (!pointInPoly(x, z, poly) || !clearSpot(ctx, x, z, 1.4)) continue;
+      const score = Math.hypot(x - end[0], z - end[1]);
+      if (!best || score < best.score) best = { x, z, score, rot: Math.atan2(dx, dz) };
+    }
   }
   return best;
 }

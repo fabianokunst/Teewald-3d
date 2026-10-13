@@ -100,27 +100,38 @@ export function defineLandmarks(ctx) {
   // ---------------- Calçadão do Rio Cadeia ----------------
   {
     const river = rivers.list.find(r => r.name === 'Rio Cadeia');
-    const bank = [], edge = [];
+    const avenue = roads.list.filter(r => r.name === 'VRS-873');
+    const runs = [[]];
     for (let i = 0; i < river.pts.length; i++) {
       const [x, z] = river.pts[i];
-      if (x < -420 || x > -175 || z < 88 || z > 430) continue;
+      const cut = () => { if (runs[runs.length - 1].length) runs.push([]); };
+      if (x < -420 || x > -175 || z < 88 || z > 430) { cut(); continue; }
       const a = river.pts[Math.max(i - 1, 0)], b = river.pts[Math.min(i + 1, river.pts.length - 1)];
       let tx = b[0] - a[0], tz = b[1] - a[1]; const tl = Math.hypot(tx, tz); tx /= tl; tz /= tl;
-      // lado da avenida: normal que aponta para leste/sul
+      // lado da avenida: a normal que aponta para o ponto mais próximo da VRS-873
       let nx = -tz, nz = tx;
-      if (nx < 0) { nx = -nx; nz = -nz; }
-      const r0 = river.width / 2 + 3.5;
+      let best = null;
+      for (const r of avenue) { const q = nearestOnPolyline(r.pts, x, z); if (!best || q.d < best.d) best = q; }
+      if (best && (best.x - x) * nx + (best.z - z) * nz < 0) { nx = -nx; nz = -nz; }
+      const r0 = river.width / 2 + river.bank + 0.5; // depois da margem escavada
       let d = r0;
       while (d < 110) {
         const px = x + nx * d, pz = z + nz * d;
         const rc = roads.index.clearance(px, pz);
         if (rc.d < 1.6) break;
+        // outro curso d'água (arroio) ou o próprio rio voltando numa curva
+        const w = rivers.index.nearest(px, pz, rv => rv !== river);
+        if (w.seg && w.d < w.seg.data.width / 2 + w.seg.data.bank + 1.5) break;
+        const self = rivers.index.nearest(px, pz, rv => rv === river);
+        if (self.seg && Math.abs(self.seg.i - i) > 3 && self.d < river.width / 2 + river.bank + 1) break;
         d += 1;
       }
-      if (d - r0 < 8) continue;
-      bank.push([x + nx * r0, z + nz * r0]);
-      edge.push([x + nx * (d - 0.5), z + nz * (d - 0.5)]);
+      if (d - r0 < 8) { cut(); continue; }
+      runs[runs.length - 1].push({ bank: [x + nx * r0, z + nz * r0], edge: [x + nx * (d - 0.5), z + nz * (d - 0.5)] });
     }
+    // fica com o trecho contínuo mais longo (sem saltos por cima do rio)
+    const run = runs.reduce((p, q) => (q.length > p.length ? q : p), []);
+    const bank = run.map(p => p.bank), edge = run.map(p => p.edge);
     const strip = [...bank, ...edge.slice().reverse()];
     terrain.addPad(strip, (x, z) => terrain.roadHeight(x, z) - 0.05, 3);
     zones.block(strip, 0.5);
@@ -398,16 +409,26 @@ function buildPraca(B, ctx, pr) {
     const p = poly[i];
     ring.push([p[0] + (pr.c[0] - p[0]) * 0.22, p[1] + (pr.c[1] - p[1]) * 0.22]);
   }
+  // cada peça desliza pela borda até achar lugar livre (banco com a frente
+  // desimpedida, sem canteiro, poste ou árvore entre ele e a fonte)
+  const inside = pts => pts.every(([x, z]) => pointInPoly(x, z, poly));
   const step = Math.max(1, Math.floor(ring.length / 8));
   for (let i = 0; i < ring.length; i += step) {
     const p = ring[i], q = ring[(i + 1) % ring.length];
-    const m = [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2];
-    const rot = Math.atan2(pr.c[0] - m[0], pr.c[1] - m[1]);
     const k = i / step;
-    if (freeGap(ctx, m[0], m[1], y - 0.5) < 1.2) continue; // não encaixa banco dentro de canteiro
-    if (k % 2 === 0) bench(B, ctx, m[0], m[1], rot);
-    else lantern(B, ctx, m[0], m[1]);
-    if (k % 2 === 1) tree(ctx, k % 4 === 1 ? 'araucaria' : 'platano', p[0], p[1], R.range(0.85, 1.05));
+    const spots = [0.5, 0.3, 0.7, 0.1, 0.9].flatMap(t => [0, 0.6, -0.6].map(dr => {
+      const m = [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t];
+      const dx = pr.c[0] - m[0], dz = pr.c[1] - m[1], l = Math.hypot(dx, dz) || 1;
+      return { x: m[0] + dx / l * dr, z: m[1] + dz / l * dr, rot: Math.atan2(dx, dz) };
+    }));
+    if (k % 2 === 0) {
+      const s = spots.find(s => inside(boxPts(s.x, s.z, 1, 0.4, s.rot)) && benchFits(ctx, s.x, s.z, s.rot, 1.6));
+      if (s) bench(B, ctx, s.x, s.z, s.rot);
+    } else {
+      const s = spots.find(s => inside([[s.x, s.z]]) && spotFree(ctx, [[s.x, s.z]], 0.7));
+      if (s) lantern(B, ctx, s.x, s.z);
+      if (spotFree(ctx, [p], 1.0)) tree(ctx, k % 4 === 1 ? 'araucaria' : 'platano', p[0], p[1], R.range(0.85, 1.05));
+    }
   }
   // orelhão real do OSM (fica perto da praça)
   const tel = ctx.mapdata.pois.find(p => p.k === 'telephone' && Math.hypot(p.x - pr.c[0], p.z - pr.c[1]) < 40);
@@ -496,7 +517,7 @@ function buildCalcadao(B, ctx, cd) {
     const side = k % 2 ? 1 : -1;
     const ox = -t[1] * side, oz = t[0] * side;
     const at = d => [p[0] + ox * d, p[1] + oz * d];
-    const ok = q => offRoad(ctx, q[0], q[1], 1.0);
+    const ok = q => offRoad(ctx, q[0], q[1], 1.0) && freeGap(ctx, q[0], q[1]) > 1.1; // longe da rua e do guarda-corpo
     if (k % 2 === 0) { const q = at(2.6); if (ok(q)) lantern(B, ctx, q[0], q[1]); }
     if (k % 3 === 1) { const q = at(2.9); if (ok(q)) bench(B, ctx, q[0], q[1], Math.atan2(-ox, -oz)); }
     if (k % 7 === 3) { const q = at(3.0); if (ok(q)) bin(B, ctx, q[0], q[1]); }
@@ -506,7 +527,7 @@ function buildCalcadao(B, ctx, cd) {
     tree(ctx, k % 4 === 0 ? 'araucaria' : 'platano', tq[0], tq[1], R.range(0.85, 1.15));
     const tq2 = at(-4.5 - R.range(0, 3));
     if (R.chance(0.6)) tree(ctx, R.chance(0.25) ? 'araucaria' : R.chance(0.5) ? 'platano' : 'nativa', tq2[0], tq2[1], R.range(0.8, 1.1));
-    if (R.chance(0.35)) { const h = at(side * 0 + 3.4); tree(ctx, 'hortensia', h[0] + R.range(-1, 1), h[1] + R.range(-1, 1), 0.9); }
+    if (R.chance(0.35)) { const h = at(3.4), hx = h[0] + R.range(-1, 1), hz = h[1] + R.range(-1, 1); if (offRoad(ctx, hx, hz, 0.8)) tree(ctx, 'hortensia', hx, hz, 0.9); }
   }
   // letreiro TEEWALD perto da praça, virado para a avenida
   const li = Math.floor(cd.bank.length * 0.22);

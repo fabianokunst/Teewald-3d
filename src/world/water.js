@@ -4,7 +4,7 @@ import { chaikin, resample, SegmentIndex, polyLength } from './geo.js';
 export function prepareRivers(mapdata, terrain) {
   const list = [];
   const index = new SegmentIndex(20, 30);
-  for (const r of mapdata.rivers) {
+  for (const r of joinWays(mapdata.rivers)) {
     const isRiver = r.k === 'river';
     const pts = resample(chaikin(r.p, 3), 4);
     if (pts.length < 2) continue;
@@ -17,7 +17,12 @@ export function prepareRivers(mapdata, terrain) {
       level: [],
     };
     // nível: abaixo do terreno suavizado e do terreno bruto local
-    let lv = pts.map(([x, z]) => Math.min(terrain.roadHeight(x, z) - (isRiver ? 1.6 : 1.0), terrain.raw(x, z) - 0.7));
+    const side = rv.width / 2 + 2.5;
+    let lv = pts.map(([x, z], i) => {
+      const a = pts[Math.max(i - 1, 0)], b = pts[Math.min(i + 1, pts.length - 1)];
+      const l = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1, nx = -(b[1] - a[1]) / l * side, nz = (b[0] - a[0]) / l * side;
+      return Math.min(terrain.roadHeight(x, z) - (isRiver ? 1.6 : 1.0), terrain.raw(x, z) - 0.7, terrain.raw(x + nx, z + nz) - 0.4, terrain.raw(x - nx, z - nz) - 0.4);
+    });
     for (let pass = 0; pass < 3; pass++) {
       for (let i = 1; i < lv.length; i++) if (lv[i] > lv[i - 1]) lv[i] = lv[i - 1];
       lv = lv.map((v, i) => (lv[Math.max(i - 2, 0)] + lv[Math.max(i - 1, 0)] + v + lv[Math.min(i + 1, lv.length - 1)] + lv[Math.min(i + 2, lv.length - 1)]) / 5);
@@ -32,12 +37,29 @@ export function prepareRivers(mapdata, terrain) {
     }
     list.push(rv);
   }
+  // afluente desce até o nível do rio em que deságua (nos últimos 40 m), em vez de
+  // chegar lá em cima e despencar num paredão
+  for (const rv of list) {
+    const end = rv.pts[rv.pts.length - 1];
+    const q = index.nearest(end[0], end[1], d => d !== rv);
+    if (!q.seg || q.d > q.seg.data.width / 2 + 10) continue;
+    const target = q.seg.data.levelAt(q.seg, q.t) + 0.05, lv = rv.level, n = lv.length;
+    if (lv[n - 1] <= target) continue;
+    let acc = 0, k = n - 1;
+    while (k > 0 && acc < 40) { acc += Math.hypot(rv.pts[k][0] - rv.pts[k - 1][0], rv.pts[k][1] - rv.pts[k - 1][1]); k--; }
+    const top = lv[k];
+    let dist = 0;
+    for (let i = n - 1; i > k; i--) {
+      lv[i] = Math.min(lv[i], target + (top - target) * (dist / acc));
+      dist += Math.hypot(rv.pts[i][0] - rv.pts[i - 1][0], rv.pts[i][1] - rv.pts[i - 1][1]);
+    }
+  }
   return { list, index };
 }
 
 export function buildWater(B, rivers) {
   for (const rv of rivers.list) {
-    const P = rv.pts, n = P.length, hw = rv.width / 2 + 1.5;
+    const P = rv.pts, n = P.length, hw = rv.width / 2 + rv.bank * 0.5;
     let dist = 0;
     for (let i = 0; i < n - 1; i++) {
       const a = P[i], b = P[i + 1];
@@ -51,6 +73,25 @@ export function buildWater(B, rivers) {
       dist += seg;
     }
   }
+}
+
+// o OSM divide um arroio em vários caminhos; junta os que continuam um no outro
+function joinWays(ways) {
+  const out = ways.map(w => ({ ...w, p: w.p.slice() }));
+  const near = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]) < 1.5;
+  for (let merged = true; merged;) {
+    merged = false;
+    for (const a of out) {
+      const b = out.find(o => o !== a && o.k === a.k && near(a.p[a.p.length - 1], o.p[0]));
+      if (!b) continue;
+      a.p.push(...b.p.slice(1));
+      if (!a.n && b.n) a.n = b.n;
+      out.splice(out.indexOf(b), 1);
+      merged = true;
+      break;
+    }
+  }
+  return out;
 }
 
 function tangent(P, i) {
