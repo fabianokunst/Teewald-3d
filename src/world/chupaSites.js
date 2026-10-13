@@ -1,6 +1,7 @@
 import { ps1Material } from '../engine/ps1material.js';
 import { M } from '../engine/materials.js';
 import { rng, pointInPoly, chaikin, resample } from './geo.js';
+import { inKeepOut } from './props.js';
 import { trackTexture, mudTexture, bloodTexture, posterTexture, noteTexture } from '../game/missionArt.js';
 
 // Cenário da missão do chupacabras (roda antes da vegetação, para a trilha e a
@@ -46,6 +47,7 @@ function clearSpot(ctx, x, z, r) {
     if (Math.abs(lx) < it.hx + r && Math.abs(lz) < it.hz + r) return false;
   }
   if (ctx.trees.some(t => Math.hypot(t.x - x, t.z - z) < r + 1.2)) return false;
+  if (inKeepOut(ctx, x, z, r)) return false;   // frente de bancos, mesas e parada
   if (ctx.roads.index.clearance(x, z).d < r + 0.5) return false;
   return !ctx.zones.insideBuilding(x, z, r);
 }

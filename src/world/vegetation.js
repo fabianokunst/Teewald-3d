@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { MeshBuilder, geometryFromBuilder } from '../engine/builder.js';
 import { rng, fbm } from './geo.js';
 import { NEAR } from './terrain.js';
+import { inKeepOut } from './props.js';
 
 // Árvores instanciadas: araucária, plátano (outono), nativas, pinheiro, cipreste,
 // arbustos e hortênsias. Geometria low poly com folhagem recortada (alpha test).
@@ -102,11 +103,13 @@ export function scatterVegetation(ctx) {
     if (rv.seg && rv.d < rv.seg.data.width / 2 + 1.2) return false;
     if (zones.insideBuilding(x, z, 1.8)) return false;
     if (ctx.fenceIndex && ctx.fenceIndex.nearest(x, z).d < 0.9) return false; // muros e cercas
+    if (inKeepOut(ctx, x, z, 0.6)) return false;   // frente de bancos, mesas e parada
     if (!allowBlocked && zones.isBlocked(x, z)) return false;
     return true;
   };
-  // validação das árvores pedidas pelos marcos (praça, calçadão, igreja...)
-  const req = trees.splice(0).filter(t => ok(t.x, t.z, 0.6, true) || t.t === 'hortensia' || t.t === 'cipreste');
+  // validação das árvores pedidas pelos marcos (praça, calçadão, igreja...);
+  // hortênsias e ciprestes podem ficar em canteiros, mas nunca na frente de um banco
+  const req = trees.splice(0).filter(t => ok(t.x, t.z, 0.6, true) || ((t.t === 'hortensia' || t.t === 'cipreste') && !inKeepOut(ctx, t.x, t.z, 0.3)));
   trees.push(...req);
   const play = ctx.playBounds;
   // mata: grade com jitter

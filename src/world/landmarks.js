@@ -2,7 +2,7 @@ import { rng, polyCentroid, pointInPoly, distSeg, resample, chaikin, obbCorners 
 import { buildChurch, CHURCH, pyramid } from './church.js';
 import { buildHouse, makeSpec, lotValid, facingRoad, frame, orientToRoad as orientFP, fitBox } from './buildings.js';
 import { claimFootprint } from './footprints.js';
-import { bench, picnicTable, bin, lantern, orelhao, letreiro, monumento, fountain, railing, car, busStop, stopSign } from './props.js';
+import { bench, picnicTable, bin, lantern, orelhao, letreiro, monumento, fountain, railing, car, busStop, stopSign, benchFits, spotFree, boxPts, reserve, treeRadius, groundOk } from './props.js';
 import { signMaterial } from '../engine/materials.js';
 
 // Lugares marcantes: Igreja Matriz, Praça 10 de Abril, Calçadão do Rio Cadeia,
@@ -169,13 +169,25 @@ export function defineLandmarks(ctx) {
   {
     const k = poi(md, 'Kartoffelfest');
     const fr = facingRoad(ctx, k.x, k.z);
-    const poly = rectPoly(k.x, k.z, fr.rot, -17, 17, -11, 11);
-    const y = terrain.roadHeight(k.x, k.z);
+    // ao lado da rua de acesso, não em cima dela: afasta da rua até o pavilhão
+    // (com o piso) ficar livre de qualquer pista
+    const clear = (x, z) => {
+      const W = frame({ x, z, rot: fr.rot }).W;
+      for (let a = -18; a <= 18; a += 3) for (let b = -12; b <= 12; b += 3) {
+        const [px, pz] = W(a, b), q = roads.index.clearance(px, pz, d => d.rank >= 1);
+        if (q.seg && q.d < (q.seg.data.sidewalk ? 2 : 0) + 1) return false;
+      }
+      return true;
+    };
+    let x = k.x, z = k.z;
+    if (fr.road) for (let push = 1; push <= 24 && !clear(x, z); push++) { x = k.x + fr.nx * push; z = k.z + fr.nz * push; }
+    const poly = rectPoly(x, z, fr.rot, -17, 17, -11, 11);
+    const y = terrain.roadHeight(x, z);
     terrain.addPad(poly, y, 6, y + 0.05);
     zones.block(poly, 1);
     zones.clearForest(poly);
     zones.place(poly, 'PAVILHÃO DA KARTOFFELFEST', 2);
-    L.kartoffel = { x: k.x, z: k.z, rot: fr.rot, y };
+    L.kartoffel = { x, z, rot: fr.rot, y };
   }
 
   // ---------------- Posto Calçadão (pátio de concreto plano) ----------------
@@ -409,25 +421,30 @@ function buildPraca(B, ctx, pr) {
     const p = poly[i];
     ring.push([p[0] + (pr.c[0] - p[0]) * 0.22, p[1] + (pr.c[1] - p[1]) * 0.22]);
   }
-  // cada peça desliza pela borda até achar lugar livre (banco com a frente
-  // desimpedida, sem canteiro, poste ou árvore entre ele e a fonte)
+  // 8 vagas espaçadas por igual ao longo do anel (os cantos arredondados têm muitos
+  // vértices juntos), bancos e lampiões alternados. Cada peça desliza pela borda
+  // até achar lugar livre: banco com a frente desimpedida (sem canteiro, poste ou
+  // árvore entre ele e a fonte), lampião a 5 m de outro
   const inside = pts => pts.every(([x, z]) => pointInPoly(x, z, poly));
-  const step = Math.max(1, Math.floor(ring.length / 8));
-  for (let i = 0; i < ring.length; i += step) {
-    const p = ring[i], q = ring[(i + 1) % ring.length];
-    const k = i / step;
-    const spots = [0.5, 0.3, 0.7, 0.1, 0.9].flatMap(t => [0, 0.6, -0.6].map(dr => {
-      const m = [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t];
-      const dx = pr.c[0] - m[0], dz = pr.c[1] - m[1], l = Math.hypot(dx, dz) || 1;
-      return { x: m[0] + dx / l * dr, z: m[1] + dz / l * dr, rot: Math.atan2(dx, dz) };
-    }));
+  const dense = resample([...ring, ring[0]], 0.5), N = dense.length;
+  const spot = (j, dr) => {
+    const m = dense[((j % N) + N) % N];
+    const dx = pr.c[0] - m[0], dz = pr.c[1] - m[1], l = Math.hypot(dx, dz) || 1;
+    return { x: m[0] + dx / l * dr, z: m[1] + dz / l * dr, rot: Math.atan2(dx, dz) };
+  };
+  const lit = s => ctx.lights.every(l => Math.hypot(l[0] - s.x, l[2] - s.z) > 5);
+  for (let k = 0; k < 8; k++) {
+    const j0 = Math.floor(N * k / 8);
+    const spots = [0, 2, -2, 4, -4, 6, -6].flatMap(dj => [0, 0.6, -0.6].map(dr => spot(j0 + dj, dr)));
     if (k % 2 === 0) {
       const s = spots.find(s => inside(boxPts(s.x, s.z, 1, 0.4, s.rot)) && benchFits(ctx, s.x, s.z, s.rot, 1.6));
       if (s) bench(B, ctx, s.x, s.z, s.rot);
     } else {
-      const s = spots.find(s => inside([[s.x, s.z]]) && spotFree(ctx, [[s.x, s.z]], 0.7));
+      const s = spots.find(s => inside([[s.x, s.z]]) && lit(s) && spotFree(ctx, [[s.x, s.z]], 0.7));
       if (s) lantern(B, ctx, s.x, s.z);
-      if (spotFree(ctx, [p], 1.0)) tree(ctx, k % 4 === 1 ? 'araucaria' : 'platano', p[0], p[1], R.range(0.85, 1.05));
+      // árvore entre o lampião e o próximo banco, mais perto da borda
+      const t = spot(j0 + Math.round(N / 16), -1.5);
+      if (inside([[t.x, t.z]]) && spotFree(ctx, [[t.x, t.z]], 1.0)) tree(ctx, k % 4 === 1 ? 'araucaria' : 'platano', t.x, t.z, R.range(0.85, 1.05));
     }
   }
   // orelhão real do OSM (fica perto da praça)
@@ -507,49 +524,146 @@ function buildCalcadao(B, ctx, cd) {
     else runs[runs.length - 1].push(p);
   }
   for (const r of runs) if (r.length > 1) railing(B, ctx, r);
-  // mobiliário ao longo do caminho
+  // ---------- o que fica ao lado do caminho ----------
+  // Nada em cima do caminho e nada encaixado em outra peça: as peças grandes
+  // entram primeiro (letreiro, monumento, placas, parada) e o mobiliário desvia
+  // delas. Banco só com a frente desimpedida até o caminho, sem poste, lixeira,
+  // canteiro ou grade entre ele e quem passa.
+  const EDGE = hw + 0.25;                                   // meia largura com o meio-fio
+  const pathD = (x, z) => nearestOnPolyline(path, x, z).d;
+  const offPath = (pts, m) => pts.every(([x, z]) => pathD(x, z) > EDGE + m);
+  const inStrip = pts => pts.every(([x, z]) => pointInPoly(x, z, cd.strip) && offRoad(ctx, x, z, 0.6));
+  // ponto ao lado do caminho: vértice i, lado s (1 ou -1), d m do eixo, u m adiante
+  const beside = (i, s, d, u = 0) => { const t = tan(path, i), p = path[i]; return [p[0] - t[1] * s * d + t[0] * u, p[1] + t[0] * s * d + t[1] * u]; };
+  const facing = (i, s) => { const t = tan(path, i); return Math.atan2(t[1] * s, -t[0] * s); };   // virado para o caminho
+  const nearIdx = q => nearestOnPolyline(path, q[0], q[1]).i;
+  // lado do rio no vértice i
+  const riverSide = i => { const a = beside(i, 1, 4), b = beside(i, -1, 4); return ctx.rivers.index.nearest(a[0], a[1]).d < ctx.rivers.index.nearest(b[0], b[1]).d ? 1 : -1; };
+  const ring = (x, z, r, n = 12) => [[x, z], ...circlePoly(x, z, r, n)];
+  const clamp = i => Math.max(1, Math.min(path.length - 2, i));
+  // a melhor posição entre os candidatos (menor nota) que passa no teste
+  const pick = (cands, test) => cands.sort((a, b) => a.score - b.score).find(test) || null;
+
+  // letreiro TEEWALD perto da praça: do lado do rio, de frente para o caminho (e
+  // para a avenida do outro lado); a frente fica livre para a foto
+  {
+    const pi = nearIdx(cd.bank[Math.floor(cd.bank.length * 0.22)]);
+    const cands = [];
+    for (let i = clamp(pi - 14); i <= clamp(pi + 14); i++) for (const s of [1, -1]) for (const g of [0.5, 0.8, 1.2, 1.7, 2.3]) {
+      const d = EDGE + 0.7 + g;
+      cands.push({ i, s, d, score: Math.abs(i - pi) * 0.5 + g + (s === riverSide(i) ? 0 : 4) });
+    }
+    const box = c => { const q = beside(c.i, c.s, c.d); return { q, rot: facing(c.i, c.s), pts: boxPts(q[0], q[1], 6.5, 0.7, facing(c.i, c.s)) }; };
+    const c = pick(cands, c => { const { q, pts } = box(c); return inStrip(pts) && offPath(pts, 0.3) && spotFree(ctx, pts, 0.3) && groundOk(ctx, pts, ctx.surfaceAt(q[0], q[1]), 0.5); });
+    if (c) {
+      const { q, rot } = box(c);
+      letreiro(B, ctx, q[0], q[1], rot, 'TEEWALD');
+      // da frente das letras até 2 m depois do caminho: nada de poste ou árvore na foto
+      const f = beside(c.i, c.s, (c.d - 0.7 - EDGE - 2) / 2);
+      reserve(ctx, f[0], f[1], 6.5, (c.d - 0.7 + EDGE + 2) / 2, rot);
+      ctx.landmarks.letreiro = { x: q[0], z: q[1], rot };
+    } else {
+      console.warn('Teewald: letreiro sem lugar livre no calçadão');
+      const b = cd.bank[Math.floor(cd.bank.length * 0.22)];
+      ctx.landmarks.letreiro = { x: b[0], z: b[1], rot: 0 };
+    }
+  }
+  // Monumento ao Imigrante, na ponta sul, perto do acesso à cidade: a base
+  // redonda (3,2 m) fica ao lado do caminho, sem invadi-lo
+  {
+    const pi = nearIdx(cd.bank[Math.floor(cd.bank.length * 0.82)]);
+    const cands = [];
+    for (let i = clamp(pi - 12); i <= clamp(pi + 12); i++) for (const s of [1, -1]) for (const g of [0.5, 1, 1.6, 2.4]) cands.push({ i, s, d: EDGE + 3.2 + g, score: Math.abs(i - pi) * 0.5 + g });
+    const c = pick(cands, c => {
+      const q = beside(c.i, c.s, c.d), pts = ring(q[0], q[1], 3.3);
+      return inStrip(pts) && offPath(pts, 0.3) && spotFree(ctx, pts, 0.3) && groundOk(ctx, pts, ctx.surfaceAt(q[0], q[1]), 0.6);
+    });
+    const q = c ? beside(c.i, c.s, c.d) : cd.bank[Math.floor(cd.bank.length * 0.82)];
+    monumento(B, ctx, q[0], q[1], c ? facing(c.i, c.s) : 0);
+    ctx.landmarks.monumento = { x: q[0], z: q[1] };
+    if (!c) console.warn('Teewald: monumento sem lugar livre no calçadão');
+    // placa ao lado (não na frente) do monumento, de frente para o caminho
+    const toPath = c ? facing(c.i, c.s) : 0, sc = [];
+    for (let a = 0; a < 16; a++) {
+      const ang = (a / 16) * Math.PI * 2, off = Math.abs(Math.atan2(Math.sin(ang - toPath), Math.cos(ang - toPath)));
+      if (off < 0.9 || off > 2.2) continue;   // nem entre o monumento e o caminho, nem atrás dele
+      const x = q[0] + Math.sin(ang) * 4.6, z = q[1] + Math.cos(ang) * 4.6;
+      sc.push({ x, z, score: pathD(x, z) });
+    }
+    const rotTo = s => { const n = nearestOnPolyline(path, s.x, s.z); return Math.atan2(n.x - s.x, n.z - s.z); };
+    const s = pick(sc, s => { const pts = boxPts(s.x, s.z, 0.95, 0.15, rotTo(s)); return inStrip(pts) && offPath(pts, 0.4) && spotFree(ctx, pts, 0.25); });
+    if (s) signPost(B, ctx, s.x, s.z, rotTo(s), signMaterial('MONUMENTO AO IMIGRANTE', { bg: '#3a2a1a', fg: '#f0e0c0', w: 128, h: 24, sub: '1847 - 2017' }));
+  }
+  // placa do calçadão no começo do caminho
+  {
+    const cands = [];
+    for (let i = 2; i < Math.min(14, path.length - 1); i++) for (const s of [1, -1]) cands.push({ i, s, score: i });
+    const c = pick(cands, c => { const q = beside(c.i, c.s, EDGE + 0.6), pts = boxPts(q[0], q[1], 0.95, 0.15, facing(c.i, c.s)); return inStrip(pts) && spotFree(ctx, pts, 0.25); });
+    if (c) { const q = beside(c.i, c.s, EDGE + 0.6); signPost(B, ctx, q[0], q[1], facing(c.i, c.s), signMaterial('CALÇADÃO DO RIO CADEIA', { bg: '#2f4a2a', fg: '#f2e8c8', w: 128, h: 24 })); }
+  }
+  // parada de ônibus na beira da avenida, no meio do calçadão, de frente para a rua
+  {
+    const mid = Math.floor(cd.edge.length * 0.5), cands = [];
+    for (let i = Math.max(0, mid - 10); i <= Math.min(cd.edge.length - 1, mid + 10); i++) for (const back of [1.4, 1.8, 2.3]) cands.push({ i, back, score: Math.abs(i - mid) + back });
+    const at = c => {
+      const e = cd.edge[c.i], b = cd.bank[c.i], dx = e[0] - b[0], dz = e[1] - b[1], l = Math.hypot(dx, dz);
+      return { x: e[0] - dx / l * c.back, z: e[1] - dz / l * c.back, rot: Math.atan2(dx, dz) };
+    };
+    const c = pick(cands, c => { const a = at(c), pts = boxPts(a.x, a.z, 1.8, 1.0, a.rot); return pts.every(([x, z]) => pointInPoly(x, z, cd.strip)) && offPath(pts, 0.3) && spotFree(ctx, pts, 0.2); });
+    if (c) { const a = at(c); busStop(B, ctx, a.x, a.z, a.rot); }
+  }
+
+  // ---------- mobiliário a cada ~9 m, lados alternados ----------
+  // Onde há banco, o lampião vai para o outro lado do caminho (iluminando o
+  // banco); a lixeira fica ao lado do banco e a hortênsia atrás dele.
+  const U = [0, 1, -1, 2, -2, 3, -3];
+  const tryAt = (i, s, ds, us, test) => { for (const u of us) for (const d of ds) { const q = beside(i, s, d, u); if (test(q, d, u)) return { q, d, u }; } return null; };
+  const small = r => q => inStrip([q]) && pathD(q[0], q[1]) > EDGE + r + 0.3 && spotFree(ctx, [q], r + 0.25) && groundOk(ctx, [q], ctx.surfaceAt(q[0], q[1]));
+  const treeOk = t => q => { const r = treeRadius({ t }); return pathD(q[0], q[1]) > EDGE + r + 0.2 && offRoad(ctx, q[0], q[1], r + 0.4) && spotFree(ctx, [q], r + 0.3); };
+  const benchOk = (i, s) => q => {
+    const rot = facing(i, s), body = boxPts(q[0], q[1], 1.05, 0.4, rot);
+    return inStrip(body) && offPath(body, 0.4) && benchFits(ctx, q[0], q[1], rot, Math.max(0.8, pathD(q[0], q[1]) - 0.3 - EDGE + 0.1));
+  };
   let acc = 0, k = 0;
-  for (let i = 1; i < path.length; i++) {
+  for (let i = 1; i < path.length - 1; i++) {
     acc += Math.hypot(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]);
     if (acc < 9) continue;
     acc = 0; k++;
-    const t = tan(path, i), p = path[i];
+    const t = tan(path, i);
     const side = k % 2 ? 1 : -1;
-    const ox = -t[1] * side, oz = t[0] * side;
-    const at = d => [p[0] + ox * d, p[1] + oz * d];
-    const ok = q => offRoad(ctx, q[0], q[1], 1.0) && freeGap(ctx, q[0], q[1]) > 1.1; // longe da rua e do guarda-corpo
-    if (k % 2 === 0) { const q = at(2.6); if (ok(q)) lantern(B, ctx, q[0], q[1]); }
-    if (k % 3 === 1) { const q = at(2.9); if (ok(q)) bench(B, ctx, q[0], q[1], Math.atan2(-ox, -oz)); }
-    if (k % 7 === 3) { const q = at(3.0); if (ok(q)) bin(B, ctx, q[0], q[1]); }
-    if (k % 9 === 5) { const q = at(-6); if (ok(q)) picnicTable(B, ctx, q[0], q[1], Math.atan2(t[0], t[1])); }
-    // árvores: plátanos em fila, araucárias em grupos
-    const tq = at(5.5 + R.range(0, 2));
-    tree(ctx, k % 4 === 0 ? 'araucaria' : 'platano', tq[0], tq[1], R.range(0.85, 1.15));
-    const tq2 = at(-4.5 - R.range(0, 3));
-    if (R.chance(0.6)) tree(ctx, R.chance(0.25) ? 'araucaria' : R.chance(0.5) ? 'platano' : 'nativa', tq2[0], tq2[1], R.range(0.8, 1.1));
-    if (R.chance(0.35)) { const h = at(3.4), hx = h[0] + R.range(-1, 1), hz = h[1] + R.range(-1, 1); if (offRoad(ctx, hx, hz, 0.8)) tree(ctx, 'hortensia', hx, hz, 0.9); }
+    let seat = null;
+    if (k % 3 === 1) {
+      seat = tryAt(i, side, [2.9, 3.3], U, benchOk(i, side));
+      if (seat) {
+        bench(B, ctx, seat.q[0], seat.q[1], facing(i, side));
+        if (k % 2 === 1) { const b = tryAt(i, side, [seat.d], [seat.u + 1.65, seat.u - 1.65], small(0.3)); if (b) bin(B, ctx, b.q[0], b.q[1]); }
+        if (R.chance(0.6)) { const h = tryAt(i, side, [seat.d + 1.45], [seat.u], treeOk('hortensia')); if (h) tree(ctx, 'hortensia', h.q[0], h.q[1], 0.9); }
+      }
+    }
+    if (k % 2 === 0 || seat) {
+      const l = tryAt(i, seat ? -side : side, [2.6, 2.9], U, small(0.2));
+      if (l) lantern(B, ctx, l.q[0], l.q[1]);
+    }
+    if (!seat && k % 7 === 3) { const b = tryAt(i, side, [3.0], U, small(0.3)); if (b) bin(B, ctx, b.q[0], b.q[1]); }
+    if (k % 9 === 5) {
+      const rot = Math.atan2(t[0], t[1]);
+      const m = tryAt(i, -side, [6, 5.2, 7], U, q => {
+        const pts = boxPts(q[0], q[1], 1.0, 1.0, rot);
+        return inStrip(pts) && offPath(pts, 0.6) && spotFree(ctx, boxPts(q[0], q[1], 1.4, 1.6, rot), 0.2) && groundOk(ctx, pts, ctx.surfaceAt(q[0], q[1]));
+      });
+      if (m) picnicTable(B, ctx, m.q[0], m.q[1], rot);
+    }
+    // árvores: plátanos em fila, araucárias em grupos (fora da frente dos bancos)
+    const tt = k % 4 === 0 ? 'araucaria' : 'platano';
+    const tq = tryAt(i, side, [5.5 + R.range(0, 2)], [0, 1.5, -1.5], treeOk(tt));
+    if (tq) tree(ctx, tt, tq.q[0], tq.q[1], R.range(0.85, 1.15));
+    if (R.chance(0.6)) {
+      const t2 = R.chance(0.25) ? 'araucaria' : R.chance(0.5) ? 'platano' : 'nativa';
+      const q2 = tryAt(i, -side, [4.5 + R.range(0, 3)], [0, 1.5, -1.5], treeOk(t2));
+      if (q2) tree(ctx, t2, q2.q[0], q2.q[1], R.range(0.8, 1.1));
+    }
+    if (!seat && R.chance(0.35)) { const h = tryAt(i, side, [3.4], [R.range(-1, 1), 1.5, -1.5], treeOk('hortensia')); if (h) tree(ctx, 'hortensia', h.q[0], h.q[1], 0.9); }
   }
-  // letreiro TEEWALD perto da praça, virado para a avenida
-  const li = Math.floor(cd.bank.length * 0.22);
-  {
-    const b = cd.bank[li], e = cd.edge[li];
-    const x = b[0] + (e[0] - b[0]) * 0.72, z = b[1] + (e[1] - b[1]) * 0.72;
-    const rot = Math.atan2(e[0] - b[0], e[1] - b[1]);
-    letreiro(B, ctx, x, z, rot, 'TEEWALD');
-    ctx.landmarks.letreiro = { x, z, rot };
-  }
-  // Monumento ao Imigrante, na ponta sul, perto do acesso à cidade
-  {
-    const mi = Math.floor(cd.bank.length * 0.82);
-    const b = cd.bank[mi], e = cd.edge[mi];
-    const x = b[0] + (e[0] - b[0]) * 0.55, z = b[1] + (e[1] - b[1]) * 0.55;
-    monumento(B, ctx, x, z, Math.atan2(e[0] - b[0], e[1] - b[1]));
-    ctx.landmarks.monumento = { x, z };
-    const sp = [x + (e[0] - b[0]) * 0.12, z + (e[1] - b[1]) * 0.12];
-    signPost(B, ctx, sp[0] + 3.6, sp[1] - 1, Math.atan2(e[0] - b[0], e[1] - b[1]), signMaterial('MONUMENTO AO IMIGRANTE', { bg: '#3a2a1a', fg: '#f0e0c0', w: 128, h: 24, sub: '1847 - 2017' }));
-  }
-  const sp = cd.path[3];
-  signPost(B, ctx, sp[0] + 2.5, sp[1] + 1, 0.6, signMaterial('CALÇADÃO DO RIO CADEIA', { bg: '#2f4a2a', fg: '#f2e8c8', w: 128, h: 24 }));
 }
 
 // passarela entre os pontos a e b do caminho: tabuleiro caminhável e guarda-corpos
@@ -853,13 +967,7 @@ function buildSpecials(B, ctx) {
       cols.forEach((c, i) => { const p = P(-4 + i * 4, 0, o.hz + 4.5); car(B, ctx, p[0], p[2], o.rot + Math.PI / 2, c); });
     }
   }
-  // parada de ônibus e placas de PARE
-  {
-    const cd = ctx.landmarks.calcadao, i = Math.floor(cd.edge.length * 0.5);
-    const e = cd.edge[i], b = cd.bank[i];
-    const dx = e[0] - b[0], dz = e[1] - b[1], l = Math.hypot(dx, dz);
-    busStop(B, ctx, e[0] - dx / l * 1.5, e[1] - dz / l * 1.5, Math.atan2(dx, dz));
-  }
+  // (a parada de ônibus é posta junto com o calçadão; as placas de PARE, depois das casas)
   void obbCorners;
 }
 
@@ -876,7 +984,7 @@ export function placeStopSigns(B, ctx) {
       // lado direito de quem chega; se cair na pista de outra rua, tenta o outro lado
       for (const side of [1, -1]) {
         const px = r.pts[k][0] - t[1] * (r.hw + 0.8) * side, pz = r.pts[k][1] + t[0] * (r.hw + 0.8) * side;
-        if (ctx.zones.isBlocked(px, pz) || ctx.zones.insideBuilding(px, pz, 0.5) || !offRoad(ctx, px, pz, -2)) continue;
+        if (ctx.zones.isBlocked(px, pz) || ctx.zones.insideBuilding(px, pz, 0.5) || !offRoad(ctx, px, pz, -2) || !spotFree(ctx, [[px, pz]], 0.35)) continue;
         stopSign(B, ctx, px, pz, Math.atan2(t[0], t[1]) + (end === 0 ? Math.PI : 0));
         break;
       }

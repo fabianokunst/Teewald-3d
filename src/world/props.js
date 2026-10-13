@@ -358,7 +358,7 @@ export function utilityLines(ctx, B) {
       const a = P[Math.max(i - 1, 0)], b = P[Math.min(i + 1, P.length - 1)];
       const dx = b[0] - a[0], dz = b[1] - a[1], l = Math.hypot(dx, dz) || 1;
       const x = P[i][0] - (dz / l) * off, z = P[i][1] + (dx / l) * off;
-      if (roads.index.clearance(x, z, d => d !== r).d < 1.2 || ctx.zones.insideBuilding(x, z, 0.6) || ctx.zones.isBlocked(x, z)) { prev = null; continue; }
+      if (roads.index.clearance(x, z, d => d !== r).d < 1.2 || ctx.zones.insideBuilding(x, z, 0.6) || ctx.zones.isBlocked(x, z) || inKeepOut(ctx, x, z, 0.4)) { prev = null; continue; }
       const rv = ctx.rivers.index.nearest(x, z);
       if (rv.seg && rv.d < rv.seg.data.width / 2 + 1.5) { prev = null; continue; }
       const rot = Math.atan2(dx / l, dz / l) + Math.PI / 2;

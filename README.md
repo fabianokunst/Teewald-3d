@@ -98,6 +98,11 @@ feitos em código. O cenário fica em `src/world/chupaSites.js` e a missão em
 - **Calçadão do Rio Cadeia**: na margem do lado da VRS-873, entre o rio e a
   avenida, sem cruzar a água; caminho, guarda-corpo, letreiro TEEWALD e
   Monumento ao Imigrante. O jogo começa aqui.
+- **Mobiliário organizado** (`spotFree`/`benchFits` em `src/world/props.js`):
+  nenhuma peça entra encaixada em outra nem em cima do caminho. Banco só com a
+  frente livre até o caminho (sem poste, lixeira, canteiro ou grade no meio), e
+  a frente dos bancos, das mesas, da parada e do letreiro fica reservada:
+  árvores, postes e placas posteriores desviam dela.
 - Cemitério, Kartoffelfest, Sociedade, Prefeitura, Museu (enxaimel), Posto
   Calçadão, fábricas de calçados, escola, hospital e comércio.
 - **Carros** low poly (`src/world/vehicles.js`): sedã de quatro portas e hatch
