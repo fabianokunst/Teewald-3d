@@ -249,7 +249,10 @@ export function build(ctx, B, o) {
   K.face('int:c:door', 2.5, STAIR_TOP, 0.47, 1.3, 2.3, 0, UV1, [gray(0.5), gray(0.5), gray(0.6), gray(0.6)]);
   for (const [x0, y0, x1, y1] of [[1.84, 2.4, 1.86, 4.7], [3.14, 2.4, 3.16, 4.7], [1.85, 4.69, 3.15, 4.71], [2.24, 2.5, 2.25, 4.6], [2.83, 2.6, 2.84, 4.5]]) K.quad('int:c:crack', [x0, y0, 0.48], [x1, y0, 0.48], [x1, y1, 0.48], [x0, y1, 0.48]);
   K.box('iron', 2.5, STAIR_TOP + 2.32, 0.5, 1.5, 0.12, 0.08, 0, { col: gray(0.4) });
-  K.floor('int:c:moon', 1.0, 0.4, 4.0, 3.2, STAIR_TOP + 0.02, 99, null, 0);
+  // luar da porta no patamar e nos primeiros degraus (um quadro só, na altura do
+  // patamar, ficava flutuando 30 cm acima da escada)
+  K.floor('int:c:moon', 1.0, 0.4, 4.0, SZ0, STAIR_TOP + 0.02, 99, null, 0);
+  for (let i = 0; SZ0 + i * run < 3.2; i++) K.floor('int:c:moon', 1.0, SZ0 + i * run, 4.0, Math.min(SZ0 + (i + 1) * run, 3.2), STAIR_TOP - (i + 1) * rise + 0.02, 99, null, 0);
 
   // ---------------- corredor abobadado com nichos ----------------
   const niches = [];

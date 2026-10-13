@@ -216,6 +216,53 @@ export class Terrain {
     return a + (d - c) * tx + (c - a) * tz;
   }
 
+  // piso colado no relevo: os triângulos da malha do terreno (a mesma triangulação
+  // do desenho, inclusive a grade fina dos rios) recortados por um polígono convexo.
+  // Um quadrado plano por cima do relevo flutua onde o chão desce e some onde sobe.
+  // emit(a, b, c) recebe pontos [x, y, z] na altura exata do terreno, virados para cima
+  drape(poly, emit) {
+    const n = NEAR, cx = this.nx - 1, cz = this.nz - 1;
+    let area = 0;
+    for (let k = 0; k < poly.length; k++) { const p = poly[k], q = poly[(k + 1) % poly.length]; area += p[0] * q[1] - q[0] * p[1]; }
+    const sg = area > 0 ? 1 : -1;
+    // Sutherland-Hodgman: fica com a parte do lado de dentro de cada aresta
+    const clip = pts => {
+      for (let k = 0; k < poly.length && pts.length >= 3; k++) {
+        const [ax, az] = poly[k], [bx, bz] = poly[(k + 1) % poly.length];
+        const side = p => sg * ((bx - ax) * (p[1] - az) - (bz - az) * (p[0] - ax));
+        const out = [];
+        for (let m = 0; m < pts.length; m++) {
+          const p = pts[m], q = pts[(m + 1) % pts.length], sp = side(p), sq = side(q);
+          if (sp >= 0) out.push(p);
+          if ((sp >= 0) !== (sq >= 0)) { const t = sp / (sp - sq); out.push([p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t]); }
+        }
+        pts = out;
+      }
+      return pts;
+    };
+    const xs = poly.map(p => p[0]), zs = poly.map(p => p[1]);
+    const i0 = Math.max(0, Math.floor((Math.min(...xs) - n.x0) / n.step)), i1 = Math.min(cx - 1, Math.floor((Math.max(...xs) - n.x0) / n.step));
+    const j0 = Math.max(0, Math.floor((Math.min(...zs) - n.z0) / n.step)), j1 = Math.min(cz - 1, Math.floor((Math.max(...zs) - n.z0) / n.step));
+    for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
+      const k = this.refined && this.refined[j * cx + i] ? SUB : 1, s = n.step / k;
+      for (let b = 0; b < k; b++) for (let a = 0; a < k; a++) {
+        const x0 = n.x0 + i * n.step + a * s, z0 = n.z0 + j * n.step + b * s, x1 = x0 + s, z1 = z0 + s;
+        // mesma diagonal da malha: de (x0, z0) a (x1, z1)
+        for (const t of [[[x0, z0], [x1, z0], [x1, z1]], [[x0, z0], [x1, z1], [x0, z1]]]) {
+          const c = clip(t);
+          if (c.length < 3) continue;
+          const P = c.map(([x, z]) => [x, this.heightAt(x, z), z]);
+          for (let m = 1; m < P.length - 1; m++) {
+            const A = P[0], B = P[m], C = P[m + 1];
+            const ny = (B[2] - A[2]) * (C[0] - A[0]) - (B[0] - A[0]) * (C[2] - A[2]);
+            if (Math.abs(ny) < 1e-7) continue;
+            if (ny > 0) emit(A, B, C); else emit(A, C, B);
+          }
+        }
+      }
+    }
+  }
+
   waterAt(x, z) {
     const w = this.riverIndex?.nearest(x, z);
     if (!w || !w.seg) return null;
@@ -365,6 +412,10 @@ export class Terrain {
     }
     const idx = [];
     for (let j = 0; j < vz - 1; j++) for (let i = 0; i < vx - 1; i++) {
+      // célula toda dentro da área detalhada: a malha de perto já cobre, e este
+      // relevo grosso (40 m) ficava acima do fundo dos vales estreitos (leito do rio)
+      const x0 = f.x0 + i * f.step, z0 = f.z0 + j * f.step;
+      if (x0 >= n.x0 && x0 + f.step <= n.x1 && z0 >= n.z0 && z0 + f.step <= n.z1) continue;
       const a = j * vx + i, b = a + 1, c = a + vx, d = c + 1;
       idx.push(a, d, b, a, c, d);
     }

@@ -15,10 +15,33 @@ import { FallingLeaves } from './leaves.js';
 import { MeshBuilder } from '../engine/builder.js';
 import { CollisionWorld } from '../engine/collision.js';
 import { M } from '../engine/materials.js';
-import { pointInPoly } from './geo.js';
+import { pointInPoly, SegmentIndex, distSeg } from './geo.js';
 import { PLAY_BOUNDS } from '../config.js';
 
 const frame = () => new Promise(r => requestAnimationFrame(() => r()));
+
+// piso desenhado por cima do chão: { poly, y (número ou função (x, z)), surface }
+function floorHeight(f, x, z) {
+  const b = f.bb || (f.bb = f.poly.reduce((m, [px, pz]) => [Math.min(m[0], px), Math.min(m[1], pz), Math.max(m[2], px), Math.max(m[3], pz)], [Infinity, Infinity, -Infinity, -Infinity]));
+  if (x < b[0] || x > b[2] || z < b[1] || z > b[3] || !pointInPoly(x, z, f.poly)) return null;
+  return typeof f.y === 'function' ? f.y(x, z) : f.y;
+}
+
+// caminho elevado (lajotas do calçadão): quanto fica acima do terreno no ponto, ou null.
+// data = { hw, dy, edge, edgeDy }: meia largura e altura do piso, largura e altura da borda
+function walkwayLift(index, x, z) {
+  let best = null;
+  for (const id of index.candidates(x, z)) {
+    const s = index.segs[id], w = s.data;
+    const [d, t] = distSeg(x, z, s.ax, s.az, s.bx, s.bz);
+    if (d > w.hw + w.edge) continue;
+    // depois da ponta do caminho não há lajota (a distância ali é a de um semicírculo)
+    if ((t <= 0 && s.i === 0) || (t >= 1 && s.i === s.n - 1)) continue;
+    const dy = d <= w.hw ? w.dy : w.dy + (w.edgeDy - w.dy) * (d - w.hw) / w.edge;
+    if (best === null || dy > best) best = dy;
+  }
+  return best;
+}
 
 // Monta a cidade inteira. onStep(fração, texto) atualiza a tela de carregamento.
 export async function buildWorld(scene, onStep) {
@@ -31,14 +54,20 @@ export async function buildWorld(scene, onStep) {
   ctx.rivers = prepareRivers(mapdata, ctx.terrain);
   ctx.zones = new Zones(ctx);
   ctx.collision = new CollisionWorld(8);
+  ctx.walkways = new SegmentIndex(10, 3);
   defineLandmarks(ctx);
   ctx.terrain.finalize(ctx.roads.index, ctx.rivers.index);
-  // superfície onde um objeto se apoia: terreno, rua, calçada ou piso (praça, pátio)
+  // superfície onde um objeto se apoia: terreno, rua, calçada, caminho ou piso
+  // (praça, adro, campo, pátio). Tudo que é desenhado acima do terreno e se pisa
+  // precisa estar aqui, senão os pés do jogador afundam nele
   ctx.surfaceAt = (x, z) => {
-    let y = ctx.terrain.heightAt(x, z);
+    const h = ctx.terrain.heightAt(x, z);
+    let y = h;
     const r = roadSurfaceAt(ctx.roads, ctx.terrain, x, z);
     if (r !== null) y = Math.max(y, r);
-    for (const f of ctx.floors) if (pointInPoly(x, z, f.poly)) y = Math.max(y, f.y);
+    const w = walkwayLift(ctx.walkways, x, z);
+    if (w !== null) y = Math.max(y, h + w);
+    for (const f of ctx.floors) { const fy = floorHeight(f, x, z); if (fy !== null && fy > y) y = fy; }
     return y;
   };
 
@@ -84,6 +113,8 @@ export async function buildWorld(scene, onStep) {
   ctx.groundAt = (x, z, feetY) => {
     if (ctx.indoor) {
       const f = ctx.collision.floorAt(x, z, feetY + 0.45);
+      // interior com chão irregular (gruta): a altura exata da malha desenhada
+      if (ctx.indoor.ground) return Math.max(f, ctx.indoor.ground(x, z));
       return f > -Infinity ? f : ctx.indoor.floorY;
     }
     let y = ctx.surfaceAt(x, z);

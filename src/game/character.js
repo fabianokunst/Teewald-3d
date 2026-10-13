@@ -98,7 +98,22 @@ class SkinBuilder {
     if (o.capEnd) cap(rings[rings.length - 1], o.capEnd, centroid(rings[rings.length - 2].pts));
   }
 
-  build() {
+  // caps: cápsulas { a, b, r, skip: [ossos] } que fazem sombra de oclusão nos vértices de
+  // outras partes (assada na cor dos vértices, na pose de repouso)
+  build(caps = []) {
+    const occlusion = (p, n, w) => {
+      let bone = w[0][0], best = w[0][1], occ = 0;
+      for (const [i, k] of w) if (k > best) { best = k; bone = i; }
+      for (const c of caps) {
+        if (c.skip.includes(bone)) continue;
+        const ab = sub(c.b, c.a), t = Math.max(0, Math.min(1, dot(sub(p, c.a), ab) / dot(ab, ab)));
+        const v = sub(add(c.a, mul(ab, t)), p), d = Math.hypot(v[0], v[1], v[2]);
+        if (d <= c.r * 1.02) continue;
+        const cos = dot(n, v) / d;
+        if (cos > 0) occ += (c.r * c.r) / (d * d) * cos;
+      }
+      return 1 - Math.min(0.32, occ * 0.6);
+    };
     const key = (g, p) => g + '|' + p.map(v => Math.round(v * 1e4)).join(',');
     const acc = new Map();
     for (const t of this.tris) {
@@ -115,7 +130,8 @@ class SkinBuilder {
         const n = t.g[0] === '!' ? fn : norm(acc.get(key(t.g, v.p)));
         pos.push(...v.p); nor.push(...n);
         uv.push(t.uv[j][0] / ATLAS, 1 - t.uv[j][1] / ATLAS);
-        col.push(v.c, v.c, v.c);
+        const c = v.c * (caps.length ? occlusion(v.p, n, v.w) : 1);
+        col.push(c, c, c);
         const tot = v.w.reduce((s, w) => s + w[1], 0);
         for (let q = 0; q < 4; q++) { si.push(v.w[q] ? v.w[q][0] : 0); sw.push(v.w[q] ? v.w[q][1] / tot : 0); }
       });
@@ -194,8 +210,8 @@ function buildHero(b) {
   // --- cabeça: anéis do queixo ao alto, com o cabelo "inflado" acima da linha do cabelo ---
   const NH = 10;
   const HR = [ // y, rx, rzF, rzB, cz
-    [0.02, 0.04, 0.022, 0.02, 0.078],
-    [0.038, 0.067, 0.028, 0.05, 0.052],
+    [0.022, 0.046, 0.018, 0.03, 0.058],    // base do queixo (logo atrás dos lábios, não à frente)
+    [0.04, 0.069, 0.029, 0.054, 0.05],
     [0.068, 0.083, 0.05, 0.075, 0.03],
     [0.105, 0.089, 0.07, 0.095, 0.01],
     [0.145, 0.094, 0.075, 0.102, 0.002],
@@ -205,7 +221,7 @@ function buildHero(b) {
   ];
   // relevo do rosto por anel: k = 5 é o centro da frente; 3/4 são espelhados em 7/6
   const MODS = {
-    1: { 5: [0, 0, 0.006], 3: [0.009, 0, 0] },  // queixo e ângulo da mandíbula
+    1: { 5: [0, 0, 0.004], 3: [0.009, 0, -0.004] },  // queixo e ângulo da mandíbula (quadrada)
     2: { 5: [0, 0, 0.004] },                     // lábios
     3: { 4: [0.002, 0, 0.003] },                 // maçãs do rosto
     4: { 4: [0, 0, -0.008], 5: [0, 0, 0.004] },  // olhos fundos, dorso do nariz
@@ -235,7 +251,7 @@ function buildHero(b) {
   }));
   B.loft(headRings, {
     reg: 'head', g: 'head', u: k => headU(k / NH),
-    capStart: { p: add(HEAD_J, [0, 0.01, 0.074]), v: headRow(0.012) - REG.head[1] },
+    capStart: { p: add(HEAD_J, [0, 0.013, 0.05]), v: headRow(0.012) - REG.head[1] },
     capEnd: { p: add(HEAD_J, [0, 0.276, -0.012]), v: headRow(0.262) - REG.head[1] },
   });
 
@@ -358,23 +374,103 @@ function buildHero(b) {
       [cx + 0.55 * hw, top, z], [cx + hw, (top + bot) / 2 + 0.01, z], [cx + 1.05 * hw, bot + 0.016, z], [cx + 0.8 * hw, bot, z],
       [cx - 0.8 * hw, bot, z], [cx - 1.05 * hw, bot + 0.016, z], [cx - hw, (top + bot) / 2 + 0.01, z], [cx - 0.55 * hw, top, z],
     ].map(q => at(AJ, q));
+    // a ponta do pé dobra nos dedos (calcanhar sobe ao sair do chão)
     B.loft([
       { pts: sec(-0.07, 0.042, 0.005, -0.07, 0), w: AW, v: 9 },
       { pts: sec(-0.02, 0.051, 0.026, -0.07, 0), w: AW, v: 14 },
-      { pts: sec(0.065, 0.056, -0.01, -0.07, 0.004), w: AW, v: 22 },
-      { pts: sec(0.14, 0.05, -0.033, -0.07, 0.008), w: AW, v: 29 },
+      { pts: sec(0.065, 0.056, -0.01, -0.07, 0.004), w: [[ank, 0.8], [b.toe[i], 0.2]], v: 22 },
+      { pts: sec(0.14, 0.05, -0.033, -0.07, 0.008), w: [[b.toe[i], 1]], v: 29 },
     ], {
       reg: 'boot', g: 'foot' + s,
       capStart: { p: at(AJ, [0, -0.035, -0.079]), v: 8.5 },
       capEnd: { p: at(AJ, [0.009, -0.051, 0.18]), v: 31.5 },
     });
   }
-  return B.build();
+  // oclusão: tronco, braços e pernas escurecem axilas, lados do tronco e o lado de dentro das coxas
+  const caps = [{ a: [0, 0.95, -0.005], b: [0, 1.34, -0.005], r: 0.11, skip: [b.spine, b.hips, b.neck] }];
+  for (let i = 0; i < 2; i++) {
+    const s = i ? 1 : -1, x = s * SH_X;
+    caps.push(
+      { a: [x, 1.33, 0], b: [x, 1.17, 0], r: 0.048, skip: [b.sh[i], b.el[i]] },
+      { a: [x, 1.12, 0.01], b: [x, 0.93, 0.01], r: 0.044, skip: [b.el[i], b.sh[i], b.hand[i]] },
+      { a: [s * HIP_X, 0.82, 0], b: [s * HIP_X, 0.5, 0], r: 0.07, skip: [b.hip[i], b.knee[i], b.hips] },
+      { a: [s * HIP_X, 0.44, 0], b: [s * HIP_X, 0.14, 0], r: 0.054, skip: [b.knee[i], b.hip[i], b.ankle[i]] },
+    );
+  }
+  return B.build(caps);
+}
+
+// ---------- animação ----------
+// Andar e correr por fase de passada, com IK nas pernas: o pé apoiado fica parado no chão
+// (no espaço do corpo ele anda para trás na mesma velocidade), rola do calcanhar para a
+// ponta, e o quadril só sobe até onde as pernas alcançam. Braços, tronco e cabeça seguem
+// a mesma fase. Os moradores usam a mesma animação.
+const LEG_A = -KNEE_DY, LEG_B = -ANKLE_DY, LEG_MAX = (LEG_A + LEG_B) * 0.999;
+const ANKLE_H = HIPS_Y + HIP_DY + KNEE_DY + ANKLE_DY;   // tornozelo acima do chão, em pé
+const HEEL_Z = -0.062, BALL_Z = 0.088;                 // calcanhar e bola do pé no chão (z a partir do tornozelo)
+const TOE_J = [0, -0.056, 0.088];                     // junta dos dedos
+const lerp = (a, b, t) => a + (b - a) * t;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const ease = t => t * t * (3 - 2 * t);
+const wrapPi = a => a - Math.round(a / TAU) * TAU;
+const _hj = new THREE.Vector3(), _d = new THREE.Vector3(), _pn = new THREE.Vector3(), _th = new THREE.Vector3();
+const _X = new THREE.Vector3(), _Y = new THREE.Vector3(), _Z = new THREE.Vector3(), _tg = new THREE.Vector3(), _pole = new THREE.Vector3();
+const _q = new THREE.Quaternion(), _q2 = new THREE.Quaternion(), _m4 = new THREE.Matrix4(), _eu = new THREE.Euler(0, 0, 0, 'YXZ');
+
+// passada para a velocidade v (m/s); act dá o ritmo (girar no lugar também dá passos); r = corrida
+function gaitParams(v, act, r, g) {
+  const f = a => lerp(0.62 + 0.47 * a, 1.2 + 0.125 * a, r);   // ciclos por segundo (andando a 1,75 m/s: 1,4)
+  g.f = f(act);
+  const S = v / f(v);                                         // passada (um ciclo) em metros
+  g.duty = lerp(0.6, clamp(0.42 - 0.014 * v, 0.3, 0.38), r);   // parte do ciclo com o pé no chão
+  g.e = g.duty * S / 2;                                       // meio curso do pé apoiado
+  g.c = -lerp(0.025, 0.12, r) * Math.min(1, S / 1.2);         // centro do apoio, um pouco atrás do quadril
+  const k = Math.min(1, v / 1.4);
+  g.lift = lerp(0.025 + 0.05 * Math.min(1, act / 1.4), 0.12 + 0.045 * v, r);   // altura do pé no ar
+  g.hs = lerp(0.3 * k, 0.1, r);       // ponta para cima no toque (calcanhar primeiro)
+  g.sH = lerp(0.17, 0.08, r);         // parte do apoio rolando do calcanhar
+  g.sT = lerp(0.52, 0.32, r);         // daqui em diante o calcanhar sobe
+  g.to = lerp(0.6 * k, 0.85, r);      // calcanhar levantado na saída
+  g.run = r;
+}
+
+// pé apoiado na fração s do apoio, com o ponto plantado em G (ao longo do movimento):
+// gira em volta do calcanhar no toque e em volta da bola do pé na saída
+function stanceFoot(s, G, g, o) {
+  if (s < g.sH && g.hs > 0) {
+    const t = g.hs * (1 - ease(s / g.sH)), c = Math.cos(t), sn = Math.sin(t);
+    o.z = G + HEEL_Z - HEEL_Z * c - ANKLE_H * sn; o.y = -HEEL_Z * sn + ANKLE_H * c; o.pitch = -t; o.toe = 0;
+  } else if (s > g.sT) {
+    const q = (s - g.sT) / (1 - g.sT), t = g.to * q * q * (1.6 - 0.6 * q), c = Math.cos(t), sn = Math.sin(t);
+    o.z = G + BALL_Z - BALL_Z * c + ANKLE_H * sn; o.y = BALL_Z * sn + ANKLE_H * c; o.pitch = t; o.toe = -t;
+  } else { o.z = G; o.y = ANKLE_H; o.pitch = 0; o.toe = 0; }
+}
+
+// pé de uma perna na fase u (0 = toque no chão): tornozelo (z ao longo do movimento, y),
+// inclinação, dedos e peso de apoio (w)
+const F0 = {}, F1 = {};
+function gaitFoot(u, g, o) {
+  if (u < g.duty) {
+    const s = u / g.duty;
+    stanceFoot(s, g.c + g.e - 2 * g.e * s, g, o);
+    o.w = Math.min(1, s / 0.1, (1 - s) / 0.1);
+    return;
+  }
+  // no ar: da saída até o próximo toque; correndo, o calcanhar sobe atrás antes de ir à frente
+  const s = (u - g.duty) / (1 - g.duty), r = g.run;
+  stanceFoot(1, g.c - g.e, g, F0);
+  stanceFoot(0, g.c + g.e, g, F1);
+  o.z = lerp(F0.z, F1.z, lerp(ease(s), ease(clamp((s - 0.14) / 0.78, 0, 1)), r));
+  o.y = lerp(F0.y, F1.y, s) + g.lift * Math.sin(Math.PI * Math.pow(s, lerp(0.75, 0.8, r)));
+  o.pitch = lerp(F0.pitch, F1.pitch, ease(clamp((s - 0.08) / 0.75, 0, 1)));
+  o.toe = F0.toe * (1 - ease(Math.min(1, s / 0.3)));
+  o.w = 0;
 }
 
 export class Character {
   // material: atlas de outro personagem (moradores usam a mesma malha e o mesmo esqueleto)
   constructor(M, material = M.hero) {
+    this.hero = material === M.hero;
     this.root = new THREE.Group();
     this.root.scale.setScalar(0.95);
     const bones = [];
@@ -385,6 +481,7 @@ export class Character {
     this.spine = J(this.hips, 0, 0.05, 0);
     this.neck = J(this.spine, 0, NECK_Y - HIPS_Y - 0.05, 0);
     this.head = J(this.neck, HEAD_J[0], HEAD_J[1] - NECK_Y, HEAD_J[2]);
+    for (const o of [this.hips, this.spine, this.neck, this.head]) o.rotation.order = 'YXZ';
     this.arms = [];
     for (const side of [-1, 1]) {
       const sh = J(this.spine, side * SH_X, SH_Y - HIPS_Y - 0.05, 0);
@@ -399,12 +496,15 @@ export class Character {
       const ankle = J(knee, 0, ANKLE_DY, 0);
       this.legs.push({ hip, knee, ankle, side });
     }
+    // dedos dos pés (bola do pé): dobram quando o calcanhar sobe
+    for (const l of this.legs) l.toe = J(l.ankle, ...TOE_J);
 
     // os ossos nascem sempre na mesma ordem: a geometria é a mesma para todos
     const geo = Character.geo ||= buildHero({
       hips: idx(this.hips), spine: idx(this.spine), neck: idx(this.neck), head: idx(this.head),
       sh: this.arms.map(a => idx(a.sh)), el: this.arms.map(a => idx(a.el)), hand: this.arms.map(a => idx(a.hand)),
       hip: this.legs.map(l => idx(l.hip)), knee: this.legs.map(l => idx(l.knee)), ankle: this.legs.map(l => idx(l.ankle)),
+      toe: this.legs.map(l => idx(l.toe)),
     });
     this.triangles = geo.getAttribute('position').count / 3;
     const mesh = new THREE.SkinnedMesh(geo, material);
@@ -423,51 +523,235 @@ export class Character {
     blob.renderOrder = 2;
     this.blob = blob;
 
-    this.phase = 0; this.walk = 0; this.run = 0; this.air = 0; this.t = 0;
-    this.lastStepSign = 1;
+    // estado da animação
+    this.shY = this.arms.map(a => a.sh.position.y);
+    this.t = 0; this.cyc = 0;                 // fase da passada (0..1): a perna 0 toca o chão em 0
+    this.move = 0; this.run = 0; this.air = 0; // misturas: andando, correndo, no ar
+    this.dir = [0, 1]; this.back = 1;          // direção do movimento (no espaço do personagem); -1 = de costas
+    this.turn = 0; this.yaw0 = null; this.acc = 0; this.v0 = 0; this.ex = 0;
+    this.drop = 0; this.landY = 0; this.landV = 0; this.vy = 0; this.grounded = true; this.lead = 0;
+    this.ws = 0; this.wsGoal = 0; this.wsT = 2 + Math.random() * 3;    // troca do peso entre as pernas (parado)
+    this.look = { y: 0, p: 0, tw: 0, ty: 0, tp: 0, ttw: 0, timer: 1 + Math.random() * 2 };
+    this.feet = [{}, {}]; this.from = null; this.fade = 0;
+    this.g = {}; this.F = {};
     this.onStep = null;
   }
 
-  // dir = -1 anda de costas (mirando)
-  update(dt, speed, grounded, running, dir = 1) {
+  // dt; speed em m/s; grounded; running (som dos passos);
+  // o = { mx, mz: direção do movimento no espaço do personagem, vy: velocidade vertical }
+  // (um número em `o` é o formato antigo: 1 = para a frente, -1 = de costas)
+  update(dt, speed, grounded, running, o = {}) {
+    if (typeof o === 'number') o = { mz: o };
+    dt = Math.min(dt, 0.1);
     this.t += dt;
-    // a pose de mira gira os ossos em outros eixos: volta tudo ao neutro antes de animar
-    for (const a of this.arms) { a.sh.rotation.y = 0; a.el.rotation.y = a.el.rotation.z = 0; a.hand.rotation.y = a.hand.rotation.z = 0; }
-    this.spine.rotation.z = 0; this.head.rotation.z = 0;
-    const targetWalk = Math.min(1, speed / 1.6);
-    const targetRun = Math.max(0, Math.min(1, (speed - 2.4) / 2.2));
-    this.walk += (targetWalk - this.walk) * Math.min(1, dt * 8);
-    this.run += (targetRun - this.run) * Math.min(1, dt * 6);
-    this.air += ((grounded ? 0 : 1) - this.air) * Math.min(1, dt * 10);
-    const stride = 1.25 + this.run * 2.0;
-    this.phase += dir * (speed / stride) * Math.PI * 2 * dt * (grounded ? 1 : 0.2);
-    const s = Math.sin(this.phase), c = Math.cos(this.phase);
-    const w = this.walk * (1 - this.air), r = this.run;
-    const A = 0.42 * w + 0.32 * r * (1 - this.air);
-    const K = 0.55 * w + 0.7 * r;
-    const [L, Rr] = this.legs;
-    L.hip.rotation.x = -s * A - this.air * 0.55;
-    Rr.hip.rotation.x = s * A - this.air * 0.25;
-    L.knee.rotation.x = Math.max(0, c) * K + 0.06 * w + this.air * 0.9;
-    Rr.knee.rotation.x = Math.max(0, -c) * K + 0.06 * w + this.air * 0.5;
-    L.ankle.rotation.x = -L.knee.rotation.x * 0.3; Rr.ankle.rotation.x = -Rr.knee.rotation.x * 0.3;
-    const AA = 0.38 * w + 0.45 * r;
-    const [aL, aR] = this.arms;
-    const idle = (1 - w) * (1 - this.air);
-    aL.sh.rotation.x = s * AA - this.air * 0.9; aR.sh.rotation.x = -s * AA - this.air * 0.9;
-    aL.sh.rotation.z = -0.08 - this.air * 0.3 - idle * 0.03; aR.sh.rotation.z = 0.08 + this.air * 0.3 + idle * 0.03;
-    aL.el.rotation.x = -0.2 - 0.9 * r - 0.15 * w; aR.el.rotation.x = -0.2 - 0.9 * r - 0.15 * w;
-    // punhos acompanham o balanço dos braços
-    aL.hand.rotation.x = -0.1 - s * 0.12 * w; aR.hand.rotation.x = -0.1 + s * 0.12 * w;
-    this.hips.position.y = HIPS_Y - Math.abs(c) * 0.035 * w - Math.abs(c) * 0.05 * r + Math.sin(this.t * 1.6) * 0.004 * idle;
-    this.spine.rotation.x = 0.04 * w + 0.22 * r + Math.sin(this.t * 1.6) * 0.012 * idle;
-    this.spine.rotation.y = -s * 0.08 * w;
-    this.hips.rotation.y = s * 0.06 * w;
-    this.head.rotation.x = -0.1 * r + Math.sin(this.t * 0.7) * 0.02 * idle;
-    this.head.rotation.y = Math.sin(this.t * 0.37) * 0.25 * idle * (Math.sin(this.t * 0.11) > 0.6 ? 1 : 0.2);
-    // passos
-    const sign = Math.sign(s) || 1;
-    if (grounded && speed > 0.3 && sign !== this.lastStepSign) this.onStep?.(running);
-    this.lastStepSign = sign;
+    const v = Math.max(0, speed || 0), k = rate => Math.min(1, dt * rate);
+
+    // giro do corpo: quem move o personagem gira a raiz depois de animar (um quadro de atraso)
+    const yaw = this.root.rotation.y;
+    let w = this.yaw0 === null || dt <= 0 ? 0 : wrapPi(yaw - this.yaw0) / dt;
+    if (Math.abs(w) > 20) w = 0;
+    this.yaw0 = yaw;
+    this.turn += (w - this.turn) * k(10);
+    // aceleração: inclina para a frente ao arrancar e para trás ao frear
+    this.acc += (clamp(dt > 0 ? (v - this.v0) / dt : 0, -14, 14) - this.acc) * k(6);
+    this.v0 = v;
+
+    // direção do movimento; de costas inverte e a fase corre para trás
+    let mx = o.mx ?? 0, mz = o.mz ?? 1;
+    const ml = Math.hypot(mx, mz);
+    if (ml > 1e-4) { mx /= ml; mz /= ml; } else { mx = 0; mz = 1; }
+    if (this.back > 0 ? mz < -0.2 : mz > 0.05) {
+      this.back = -this.back;
+      this.from = this.feet.map(f => ({ ...f })); this.fade = 1;
+      this.dir[0] = mx * this.back; this.dir[1] = mz * this.back;
+    }
+    if (this.back < 0) { mx = -mx; mz = -mz; }
+    this.dir[0] += (mx - this.dir[0]) * k(10); this.dir[1] += (mz - this.dir[1]) * k(10);
+    const dl = Math.hypot(this.dir[0], this.dir[1]) || 1, dx = this.dir[0] / dl, dz = this.dir[1] / dl;
+
+    // misturas (girar no lugar também dá passos)
+    const act = Math.max(v, grounded ? Math.abs(this.turn) * 0.3 : 0);
+    this.move += ((act > 0.06 ? 1 : 0) - this.move) * k(act > 0.06 ? 9 : 5);
+    this.run += (smooth(1.9, 3.3, v) - this.run) * k(6);
+    this.air += ((grounded ? 0 : 1) - this.air) * k(grounded ? 14 : 9);
+    this.ex += ((this.run > 0.5 ? 1 : 0) - this.ex) * k(this.run > 0.5 ? 0.25 : 0.08);  // fôlego depois de correr
+    const r = this.run, air = this.air, m = this.move * (1 - air), idle = (1 - m) * (1 - air);
+    const fall = clamp(-(o.vy ?? 0) / 4, 0, 1);
+
+    // pouso: mola que amassa o corpo
+    if (!grounded) { if (this.grounded) this.lead = this.cyc < 0.5 ? 1 : 0; this.vy = o.vy ?? this.vy; }
+    else if (!this.grounded) this.landV -= 0.5 + 3.2 * clamp((-this.vy - 1.5) / 6, 0, 1);
+    this.grounded = grounded;
+    for (let n = Math.ceil(dt / 0.008), i = 0; i < n; i++) {
+      const h = dt / n;
+      this.landV += (-150 * this.landY - 24 * this.landV) * h;
+      this.landY += this.landV * h;
+    }
+
+    // fase da passada e som dos passos (quando um pé toca o chão)
+    const g = this.g;
+    gaitParams(v, act, r, g);
+    const prev = this.cyc;
+    if (grounded) this.cyc = (this.cyc + this.back * g.f * dt * this.move + 1) % 1;
+    if (grounded && act > 0.3) {
+      for (let i = 0; i < 2; i++) {
+        const u0 = (prev + i * 0.5) % 1, u1 = (this.cyc + i * 0.5) % 1;
+        if (this.back > 0 ? u1 < u0 - 0.5 : u0 >= g.duty && u1 < g.duty && u0 - u1 < 0.5) this.onStep?.(running);
+      }
+    }
+
+    // parado: o peso passa de uma perna para a outra de vez em quando
+    this.wsT -= dt;
+    if (this.wsT <= 0) {
+      const s = Math.sign(this.wsGoal) || 1;
+      this.wsGoal = (Math.random() < 0.75 ? -s : s) * (0.45 + Math.random() * 0.55);
+      this.wsT = 3.5 + Math.random() * 5;
+    }
+    this.ws += (this.wsGoal * (1 - m) - this.ws) * k(1.3);
+    const br = Math.sin(this.t * TAU / lerp(4.2, 1.6, this.ex)) * (1 + 1.4 * this.ex);   // respiração
+    // olhar em volta (o protagonista desconfia e às vezes olha por cima do ombro)
+    const Lk = this.look;
+    Lk.timer -= dt;
+    if (o.still) { Lk.ty = Lk.tp = Lk.ttw = 0; Lk.timer = Math.max(Lk.timer, 1.5); }
+    else if (Lk.timer <= 0) this._newLook();
+    Lk.y += (Lk.ty - Lk.y) * k(4); Lk.p += (Lk.tp - Lk.p) * k(4); Lk.tw += (Lk.ttw - Lk.tw) * k(3);
+
+    // ---- quadril ----
+    const kv = Math.min(1, v / 1.4), kw = kv * (1 - r);
+    const ph = TAU * (this.cyc - g.duty / 2);                              // 0 = meio do apoio da perna 0
+    const yawG = m * lerp(0.07 * kw, 0.1, r) * Math.cos(TAU * this.cyc);   // a bacia gira com a perna que avança
+    const rollG = m * -lerp(0.045 * kw, 0.035, r) * Math.cos(ph);          // cai do lado da perna no ar
+    const lowYaw = m * clamp(Math.atan2(dx, dz), -1.3, 1.3) * 0.45;        // de lado: o quadril vira para onde anda
+    const lean = -clamp(Math.atan(v * this.turn / 9.8) * lerp(0.12, 0.5, r), -0.28, 0.28) * m;   // curva
+    const accLean = clamp(this.acc * 0.016, -0.1, 0.12) * m;
+    const H = this.hips;
+    H.rotation.set(m * lerp(0.025, 0.13, r) + accLean * 0.4 + air * 0.05, yawG + lowYaw, rollG + idle * 0.032 * this.ws + lean);
+    const hx = m * -lerp(0.022 * kw, 0.006, r) * Math.cos(ph) + idle * 0.03 * this.ws;
+    // (com a perna quase reta, 1 cm a menos já dobra o joelho uns 15°)
+    let hy = HIPS_Y - lerp(0.004 + 0.004 * Math.abs(this.ws), lerp(0.006, 0.035, r), m) - m * r * 0.02 * Math.cos(2 * ph);
+
+    // ---- pés ----
+    const F = this.F, wStep = lerp(0.075, 0.05, r);
+    let drop = 0;
+    for (let i = 0; i < 2; i++) {
+      const s = this.legs[i].side, ft = this.feet[i];
+      gaitFoot((this.cyc + i * 0.5) % 1, g, F);
+      // andando: ao longo da direção do movimento, um pouco afastado da linha do meio
+      const gx = s * wStep * dz + dx * F.z, gz = -s * wStep * dx + dz * F.z;
+      // parado: pés afastados, pontas para fora; a perna sem peso dobra e vai um pouco à frente
+      const free = Math.max(0, -s * this.ws);
+      ft.x = lerp(s * (0.112 + 0.012 * free), gx, m);
+      ft.z = lerp(0.012 * s + 0.045 * free, gz, m);
+      ft.y = lerp(ANKLE_H, F.y, m);
+      ft.pitch = F.pitch * m; ft.toe = F.toe * m;
+      ft.yaw = lerp(s * (0.13 + 0.05 * free), s * lerp(0.06, 0.03, r), m) + lowYaw;
+      ft.w = lerp(1, F.w, m);
+      // no ar: a perna da frente encolhe e a outra fica para trás; caindo, as duas descem para o pouso
+      if (air > 0.001) {
+        const ld = i === this.lead;
+        ft.x = lerp(ft.x, s * 0.1, air);
+        ft.y = lerp(ft.y, ld ? lerp(0.42, 0.16, fall) : lerp(0.2, 0.1, fall), air);
+        ft.z = lerp(ft.z, ld ? lerp(0.16, 0.1, fall) : lerp(-0.16, -0.04, fall), air);
+        ft.pitch = lerp(ft.pitch, lerp(0.45, 0.1, fall), air); ft.toe *= 1 - air;
+        ft.yaw = lerp(ft.yaw, s * 0.06, air); ft.w *= 1 - air;
+      }
+      // trocou entre andar de frente e de costas: os pés deslizam da pose anterior
+      if (this.fade > 0 && this.from?.[i].x !== undefined) {
+        const p = this.from[i], f = ease(this.fade);
+        for (const key of ['x', 'y', 'z', 'pitch', 'yaw', 'toe']) ft[key] = lerp(ft[key], p[key], f);
+      }
+      // o quadril não sobe além do que a perna apoiada alcança
+      if (ft.w > 0) {
+        const ddx = ft.x - (hx + s * HIP_X);
+        const reach = Math.sqrt(Math.max(0, LEG_MAX * LEG_MAX * 0.995 - ddx * ddx - ft.z * ft.z));
+        drop = Math.max(drop, (hy + HIP_DY - ft.y - reach) * ft.w);
+      }
+    }
+    this.fade = Math.max(0, this.fade - dt * 7);
+    this.drop += (Math.max(0, drop) - this.drop) * k(30);
+    H.position.set(hx, hy - this.drop + this.landY, 0);
+    for (let i = 0; i < 2; i++) {
+      const ft = this.feet[i], s = this.legs[i].side;
+      this._leg(this.legs[i], _tg.set(ft.x, ft.y, ft.z), _pole.set(Math.sin(ft.yaw) + s * 0.04, 0, Math.cos(ft.yaw)), ft.yaw, ft.pitch, ft.toe);
+    }
+
+    // ---- tronco e cabeça ----
+    const S = this.spine;
+    S.rotation.set(
+      m * lerp(0.02, 0.16, r) + accLean * 0.6 - br * 0.012 + air * lerp(0.1, -0.06, fall) - this.landY * 1.6 + (this.hero ? 0.03 * idle : 0),
+      -yawG * lerp(1.6, 1.3, r) - lowYaw + Lk.tw * idle,
+      -0.6 * rollG - idle * 0.02 * this.ws + lean * 0.3,
+    );
+    // a cabeça compensa o balanço do tronco e olha em volta
+    const tYaw = H.rotation.y + S.rotation.y, tPitch = H.rotation.x + S.rotation.x, tRoll = H.rotation.z + S.rotation.z;
+    const lookW = (1 - 0.65 * m) * (1 - air);
+    this.neck.rotation.set(-tPitch * 0.35, 0, -tRoll * 0.3);
+    this.head.rotation.set(
+      Lk.p * lookW - tPitch * 0.4 - m * r * 0.04,
+      Lk.y * lookW - tYaw * 0.9 + clamp(this.turn * 0.13, -0.4, 0.4) * m,
+      -tRoll * 0.45,
+    );
+
+    // ---- braços: balançam ao contrário da perna do mesmo lado; correndo, cotovelos a 90° ----
+    for (let i = 0; i < 2; i++) {
+      const A = this.arms[i], s = A.side;
+      const sw = Math.cos(TAU * ((this.cyc + i * 0.5) % 1 - lerp(0.05, 0.03, r)));   // +1 = braço atrás
+      const fw = Math.max(0, -sw), bk = Math.max(0, sw);
+      let shx = lerp(-0.06, -0.15, r) + lerp(0.27 * kv, 0.6, r) * sw;
+      let shz = s * lerp(0.095 - 0.05 * fw * kv, 0.16 - 0.1 * fw, r);
+      let elx = -lerp(0.2 + 0.3 * fw * kv, 1.475 + 0.275 * fw - 0.275 * bk, r);
+      let hdx = lerp(-0.14, -0.3, r);
+      // parado: braços soltos, cotovelo um pouco dobrado, ombros sobem com a respiração
+      shx = lerp(-0.035 - 0.008 * br, shx, m); shz = lerp(s * (0.105 + 0.004 * br), shz, m);
+      elx = lerp(-0.24, elx, m); hdx = lerp(-0.13, hdx, m);
+      // no ar: braços abertos para o equilíbrio
+      if (air > 0.001) {
+        shx = lerp(shx, lerp(-0.42, -0.15, fall), air); shz = lerp(shz, s * lerp(0.42, 0.72, fall), air);
+        elx = lerp(elx, -0.55, air);
+      }
+      shx -= this.landY * 2.5;
+      A.sh.rotation.set(shx, 0, shz);
+      A.el.rotation.set(elx, 0, 0);
+      A.hand.rotation.set(hdx, 0, s * 0.05);
+      A.sh.position.y = this.shY[i] + 0.004 * br * idle;
+    }
+  }
+
+  // novo ponto para onde olhar quando parado
+  _newLook() {
+    const L = this.look, R = Math.random();
+    if (this.hero && R < 0.16) {
+      // olha por cima do ombro, girando um pouco o tronco
+      const s = Math.random() < 0.5 ? -1 : 1;
+      L.ty = s * (0.95 + Math.random() * 0.25); L.ttw = s * 0.32; L.tp = 0.02; L.timer = 1.1 + Math.random() * 0.7;
+    } else if (R < 0.5) {
+      L.ty = (Math.random() - 0.5) * 0.3; L.ttw = 0; L.tp = (Math.random() - 0.5) * 0.1; L.timer = 2 + Math.random() * 3.5;
+    } else {
+      L.ty = (Math.random() * 2 - 1) * (this.hero ? 0.8 : 0.6); L.ttw = 0; L.tp = Math.random() * 0.18 - 0.08; L.timer = 1.4 + Math.random() * 2.8;
+    }
+  }
+
+  // IK de duas juntas no espaço do personagem: tornozelo no alvo, joelho para o polo,
+  // pé com guinada/inclinação (+ = ponta para baixo) e dedos dobrados (+ = para baixo)
+  _leg(L, target, pole, yaw, pitch, toe) {
+    const H = this.hips;
+    const hj = _hj.set(L.side * HIP_X, HIP_DY, 0).applyQuaternion(H.quaternion).add(H.position);
+    const d = _d.subVectors(target, hj);
+    const len = clamp(d.length(), 0.1, LEG_MAX);
+    d.normalize();
+    const knee = Math.PI - Math.acos(clamp((LEG_A * LEG_A + LEG_B * LEG_B - len * len) / (2 * LEG_A * LEG_B), -1, 1));
+    const al = Math.acos(clamp((LEG_A * LEG_A + len * len - LEG_B * LEG_B) / (2 * LEG_A * len), -1, 1));
+    // coxa: gira da linha quadril-tornozelo para o lado do joelho
+    const pn = _pn.copy(pole).addScaledVector(d, -pole.dot(d)).normalize();
+    const th = _th.copy(d).multiplyScalar(Math.cos(al)).addScaledVector(pn, Math.sin(al));
+    _Y.copy(th).negate();
+    _Z.copy(pn).addScaledVector(th, -pn.dot(th)).normalize();
+    _X.crossVectors(_Y, _Z);
+    const qT = _q.setFromRotationMatrix(_m4.makeBasis(_X, _Y, _Z));
+    L.hip.quaternion.copy(H.quaternion).invert().multiply(qT);
+    L.knee.rotation.set(knee, 0, 0);
+    _eu.set(pitch, yaw, 0);
+    L.ankle.quaternion.setFromEuler(_eu).premultiply(_q2.copy(qT).multiply(L.knee.quaternion).invert());
+    L.toe.rotation.set(toe, 0, 0);
   }
 }

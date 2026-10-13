@@ -97,7 +97,7 @@ export function buildHouse(B, ctx, s) {
   // aberturas
   if (s.style === 'factory') addFactoryOpenings(B, s, P, y0, top);
   else if (s.style !== 'pavilion') addOpenings(B, s, P, y0, ctx);
-  if (s.sign) addSign(B, s, P, y0, top);
+  if (s.sign) addSign(B, s, P, y0, top, ctx);
   if (s.chimney) {
     const cx = hw * 0.45, cz = -hd * 0.3;
     const p = P(cx, 0, cz);
@@ -331,16 +331,23 @@ function addFactoryOpenings(B, s, P, y0, top) {
   }
 }
 
-function addSign(B, s, P, y0, top) {
+function addSign(B, s, P, y0, top, ctx) {
   const hd = s.d / 2 + 0.06;
   const sw = Math.min(s.w * 0.8, 7), sh = s.signH || 0.8;
   const y = s.signY ?? (s.style === 'commercial' ? y0 + 2.55 : top - sh - 0.3);
   B.quad(s.sign, P(-sw / 2, y, hd), P(sw / 2, y, hd), P(sw / 2, y + sh, hd), P(-sw / 2, y + sh, hd));
   if (s.awning) {
-    // toldo listrado
+    // toldo listrado. A ponta desce até 50 cm, mas fica a pelo menos 2,15 m do chão
+    // embaixo dele: onde a rua é mais alta que a loja, ficava na altura da cabeça.
+    // Se nem reto ele passa por cima de quem anda na calçada, a loja fica sem toldo
     const aw = s.w * 0.92 / 2, ay = y0 + 2.5;
-    const a = P(-aw, ay - 0.5, hd + 1.3), b = P(aw, ay - 0.5, hd + 1.3), c = P(aw, ay, hd), d = P(-aw, ay, hd);
-    B.quad(s.awning, a, b, c, d, [[0, 0], [aw * 2 / 1.5, 0], [aw * 2 / 1.5, 1], [0, 1]]);
+    let g = -Infinity;
+    for (let lx = -aw; lx <= aw + 0.01; lx += Math.max(0.5, aw / 8)) for (const lz of [hd + 0.3, hd + 0.8, hd + 1.3]) { const p = P(lx, 0, lz); g = Math.max(g, ctx.surfaceAt(p[0], p[2])); }
+    if (g + 2.15 <= ay) {
+      const ye = Math.max(ay - 0.5, g + 2.15);
+      const a = P(-aw, ye, hd + 1.3), b = P(aw, ye, hd + 1.3), c = P(aw, ay, hd), d = P(-aw, ay, hd);
+      B.quad(s.awning, a, b, c, d, [[0, 0], [aw * 2 / 1.5, 0], [aw * 2 / 1.5, 1], [0, 1]]);
+    }
   }
 }
 
@@ -470,6 +477,8 @@ function addFence(B, ctx, s, P) {
     const vs = [V(a, -1), V(b, -1), V(b, 1), V(a, 1)];
     B.quadOut('stonePath', ...vs, [0, 1, 0], vs.map(v => [v[0] / 2, v[2] / 2]));
   }
+  // as lajotas ficam 4 cm acima do chão: entram no chão de quem pisa nelas
+  ctx.walkways?.addPolyline(pts.map(p => L(p[0], p[1])), { hw: 0.5, dy: 0.04, edge: 0, edgeDy: 0.04 });
 }
 
 // ---------- posicionamento ao longo das ruas ----------

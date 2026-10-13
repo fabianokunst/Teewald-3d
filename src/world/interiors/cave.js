@@ -132,8 +132,8 @@ export function build(ctx, B, o) {
     return dCh(x, z) < Rch(Math.atan2(z - CH.z, x - CH.x)) + m;
   };
 
-  // ---------------- piso: malha de terra e caixas caminháveis ----------------
-  const G = 0.75, hc = new Map(), rows = new Map();
+  // ---------------- piso: malha de terra ----------------
+  const G = 0.75, hc = new Map();
   const Hg = (i, j) => { const k = i * 1000 + j; if (!hc.has(k)) hc.set(k, H(i * G, j * G)); return hc.get(k); };
   for (let i = -2; i < 60; i++) for (let j = -4; j < 48; j++) {
     const cx = (i + 0.5) * G, cz = (j + 0.5) * G;
@@ -142,19 +142,49 @@ export function build(ctx, B, o) {
     const col = (x, z) => { const k = 0.5 + 0.22 * Math.sin(x * 0.8 + Math.sin(z * 0.5) * 2) * Math.cos(z * 0.7) + hash(x * 4 | 0, z * 4 | 0) * 0.12; return [k * 1.05, k * 0.95, k * 0.82]; };
     const x0 = i * G, x1 = x0 + G, z0 = j * G, z1 = z0 + G;
     K.quad('dirt', [x0, ya, z0], [x0, yd, z1], [x1, yc, z1], [x1, yb, z0], [[x0 / 2, z0 / 2], [x0 / 2, z1 / 2], [x1 / 2, z1 / 2], [x1 / 2, z0 / 2]], [col(x0, z0), col(x0, z1), col(x1, z1), col(x1, z0)]);
-    if (inside(cx, cz, 0.9)) { if (!rows.has(j)) rows.set(j, []); rows.get(j).push([i, H(cx, cz)]); }
   }
-  // caixas caminháveis: células vizinhas de altura parecida viram uma faixa só
-  for (const [j, cells] of rows) {
-    cells.sort((a, b) => a[0] - b[0]);
-    let run = null;
-    const flush = () => { if (!run) return; const n = run.i1 - run.i0 + 1, y = run.sum / n; K.walk((run.i0 + n / 2) * G, (j + 0.5) * G, n * G / 2 + 0.01, G / 2 + 0.01, y); run = null; };
-    for (const [i, h] of cells) {
-      if (run && i === run.i1 + 1 && Math.abs(h - run.h0) < 0.05 && i - run.i0 < 12) { run.i1 = i; run.sum += h; }
-      else { flush(); run = { i0: i, i1: i, h0: h, sum: h }; }
+  // altura exata da malha de terra (os mesmos triângulos do desenho, diagonal de
+  // (x0, z0) a (x1, z1)): é o chão de quem anda na gruta. As caixas planas por
+  // célula que havia antes deixavam os pés até 10 cm dentro da terra nas subidas,
+  // e entre elas e a parede o jogador caía para baixo do chão
+  const meshH = (x, z) => {
+    const fi = x / G, fj = z / G, i = Math.floor(fi), j = Math.floor(fj), u = fi - i, v = fj - j;
+    const ya = Hg(i, j), yb = Hg(i + 1, j), yc = Hg(i + 1, j + 1), yd = Hg(i, j + 1);
+    return v >= u ? ya + (yd - ya) * v + (yc - yd) * u : ya + (yb - ya) * u + (yc - yb) * v;
+  };
+  // mancha no chão (brilho, fuligem) colada na terra: um quadrado plano flutuava até
+  // 40 cm onde o chão desce e cobria as pernas de quem passava por baixo dele.
+  // Recorta cada triângulo da malha pelo retângulo; uv(x, z) em metros locais
+  const groundDecal = (mat, x0, z0, x1, z1, lift, uv) => {
+    for (let i = Math.floor(x0 / G); i * G < x1; i++) for (let j = Math.floor(z0 / G); j * G < z1; j++) {
+      const a0 = i * G, b0 = j * G, a1 = a0 + G, b1 = b0 + G;
+      for (const t of [[[a0, b0], [a0, b1], [a1, b1]], [[a0, b0], [a1, b1], [a1, b0]]]) {
+        let pts = t;
+        for (const [ax, sg, lim] of [[0, 1, x0], [0, -1, x1], [1, 1, z0], [1, -1, z1]]) {
+          const out = [];
+          for (let m = 0; m < pts.length; m++) {
+            const p = pts[m], q = pts[(m + 1) % pts.length], sp = sg * (p[ax] - lim), sq = sg * (q[ax] - lim);
+            if (sp >= 0) out.push(p);
+            if ((sp >= 0) !== (sq >= 0)) { const k = sp / (sp - sq); out.push([p[0] + (q[0] - p[0]) * k, p[1] + (q[1] - p[1]) * k]); }
+          }
+          pts = out;
+          if (pts.length < 3) break;
+        }
+        if (pts.length < 3) continue;
+        const P3 = pts.map(([x, z]) => [x, meshH(x, z) + lift, z]);
+        for (let m = 1; m < P3.length - 1; m++) {
+          const A = P3[0], Bq = P3[m], C = P3[m + 1];
+          const ny = (Bq[2] - A[2]) * (C[0] - A[0]) - (Bq[0] - A[0]) * (C[2] - A[2]);
+          if (Math.abs(ny) < 1e-7) continue;
+          const [p, q] = ny > 0 ? [Bq, C] : [C, Bq];
+          K.tri(mat, A, p, q, uv(A[0], A[2]), uv(p[0], p[2]), uv(q[0], q[2]));
+        }
+      }
     }
-    flush();
-  }
+  };
+  const glowUV = (x, z) => [x / 99, z / 99];
+  // mancha quadrada (lado 2s) centrada em (x, z), textura inteira
+  K.decal = (mat, x, z, s, lift) => groundDecal(mat, x - s, z - s, x + s, z + s, lift, (px, pz) => [(px - x + s) / (2 * s), (pz - z + s) / (2 * s)]);
 
   // ---------------- paredes do túnel (anéis de rocha irregular) ----------------
   const JN = 10;
@@ -199,7 +229,7 @@ export function build(ctx, B, o) {
     const cx = A.p.x - dx * 1.6, cz = A.p.z - dz * 1.6, rot = Math.atan2(dx, dz);
     K.face('int:g:night', cx, A.y - 1.5, cz, 9, 7, rot);
     K.hit(A.p.x - dx * 0.6, A.p.z - dz * 0.6, A.w + 1, 0.3, Math.atan2(-dz, dx) + Math.PI / 2, A.y - 1, A.y + 5, true);
-    K.floor('int:g:glowFloor', A.p.x - 2, A.p.z - 1, A.p.x + 2, A.p.z + 2.5, A.y + 0.03, 99, null, 0);
+    groundDecal('int:g:glowFloor', A.p.x - 2, A.p.z - 1, A.p.x + 2, A.p.z + 2.5, 0.03, glowUV);
   }
 
   // ---------------- salão: cúpula irregular ----------------
@@ -256,7 +286,8 @@ export function build(ctx, B, o) {
     }
     const top = pt(0, ne);
     for (let i = 0; i < na; i++) K.triOut('int:g:rock', top, pt(i, ne - 1), pt(i + 1, ne - 1), [0, 1, 0], [0, 0], [r, 0], [0, r], gray(k * 1.2), gray(k * 1.1), gray(k * 1.1));
-    if (coll && y + r * flat > H(x, z) + 0.3) K.round(x, z, r * 0.75, y - r, y + r * flat, r > 0.9);
+    // raio médio da pedra (cada ponto varia de 0,75 a 1,25 r): com 0,75 r o corpo entrava nela
+    if (coll && y + r * flat > H(x, z) + 0.3) K.round(x, z, r, y - r, y + r * flat, r > 0.9);
   };
   const cone = (x, y, z, r, len, down, k = 0.38) => {
     const tip = [x + (hash(x * 9 | 0, 1) - 0.5) * 0.1, y + (down ? -len : len), z];
@@ -276,7 +307,7 @@ export function build(ctx, B, o) {
     if (Math.hypot(x - tunEnd.p.x, z - tunEnd.p.z) < 4) continue;
     const y = H(x, z), rr = 0.15 + R() * 0.3, len = 0.4 + R() * 1.6;
     cone(x, y - 0.1, z, rr, len, false);
-    if (rr > 0.25) K.round(x, z, rr * 0.8, y, y + len);
+    K.round(x, z, Math.max(0.12, rr * 0.8), y, y + len);   // as finas também: senão o corpo passa por dentro
   }
   for (let i = 0; i < 22; i++) {
     const a = R() * Math.PI * 2, r = Rch(a) * (0.86 + R() * 0.1), x = CH.x + Math.cos(a) * r, z = CH.z + Math.sin(a) * r;
@@ -285,12 +316,12 @@ export function build(ctx, B, o) {
   }
   for (let i = 2; i < rings.length - 2; i += 2) {
     const rg = rings[i], sd = R() < 0.5 ? -1 : 1, x = rg.p.x + rg.nx * sd * rg.w * 0.8, z = rg.p.z + rg.nz * sd * rg.w * 0.8;
-    rockBlob(x, H(x, z), z, 0.4 + R() * 0.5, 0.32, 0.6, false);
+    rockBlob(x, H(x, z), z, 0.4 + R() * 0.5, 0.32, 0.6);
   }
   // pedras escondendo a emenda do túnel com o salão
   for (const sd of [-1, 1]) {
     const x = tunEnd.p.x + tunEnd.nx * sd * (tunEnd.w + 0.3), z = tunEnd.p.z + tunEnd.nz * sd * (tunEnd.w + 0.3);
-    rockBlob(x, H(x, z), z, 1.4, 0.32, 1.4, false);
+    rockBlob(x, H(x, z), z, 1.4, 0.32, 1.4);
   }
 
   // ---------------- cristais verdes ----------------
@@ -306,11 +337,13 @@ export function build(ctx, B, o) {
       facetPrism(K, V.add(base, V.scl(d, -0.1)), mid, r, r, k, hash(i, 19) * 2);
       facetPrism(K, mid, tip, r, 0, k * 1.15, hash(i, 19) * 2);
     }
+    // o cacho é sólido (os do teto ficam fora do alcance)
+    if (s >= 0.5 && y < H(x, z) + 1.2) K.round(x + dx * 0.45 * s, z + dz * 0.45 * s, 0.5 * s, y - 0.3, y + 1.3 * s);
     // brilho: dois quadros cruzados e mancha no chão
     const g = 0.9 * s, cy = y + 0.45 * s;
     K.quad('int:g:glow', [x - g, cy - g, z], [x + g, cy - g, z], [x + g, cy + g, z], [x - g, cy + g, z]);
     K.quad('int:g:glow', [x, cy - g, z - g], [x, cy - g, z + g], [x, cy + g, z + g], [x, cy + g, z - g]);
-    K.floor('int:g:glowFloor', x - 2.4 * s, z - 2.4 * s, x + 2.4 * s, z + 2.4 * s, H(x, z) + 0.04, 99, null, 0);
+    groundDecal('int:g:glowFloor', x - 2.4 * s, z - 2.4 * s, x + 2.4 * s, z + 2.4 * s, 0.04, glowUV);
     glowAt.push([x, y, z]);
   };
   // cristal 1: na parede do túnel, no meio do caminho
@@ -328,7 +361,7 @@ export function build(ctx, B, o) {
   {
     const { x, z } = METEOR, y = H(x, z);
     rockBlob(x, y + 0.1, z, 1.5, 0.16, 0.75);
-    K.quad('int:g:scorch', [x - 3.4, y + 0.035, z - 3.4], [x - 3.4, y + 0.035, z + 3.4], [x + 3.4, y + 0.035, z + 3.4], [x + 3.4, y + 0.035, z - 3.4], [[0, 0], [0, 1], [1, 1], [1, 0]]);
+    groundDecal('int:g:scorch', x - 3.4, z - 3.4, x + 3.4, z + 3.4, 0.035, (px, pz) => [(px - x + 3.4) / 6.8, (pz - z + 3.4) / 6.8]);
     crystals(x - 0.5, y + 0.9, z - 0.3, [-1, 1.2, -0.4], 1.3, 9);
     crystals(x + 0.6, y + 0.7, z + 0.6, [0.6, 1, 0.8], 0.9, 6);
     crystals(x - 0.2, y + 1.15, z + 0.4, [0, 1, 0], 0.8, 5);
@@ -348,7 +381,7 @@ export function build(ctx, B, o) {
     for (let i = 0; i < 6; i++) bone(K, x + (R() - 0.5) * 1.6, y + 0.12, z + (R() - 0.5) * 1.6, R() * 6, 0.35 + R() * 0.2);
     sheepSkull(K, x + 0.4, y + 0.1, z - 0.3, 2.4);
     crystals(x - 0.5, y + 0.05, z + 0.5, [0.2, 1, 0.1], 0.35, 4);
-    K.quad('int:g:blood', [x - 1.2, y + 0.03, z - 1.2], [x - 1.2, y + 0.03, z + 1.2], [x + 1.2, y + 0.03, z + 1.2], [x + 1.2, y + 0.03, z - 1.2], [[0, 0], [0, 1], [1, 1], [1, 0]]);
+    K.decal('int:g:blood', x, z, 1.2, 0.03);
   }
 
   // ---------------- carcaças, ossos, penas e sangue ----------------
@@ -371,10 +404,9 @@ export function build(ctx, B, o) {
   // trilha de sangue arrastado do túnel até o ninho
   for (let i = 0; i < 16; i++) {
     const t = i / 15, x = tunEnd.p.x + (NEST.x - tunEnd.p.x) * t + Math.sin(i * 1.9) * 0.6, z = tunEnd.p.z + (NEST.z - tunEnd.p.z) * t + Math.cos(i * 1.3) * 0.5, s = 0.35 + R() * 0.4;
-    const y = H(x, z) + 0.03;
-    K.quad('int:g:blood', [x - s, y, z - s], [x - s, y, z + s], [x + s, y, z + s], [x + s, y, z - s], [[0, 0], [0, 1], [1, 1], [1, 0]]);
+    K.decal('int:g:blood', x, z, s, 0.03);
   }
-  for (let i = 4; i < rings.length; i += 3) { const rg = rings[i], s = 0.3 + R() * 0.3, x = rg.p.x + rg.nx * (R() - 0.5), z = rg.p.z + rg.nz * (R() - 0.5), y = H(x, z) + 0.03; K.quad('int:g:blood', [x - s, y, z - s], [x - s, y, z + s], [x + s, y, z + s], [x + s, y, z - s], [[0, 0], [0, 1], [1, 1], [1, 0]]); }
+  for (let i = 4; i < rings.length; i += 3) { const rg = rings[i], s = 0.3 + R() * 0.3, x = rg.p.x + rg.nx * (R() - 0.5), z = rg.p.z + rg.nz * (R() - 0.5); K.decal('int:g:blood', x, z, s, 0.03); }
   // poças escuras de goteira
   B.col = [0.3, 0.33, 0.32];
   for (const [x, z, s] of [[26.5, 19.0, 1.0], [8.4, 8.0, 0.7], [31.8, 27.8, 0.8]]) K.poly('water', Array.from({ length: 9 }, (_, i) => { const a = i / 9 * 6.28; return [x + Math.cos(a) * s * (0.7 + hash(i, s * 10 | 0) * 0.5), z + Math.sin(a) * s * 0.7]; }), H(x, z) + 0.02, 1);
@@ -438,7 +470,9 @@ export function build(ctx, B, o) {
     // ponto (mundo) dentro da gruta? (para a missão sortear lugares)
     dark: false,       // true = os cristais quase apagam (sobra o luar da boca)
     isInside: (x, z, m = -0.6) => inside(x - o.x, z - o.z, m),
-    groundY: (x, z) => o.y + H(x - o.x, z - o.z),
+    groundY: (x, z) => o.y + meshH(x - o.x, z - o.z),
+    // chão de quem anda (world.groundAt): a malha de terra desenhada
+    ground: (x, z) => o.y + meshH(x - o.x, z - o.z),
     update(dt, t, active) {
       if (!active) return;
       for (const f of anim) f(dt, t);
@@ -521,7 +555,7 @@ function sheepSkeleton(K, H, x, z, rot) {
   sheepSkull(K, sk[0], sk[1], sk[2], rot + 0.5);
   K.round(x, z, 0.5, y, y + 0.45);
   const s = 1.1;
-  K.quad('int:g:blood', [x - s, y + 0.025, z - s], [x - s, y + 0.025, z + s], [x + s, y + 0.025, z + s], [x + s, y + 0.025, z - s], [[0, 0], [0, 1], [1, 1], [1, 0]]);
+  K.decal('int:g:blood', x, z, s, 0.025);
 }
 
 // ovelha meio comida: corpo de lã aberto nas costelas
@@ -536,7 +570,7 @@ function sheepRemains(K, R, H, x, z, rot) {
   for (const [lx, lz] of [[-0.18, -0.4], [0.2, -0.45], [-0.2, 0.5]]) F.beam('carPaint', [lx, 0.1, lz], [lx * 2.2, 0.03, lz * 1.4], 0.05, 0.05, [0.2, 0.17, 0.14]);
   K.round(x, z, 0.6, y, y + 0.5);
   const s = 1.3;
-  K.quad('int:g:blood', [x - s, y + 0.025, z - s], [x - s, y + 0.025, z + s], [x + s, y + 0.025, z + s], [x + s, y + 0.025, z - s], [[0, 0], [0, 1], [1, 1], [1, 0]]);
+  K.decal('int:g:blood', x, z, s, 0.025);
   for (let i = 0; i < 6; i++) woolTuft(K, x + (R() - 0.5) * 2.4, y + 0.02, z + (R() - 0.5) * 2.4, 0.12 + R() * 0.1, R);
 }
 

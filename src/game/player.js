@@ -20,6 +20,7 @@ export class Player {
     this.moveScale = 1;   // golpes e esquiva deixam o passo mais curto
     this.lockHeading = false;   // durante um golpe o corpo não vira com o analógico
     this.noJump = false;
+    this.stepT = 0;       // tempo que ainda sobe/desce suave depois de um degrau
     character.onStep = run => this.audio.step(this.surface(), run);
   }
 
@@ -34,7 +35,7 @@ export class Player {
   surface() {
     const { x, z } = this.pos;
     if (roadSurfaceAt(this.ctx.roads, this.ctx.terrain, x, z) !== null) return 'stone';
-    for (const f of this.ctx.floors) if (pointInPoly(x, z, f.poly)) return 'stone';
+    for (const f of this.ctx.floors) if (pointInPoly(x, z, f.poly)) return f.surface || 'stone';
     if (this.ctx.landmarks && this.ctx.zones.placeAt(x, z) === 'CALÇADÃO DO RIO CADEIA') return 'stone';
     if (this.ctx.zones.isForest(x, z)) return 'leaves';
     return 'grass';
@@ -81,12 +82,16 @@ export class Player {
       if (mag > 0.05) this.strafe = [dx, dz];
       if (this.strafe) [hx, hz] = this.strafe;
     } else this.strafe = null;
-    // de costas para onde anda: as pernas andam para trás
-    const stepDir = aiming && hx * Math.sin(this.heading) + hz * Math.cos(this.heading) < -0.3 ? -1 : 1;
+    // direção do passo no espaço do personagem: mirando, anda de lado e de costas
+    const ch = Math.cos(this.heading), sh = Math.sin(this.heading), step = this._step ||= {};
+    step.mx = hx * ch - hz * sh; step.mz = hx * sh + hz * ch;
     // move na direção em que o personagem olha (curvas suaves), em passos curtos
     // para não atravessar muros finos quando o quadro demora (até 0,1 s)
     const dist = this.speed * dt, n = Math.max(1, Math.ceil(dist / 0.12));
     let gPrev = this.ctx.groundAt(this.pos.x, this.pos.z, this.pos.y);
+    // maior desnível entre dois passos de 12 cm (degrau, meio-fio, borda de piso), ou
+    // entre os pés e o chão (ainda subindo o degrau anterior, esquiva, empurrão)
+    let edge = this.grounded ? Math.abs(gPrev - this.pos.y) : 0;
     for (let i = 0; i < n; i++) {
       const ox = this.pos.x, oz = this.pos.z;
       this.pos.x += hx * dist / n;
@@ -101,6 +106,7 @@ export class Player {
         this.pos.x = ox; this.pos.z = oz; this.speed *= 0.5;
         break;
       }
+      edge = Math.max(edge, Math.abs(g - gPrev));
       gPrev = g;
     }
     const b = PLAY_BOUNDS;
@@ -110,16 +116,24 @@ export class Player {
     // gravidade e chão
     const ground = this.ctx.groundAt(this.pos.x, this.pos.z, this.pos.y);
     if (input && !this.auto && !aiming && !this.noJump && this.grounded && input.jump()) { this.vel.y = 4.6; this.grounded = false; }
+    if (edge > 0.08) this.stepT = 0.15;
     if (this.grounded) {
       if (ground < this.pos.y - 0.45) { this.grounded = false; this.vel.y = 0; }
-      else this.pos.y += (ground - this.pos.y) * Math.min(1, dt * 18);
+      // degrau: desce suave (~0,1 s) e sobe quase na hora (no máximo 5 cm dentro do
+      // degrau). Ladeira e rampa: os pés acompanham o chão na hora — com o atraso,
+      // correndo morro acima afundavam até 12 cm
+      else if (this.stepT > 0) this.pos.y = Math.max(this.pos.y + (ground - this.pos.y) * Math.min(1, dt * 18), ground - 0.05);
+      else this.pos.y = ground;
     }
+    if (this.stepT > 0) this.stepT -= dt;
     if (!this.grounded) {
       this.vel.y -= 13 * dt;
       this.pos.y += this.vel.y * dt;
       if (this.pos.y <= ground) { this.pos.y = ground; this.vel.y = 0; this.grounded = true; }
     }
-    this.ch.update(dt, this.speed, this.grounded, run, stepDir);
+    step.vy = this.vel.y;
+    step.still = !input;   // conversa, leitura, cena: olha para a frente (sem olhar em volta)
+    this.ch.update(dt, this.speed, this.grounded, run, step);
     this.sync(ground);
     return { moving: mag > 0.05 };
   }

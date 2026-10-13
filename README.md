@@ -244,11 +244,19 @@ feitos em código. O cenário fica em `src/world/chupaSites.js` e a missão em
   comentam; mirada, levantam as mãos; um tiro por perto os faz encolher e
   fugir. Ninguém se machuca.
 - **Protagonista** com ~1200 triângulos numa malha única com esqueleto
-  (cotovelos e joelhos contínuos ao dobrar), sombreamento suave e visual sério,
-  no estilo dos survival horror de PS1: rosto realista pintado com pincel macio
-  (olhos fundos, sobrancelhas retas, barba por fazer), cabelo loiro
-  penteado para trás, jaqueta de couro marrom com lapelas sobre suéter cinza em V,
-  calça escura e botas.
+  (cotovelos e joelhos contínuos ao dobrar), sombreamento suave com oclusão
+  assada nos vértices e visual sério, no estilo dos survival horror de PS1:
+  textura própria em 256 px, rosto realista pintado com pincel macio (olhos
+  fundos, sobrancelhas retas, barba por fazer), cabelo loiro penteado para trás
+  fio a fio, jaqueta de couro marrom pespontada com lapelas sobre suéter cinza
+  em V, calça escura e botas.
+- **Animação** procedural com IK nas pernas: o pé apoiado fica plantado no chão
+  e rola do calcanhar para a ponta, o quadril sobe e desce com a passada e o
+  tronco gira ao contrário; corrida inclinada com braços a 90°; inclina nas
+  curvas, dá passos ao girar no lugar, encolhe as pernas no pulo e amortece o
+  pouso; mirando, anda de lado e de costas; parado, respira, troca o apoio
+  entre as pernas e olha desconfiado em volta. Os moradores usam o mesmo
+  esqueleto e a mesma caminhada.
 - Milhares de árvores (araucárias, plátanos de outono, nativas, pinheiros,
   ciprestes) e folhas caindo.
 - **Clima de terror**: céu encoberto, neblina fechada, luz fria, cores sem

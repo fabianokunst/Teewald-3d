@@ -410,8 +410,8 @@ export class Guns {
     const f = this._aimDir(this._v);
     const pitch = Math.asin(Math.max(-1, Math.min(1, f.y)));
     ch.spine.rotation.x = lerp(ch.spine.rotation.x, -pitch * 0.3, a);
-    ch.spine.rotation.y = lerp(ch.spine.rotation.y, 0, a);
-    ch.hips.rotation.y = lerp(ch.hips.rotation.y, 0, a);
+    // o tronco fica de frente para a mira; o quadril segue as pernas (andando de lado, vira junto)
+    ch.spine.rotation.y = lerp(ch.spine.rotation.y, -ch.hips.rotation.y, a);
     ch.head.rotation.x = lerp(ch.head.rotation.x, -pitch * 0.45, a);
     ch.head.rotation.y = lerp(ch.head.rotation.y, 0, a);
     ch.root.updateMatrixWorld(true);

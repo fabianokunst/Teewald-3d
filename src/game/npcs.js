@@ -452,10 +452,12 @@ class NPC {
     if (this.mode === 'sit') {
       const sy = this.scale, hipsY = this.seat.seat / sy + 0.14, H = hipsY - 0.06;
       const th = Math.acos(clamp((H - 0.45) / 0.42, 0, 1));
-      ch.hips.position.y = hipsY;
-      ch.hips.rotation.y = 0; ch.spine.rotation.y = 0; ch.spine.rotation.x = -0.05;
-      for (const l of ch.legs) { l.hip.rotation.x = -th; l.knee.rotation.x = th + 0.05; l.ankle.rotation.x = -0.05; }
-      ch.legs[0].hip.rotation.z = 0.06; ch.legs[1].hip.rotation.z = -0.06;
+      ch.hips.position.set(0, hipsY, 0);
+      ch.hips.rotation.set(0, 0, 0); ch.spine.rotation.set(-0.05, 0, 0);
+      for (const l of ch.legs) {
+        l.hip.rotation.set(-th, 0, -l.side * 0.06); l.knee.rotation.set(th + 0.05, 0, 0);
+        l.ankle.rotation.set(-0.05, 0, 0); l.toe.rotation.set(0, 0, 0);
+      }
       arm(Rr, -0.42, 0.06, -0.7, 1); arm(Lf, -0.42, -0.06, -0.7, 1);
     }
 

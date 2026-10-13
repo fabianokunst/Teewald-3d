@@ -187,7 +187,10 @@ export class SegmentIndex {
     }
   }
   addPolyline(pts, data) {
+    const first = this.segs.length;
     for (let i = 1; i < pts.length; i++) this.add(pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1], data);
+    // posição de cada trecho na linha: i de n (o primeiro e o último têm uma ponta solta)
+    for (let k = first; k < this.segs.length; k++) { this.segs[k].i = k - first; this.segs[k].n = this.segs.length - first; }
   }
   candidates(x, z) {
     return this.map.get(Math.floor(x / this.cell) * 100000 + Math.floor(z / this.cell)) || [];

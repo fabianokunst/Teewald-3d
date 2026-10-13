@@ -218,6 +218,14 @@ export function buildLandmarks(B, ctx) {
 
 function tree(ctx, t, x, z, s = 1, c = null) { ctx.trees.push({ t, x, z, s, c }); }
 
+// piso colado no relevo (polígono convexo), dy acima do terreno, e registrado como
+// piso: os pés pisam na mesma altura do desenho. uv(x, z) dá a textura
+function drapeFloor(B, ctx, mat, poly, dy, uv, surface = 'stone') {
+  const T = ctx.terrain, up = p => [p[0], p[1] + dy, p[2]];
+  T.drape(poly, (a, b, c) => B.tri(mat, up(a), up(b), up(c), uv(a[0], a[2]), uv(b[0], b[2]), uv(c[0], c[2])));
+  ctx.floors.push({ poly, y: (x, z) => T.heightAt(x, z) + dy, surface });
+}
+
 // fora da pista (e da calçada) de qualquer rua?
 function offRoad(ctx, x, z, m = 0.4) {
   const q = ctx.roads.index.clearance(x, z, d => d.rank >= 1);
@@ -257,16 +265,20 @@ function buildChurchArea(B, ctx, ch) {
   const res = buildChurch(B, ctx, { x: ch.x, z: ch.z, rot: ch.rot, y: ch.y, apse: false });
   const { P, W } = frame({ x: ch.x, z: ch.z, rot: ch.rot });
   const hl = CHURCH.L / 2;
-  // adro em pedra
+  // coordenadas locais da igreja (inverso de W)
+  const c = Math.cos(ch.rot), s = Math.sin(ch.rot);
+  const local = (x, z) => { const dx = x - ch.x, dz = z - ch.z; return [dx * c - dz * s, dx * s + dz * c]; };
+  // adro em pedra e calçada em volta, colados no relevo: perto da rua o terreno desce
+  // (ela é mais baixa que a igreja) e um piso plano ficava até 75 cm acima do chão
+  // onde se pisa. Cada um entra como piso, com a mesma altura do desenho
   const z0 = hl + 1.2, z1 = ch.dist - 2.5;
-  B.quad('stonePath', P(-11, ch.y + 0.02, z1), P(11, ch.y + 0.02, z1), P(11, ch.y + 0.02, z0 - 4), P(-11, ch.y + 0.02, z0 - 4),
-    [[0, 0], [11, 0], [11, (z1 - z0 + 4) / 2], [0, (z1 - z0 + 4) / 2]], null, 4);
-  // calçada em volta da igreja
+  const adro = [W(-11, z1), W(11, z1), W(11, z0 - 4), W(-11, z0 - 4)];
+  drapeFloor(B, ctx, 'stonePath', adro, 0.02, (x, z) => { const [lx, lz] = local(x, z); return [(lx + 11) / 2, (z1 - lz) / 2]; });
   for (const side of [1, -1]) {
     const x0 = side * (CHURCH.W / 2 + 0.2), x1 = side * (CHURCH.W / 2 + 2.4);
     const a = side > 0 ? [x0, x1] : [x1, x0];
-    B.quad('pavers', P(a[0], ch.y + 0.02, z0 - 4), P(a[1], ch.y + 0.02, z0 - 4), P(a[1], ch.y + 0.02, -hl - 2), P(a[0], ch.y + 0.02, -hl - 2),
-      [[0, 0], [1.1, 0], [1.1, hl], [0, hl]], null, 4);
+    const walk = [W(a[0], z0 - 4), W(a[1], z0 - 4), W(a[1], -hl - 2), W(a[0], -hl - 2)];
+    drapeFloor(B, ctx, 'pavers', walk, 0.02, (x, z) => { const [lx, lz] = local(x, z); return [(lx - a[0]) / 2, (z0 - 4 - lz) / 2]; });
   }
   // araucárias e lampiões na frente
   for (const side of [1, -1]) {
@@ -500,6 +512,9 @@ function buildCalcadao(B, ctx, cd) {
       }
     }
   }
+  // o caminho fica 12 cm acima do terreno (15 na borda): entra no chão de quem anda
+  // nele, senão os pés afundam nas lajotas
+  ctx.walkways.addPolyline(path, { hw, dy: 0.12, edge: 0.25, edgeDy: 0.15 });
   // passarela de madeira onde o caminho cruza o rio (sem ela o caminho afunda na água)
   const wet = p => { const w = T.waterAt(p[0], p[1]); return w && w.river.width > 5 && T.heightAt(p[0], p[1]) < w.level + 0.2 ? w : null; };
   for (let i = 1; i < path.length - 1; i++) {
@@ -701,6 +716,8 @@ function buildField(B, ctx, f) {
   const { P } = frame({ x: f.c[0], z: f.c[1], rot: ang });
   const hl = 44, hw = 27, y = f.y + 0.05;
   B.quad('field', P(-hw - 3, y, -hl - 3), P(-hw - 3, y, hl + 3), P(hw + 3, y, hl + 3), P(hw + 3, y, -hl - 3), [[0, 0], [0, 8], [5, 8], [5, 0]], null, 6);
+  // o gramado fica 5 cm acima do terreno aplainado
+  ctx.floors.push({ poly: [P(-hw - 3, 0, -hl - 3), P(-hw - 3, 0, hl + 3), P(hw + 3, 0, hl + 3), P(hw + 3, 0, -hl - 3)].map(p => [p[0], p[2]]), y, surface: 'grass' });
   const line = (x0, z0, x1, z1) => {
     const dx = x1 - x0, dz = z1 - z0, l = Math.hypot(dx, dz), nx = -dz / l * 0.06, nz = dx / l * 0.06;
     B.quad('paint', P(x0 - nx, y + 0.02, z0 - nz), P(x0 + nx, y + 0.02, z0 + nz), P(x1 + nx, y + 0.02, z1 + nz), P(x1 - nx, y + 0.02, z1 - nz));
