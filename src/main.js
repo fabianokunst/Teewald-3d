@@ -13,6 +13,7 @@ import { Character } from './game/character.js';
 import { Player } from './game/player.js';
 import { ThirdPersonCamera } from './game/camera.js';
 import { Menu } from './ui/menu.js';
+import { TouchMenu } from './ui/touchMenu.js';
 import { Hud } from './ui/hud.js';
 import { Minimap } from './ui/minimap.js';
 import { Inventory, PISTOL_MAG } from './game/items.js';
@@ -38,7 +39,7 @@ const hud = new Hud();
 // sol de fim de tarde vindo do noroeste (hemisfério sul)
 G.uSunDir.value.set(-0.62, 0.4, -0.68).normalize();
 
-let ctx, character, player, tpc, menu, minimap;
+let ctx, character, player, tpc, menu, minimap, touchMenu;
 let inventory, pistol, effects, targets, invScreen;
 let npcs, mission;
 let state = 'loading';
@@ -67,6 +68,11 @@ function keepAwake() {
 }
 
 function pauseGame() { menu.open('pause'); setState('pause'); input.unlock(); }
+
+// menus com botões grandes enquanto o último aparelho usado for o toque
+const touchUI = () => input.lastDevice === 'touch';
+// celular em pé (imagem em cima, área livre embaixo)
+const invPanel = () => touchUI() && !!input.touch.L?.portrait;
 
 // trocou de aplicativo ou de aba: pausa e silencia
 document.addEventListener('visibilitychange', () => {
@@ -125,6 +131,8 @@ async function boot() {
   // missão 1: o chupacabras (cartaz, galinheiro, pegadas, luta na clareira)
   mission = new Mission({ ctx, scene, audio, input, player, character, tpc, camera, inventory, pistol, targets, effects, hud, R, npcs });
   menu = new Menu(input, audio, settings, applySettings);
+  // no toque, as mesmas telas com botões grandes na tela inteira
+  touchMenu = new TouchMenu(menu, input, audio);
   setupStart();
   exposeDebug();
   if (params.get('skip') === '1') { startGame(false); fade = 0; }
@@ -204,7 +212,7 @@ function loop(now) {
   const mouseInt = R.toInternal(input.mouse.x, input.mouse.y);
   if (state === 'title') {
     titleCamera(dt);
-    const act = menu.update(dt, mouseInt);
+    const act = touchUI() ? touchMenu.update(dt) : menu.update(dt, mouseInt);
     if (act === 'newgame' && !onFaded) fadeTo(() => { startGame(true); fadeTarget = 0; fadeSpeed = 0.5; });
   } else if (state === 'intro') {
     playIntro(dt);
@@ -242,11 +250,13 @@ function loop(now) {
     player.update(dt, tpc.yaw, null);
     if (state === 'dying') { tpc.update(dt, player, null, settings, false); mission.afterCamera(); }
   } else if (state === 'inventory') {
-    if (invScreen.update(dt, mouseInt) === 'close') { invScreen.close(); setState('play'); }
+    // em pé no celular, as ações do item viram botões grandes na parte de baixo
+    const panelClose = invPanel() && touchMenu.updateInventory(invScreen) === 'close';
+    if (panelClose || invScreen.update(dt, mouseInt) === 'close') { invScreen.close(); setState('play'); }
   } else if (state === 'pause') {
     // START (ou P) de novo retoma o jogo, qualquer que seja o item marcado
     const resume = menu.screen === 'pause' && (input.padHit('start') || input.hit('KeyP'));
-    const act = resume ? 'resume' : menu.update(dt, mouseInt);
+    const act = resume ? 'resume' : touchUI() ? touchMenu.update(dt) : menu.update(dt, mouseInt);
     if (act === 'resume') { setState('play'); }
     if (act === 'quit') fadeTo(() => { menu.open('main'); setState('title'); audio.setAmbience(false); fadeTarget = 0; fadeSpeed = 1.2; });
   }
@@ -280,7 +290,10 @@ function loop(now) {
   // controles de toque só no jogo; nos menus e na abertura um toque vale um clique
   input.touch.setMode(state === 'play' ? 'play' : 'menu');
   input.touch.weapon = pistol.equipped;
-  input.touch.draw(R, state === 'play' && input.lastDevice === 'touch', input.touchPrimary);
+  const menuOnTouch = touchUI() && (state === 'title' || state === 'pause');
+  input.touch.draw(R, state === 'play' && input.lastDevice === 'touch', input.touchPrimary,
+    menuOnTouch ? (g, v) => touchMenu.draw(g, v)
+      : state === 'inventory' && invPanel() ? (g, v) => touchMenu.drawInventory(g, v, invScreen) : null);
   input.endFrame();
 }
 
@@ -321,7 +334,8 @@ function drawUI() {
   const g = R.uictx, W = R.W, H = R.H;
   g.clearRect(0, 0, W, H);
   if (state === 'title' || state === 'pause') {
-    menu.draw(g, W, H);
+    // no toque o menu é desenhado na camada de toque (input.touch.draw)
+    if (!touchUI()) menu.draw(g, W, H);
   } else if (state === 'inventory') {
     invScreen.draw(g, W, H);
   } else if (state === 'intro') {
@@ -353,7 +367,7 @@ function drawUI() {
 
 function exposeDebug() {
   window.__teewald = {
-    ctx, player, camera, tpc, settings, scene, renderer: R, G, input, menu, inventory, pistol, targets, effects, invScreen, npcs, mission,
+    ctx, player, camera, tpc, settings, scene, renderer: R, G, input, menu, touchMenu, inventory, pistol, targets, effects, invScreen, npcs, mission,
     get state() { return state; },
     setState: s => setState(s),
     startGame: (intro = false) => { startGame(intro); fade = 0; fadeTarget = 0; },

@@ -45,6 +45,14 @@ melhor deitado; em pé, a imagem fica em 4:3 no alto e os controles embaixo.
 Dá para jogar no celular com controle Bluetooth: os botões da tela somem quando
 o controle é usado e voltam ao tocar na tela.
 
+Os menus no toque (`src/ui/touchMenu.js`) usam botões grandes na tela inteira:
+o botão acende ao encostar e só age ao soltar em cima dele. Em Opções cada linha
+tem ◀ e ▶ (deitado, em duas colunas; arrastar rola se não couber), e há opções
+só do celular: **tamanho dos botões** (pequeno, médio, grande) e **vibração**
+(Android). Sair da partida pela pausa pede confirmação. Em pé, o inventário
+mostra as ações do item em botões grandes na parte de baixo; em EXAMINAR,
+arrastar gira o item.
+
 ## Missão 1: O Chupacabras
 
 O foco do jogo é pegar o chupacabras. Animais aparecem mortos e sem sangue em

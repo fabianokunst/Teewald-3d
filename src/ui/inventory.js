@@ -105,8 +105,12 @@ export class InventoryScreen {
       if (I.right()) this.rot.y += 0.35;
       if (I.up()) this.rot.x -= 0.3;
       if (I.downNav()) this.rot.x += 0.3;
-      this.rot.y += dt * 0.5;
-      if (I.back() || I.confirm() || I.inventory() || I.mouse.clicked) { this.examine = false; this.audio.menuBack(); }
+      // toque: arrastar gira o item; um toque sem arrastar volta
+      const T = I.touch;
+      if (T.tap) { this.rot.y += T.tapDX * 0.012; this.rot.x = Math.max(-1.4, Math.min(1.4, this.rot.x + T.tapDY * 0.01)); }
+      else this.rot.y += dt * 0.5;
+      const dragged = T.tapUp && T.tapUp.moved;
+      if (I.back() || I.confirm() || I.inventory() || (I.mouse.clicked && !dragged)) { this.examine = false; this.audio.menuBack(); }
       return null;
     }
     // mouse/toque: passar por cima seleciona, clique confirma
@@ -127,6 +131,8 @@ export class InventoryScreen {
       if (I.downNav()) { this.menuSel = (this.menuSel + 1) % n; this.audio.menuMove(); }
       if (click?.kind === 'menu') { this._do(this.menu[click.i].act); return null; }
       if (click?.kind === 'slot') { this.menu = null; this.sel = click.i; return null; }
+      // clique/toque fora das ações cancela
+      if (I.mouse.clicked && !click) { this.menu = null; this.audio.menuBack(); return null; }
       if (I.confirm()) { this._do(this.menu[this.menuSel].act); return null; }
       if (I.back()) { this.menu = null; this.audio.menuBack(); }
       if (I.inventory()) { this.audio.menuBack(); return 'close'; }
@@ -175,8 +181,17 @@ export class InventoryScreen {
     g.clearRect(R(box[0]), R(box[1]), R(box[2]), R(box[3]));
     drawText(g, this.examine ? 'EXAMINAR' : 'INVENTÁRIO', px + 10 * k, py + 6 * k, 16 * k, { color: '#f2c879' });
     // fechar (útil no toque)
-    const cs = drawText(g, '✕', px + pw - 8 * k, py + 5 * k, 14 * k, { align: 'right', color: '#c8b898' });
-    this.rects.push({ kind: 'close', x: px + pw - 8 * k - cs.w - 4 * k, y: py, w: cs.w + 12 * k, h: 22 * k });
+    if (device === 'touch') {
+      // no toque, um botão de verdade para fechar
+      const bw = 28 * k, bh = 20 * k, bx = R(px + pw - bw - 5 * k), by = R(py + 4 * k);
+      g.globalAlpha = 0.9; g.fillStyle = '#18120c'; g.fillRect(bx, by, R(bw), R(bh)); g.globalAlpha = 1;
+      g.strokeStyle = '#d8c8a0'; g.strokeRect(bx + 0.5, by + 0.5, R(bw) - 1, R(bh) - 1);
+      drawText(g, '✕', bx + bw / 2, by + 3 * k, 14 * k, { align: 'center', color: '#efe2c4' });
+      this.rects.push({ kind: 'close', x: bx - 6 * k, y: py - 4 * k, w: bw + 12 * k, h: bh + 12 * k });
+    } else {
+      const cs = drawText(g, '✕', px + pw - 8 * k, py + 5 * k, 14 * k, { align: 'right', color: '#c8b898' });
+      this.rects.push({ kind: 'close', x: px + pw - 8 * k - cs.w - 4 * k, y: py, w: cs.w + 12 * k, h: 22 * k });
+    }
 
     // texto do item
     const ty = this.examine ? py + 160 * k : py + 132 * k;
@@ -188,7 +203,7 @@ export class InventoryScreen {
       drawText(g, info, px + 10 * k, ty + 40 * k, 11 * k, { color: '#f2c879' });
     }
     if (this.examine) {
-      const hint = device === 'pad' ? 'DIRECIONAL girar   B voltar' : device === 'touch' ? 'toque para voltar' : '←→↑↓ girar   ESC voltar';
+      const hint = device === 'pad' ? 'DIRECIONAL girar   B voltar' : device === 'touch' ? 'arraste para girar   toque para voltar' : '←→↑↓ girar   ESC voltar';
       drawText(g, hint, W / 2, py + ph + 3 * k, 10 * k, { align: 'center', color: '#a89878' });
       return;
     }
@@ -215,7 +230,18 @@ export class InventoryScreen {
     drawText(g, 'NA MÃO: ' + eq, gx, gy + 2 * (sz + gap) + 4 * k, 10 * k, { color: '#a89878' });
 
     // ações do item
-    if (this.menu) {
+    if (this.menu && device === 'touch') {
+      // no toque, cada ação é um botão alto (dá para acertar com o dedo)
+      const mx = gx, my = gy + 2 * (sz + gap) + 18 * k, mw = 141 * k, bh = 21 * k, step = 24 * k;
+      this.menu.forEach((it, i) => {
+        const y = R(my + i * step);
+        g.globalAlpha = 0.92; g.fillStyle = '#18120c'; g.fillRect(R(mx), y, R(mw), R(bh)); g.globalAlpha = 1;
+        g.fillStyle = '#4a3a28'; g.fillRect(R(mx) + 1, y + 1, R(mw) - 2, Math.max(1, R(k)));
+        g.strokeStyle = '#d8c8a0'; g.strokeRect(R(mx) + 0.5, y + 0.5, R(mw) - 1, R(bh) - 1);
+        drawText(g, it.label, mx + mw / 2, y + 4 * k, 13 * k, { align: 'center', color: '#efe2c4' });
+        this.rects.push({ kind: 'menu', i, x: mx, y, w: mw, h: bh });
+      });
+    } else if (this.menu) {
       const mx = gx, my = gy + 2 * (sz + gap) + 20 * k, mw = 141 * k, mh = (this.menu.length * 14 + 6) * k;
       panel(g, mx, my, mw, mh, 0.9);
       this.menu.forEach((it, i) => {
@@ -225,7 +251,7 @@ export class InventoryScreen {
       });
     }
     const hint = device === 'pad' ? 'DIRECIONAL escolher   A usar   B / Y fechar'
-      : device === 'touch' ? 'toque no item para usar'
+      : device === 'touch' ? (this.menu ? 'toque na ação · fora para cancelar' : 'toque no item para ver o que fazer')
         : '↑↓←→ escolher   ENTER usar   ESC / I fechar';
     drawText(g, hint, W / 2, py + ph + 3 * k, 10 * k, { align: 'center', color: '#a89878' });
   }

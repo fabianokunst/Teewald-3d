@@ -14,9 +14,12 @@ const OPTIONS = [
   { key: 'volume', label: 'VOLUME', values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], fmt: v => '▮'.repeat(v) + '▯'.repeat(10 - v) },
   { key: 'fps', label: 'QUADROS POR SEGUNDO', values: [60, 30], fmt: v => v + ' FPS' },
   { key: 'minimap', label: 'MINIMAPA (TECLA M)', values: [true, false], fmt: v => (v ? 'LIGADO' : 'DESLIGADO') },
+  // só no celular/tablet
+  { key: 'touchSize', label: 'TAMANHO DOS BOTÕES', values: [0, 1, 2], fmt: v => ['PEQUENO', 'MÉDIO', 'GRANDE'][v], touchOnly: true },
+  { key: 'vibrate', label: 'VIBRAÇÃO', values: [true, false], fmt: v => (v ? 'LIGADA' : 'DESLIGADA'), touchOnly: true, needs: () => !!navigator.vibrate },
 ];
 
-const CREDITS = [
+export const CREDITS = [
   ['Teewald', 'title'],
   ['', ''],
   ['protótipo 0.1', 'dim'],
@@ -43,13 +46,20 @@ export class Menu {
 
   open(screen) {
     if (screen === 'options' || screen === 'credits') this.returnTo = this.screen === 'pause' ? 'pause' : 'main';
+    if (screen === 'confirm') this.returnTo = 'pause';
     this.screen = screen; this.sel = 0; this.t = 0;
+  }
+
+  options() {
+    return OPTIONS.filter(o => (!o.touchOnly || this.input.touchPrimary) && (!o.needs || o.needs()));
   }
 
   items() {
     if (this.screen === 'main') return [{ label: 'NOVO JOGO', act: 'newgame' }, { label: 'OPÇÕES', act: 'options' }, { label: 'CRÉDITOS', act: 'credits' }];
-    if (this.screen === 'pause') return [{ label: 'CONTINUAR', act: 'resume' }, { label: 'OPÇÕES', act: 'options' }, { label: 'MENU PRINCIPAL', act: 'quit' }];
-    if (this.screen === 'options') return [...OPTIONS.map(o => ({ label: o.label, opt: o })), { label: 'VOLTAR', act: 'back' }];
+    if (this.screen === 'pause') return [{ label: 'CONTINUAR', act: 'resume' }, { label: 'OPÇÕES', act: 'options' }, { label: 'MENU PRINCIPAL', act: 'confirm' }];
+    // sair da partida pede confirmação (o item marcado de início é o seguro)
+    if (this.screen === 'confirm') return [{ label: 'CONTINUAR JOGANDO', act: 'back' }, { label: 'SAIR PARA O MENU', act: 'quit' }];
+    if (this.screen === 'options') return [...this.options().map(o => ({ label: o.label, opt: o })), { label: 'VOLTAR', act: 'back' }];
     if (this.screen === 'credits') return [{ label: 'VOLTAR', act: 'back' }];
     return [];
   }
@@ -61,6 +71,14 @@ export class Menu {
     saveSettings();
     this.onChange(this.settings, opt.key);
     this.audio.menuMove();
+  }
+
+  // item de ação escolhido (teclado, controle, mouse ou toque); devolve a ação do jogo
+  activate(it) {
+    this.audio.menuOk();
+    if (it.act === 'options' || it.act === 'credits' || it.act === 'confirm') { this.open(it.act); return null; }
+    if (it.act === 'back') { this.audio.menuBack(); this.open(this.returnTo); return null; }
+    return it.act;
   }
 
   // devolve uma ação: 'newgame' | 'resume' | 'quit' | null
@@ -98,13 +116,10 @@ export class Menu {
     const clickDir = this._click; this._click = undefined;
     if (activate && it) {
       if (it.opt) { this.change(it.opt, clickDir === 'left' ? -1 : 1); return null; }
-      this.audio.menuOk();
-      if (it.act === 'options' || it.act === 'credits') { this.open(it.act); return null; }
-      if (it.act === 'back') { this.audio.menuBack(); this.open(this.returnTo); return null; }
-      return it.act;
+      return this.activate(it);
     }
     if (I.back()) {
-      if (this.screen === 'options' || this.screen === 'credits') { this.audio.menuBack(); this.open(this.returnTo); }
+      if (this.screen === 'options' || this.screen === 'credits' || this.screen === 'confirm') { this.audio.menuBack(); this.open(this.returnTo); }
       else if (this.screen === 'pause') { this.audio.menuBack(); return 'resume'; }
     }
     return null;
@@ -123,6 +138,14 @@ export class Menu {
       drawText(g, 'PAUSA', W / 2, 62 * k, 26 * k, { align: 'center', color: '#e9dcc0' });
       this._list(g, W, H, k, 112 * k);
       help('DIRECIONAL escolher   A confirmar   START continuar', '↑↓ escolher   ENTER confirmar   ESC continuar', '');
+      return;
+    }
+    if (this.screen === 'confirm') {
+      g.globalAlpha = 0.7; g.fillStyle = '#000'; g.fillRect(0, 0, W, H); g.globalAlpha = 1;
+      drawText(g, 'VOLTAR AO MENU PRINCIPAL?', W / 2, 70 * k, 18 * k, { align: 'center', color: '#e9dcc0' });
+      drawText(g, 'o progresso desta partida será perdido', W / 2, 92 * k, 11 * k, { align: 'center', color: '#a89878' });
+      this._list(g, W, H, k, 124 * k);
+      help('DIRECIONAL escolher   A confirmar   B voltar', '↑↓ escolher   ENTER confirmar   ESC voltar', '');
       return;
     }
     // vinheta
@@ -173,8 +196,10 @@ export class Menu {
   // touch: setas em todas as linhas, para tocar direto no lado que quer mudar
   _options(g, W, H, k, touch = false) {
     const items = this.items();
+    // com as opções do celular a lista fica maior: aperta um pouco as linhas
+    const step = Math.min(13, 160 / (items.length - 1)) * k;
     items.forEach((it, i) => {
-      const y = 50 * k + i * 13 * k, on = i === this.sel;
+      const y = 50 * k + i * step, on = i === this.sel;
       const color = on ? '#f2c879' : '#c8b898';
       if (it.opt) {
         drawText(g, it.label, W / 2 - 140 * k, y, 13 * k, { color });

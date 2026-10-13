@@ -1,4 +1,5 @@
 import { drawText } from '../ui/overlay.js';
+import { settings } from '../config.js';
 
 // Controles de toque (celular e tablet). No jogo: analógico flutuante à esquerda,
 // arrastar no resto da tela gira a câmera, pinça com dois dedos dá zoom, toque
@@ -41,6 +42,12 @@ function safeInsets() {
   return { top: parseFloat(s.paddingTop) || 0, right: parseFloat(s.paddingRight) || 0, bottom: parseFloat(s.paddingBottom) || 0, left: parseFloat(s.paddingLeft) || 0 };
 }
 
+// vibração curta ao apertar botões (Android; o iPhone não tem a API)
+export function buzz(ms = 8) {
+  if (settings.vibrate === false || !navigator.vibrate) return;
+  try { navigator.vibrate(ms); } catch (e) { /* ignora */ }
+}
+
 const near = (p, x, y, r) => p && Math.hypot(x - p.x, y - p.y) <= r;
 const inRect = (r, x, y, pad = 0) => r && x >= r.x - pad && x <= r.x + r.w + pad && y >= r.y - pad && y <= r.y + r.h + pad;
 const inZone = (z, x, y) => x >= z.x0 && x <= z.x1 && y >= z.y0 && y <= z.y1;
@@ -60,6 +67,8 @@ export class TouchControls {
     this.invHit = false; this.fireHit = false; this.reloadHit = false; this.aimOn = false;
     this.weapon = false;            // o jogo liga quando a pistola está na mão
     this.lastTap = { t: -1e9, x: 0, y: 0 };
+    // menus: dedo na tela (tap), dedo solto neste quadro (tapUp) e arrasto acumulado
+    this.tap = null; this.tapUp = null; this.tapDX = 0; this.tapDY = 0;
     this.L = null;
     const c = this.canvas = doc.createElement('canvas');
     Object.assign(c.style, { position: 'absolute', left: '0', top: '0', pointerEvents: 'none', imageRendering: 'pixelated', display: 'none' });
@@ -77,6 +86,7 @@ export class TouchControls {
     this.mode = mode;
     // dedos que já estavam na tela não valem para o novo modo
     for (const T of this.touches.values()) T.role = 'ignore';
+    this.tap = null;
     this._releaseStick();
     this.look.dx = this.look.dy = 0; this.zoom = 0; this.pinchD = 0;
   }
@@ -84,11 +94,13 @@ export class TouchControls {
   // posições em px CSS; recalculadas quando a tela muda de tamanho
   _layout(R) {
     const vw = innerWidth, vh = innerHeight, gr = R.cssRect;
-    const key = [vw, vh, gr.x, gr.y, gr.w, gr.h, R.H].join();
+    const size = settings.touchSize ?? 1;
+    const key = [vw, vh, gr.x, gr.y, gr.w, gr.h, R.H, size].join();
     if (this.L && this.L.key === key) return this.L;
     const ins = safeInsets();
     const portrait = gr.y + gr.h < vh - 60;      // jogo em cima, controles embaixo
-    const u = Math.max(300, Math.min(520, Math.min(vw, vh))) / 100;
+    // unidade de tamanho; a opção TAMANHO DOS BOTÕES aumenta ou diminui tudo
+    const u = Math.max(300, Math.min(520, Math.min(vw, vh))) / 100 * [0.85, 1, 1.18][size];
     const m = 4 * u, Rs = 15 * u, Rj = 10 * u, Rr = 7.5 * u, S = 9 * u;
     const left = ins.left, right = vw - ins.right, bottom = vh - ins.bottom;
     let stick, jump, stickZone;
@@ -103,7 +115,9 @@ export class TouchControls {
       stickZone = { x0: 0, y0: Math.max(gr.y, ins.top) + m + S + 2 * u, x1: vw * 0.42, y1: vh };
     }
     const run = { x: jump.x - Rj - Rr - 2.5 * u, y: jump.y - Rj * 0.55 };
-    const bx = Math.max(gr.x, left) + m * 0.6, by = Math.max(gr.y, ins.top) + m * 0.6;
+    // em pé, pausa / tela cheia / INV vão para a área dos controles e deixam a imagem livre
+    const bx = Math.max(gr.x, left) + m * 0.6;
+    const by = portrait ? gr.y + gr.h + m * 0.6 : Math.max(gr.y, ins.top) + m * 0.6;
     const pause = { x: bx, y: by, w: S, h: S };
     const fs = fullscreen.supported ? { x: bx + S + 2.5 * u, y: by, w: S, h: S } : null;
     const inv = { x: bx + (S + 2.5 * u) * (fs ? 2 : 1), y: by, w: S * 1.3, h: S };
@@ -128,16 +142,18 @@ export class TouchControls {
       if (this.mode !== 'play' || !L) {
         // menus: o item sob o dedo fica selecionado; o clique vem ao soltar
         I.mouse.x = x; I.mouse.y = y; I.mouse.moved = true;
+        // mesmo id de novo = o dedo anterior já saiu (fim perdido): começa outro toque
+        if (!this.tap || this.tap.id === t.identifier || !this.touches.has(this.tap.id)) this.tap = { id: t.identifier, x, y, x0: x, y0: y, moved: false };
         continue;
       }
-      if (inRect(L.pause, x, y, 2 * L.u)) { T.role = 'pause'; this.pauseHit = true; }
-      else if (inRect(L.inv, x, y, 2 * L.u)) { T.role = 'inv'; this.invHit = true; }
-      else if (this.weapon && near(L.fire, x, y, L.Rj * 1.25)) { T.role = 'fire'; this.fireHit = true; }
-      else if (this.weapon && near(L.aim, x, y, L.Rr * 1.3)) { T.role = 'aim'; this.aimOn = !this.aimOn; }
-      else if (this.weapon && near(L.reload, x, y, L.Rr * 0.9)) { T.role = 'reload'; this.reloadHit = true; }
+      if (inRect(L.pause, x, y, 2 * L.u)) { T.role = 'pause'; this.pauseHit = true; buzz(); }
+      else if (inRect(L.inv, x, y, 2 * L.u)) { T.role = 'inv'; this.invHit = true; buzz(); }
+      else if (this.weapon && near(L.fire, x, y, L.Rj * 1.25)) { T.role = 'fire'; this.fireHit = true; buzz(14); }
+      else if (this.weapon && near(L.aim, x, y, L.Rr * 1.3)) { T.role = 'aim'; this.aimOn = !this.aimOn; buzz(); }
+      else if (this.weapon && near(L.reload, x, y, L.Rr * 0.9)) { T.role = 'reload'; this.reloadHit = true; buzz(); }
       else if (inRect(L.fs, x, y, 2 * L.u)) T.role = 'fs';
-      else if (near(L.jump, x, y, L.Rj * 1.3)) { T.role = 'jump'; this.jumpHit = true; }
-      else if (near(L.run, x, y, L.Rr * 1.3)) { T.role = 'run'; this.runOn = !this.runOn; }
+      else if (near(L.jump, x, y, L.Rj * 1.3)) { T.role = 'jump'; this.jumpHit = true; buzz(); }
+      else if (near(L.run, x, y, L.Rr * 1.3)) { T.role = 'run'; this.runOn = !this.runOn; buzz(); }
       else if (this.stick.id === null && inZone(L.stickZone, x, y)) {
         T.role = 'stick';
         const s = this.stick, R = L.Rs;
@@ -166,8 +182,14 @@ export class TouchControls {
       const x = t.clientX, y = t.clientY, dx = x - T.x, dy = y - T.y;
       T.x = x; T.y = y;
       if (Math.hypot(x - T.x0, y - T.y0) > 10) T.moved = true;
-      if (T.role === 'tap') { I.mouse.x = x; I.mouse.y = y; I.mouse.moved = true; }
-      else if (T.role === 'stick') this._stickTo(x, y);
+      if (T.role === 'tap') {
+        I.mouse.x = x; I.mouse.y = y; I.mouse.moved = true;
+        const tp = this.tap;
+        if (tp && tp.id === t.identifier) {
+          tp.x = x; tp.y = y; this.tapDX += dx; this.tapDY += dy;
+          if (T.moved) tp.moved = true;
+        }
+      } else if (T.role === 'stick') this._stickTo(x, y);
       else if (T.role === 'look' && looks.length === 1) { this.look.dx += dx; this.look.dy += dy; }
     }
     // pinça com dois dedos na área da câmera: afastar aproxima
@@ -185,6 +207,11 @@ export class TouchControls {
       const T = this.touches.get(t.identifier);
       if (!T) continue;
       this.touches.delete(t.identifier);
+      const tp = this.tap;
+      if (tp && tp.id === t.identifier) {
+        this.tap = null;
+        if (!cancel) this.tapUp = { x: T.x, y: T.y, x0: tp.x0, y0: tp.y0, moved: tp.moved };
+      }
       if (cancel) { if (T.role === 'stick') this._releaseStick(); continue; }
       if (T.role === 'tap') { I.mouse.x = T.x; I.mouse.y = T.y; I.mouse.clicked = true; }
       else if (T.role === 'stick') this._releaseStick();
@@ -223,14 +250,17 @@ export class TouchControls {
     this.jumpHit = false; this.pauseHit = false; this.recenterHit = false;
     this.invHit = false; this.fireHit = false; this.reloadHit = false;
     if (!this.weapon) this.aimOn = false;
+    this.tapUp = null; this.tapDX = 0; this.tapDY = 0;
   }
 
   // controls: desenha os controles do jogo · hint: aviso para girar (retrato, menus)
-  draw(R, controls, hint) {
+  // menu(g, view): menu de toque desenhado na tela inteira, no lugar dos controles
+  draw(R, controls, hint, menu = null) {
     const c = this.canvas;
     const L = this._layout(R);
-    if (!controls && !(hint && L.portrait)) { if (c.style.display !== 'none') c.style.display = 'none'; return; }
-    const s = L.s, g = this.g;
+    if (!controls && !menu && !(hint && L.portrait)) { if (c.style.display !== 'none') c.style.display = 'none'; return; }
+    // menus têm muito texto: grade de pixels mais fina (1 px CSS) para ficar legível
+    const s = menu ? Math.min(L.s, 1) : L.s, g = this.g;
     const cw = Math.ceil(innerWidth / s), ch = Math.ceil(innerHeight / s);
     if (c.width !== cw || c.height !== ch) {
       c.width = cw; c.height = ch;
@@ -246,11 +276,25 @@ export class TouchControls {
       if (stroke) { g.globalAlpha = sa; g.lineWidth = lw; g.strokeStyle = stroke; g.stroke(); }
       g.globalAlpha = 1;
     };
-    const label = (text, x, y, size, color, alpha = 0.9) => {
-      const px = Math.max(8, Math.round(P(size)));
+    const label = (text, x, y, size, color, alpha = 0.95) => {
+      const px = Math.max(10, Math.round(P(size)));
       // texto escuro (botão aceso) vai sem sombra, senão vira um borrão
       drawText(g, text, P(x), P(y) - px * 0.66, px, { align: 'center', color, alpha, shadow: color === '#140c08' ? null : undefined });
     };
+
+    if (menu) {
+      menu(g, { s, cw, ch, vw: innerWidth, vh: innerHeight, gr: L.gr, portrait: L.portrait, u: L.u / [0.85, 1, 1.18][settings.touchSize ?? 1] });
+      return;
+    }
+
+    // em pé: fundo da área dos controles, como a parte de baixo de um portátil
+    if (L.portrait) {
+      const top = Math.round(P(L.gr.y + L.gr.h));
+      const grd = g.createLinearGradient(0, top, 0, ch);
+      grd.addColorStop(0, '#1c140e'); grd.addColorStop(1, '#070504');
+      g.fillStyle = grd; g.fillRect(0, top, cw, ch - top);
+      g.fillStyle = '#6b5a40'; g.fillRect(0, top, cw, Math.max(1, Math.round(lw)));
+    }
 
     if (!controls) {
       const top = L.gr.y + L.gr.h, cy = (top + innerHeight) / 2;
