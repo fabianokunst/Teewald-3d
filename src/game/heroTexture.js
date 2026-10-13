@@ -1,8 +1,8 @@
 import { IMG, HERO_FILES, makeCanvas, shrink, processPixels, canvasTex } from '../engine/textures.js';
 
 // Atlas 128x128 do protagonista, pintado na carga: o grão dos tecidos vem das
-// texturas da pasta (lona da jaqueta, tecido da calça, cabelo da foto de
-// referência) e os detalhes (rosto, bolsos, zíper, costuras, cadarço) são pixel art.
+// texturas da pasta (lona, tecido da calça, cabelo da foto de referência). O rosto
+// do protagonista é pintado com pincel macio (realista); roupas e detalhes, em pixel art.
 // Coordenadas em pixels do atlas, origem no canto superior esquerdo.
 // As linhas (v) de cada anel do modelo estão em character.js e batem com a pintura daqui.
 // Os moradores (npcs.js) usam a mesma malha com outro atlas: o `look` troca as
@@ -68,6 +68,15 @@ const BASE = {
   lace: [200, 170, 120],
 };
 
+// protagonista: tons sóbrios (jogo de terror), couro marrom, suéter cinza e camisa escura
+const HERO_COLORS = {
+  jacket: [92, 62, 44], pants: [56, 52, 50], boot: [58, 42, 32], sole: [34, 30, 28],
+  skin: [194, 150, 122], shirt: [40, 40, 44], sweater: [96, 94, 90],
+  hair: [[24, 18, 14], [50, 37, 28], [86, 64, 47]], brow: [42, 31, 24],
+  lid: [58, 40, 34], white: [196, 186, 176], iris: [70, 84, 92], pupil: [20, 18, 18],
+  lip: [150, 98, 90], lipLow: [172, 118, 106], brass: [52, 38, 30], lace: [96, 86, 72], stitch: [120, 96, 72],
+};
+
 export const HAIR = {
   blond: BASE.hair,
   brown: [[52, 34, 22], [98, 66, 40], [146, 104, 66]],
@@ -86,6 +95,7 @@ export const EYES = {
 };
 
 const scale = (c, k) => [c[0] * k, c[1] * k, c[2] * k];
+const smoothstep = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 const mix = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
 
 function palette(L) {
@@ -195,32 +205,173 @@ function number(p, text, cx, y0, color) {
   });
 }
 
-function paintJacket(p, G, C) {
-  fabric(p, G, C.jacket, 0.07);
-  p.each((x, y) => p.mul(x, y, 1 - (y / 48) * 0.08));
-  // decote em V mostrando a camisa (frente = coluna 32)
-  for (let y = 0; y < 8; y++) {
-    const hw = Math.round((8 - y) * 0.6);
-    for (let x = 32 - hw; x <= 32 + hw; x++) p.set(x, y, scale(C.shirt, 0.96 + G(x, y) * 0.03));
-    p.mul(31 - hw, y, 0.7); p.mul(33 + hw, y, 0.7);
+// jaqueta de couro do protagonista com lapelas, suéter cinza em V e camisa escura por dentro
+function paintHeroJacket(p, G, C, rnd) {
+  const F = 32;
+  fabric(p, G, C.jacket, 0.045);
+  // brilho do couro: faixas verticais suaves no peito e nas costas
+  const band = (x, c, w) => Math.exp(-((x - c) ** 2) / w);
+  p.each((x, y) => p.mul(x, y, (1 + 0.08 * (band(x, 24, 16) + band(x, 40, 16)) + 0.05 * (band(x, 8, 20) + band(x, 56, 20))) * (1 - (y / 48) * 0.1)));
+  // vincos do couro
+  for (let i = 0; i < 26; i++) {
+    const x = Math.floor(rnd() * 64), y = 6 + Math.floor(rnd() * 36), len = 2 + Math.floor(rnd() * 3);
+    for (let j = 0; j < len; j++) p.mul(x + j, y + (j >> 1), 0.88);
   }
-  // zíper
-  for (let y = 8; y < 44; y++) {
-    p.set(32, y, y % 2 ? [76, 54, 40] : [152, 140, 118]);
-    p.mul(31, y, 0.86); p.mul(33, y, 0.86);
+  for (let y = 0; y < 19; y++) {
+    const hw = Math.round((19 - y) * 0.36);
+    // abertura entre as lapelas: suéter de tricô
+    for (let x = F - hw; x <= F + hw; x++) p.set(x, y, scale(C.sweater, ((x + y) % 2 ? 0.94 : 1) * (0.97 + G(x, y) * 0.03)));
+    // decote do suéter com a camisa escura e as pontas da gola
+    const sw = Math.round((8 - y) * 0.5);
+    if (y < 8) for (let x = F - sw; x <= F + sw; x++) p.set(x, y, scale(C.shirt, Math.abs(x - F) === sw ? 1.35 : 1));
+    if (y < 9) { p.mul(F - sw - 1, y, 0.8); p.mul(F + sw + 1, y, 0.8); }
+    // lapelas: dobra clara junto à abertura, borda escura por fora
+    for (const s of [-1, 1]) {
+      p.mul(F + s * (hw + 1), y, 0.62);
+      p.mul(F + s * (hw + 2), y, 1.14);
+      p.mul(F + s * (hw + 3), y, 1.06);
+      if (y < 15) p.mul(F + s * (hw + 6), y, 0.72);
+    }
   }
-  // bolsos do peito com lapela e botão (fileiras 15–22 = entre os anéis do peito)
-  for (const x0 of [22, 36]) {
-    for (let y = 15; y < 23; y++) { p.mul(x0, y, 0.72); p.mul(x0 + 6, y, 0.72); }
-    for (let x = x0; x <= x0 + 6; x++) { p.mul(x, 15, 0.8); p.mul(x, 16, 0.9); p.mul(x, 17, 0.9); p.mul(x, 18, 0.68); p.mul(x, 22, 0.72); }
-    p.set(x0 + 3, 18, C.brass);
+  // entalhe das lapelas
+  for (const s of [-1, 1]) for (let k = 0; k < 3; k++) p.mul(F + s * (9 + k), 4 + k, 0.62);
+  // fechamento: costura no meio e dois botões de couro
+  for (let y = 19; y < 45; y++) p.mul(F, y, 0.74);
+  for (const y of [22, 31]) { p.set(F, y, C.brass); p.set(F + 1, y, scale(C.brass, 1.3)); p.mul(F, y + 1, 0.8); }
+  // bolsos com lapela na altura do quadril
+  for (const x0 of [19, 38]) {
+    for (let x = x0; x < x0 + 8; x++) { p.mul(x, 34, 0.66); p.mul(x, 35, 1.08); p.mul(x, 37, 0.84); }
+    for (let y = 34; y < 38; y++) { p.mul(x0, y, 0.76); p.mul(x0 + 7, y, 0.76); }
   }
-  // bolsos inferiores (vivos inclinados)
-  for (let i = 0; i < 6; i++) { p.mul(19 + i, 38 - (i >> 1), 0.62); p.mul(45 - i, 38 - (i >> 1), 0.62); }
-  // costuras laterais e pala das costas
-  for (let y = 0; y < 43; y++) { p.mul(16, y, 0.8); p.mul(48, y, 0.8); }
-  for (let x = 0; x < 64; x++) if (x < 13 || x > 51) p.mul(x, 9, 0.8);
-  rib(p, 44, 48);
+  // costuras laterais, meio das costas e bainha dobrada
+  for (let y = 0; y < 45; y++) { p.mul(16, y, 0.82); p.mul(48, y, 0.82); p.mul(0, y, 0.86); p.mul(63, y, 0.86); }
+  for (let x = 0; x < 64; x++) { p.mul(x, 44, 0.78); p.mul(x, 45, 1.06); p.mul(x, 47, 0.84); }
+}
+
+function paintHeroSleeve(P, G, C) {
+  const p = P.sub('sleeve');
+  fabric(p, G, C.jacket, 0.045);
+  p.each((x, y) => p.mul(x, y, 1 + 0.08 * Math.exp(-((x - 14) ** 2) / 14)));     // brilho na frente do braço
+  for (let x = 0; x < 32; x++) { p.mul(x, 4, 0.78); p.mul(x, 5, 0.95); }        // costura do ombro
+  for (let y = 5; y < 46; y++) p.mul(24, y, 0.82);                               // costura do lado do corpo
+  for (const [x, y] of [[1, 21], [2, 22], [30, 22], [31, 23], [0, 25], [1, 26], [29, 26], [30, 25], [3, 24], [28, 24], [2, 28], [30, 28], [4, 26], [27, 27]]) p.mul(x, y, 0.8);
+  for (let x = 0; x < 32; x++) { p.mul(x, 44, 0.74); p.mul(x, 45, 1.06); }       // punho dobrado, sem canelado
+}
+
+// Pincel macio em 4x: o rosto é pintado com sombras suaves e reduzido para a
+// resolução do atlas, o que dá o aspecto de rosto fotográfico dos jogos de PS1.
+class Soft {
+  constructor(w, h, s = 4) { this.w = w; this.h = h; this.s = s; this.W = w * s; this.H = h * s; this.d = new Float32Array(this.W * this.H * 3); }
+  fill(c) { for (let i = 0; i < this.W * this.H; i++) { this.d[i * 3] = c[0]; this.d[i * 3 + 1] = c[1]; this.d[i * 3 + 2] = c[2]; } }
+  // mancha elíptica com queda gaussiana: cor (mistura) ou fator k (multiplica)
+  _blob(x, y, rx, ry, fn) {
+    const s = this.s, X = x * s, Y = y * s, RX = rx * s, RY = ry * s;
+    const x0 = Math.max(0, Math.floor(X - RX * 1.6)), x1 = Math.min(this.W - 1, Math.ceil(X + RX * 1.6));
+    const y0 = Math.max(0, Math.floor(Y - RY * 1.6)), y1 = Math.min(this.H - 1, Math.ceil(Y + RY * 1.6));
+    for (let j = y0; j <= y1; j++) for (let i = x0; i <= x1; i++) {
+      const q = ((i + 0.5 - X) / RX) ** 2 + ((j + 0.5 - Y) / RY) ** 2;
+      if (q > 2.6) continue;
+      fn((j * this.W + i) * 3, Math.exp(-2.2 * q));
+    }
+  }
+  paint(x, y, rx, ry, c, a = 1) { this._blob(x, y, rx, ry, (o, w) => { const t = w * a; for (let k = 0; k < 3; k++) this.d[o + k] += (c[k] - this.d[o + k]) * t; }); }
+  shade(x, y, rx, ry, k) { this._blob(x, y, rx, ry, (o, w) => { const f = 1 + (k - 1) * w; for (let q = 0; q < 3; q++) this.d[o + q] *= f; }); }
+  // traço por uma polilinha (pts = [[x, y], ...])
+  stroke(pts, width, c, a = 1) {
+    for (let i = 0; i < pts.length - 1; i++) {
+      const [ax, ay] = pts[i], [bx, by] = pts[i + 1], n = Math.ceil(Math.hypot(bx - ax, by - ay) * 4);
+      for (let k = 0; k <= n; k++) {
+        const t = k / n, x = ax + (bx - ax) * t, y = ay + (by - ay) * t;
+        if (Array.isArray(c)) this.paint(x, y, width / 2, width / 2, c, a * 0.35); else this.shade(x, y, width / 2, width / 2, 1 + (c - 1) * 0.35);
+      }
+    }
+  }
+  // espelha um traço/mancha do lado esquerdo do rosto (coluna 32 é o meio)
+  static mirror(x) { return 64 - x; }
+  // média de cada bloco s x s para a região do atlas
+  resolve(p) {
+    const s = this.s;
+    for (let y = 0; y < this.h; y++) for (let x = 0; x < this.w; x++) {
+      const c = [0, 0, 0];
+      for (let j = 0; j < s; j++) for (let i = 0; i < s; i++) { const o = ((y * s + j) * this.W + x * s + i) * 3; c[0] += this.d[o]; c[1] += this.d[o + 1]; c[2] += this.d[o + 2]; }
+      p.set(x, y, scale(c, 1 / (s * s)));
+    }
+  }
+}
+
+// rosto realista e sério (protagonista): olhos fundos, sobrancelhas retas, maçãs
+// marcadas, sulcos do nariz à boca, queixo definido e barba por fazer
+function paintHeadReal(P, hairAt, rnd, C) {
+  const p = P.sub('head'), F = new Soft(64, 40, 4);
+  const R = y => headRow(y) - REG.head[1];
+  const M = Soft.mirror;
+  const both = fn => { fn(x => x, 1); fn(M, -1); };
+  F.fill(C.skin);
+  // volumes grandes
+  F.shade(32, 11, 9, 3.5, 1.05);                                                 // testa
+  both(m => F.shade(m(19), 13, 3.5, 5, 0.86));                                   // têmporas
+  both(m => F.shade(m(16.5), 22, 2.8, 10, 0.86));                                // laterais do rosto
+  both(m => F.paint(m(22.5), 23.5, 3, 2, [214, 150, 130], 0.12));                // um pouco de cor nas maçãs
+  // olhos
+  both(m => F.shade(m(26), 14.2, 3.2, 1, 1.05));                                 // arco da sobrancelha
+  F.shade(32, 15.5, 1.2, 1.4, 1.03);
+  both(m => F.shade(m(26.3), 18.6, 3.8, 2.4, 0.64));                             // órbita funda
+  both(m => F.shade(m(29.3), 18.8, 1, 1.2, 0.86));                               // canto interno
+  both(m => F.stroke([[m(23.4), 17.5], [m(26), 17.1], [m(28.8), 17.6]], 0.6, 0.78)); // dobra da pálpebra
+  both(m => F.paint(m(26.1), 19.1, 2.1, 0.7, C.white, 0.6));
+  both(m => F.paint(m(26.3), 19.05, 0.9, 0.85, C.iris, 1));
+  both(m => F.paint(m(26.3), 19.05, 0.4, 0.4, C.pupil, 1));
+  both(m => F.stroke([[m(23.6), 18.75], [m(26.1), 18.25], [m(28.7), 18.75]], 0.8, C.lid, 1)); // pálpebra de cima
+  both(m => F.stroke([[m(24), 19.8], [m(26.2), 20.05], [m(28.4), 19.75]], 0.4, 0.88));      // pálpebra de baixo
+  both(m => F.paint(m(23.6), 18.9, 0.5, 0.4, C.lid, 0.8));
+  both(m => F.shade(m(26.2), 21, 2.4, 0.8, 0.9));                                // olheira
+  // sobrancelhas retas e baixas (expressão séria)
+  both(m => F.stroke([[m(22.7), 15.8], [m(25.5), 15.1], [m(28.9), 15.5]], 1.7, C.brow, 1));
+  both(m => F.shade(m(26), 16.4, 3, 0.6, 0.9));                                  // sombra logo abaixo da sobrancelha
+  // maçãs e bochecha cavada
+  both(m => F.shade(m(21.8), 21.2, 2.6, 1.4, 1.05));
+  both(m => F.shade(m(21.5), 25.8, 2.6, 2.8, 0.78));
+  // nariz
+  F.stroke([[32, 16.5], [32, 23.4]], 0.9, 1.07);
+  F.stroke([[30.6, 18.5], [30.3, 23.8]], 1.2, 0.74);
+  F.stroke([[33.4, 18.5], [33.7, 23.8]], 1.2, 0.8);
+  F.shade(32, 24, 1.1, 0.9, 1.06);
+  F.paint(32, 24, 1.2, 1, [214, 150, 130], 0.12);
+  both(m => F.shade(m(30.4), 24.9, 0.9, 0.7, 0.82));
+  both(m => F.shade(m(31), 25.3, 0.55, 0.35, 0.5));                              // narinas
+  F.shade(32, 25.9, 1.8, 0.45, 0.82);
+  // boca: lábios finos, cantos um pouco para baixo
+  F.shade(32, 27.6, 0.6, 1.1, 0.93);
+  both(m => F.shade(m(31.2), 27.6, 0.4, 1, 1.03));
+  both(m => F.stroke([[m(30.1), 25.6], [m(29.2), 27.8], [m(28.8), 30]], 0.7, 0.82)); // sulco nasolabial
+  F.paint(32, 30.25, 2.6, 0.55, C.lip, 0.45);
+  F.stroke([[29, 31.3], [32, 30.9], [35, 31.3]], 0.6, [62, 38, 34], 1);
+  F.paint(32, 31.75, 2.2, 0.55, C.lipLow, 0.35);
+  F.shade(32, 31.7, 1.2, 0.3, 1.05);
+  F.shade(32, 32.7, 2, 0.5, 0.86);
+  // queixo e mandíbula
+  F.shade(32, 34.6, 2.6, 1.5, 1.05);
+  both(m => F.shade(m(21), 34, 2.5, 4, 0.8));
+  F.shade(32, 39.5, 16, 2.6, 0.72);
+  F.resolve(p);
+  // poros e barba por fazer (no tamanho final, texel a texel)
+  p.each((x, y) => {
+    p.mul(x, y, 0.985 + rnd() * 0.03);
+    const dx = Math.abs(x - 32);
+    // queixo e mandíbula (abaixo de uma linha que sobe para as orelhas) e buço; lábios de fora
+    const jaw = smoothstep(31.5 - dx * 0.35, 33.5 - dx * 0.35, y) * (1 - smoothstep(10, 13, dx));
+    const lip = (1 - smoothstep(2.5, 4, dx)) * Math.max(0, 1 - Math.abs(y - 28.5) / 1.5);
+    const w = Math.max(jaw, lip * 0.8) * (y >= 30 && y <= 32 && dx <= 3 ? 0 : 1);
+    if (w > 0) p.set(x, y, mix(p.get(x, y), C.hair[0], w * (0.04 + rnd() * 0.08)));
+  });
+  // cabelo acima da linha, com transição de um texel; costeletas curtas
+  for (let x = 0; x < 64; x++) {
+    const f = headF(x + 0.5);
+    let edge = Math.round(R(hairline(f)));
+    if (x === 11 || x === 12 || x === 51 || x === 52) edge = Math.round(R(0.132));
+    for (let y = 0; y < edge; y++) p.set(x, y, hairAt(x, y));
+    p.set(x, edge, mix(p.get(x, edge), hairAt(x, edge), 0.45));
+  }
 }
 
 // tronco dos moradores: o tipo de roupa vem do look.top
@@ -523,7 +674,9 @@ let grains = null;
 
 // look = {} pinta o protagonista; os moradores passam roupa, cores e detalhes (ver npcData.js)
 export function makeHeroTexture(look = {}) {
-  const C = palette(look);
+  // sem look.top é o protagonista: paleta, jaqueta e rosto realista próprios
+  const hero = !look.top;
+  const C = palette(hero ? { ...look, colors: { ...HERO_COLORS, ...look.colors } } : look);
   const P = new Pix(ATLAS), rnd = rng(look.seed ?? 1971);
   grains ||= {
     jacket: grain(IMG[HERO_FILES.jacket], 32),
@@ -539,12 +692,12 @@ export function makeHeroTexture(look = {}) {
     return t < 0.5 ? mix(C.hair[0], C.hair[1], t * 2) : mix(C.hair[1], C.hair[2], (t - 0.5) * 2);
   };
 
-  if (look.top) paintTop(P, gJacket, C, look);
-  else paintJacket(P.sub('jacket'), gJacket, C);
-  paintSleeve(P, gJacket, C, look);
+  if (hero) { paintHeroJacket(P.sub('jacket'), gJacket, C, rnd); paintHeroSleeve(P, gJacket, C); }
+  else { paintTop(P, gJacket, C, look); paintSleeve(P, gJacket, C, look); }
   paintPants(P, gPants, C, look, rnd);
   paintPelvis(P, gPants, C, look);
-  paintHead(P, hairAt, rnd, C, look);
+  if (hero) paintHeadReal(P, hairAt, rnd, C);
+  else paintHead(P, hairAt, rnd, C, look);
   paintLocks(P, hairAt);
   if (look.feet && look.feet !== 'boot') paintShoes(P, rnd, C, look);
   else paintBoots(P, rnd, C);

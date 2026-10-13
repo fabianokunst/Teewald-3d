@@ -77,9 +77,11 @@ export class Terrain {
   roadHeight(x, z) { return this._bilinear(this.HR, x, z, (a, b) => this.raw(a, b)); }
 
   // pad = { poly, h, margin } aplaina uma área (praça, igreja, campo...)
-  addPad(poly, h, margin = 8) {
+  // floor: altura de um piso desenhado em cima; o terreno em volta (até uma
+  // célula da grade) fica abaixo dele, senão os triângulos da borda o cortam
+  addPad(poly, h, margin = 8, floor = null) {
     const xs = poly.map(p => p[0]), zs = poly.map(p => p[1]);
-    this.pads.push({ poly, h, margin, bb: [Math.min(...xs), Math.min(...zs), Math.max(...xs), Math.max(...zs)] });
+    this.pads.push({ poly, h, margin, floor, bb: [Math.min(...xs), Math.min(...zs), Math.max(...xs), Math.max(...zs)] });
   }
 
   // aplica ruas, áreas planas e rios na grade final
@@ -93,14 +95,24 @@ export class Terrain {
       const r = roadIndex.clearance(x, z);
       if (r.d < 7.5) h = hr;
       else if (r.d < 18) h = hr + (h - hr) * smooth((r.d - 7.5) / 10.5);
+      // o interior de cada área vale mais que a margem de transição das vizinhas
+      let inside = null;
+      const near = n.step * 1.45;
+      const floors = [];
       for (const p of this.pads) {
-        if (x < p.bb[0] - p.margin || x > p.bb[2] + p.margin || z < p.bb[1] - p.margin || z > p.bb[3] + p.margin) continue;
+        const reach = Math.max(p.margin, p.floor !== null ? near : 0);
+        if (x < p.bb[0] - reach || x > p.bb[2] + reach || z < p.bb[1] - reach || z > p.bb[3] + reach) continue;
         const d = distToPoly(x, z, p.poly);
+        if (p.floor !== null && d < near) floors.push(p.floor);
         if (d >= p.margin) continue;
         const ph = typeof p.h === 'function' ? p.h(x, z) : p.h;
-        if (d < 0) h = ph;
+        if (d < 0) inside = ph;
         else h = ph + (h - ph) * smooth(d / p.margin);
       }
+      if (inside !== null) h = inside;
+      for (const fy of floors) h = Math.min(h, fy - 0.04);
+      // uma área aplainada não pode erguer o terreno por cima de rua ou calçada
+      if (r.seg && r.d < (r.seg.data.sidewalk ? 2 : 0) + n.step * 0.8) h = Math.min(h, hr);
       const w = riverIndex.nearest(x, z);
       if (w.seg) {
         const rv = w.seg.data, wl = rv.levelAt(w.seg, w.t), hw = rv.width / 2;

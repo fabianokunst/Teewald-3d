@@ -157,6 +157,7 @@ export class MeshBuilder {
       const mat = materials[g.mat];
       if (!mat) { console.warn('material ausente:', g.mat); continue; }
       const mesh = new THREE.Mesh(geo, mat);
+      mesh.name = g.mat;
       mesh.matrixAutoUpdate = false;
       root.add(mesh);
     }

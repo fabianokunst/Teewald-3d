@@ -1,6 +1,6 @@
 import { rng, polyCentroid, pointInPoly, distSeg, resample, chaikin, obbCorners } from './geo.js';
 import { buildChurch, CHURCH, pyramid } from './church.js';
-import { buildHouse, makeSpec, lotValid, facingRoad, frame, groundFor, orientToRoad as orientFP, fitBox } from './buildings.js';
+import { buildHouse, makeSpec, lotValid, facingRoad, frame, orientToRoad as orientFP, fitBox } from './buildings.js';
 import { claimFootprint } from './footprints.js';
 import { bench, picnicTable, bin, lantern, orelhao, letreiro, monumento, fountain, railing, car, busStop, stopSign } from './props.js';
 import { signMaterial } from '../engine/materials.js';
@@ -49,7 +49,7 @@ export function defineLandmarks(ctx) {
     const dist = Math.max(hl + 8, (q.x - x) * fx + (q.z - z) * fz); // centro -> rua, ao longo do eixo
     const y = terrain.roadHeight(F[0], F[1]) + 0.05;
     const pad = rectPoly(x, z, rot, -CHURCH.W / 2 - 4, CHURCH.W / 2 + 4, -hl - 1, dist - 3.5);
-    terrain.addPad(pad, y, 8);
+    terrain.addPad(pad, y, 8, y + 0.02);
     zones.block(pad, 0.5);
     zones.clearForest(pad);
     zones.place(rectPoly(x, z, rot, -CHURCH.W / 2 - 6, CHURCH.W / 2 + 6, -hl - 2, dist + 2), 'IGREJA MATRIZ', 3);
@@ -90,7 +90,7 @@ export function defineLandmarks(ctx) {
     const smoothPoly = chaikin([...poly, poly[0]], 2).slice(0, -1);
     const pc = polyCentroid(smoothPoly);
     const y = terrain.roadHeight(pc[0], pc[1]) + 0.12;
-    terrain.addPad(smoothPoly, y - 0.15, 4);
+    terrain.addPad(smoothPoly, y - 0.15, 4, y);
     zones.block(smoothPoly, 1);
     zones.clearForest(smoothPoly);
     zones.place(smoothPoly, 'PRAÇA 10 DE ABRIL', 3);
@@ -141,11 +141,17 @@ export function defineLandmarks(ctx) {
     const f = area(md, 'pitch');
     const c = polyCentroid(f.p);
     const y = terrain.roadHeight(c[0], c[1]);
-    terrain.addPad(f.p, y, 8);
+    let bestL = 0, ang = 0;
+    for (let i = 0; i < f.p.length; i++) {
+      const a = f.p[i], b = f.p[(i + 1) % f.p.length], l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      if (l > bestL) { bestL = l; ang = Math.atan2(b[0] - a[0], b[1] - a[1]); }
+    }
+    terrain.addPad(f.p, y, 8, y + 0.05);
+    terrain.addPad(rectPoly(c[0], c[1], ang, -31, 36, -48, 48), y, 8, y + 0.05); // gramado e arquibancada
     zones.block(f.p, 2);
     zones.clearForest(f.p);
     zones.place(f.p, 'CAMPO DA SOCIEDADE', 2);
-    L.field = { poly: f.p, c, y };
+    L.field = { poly: f.p, c, y, ang };
   }
 
   // ---------------- Kartoffelfest (pavilhão) ----------------
@@ -154,11 +160,23 @@ export function defineLandmarks(ctx) {
     const fr = facingRoad(ctx, k.x, k.z);
     const poly = rectPoly(k.x, k.z, fr.rot, -17, 17, -11, 11);
     const y = terrain.roadHeight(k.x, k.z);
-    terrain.addPad(poly, y, 6);
+    terrain.addPad(poly, y, 6, y + 0.05);
     zones.block(poly, 1);
     zones.clearForest(poly);
     zones.place(poly, 'PAVILHÃO DA KARTOFFELFEST', 2);
     L.kartoffel = { x: k.x, z: k.z, rot: fr.rot, y };
+  }
+
+  // ---------------- Posto Calçadão (pátio de concreto plano) ----------------
+  {
+    const a = md.areas.find(x => x.n === 'Posto Calçadão');
+    if (a) {
+      const o = orientToRoad(ctx, polyToOBB(a.p));
+      const slab = rectPoly(o.x, o.z, o.rot, -o.hx - 3, o.hx + 3, -o.hz - 2, o.hz + 2);
+      const y = Math.max(terrain.roadHeight(o.x, o.z), ...slab.map(([x, z]) => terrain.roadHeight(x, z)));
+      terrain.addPad(slab, y, 5, y + 0.05);
+      L.posto = { o, y };
+    }
   }
 }
 
@@ -176,6 +194,29 @@ export function buildLandmarks(B, ctx) {
 }
 
 function tree(ctx, t, x, z, s = 1, c = null) { ctx.trees.push({ t, x, z, s, c }); }
+
+// fora da pista (e da calçada) de qualquer rua?
+function offRoad(ctx, x, z, m = 0.4) {
+  const q = ctx.roads.index.clearance(x, z, d => d.rank >= 1);
+  return !q.seg || q.d > (q.seg.data.sidewalk ? 2 : 0) + m;
+}
+
+// folga (m) entre o ponto e o obstáculo mais próximo já colocado (ignora os que
+// ficam todos abaixo de yMin)
+function freeGap(ctx, x, z, yMin = -Infinity) {
+  let g = Infinity;
+  for (const it of ctx.collision.near(x, z, 4)) {
+    if (it.y1 < yMin) continue;
+    let d;
+    if (it.t === 'circle') d = Math.hypot(x - it.x, z - it.z) - it.r;
+    else {
+      const [lx, lz] = ctx.collision.constructor.local(it, x, z);
+      d = Math.hypot(Math.max(Math.abs(lx) - it.hx, 0), Math.max(Math.abs(lz) - it.hz, 0));
+    }
+    g = Math.min(g, d);
+  }
+  return g;
+}
 
 // arestas do polígono no sentido em que a parede fica virada para fora
 export function outwardEdges(poly) {
@@ -319,12 +360,12 @@ function buildCemetery(B, ctx, cm) {
   for (let i = 0; i < poly.length; i++) {
     const p = poly[i];
     const x = p[0] + (c[0] - p[0]) * 0.12, z = p[1] + (c[1] - p[1]) * 0.12;
-    tree(ctx, 'cipreste', x, z, R.range(0.9, 1.2));
+    if (freeGap(ctx, x, z) > 0.6 && ctx.trees.every(t => Math.hypot(t.x - x, t.z - z) > 1.6)) tree(ctx, 'cipreste', x, z, R.range(0.9, 1.2)); // fora dos túmulos
   }
   for (let k = 0; k < 8; k++) {
     const t = (k + 0.5) / 8;
     const x = c[0] + (t - 0.5) * 80 * cs + 1.0 * sn, z = c[1] - (t - 0.5) * 80 * sn + 1.0 * cs;
-    if (pointInPoly(x, z, poly)) tree(ctx, 'cipreste', x, z, R.range(0.8, 1.1));
+    if (pointInPoly(x, z, poly) && freeGap(ctx, x, z) > 0.6 && ctx.trees.every(t => Math.hypot(t.x - x, t.z - z) > 1.6)) tree(ctx, 'cipreste', x, z, R.range(0.8, 1.1));
   }
 }
 
@@ -363,6 +404,7 @@ function buildPraca(B, ctx, pr) {
     const m = [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2];
     const rot = Math.atan2(pr.c[0] - m[0], pr.c[1] - m[1]);
     const k = i / step;
+    if (freeGap(ctx, m[0], m[1], y - 0.5) < 1.2) continue; // não encaixa banco dentro de canteiro
     if (k % 2 === 0) bench(B, ctx, m[0], m[1], rot);
     else lantern(B, ctx, m[0], m[1]);
     if (k % 2 === 1) tree(ctx, k % 4 === 1 ? 'araucaria' : 'platano', p[0], p[1], R.range(0.85, 1.05));
@@ -370,9 +412,21 @@ function buildPraca(B, ctx, pr) {
   // orelhão real do OSM (fica perto da praça)
   const tel = ctx.mapdata.pois.find(p => p.k === 'telephone' && Math.hypot(p.x - pr.c[0], p.z - pr.c[1]) < 40);
   if (tel) {
-    let [x, z] = [tel.x, tel.z];
-    if (!pointInPoly(x, z, poly)) { x = x + (pr.c[0] - x) * 0.5; z = z + (pr.c[1] - z) * 0.5; }
-    orelhao(B, ctx, x, z, Math.atan2(pr.c[0] - x, pr.c[1] - z) + Math.PI);
+    // vai para a borda da praça mais perto do ponto real, num lugar livre de
+    // bancos, canteiros, postes e árvores, com o aparelho virado para a praça
+    const free = ([x, z]) => pointInPoly(x, z, poly) && freeGap(ctx, x, z, y - 0.5) > 1.4 && ctx.trees.every(t => Math.hypot(t.x - x, t.z - z) > 2.2);
+    const cands = [];
+    for (let i = 0; i < poly.length; i++) {
+      const a = poly[i], b = poly[(i + 1) % poly.length];
+      for (let t = 0.1; t < 1; t += 0.2) {
+        const ex = a[0] + (b[0] - a[0]) * t, ez = a[1] + (b[1] - a[1]) * t;
+        const dx = pr.c[0] - ex, dz = pr.c[1] - ez, l = Math.hypot(dx, dz);
+        cands.push([ex + dx / l * 1.5, ez + dz / l * 1.5]);
+      }
+    }
+    cands.sort((p, q) => Math.hypot(p[0] - tel.x, p[1] - tel.z) - Math.hypot(q[0] - tel.x, q[1] - tel.z));
+    const at = cands.find(free);
+    if (at) orelhao(B, ctx, at[0], at[1], Math.atan2(pr.c[0] - at[0], pr.c[1] - at[1]));
   }
   const sp = [poly[0][0] + (pr.c[0] - poly[0][0]) * 0.1, poly[0][1] + (pr.c[1] - poly[0][1]) * 0.1];
   signPost(B, ctx, sp[0], sp[1], Math.atan2(sp[0] - pr.c[0], sp[1] - pr.c[1]), signMaterial('PRAÇA 10 DE ABRIL', { bg: '#2f4a2a', fg: '#f2e8c8', w: 128, h: 24 }));
@@ -382,22 +436,30 @@ function buildCalcadao(B, ctx, cd) {
   const R = rng(25);
   const path = cd.path;
   const T = ctx.terrain;
-  // caminho de lajotas
-  const hw = 1.7;
+  // caminho de lajotas, em faixas estreitas: cada vértice segue o terreno (a grade
+  // do terreno é de 5 m e um quadrado largo afundaria nas dobras da margem)
+  const hw = 1.7, ACROSS = [1, 0.5, 0, -0.5, -1];
+  const V = (p, t, s, w = hw, dy = 0.12) => { const x = p[0] - t[1] * w * s, z = p[1] + t[0] * w * s; return [x, T.heightAt(x, z) + dy, z]; };
+  const uv = p => [p[0] / 2, p[2] / 2];
   for (let i = 0; i < path.length - 1; i++) {
-    const a = path[i], b = path[i + 1];
     const ta = tan(path, i), tb = tan(path, i + 1);
-    const V = (p, t, s) => { const x = p[0] - t[1] * hw * s, z = p[1] + t[0] * hw * s; return [x, T.heightAt(x, z) + 0.06, z]; };
-    const pa = V(a, ta, 1), pb = V(b, tb, 1), pc = V(b, tb, -1), pd = V(a, ta, -1);
-    const uv = p => [p[0] / 2, p[2] / 2];
-    B.quad('pavers', pa, pb, pc, pd, [uv(pa), uv(pb), uv(pc), uv(pd)]);
-    // bordas de concreto
-    for (const s of [1, -1]) {
-      const e0 = V(a, ta, s), e1 = V(b, tb, s);
-      const o0 = [a[0] - ta[1] * (hw + 0.25) * s, 0, a[1] + ta[0] * (hw + 0.25) * s], o1 = [b[0] - tb[1] * (hw + 0.25) * s, 0, b[1] + tb[0] * (hw + 0.25) * s];
-      o0[1] = T.heightAt(o0[0], o0[2]) + 0.1; o1[1] = T.heightAt(o1[0], o1[2]) + 0.1;
-      if (s > 0) B.quad('concreteW', e0, o0, o1, e1, [[0, 0], [0.2, 0], [0.2, 1], [0, 1]]);
-      else B.quad('concreteW', e1, o1, o0, e0, [[0, 0], [0.2, 0], [0.2, 1], [0, 1]]);
+    const rows = [0, 0.5, 1].map(f => {
+      const p = [path[i][0] + (path[i + 1][0] - path[i][0]) * f, path[i][1] + (path[i + 1][1] - path[i][1]) * f];
+      let t = [ta[0] + (tb[0] - ta[0]) * f, ta[1] + (tb[1] - ta[1]) * f]; const l = Math.hypot(t[0], t[1]) || 1; t = [t[0] / l, t[1] / l];
+      return { p, t };
+    });
+    for (let r = 0; r < 2; r++) {
+      const A = rows[r], C = rows[r + 1];
+      for (let k = 0; k < ACROSS.length - 1; k++) {
+        const pa = V(A.p, A.t, ACROSS[k]), pb = V(C.p, C.t, ACROSS[k]), pc = V(C.p, C.t, ACROSS[k + 1]), pd = V(A.p, A.t, ACROSS[k + 1]);
+        B.quad('pavers', pa, pb, pc, pd, [uv(pa), uv(pb), uv(pc), uv(pd)]);
+      }
+      // bordas de concreto
+      for (const s of [1, -1]) {
+        const e0 = V(A.p, A.t, s), e1 = V(C.p, C.t, s), o0 = V(A.p, A.t, s, hw + 0.25, 0.15), o1 = V(C.p, C.t, s, hw + 0.25, 0.15);
+        if (s > 0) B.quad('concreteW', e0, o0, o1, e1, [[0, 0], [0.2, 0], [0.2, 1], [0, 1]]);
+        else B.quad('concreteW', e1, o1, o0, e0, [[0, 0], [0.2, 0], [0.2, 1], [0, 1]]);
+      }
     }
   }
   // passarela de madeira onde o caminho cruza o rio (sem ela o caminho afunda na água)
@@ -415,10 +477,12 @@ function buildCalcadao(B, ctx, cd) {
     const dx = e[0] - p[0], dz = e[1] - p[1], l = Math.hypot(dx, dz);
     return [p[0] + dx / l * 1.2, p[1] + dz / l * 1.2];
   });
-  // interrompe onde a praça (piso elevado) avança sobre a margem
+  // interrompe onde a praça (piso elevado) avança sobre a margem e onde cruza
+  // uma rua ou a calçada dela (senão o guarda-corpo atravessa a ponte)
+  const onRoad = (x, z) => { const q = ctx.roads.index.clearance(x, z, d => d.rank >= 2); return q.seg && q.d < (q.seg.data.sidewalk ? 2 : 0) + 0.8; };
   const runs = [[]];
   for (const p of chaikin(bankRail, 2)) {
-    if (pointInPoly(p[0], p[1], ctx.landmarks.praca.poly)) { if (runs[runs.length - 1].length) runs.push([]); }
+    if (pointInPoly(p[0], p[1], ctx.landmarks.praca.poly) || onRoad(p[0], p[1])) { if (runs[runs.length - 1].length) runs.push([]); }
     else runs[runs.length - 1].push(p);
   }
   for (const r of runs) if (r.length > 1) railing(B, ctx, r);
@@ -432,10 +496,11 @@ function buildCalcadao(B, ctx, cd) {
     const side = k % 2 ? 1 : -1;
     const ox = -t[1] * side, oz = t[0] * side;
     const at = d => [p[0] + ox * d, p[1] + oz * d];
-    if (k % 2 === 0) { const q = at(2.6); lantern(B, ctx, q[0], q[1]); }
-    if (k % 3 === 1) { const q = at(2.9); bench(B, ctx, q[0], q[1], Math.atan2(-ox, -oz)); }
-    if (k % 7 === 3) { const q = at(3.0); bin(B, ctx, q[0], q[1]); }
-    if (k % 9 === 5) { const q = at(-6); picnicTable(B, ctx, q[0], q[1], Math.atan2(t[0], t[1])); }
+    const ok = q => offRoad(ctx, q[0], q[1], 1.0);
+    if (k % 2 === 0) { const q = at(2.6); if (ok(q)) lantern(B, ctx, q[0], q[1]); }
+    if (k % 3 === 1) { const q = at(2.9); if (ok(q)) bench(B, ctx, q[0], q[1], Math.atan2(-ox, -oz)); }
+    if (k % 7 === 3) { const q = at(3.0); if (ok(q)) bin(B, ctx, q[0], q[1]); }
+    if (k % 9 === 5) { const q = at(-6); if (ok(q)) picnicTable(B, ctx, q[0], q[1], Math.atan2(t[0], t[1])); }
     // árvores: plátanos em fila, araucárias em grupos
     const tq = at(5.5 + R.range(0, 2));
     tree(ctx, k % 4 === 0 ? 'araucaria' : 'platano', tq[0], tq[1], R.range(0.85, 1.15));
@@ -497,12 +562,7 @@ const tan = (P, i) => {
 
 function buildField(B, ctx, f) {
   // gramado listrado e linhas brancas, num retângulo dentro do polígono
-  const poly = f.poly;
-  let bestL = 0, ang = 0;
-  for (let i = 0; i < poly.length; i++) {
-    const a = poly[i], b = poly[(i + 1) % poly.length], l = Math.hypot(b[0] - a[0], b[1] - a[1]);
-    if (l > bestL) { bestL = l; ang = Math.atan2(b[0] - a[0], b[1] - a[1]); }
-  }
+  const ang = f.ang;
   const { P } = frame({ x: f.c[0], z: f.c[1], rot: ang });
   const hl = 44, hw = 27, y = f.y + 0.05;
   B.quad('field', P(-hw - 3, y, -hl - 3), P(-hw - 3, y, hl + 3), P(hw + 3, y, hl + 3), P(hw + 3, y, -hl - 3), [[0, 0], [0, 8], [5, 8], [5, 0]], null, 6);
@@ -606,7 +666,7 @@ function placeAtPOI(ctx, R, x, z, w, d, style, extra = {}) {
   if (ctx.footprints?.length) {
     const f = claimFootprint(ctx, x, z, 22, extra.minArea ?? 40);
     const o = f && fitBox(ctx, orientFP(ctx, f));
-    if (o && !ctx.zones.overlapsBuilding(o, -0.4)) {
+    if (o && !ctx.zones.overlapsBuilding(o, -0.4) && !ctx.zones.obbBlocked(o)) {
       const spec = makeSpec(R, style, o.x, o.z, o.rot, o.hx * 2, o.hz * 2, extra);
       spec.w = Math.min(spec.w, o.hx * 2); spec.d = Math.min(spec.d, o.hz * 2);
       ctx.zones.addBuilding({ x: o.x, z: o.z, hx: spec.w / 2, hz: spec.d / 2, rot: o.rot });
@@ -712,10 +772,8 @@ function buildSpecials(B, ctx) {
 
   // Posto Calçadão: cobertura, bombas e loja
   {
-    const a = md.areas.find(x => x.n === 'Posto Calçadão');
-    const o = orientToRoad(ctx, polyToOBB(a.p));
+    const { o, y } = ctx.landmarks.posto;
     const { P } = frame(o);
-    const y = groundFor(ctx, { x: o.x, z: o.z, w: o.hx * 2, d: o.hz * 2, rot: o.rot }).yMax;
     B.quad('concrete', P(-o.hx - 3, y + 0.05, o.hz + 2), P(o.hx + 3, y + 0.05, o.hz + 2), P(o.hx + 3, y + 0.05, -o.hz - 2), P(-o.hx - 3, y + 0.05, -o.hz - 2), [[0, 0], [8, 0], [8, 8], [0, 8]], null, 5);
     const slab = [[-o.hx - 3, o.hz + 2], [o.hx + 3, o.hz + 2], [o.hx + 3, -o.hz - 2], [-o.hx - 3, -o.hz - 2]].map(([a, b]) => { const p = P(a, 0, b); return [p[0], p[2]]; });
     ctx.floors.push({ poly: slab, y: y + 0.05 });
@@ -736,12 +794,24 @@ function buildSpecials(B, ctx) {
     B.box('metalWhite', cc[0], y + 5, cc[2], cw, 0.7, cd, o.rot, { uvScale: 3 });
     const fz = o.hz + 0.02;
     B.quad(sign('POSTO CALÇADÃO', { bg: '#f4f0e8', fg: '#a01818' }), P(-5, y + 5.02, fz), P(5, y + 5.02, fz), P(5, y + 5.68, fz), P(-5, y + 5.68, fz));
+    // luminárias embaixo da cobertura
+    for (const lx of [-cw / 4, cw / 4]) {
+      const a = P(lx - 1.2, y + 4.99, o.hz - cd / 2 - 0.4), b = P(lx + 1.2, y + 4.99, o.hz - cd / 2 - 0.4);
+      const c = P(lx + 1.2, y + 4.99, o.hz - cd / 2 + 0.4), d = P(lx - 1.2, y + 4.99, o.hz - cd / 2 + 0.4);
+      B.quad('lamp', a, b, c, d);
+    }
+    // ilhas com bombas de combustível (visor dos dois lados)
     for (const lx of [-3, 3]) {
-      const p = P(lx, 0, o.hz - 2 - (cd - 2) / 2);
-      B.col = [0.85, 0.2, 0.15];
-      B.box('carPaint', p[0], y, p[2], 0.8, 1.6, 0.5, o.rot, { uvScale: 1 });
+      const p = P(lx, 0, o.hz - cd / 2);
+      B.col = [0.95, 0.95, 0.95];
+      B.box('concreteW', p[0], y + 0.05, p[2], 1.3, 0.18, 3.4, o.rot, { uvScale: 1 });
       B.col = [1, 1, 1];
-      ctx.collision.addBox(p[0], p[2], 0.45, 0.3, o.rot, y, y + 1.6);
+      B.box('metalWhite', p[0], y + 0.23, p[2], 0.5, 1.75, 0.8, o.rot, { uvScale: 2 });
+      for (const s of [1, -1]) {
+        const q = (dz, yy) => P(lx + s * 0.252, yy, o.hz - cd / 2 + dz * s);
+        B.quad('pump', q(0.4, y + 0.23), q(-0.4, y + 0.23), q(-0.4, y + 1.98), q(0.4, y + 1.98));
+      }
+      ctx.collision.addBox(p[0], p[2], 0.65, 1.7, o.rot, y, y + 2.0);
     }
     // loja de conveniência nos fundos
     const st = { x: P(0, 0, -o.hz + 4)[0], z: P(0, 0, -o.hz + 4)[2], rot: o.rot, w: Math.min(o.hx * 2, 14), d: 7, style: 'commercial', floors: 1, wall: 'plWhite', roofType: 'flat', roof: 'concrete', win: 'window2', sign: sign('CONVENIÊNCIA', { bg: '#a01818', fg: '#f6eed8' }), signH: 1.0, found: 'concrete', plinth: 0.1 };
@@ -781,10 +851,14 @@ export function placeStopSigns(B, ctx) {
       const major = ctx.roads.index.clearance(x, z, d => d.rank >= 5);
       if (major.d > 1) continue;
       const k = end === 0 ? Math.min(3, r.pts.length - 1) : Math.max(r.pts.length - 4, 0);
-      const t = tan(r.pts, k), side = 1;
-      const px = r.pts[k][0] - t[1] * (r.hw + 0.8) * side, pz = r.pts[k][1] + t[0] * (r.hw + 0.8) * side;
-      if (ctx.zones.isBlocked(px, pz) || ctx.zones.insideBuilding(px, pz, 0.5)) continue;
-      stopSign(B, ctx, px, pz, Math.atan2(t[0], t[1]) + (end === 0 ? Math.PI : 0));
+      const t = tan(r.pts, k);
+      // lado direito de quem chega; se cair na pista de outra rua, tenta o outro lado
+      for (const side of [1, -1]) {
+        const px = r.pts[k][0] - t[1] * (r.hw + 0.8) * side, pz = r.pts[k][1] + t[0] * (r.hw + 0.8) * side;
+        if (ctx.zones.isBlocked(px, pz) || ctx.zones.insideBuilding(px, pz, 0.5) || !offRoad(ctx, px, pz, -2)) continue;
+        stopSign(B, ctx, px, pz, Math.atan2(t[0], t[1]) + (end === 0 ? Math.PI : 0));
+        break;
+      }
     }
   }
 }

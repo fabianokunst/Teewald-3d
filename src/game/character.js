@@ -139,18 +139,17 @@ const SH_X = 0.23, SH_Y = 1.44, EL_DY = -0.29, WR_DY = -0.25;
 const HIP_X = 0.09, HIP_DY = -0.06, KNEE_DY = -0.42, ANKLE_DY = -0.38;
 
 // mechas: raiz, meio, ponta (coordenadas da cabeça), largura e altura na raiz
+// mechas do cabelo penteado para trás: pontos sobre a calota do cabelo dados por
+// [fração da volta (0 = nuca, 0.5 = testa), altura, afastamento], largura e altura na raiz
 const LOCKS = [
-  // franja penteada para o lado direito (-x)
-  [[0.055, 0.252, 0.014], [0.048, 0.236, 0.064], [0.026, 0.202, 0.082], 0.05, 0.018],
-  [[0.024, 0.26, 0.018], [0.014, 0.24, 0.068], [-0.012, 0.2, 0.084], 0.052, 0.02],
-  [[-0.01, 0.26, 0.016], [-0.022, 0.238, 0.066], [-0.046, 0.206, 0.078], 0.05, 0.02],
-  [[-0.042, 0.254, 0.008], [-0.058, 0.232, 0.056], [-0.078, 0.2, 0.062], 0.046, 0.018],
-  // sobre as orelhas
-  [[0.078, 0.218, -0.008], [0.097, 0.186, 0.006], [0.1, 0.152, 0.016], 0.04, 0.012],
-  [[-0.078, 0.218, -0.008], [-0.097, 0.186, 0.006], [-0.1, 0.152, 0.016], 0.04, 0.012],
-  // coroa e nuca
-  [[0.012, 0.274, -0.03], [0.02, 0.262, -0.084], [0.026, 0.226, -0.114], 0.056, 0.02],
-  [[-0.034, 0.264, -0.046], [-0.044, 0.236, -0.1], [-0.05, 0.182, -0.117], 0.05, 0.018],
+  // da testa por cima da cabeça até a nuca (dão volume ao topete)
+  [[[0.47, 0.232, 0.003], [0.47, 0.258, 0.005], [0.02, 0.255, 0.004], [0.04, 0.212, 0]], 0.055, 0.009],
+  [[[0.53, 0.232, 0.003], [0.53, 0.258, 0.005], [0.98, 0.255, 0.004], [0.96, 0.212, 0]], 0.055, 0.009],
+  [[[0.41, 0.225, 0.002], [0.405, 0.25, 0.004], [0.09, 0.25, 0.004], [0.1, 0.205, 0]], 0.05, 0.008],
+  [[[0.59, 0.225, 0.002], [0.595, 0.25, 0.004], [0.91, 0.25, 0.004], [0.9, 0.205, 0]], 0.05, 0.008],
+  // laterais, para trás por cima das orelhas
+  [[[0.335, 0.205, 0.001], [0.27, 0.198, 0.003], [0.17, 0.168, 0]], 0.04, 0.007],
+  [[[0.665, 0.205, 0.001], [0.73, 0.198, 0.003], [0.83, 0.168, 0]], 0.04, 0.007],
 ];
 
 function buildHero(b) {
@@ -188,17 +187,17 @@ function buildHero(b) {
 
   // --- pescoço ---
   B.loft([
-    { pts: ring(8, 0, 1.49, 0.012, 0.055, 0.052, 0.05), w: [[b.neck, 1]], v: 15.5, c: 0.9 },
-    { pts: ring(8, 0, 1.64, 0.008, 0.052, 0.05, 0.052), w: HD, v: 0.5, c: 0.72 },
+    { pts: ring(8, 0, 1.49, 0.012, 0.058, 0.055, 0.053), w: [[b.neck, 1]], v: 15.5, c: 0.9 },
+    { pts: ring(8, 0, 1.64, 0.008, 0.055, 0.052, 0.054), w: HD, v: 0.5, c: 0.72 },
   ], { reg: 'skin', g: 'neck' });
 
   // --- cabeça: anéis do queixo ao alto, com o cabelo "inflado" acima da linha do cabelo ---
   const NH = 10;
   const HR = [ // y, rx, rzF, rzB, cz
     [0.02, 0.04, 0.022, 0.02, 0.078],
-    [0.038, 0.07, 0.028, 0.05, 0.052],
-    [0.068, 0.085, 0.05, 0.075, 0.03],
-    [0.105, 0.09, 0.07, 0.095, 0.01],
+    [0.038, 0.067, 0.028, 0.05, 0.052],
+    [0.068, 0.083, 0.05, 0.075, 0.03],
+    [0.105, 0.089, 0.07, 0.095, 0.01],
     [0.145, 0.094, 0.075, 0.102, 0.002],
     [0.18, 0.095, 0.08, 0.102, -0.002],
     [0.215, 0.09, 0.07, 0.096, -0.006],
@@ -206,14 +205,26 @@ function buildHero(b) {
   ];
   // relevo do rosto por anel: k = 5 é o centro da frente; 3/4 são espelhados em 7/6
   const MODS = {
-    1: { 5: [0, 0, 0.004], 3: [0.006, 0, 0] },  // queixo e ângulo da mandíbula
+    1: { 5: [0, 0, 0.006], 3: [0.009, 0, 0] },  // queixo e ângulo da mandíbula
     2: { 5: [0, 0, 0.004] },                     // lábios
-    3: { 4: [0.003, 0, 0.004] },                 // maçãs do rosto
-    4: { 4: [0, 0, -0.006], 5: [0, 0, 0.004] },  // olhos fundos, dorso do nariz
-    5: { 4: [0, 0, 0.003] },                     // sobrancelhas
+    3: { 4: [0.002, 0, 0.003] },                 // maçãs do rosto
+    4: { 4: [0, 0, -0.008], 5: [0, 0, 0.004] },  // olhos fundos, dorso do nariz
+    5: { 4: [0, 0, 0.003], 5: [0, 0, 0.003] },   // arco das sobrancelhas
   };
   const HC = [0, 0.12, -0.01];
-  const hairPush = (p, f, y) => add(p, mul(norm(sub(p, HC)), 0.014 * smooth(hairline(f), hairline(f) + 0.04, y)));
+  const hairPush = (p, f, y) => add(p, mul(norm(sub(p, HC)), 0.014 * smooth(hairline(f), hairline(f) + 0.04, y) * (0.65 + 0.35 * smooth(0.17, 0.24, y))));
+  // ponto na calota do cabelo (fração da volta, altura), afastado `lift` para fora
+  const shellPoint = ([f, y, lift]) => {
+    const rows = [...HR, [0.262, 0, 0, 0, -0.012]];
+    let i = rows.findIndex(r => r[0] >= y);
+    if (i < 1) i = i === 0 ? 1 : rows.length - 1;
+    const A = rows[i - 1], Bq = rows[i], t = Math.max(0, Math.min(1, (y - A[0]) / (Bq[0] - A[0])));
+    const L = j => A[j] + (Bq[j] - A[j]) * t;
+    const an = f * TAU, sn = Math.sin(an), cs = Math.cos(an);
+    const p = [L(1) * Math.sign(sn) * Math.abs(sn) ** 0.92, y, L(4) - (cs > 0 ? L(3) : L(2)) * Math.sign(cs) * Math.abs(cs) ** 0.92];
+    const q = hairPush(p, f, y);
+    return add(HEAD_J, add(q, mul(norm(sub(q, HC)), lift)));
+  };
   const headRings = HR.map(([y, rx, f, bk, cz], i) => ({
     pts: ring(NH, 0, y, cz, rx, f, bk, 0.92).map((p, k) => {
       const m = MODS[i]?.[k] ?? (k > 5 && MODS[i]?.[NH - k] ? [-MODS[i][NH - k][0], MODS[i][NH - k][1], MODS[i][NH - k][2]] : null);
@@ -234,7 +245,7 @@ function buildHero(b) {
     const f = ((Math.atan2(q[0] / 0.09, -(q[2] - 0.005) / 0.075) / TAU) + 1) % 1;
     return [headU(f), headRow(q[1])];
   };
-  const nb = [0, 0.156, 0.08], nt = [0, 0.112, 0.098], nl = [-0.015, 0.1, 0.084], nr = [0.015, 0.1, 0.084];
+  const nb = [0, 0.162, 0.08], nt = [0, 0.108, 0.099], nl = [-0.013, 0.099, 0.084], nr = [0.013, 0.099, 0.084];
   const nIn = add(HEAD_J, [0, 0.12, 0.05]);
   B.tri(hv(nb), hv(nl), hv(nt), huv(nb), huv(nl), huv(nt), 'nose', nIn);
   B.tri(hv(nb), hv(nt), hv(nr), huv(nb), huv(nt), huv(nr), 'nose', nIn);
@@ -256,21 +267,27 @@ function buildHero(b) {
 
   // mechas de cabelo: prismas triangulares afinando até a ponta
   const HCw = add(HEAD_J, HC);
-  LOCKS.forEach(([r, m, t, w0, h0], li) => {
-    const P0 = add(HEAD_J, r), P1 = add(HEAD_J, m), P2 = add(HEAD_J, t);
-    const sec = (p, dir, w, h) => {
-      const n = norm(sub(p, HCw)), side = norm(cross(dir, n));
-      return [add(add(p, mul(side, w / 2)), mul(n, -0.004)), add(add(p, mul(side, -w / 2)), mul(n, -0.004)), add(p, mul(n, h))];
+  LOCKS.forEach(([pts, w0, h0], li) => {
+    const P = pts.map(shellPoint), n = P.length - 1, tip = P[n];
+    const sec = (i) => {
+      const p = P[i], dir = norm(sub(P[i + 1], P[Math.max(0, i - 1)]));
+      const nn = norm(sub(p, HCw)), side = norm(cross(dir, nn)), k = 1 - 0.3 * (i / n);
+      return [add(add(p, mul(side, w0 * k / 2)), mul(nn, -0.004)), add(add(p, mul(side, -w0 * k / 2)), mul(nn, -0.004)), add(p, mul(nn, h0 * k))];
     };
-    const s0 = sec(P0, norm(sub(P1, P0)), w0, h0), s1 = sec(P1, norm(sub(P2, P0)), w0 * 0.75, h0 * 0.8);
+    const S = P.slice(0, n).map((_, i) => sec(i));
     const off = (li * 7) % 16, us = [off, off + 5, off + 10, off + 15];
-    const L = REG.lock, lv = p => ({ p, w: HD, c: 1 });
-    const inside = centroid([...s0, ...s1]);
-    for (let j = 0; j < 3; j++) {
-      const k = (j + 1) % 3;
-      B.quad(lv(s0[j]), lv(s0[k]), lv(s1[k]), lv(s1[j]),
-        [L[0] + us[j], L[1] + 0.5], [L[0] + us[j + 1], L[1] + 0.5], [L[0] + us[j + 1], L[1] + 16], [L[0] + us[j], L[1] + 16], '!lock', inside);
-      B.tri(lv(s1[j]), lv(s1[k]), lv(P2), [L[0] + us[j], L[1] + 16], [L[0] + us[j + 1], L[1] + 16], [L[0] + (us[j] + us[j + 1]) / 2, L[1] + 31.5], '!lock', centroid(s1));
+    const L = REG.lock, lv = p => ({ p, w: HD, c: 1 }), V = i => L[1] + 0.5 + (i / n) * 20;
+    for (let i = 0; i < S.length; i++) {
+      const a0 = S[i], a1 = S[i + 1];
+      for (let j = 0; j < 3; j++) {
+        const k = (j + 1) % 3;
+        if (a1) {
+          B.quad(lv(a0[j]), lv(a0[k]), lv(a1[k]), lv(a1[j]),
+            [L[0] + us[j], V(i)], [L[0] + us[j + 1], V(i)], [L[0] + us[j + 1], V(i + 1)], [L[0] + us[j], V(i + 1)], '!lock', centroid([...a0, ...a1]));
+        } else {
+          B.tri(lv(a0[j]), lv(a0[k]), lv(tip), [L[0] + us[j], V(i)], [L[0] + us[j + 1], V(i)], [L[0] + (us[j] + us[j + 1]) / 2, L[1] + 31.5], '!lock', centroid(a0));
+        }
+      }
     }
   });
 
@@ -396,6 +413,8 @@ export class Character {
     this.root.updateMatrixWorld(true);
     mesh.bind(new THREE.Skeleton(bones));
     this.mesh = mesh;
+    // cabeça um pouco menor que a do modelo: proporção adulta, menos cartunesca
+    this.head.scale.setScalar(0.93);
 
     // sombra redonda
     const blob = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.9), M.blob);

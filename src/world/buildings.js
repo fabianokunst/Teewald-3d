@@ -200,6 +200,7 @@ function addOpenings(B, s, P, y0, ctx) {
     { name: 'left', a: [-hw - out, -hd], b: [-hw - out, hd], len: s.d },
   ];
   const floors = s.floors;
+  let doorT = null; // onde a porta da frente ficou de fato
   for (const f of faces) {
     const at = (t, y) => {
       const lx = f.a[0] + (f.b[0] - f.a[0]) * t, lz = f.a[1] + (f.b[1] - f.a[1]) * t;
@@ -224,6 +225,7 @@ function addOpenings(B, s, P, y0, ctx) {
           const dw = 1.0 / f.len / 2;
           quadOn('door', t - dw, t + dw, yb, yb + 2.15);
           doorDone = true;
+          if (f.name === 'front') doorT = t;
           continue;
         }
         const ww = 1.1 / f.len / 2;
@@ -239,17 +241,34 @@ function addOpenings(B, s, P, y0, ctx) {
       if (!doorDone) {
         const dw = 1.0 / f.len / 2;
         quadOn('door', doorAt - dw, doorAt + dw, yb, yb + 2.15);
+        if (f.name === 'front') doorT = doorAt;
       }
     }
   }
-  // degrau na porta: desce até o chão e dá para subir nele
-  if (s.style !== 'commercial') {
-    const dz = hd + 0.35, dx = -hw + s.w * (s.doorAt ?? (Math.floor((s.w - 1.2) / 2.6) >= 2 ? 0.5 : 0.3));
-    const p = P(dx, 0, dz);
-    const base = Math.min(...[-0.6, 0.6].map(o => { const q = P(dx + o, 0, dz + 0.3); return ctx.terrain.heightAt(q[0], q[2]); })) - 0.1;
-    if (y0 - base > 0.08) {
-      B.box('concrete', p[0], base, p[2], 1.4, y0 - base, 0.7, s.rot, { uvScale: 1 });
+  // degrau embaixo da porta de verdade; se a porta fica alta (terreno em declive),
+  // patamar e escada descendo rente à parede, sem avançar sobre a calçada
+  if (s.style !== 'commercial' && doorT !== null) {
+    const dx = -hw + s.w * doorT;
+    const ground = (lx, lz) => { const q = P(lx, 0, lz); return ctx.terrain.heightAt(q[0], q[2]); };
+    const base = Math.min(ground(dx - 0.6, hd + 0.65), ground(dx + 0.6, hd + 0.65)) - 0.1;
+    const h = y0 - base;
+    if (h > 0.08 && h <= 0.7) {
+      const p = P(dx, 0, hd + 0.35);
+      B.box('concrete', p[0], base, p[2], 1.4, h, 0.7, s.rot, { uvScale: 1 });
       ctx.collision.addBox(p[0], p[2], 0.7, 0.35, s.rot, base, y0, { walk: true, cam: false });
+    } else if (h > 0.7) {
+      const p = P(dx, 0, hd + 0.55);
+      B.box('concrete', p[0], base, p[2], 1.4, h, 1.1, s.rot, { uvScale: 1 });
+      ctx.collision.addBox(p[0], p[2], 0.7, 0.55, s.rot, base, y0, { walk: true, cam: false });
+      const dir = dx > 0 ? -1 : 1, n = Math.ceil(h / 0.19), run = n * 0.28, rise = h / (n + 1);
+      for (let i = 0; i < n; i++) {
+        const lx = dx + dir * (0.7 + 0.28 * (i + 0.5)), q = P(lx, 0, hd + 0.55);
+        const g = Math.min(ground(lx, hd + 0.1), ground(lx, hd + 1.0)) - 0.1;
+        const top = y0 - (i + 1) * rise;
+        if (top > g) B.box('concrete', q[0], g, q[2], 0.29, top - g, 1.0, s.rot, { uvScale: 1 });
+      }
+      const c = P(dx + dir * (0.7 + run / 2), 0, hd + 0.55);
+      ctx.collision.addBox(c[0], c[2], 0.5, run / 2, s.rot + dir * Math.PI / 2, base, y0, { walk: true, cam: false, ramp: [y0, y0 - n * rise] });
     }
   }
 }
@@ -543,7 +562,7 @@ export function placeFootprintBuildings(ctx, B) {
     if (!ctx.terrain.inBounds(f.x, f.z) || zones.isBlocked(f.x, f.z)) continue;
     let o = fitBox(ctx, orientToRoad(ctx, f));
     if (!o || o.hx < 1.25 || o.hz < 1.25) continue;
-    if (zones.overlapsBuilding(o, -0.4)) continue;
+    if (zones.overlapsBuilding(o, -0.4) || zones.obbBlocked(o)) continue;
     const A = 4 * o.hx * o.hz, w = o.hx * 2, d = o.hz * 2;
     const dc = Math.hypot(o.x - core[0], o.z - core[1]);
     const fr = facingRoad(ctx, o.x, o.z);

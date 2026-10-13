@@ -1,4 +1,4 @@
-import { pointInPoly, distToPoly, fbm, obbOverlap } from './geo.js';
+import { pointInPoly, distToPoly, fbm, obbOverlap, obbCorners } from './geo.js';
 
 // Áreas especiais: onde não construir casas, onde há mata, e nomes de lugares
 export class Zones {
@@ -17,6 +17,19 @@ export class Zones {
   isBlocked(x, z, extra = 0) {
     for (const b of this.blocks) if (distToPoly(x, z, b.poly) < b.margin + extra) return true;
     return false;
+  }
+
+  // a caixa invade alguma área reservada? Testa a borda a cada 3 m, o miolo e os
+  // vértices da área dentro da caixa (um prédio comprido pode ter o centro de fora)
+  obbBlocked(obb, extra = 0) {
+    const cs = obbCorners(obb), pts = [];
+    for (let i = 0; i < 4; i++) {
+      const a = cs[i], b = cs[(i + 1) % 4], n = Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / 3));
+      for (let k = 0; k < n; k++) pts.push([a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n]);
+    }
+    for (const u of [-0.5, 0, 0.5]) for (const v of [-0.5, 0, 0.5]) pts.push([(cs[0][0] + cs[2][0]) / 2 + u * (cs[1][0] - cs[0][0]) + v * (cs[3][0] - cs[0][0]), (cs[0][1] + cs[2][1]) / 2 + u * (cs[1][1] - cs[0][1]) + v * (cs[3][1] - cs[0][1])]);
+    if (pts.some(([x, z]) => this.isBlocked(x, z, extra))) return true;
+    return this.blocks.some(b => b.poly.some(([x, z]) => pointInPoly(x, z, cs)));
   }
 
   addBuilding(obb) { this.obbs.push(obb); }

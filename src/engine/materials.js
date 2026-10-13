@@ -13,7 +13,7 @@ export const M = {};
 export function makeMaterials() {
   for (const [name, tex] of Object.entries(TEX)) {
     const cut = CUTOUT.includes(name);
-    const double = name.startsWith('roof') || name.startsWith('awn') || name === 'metalRoof' || name === 'metalRust' || name === 'fenceGrid' || name === 'orelhaoShell';
+    const double = name.startsWith('roof') || name.startsWith('awn') || name === 'metalRoof' || name === 'metalRust' || name === 'fenceGrid';
     M[name] = ps1Material({
       map: tex,
       cutout: cut || name === 'fenceGrid',

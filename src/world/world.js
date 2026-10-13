@@ -33,6 +33,14 @@ export async function buildWorld(scene, onStep) {
   ctx.collision = new CollisionWorld(8);
   defineLandmarks(ctx);
   ctx.terrain.finalize(ctx.roads.index, ctx.rivers.index);
+  // superfície onde um objeto se apoia: terreno, rua, calçada ou piso (praça, pátio)
+  ctx.surfaceAt = (x, z) => {
+    let y = ctx.terrain.heightAt(x, z);
+    const r = roadSurfaceAt(ctx.roads, ctx.terrain, x, z);
+    if (r !== null) y = Math.max(y, r);
+    for (const f of ctx.floors) if (pointInPoly(x, z, f.poly)) y = Math.max(y, f.y);
+    return y;
+  };
 
   await step(0.25, 'ruas e rio');
   const B = new MeshBuilder(200);
@@ -73,10 +81,7 @@ export async function buildWorld(scene, onStep) {
 
   // altura do chão para o jogador: terreno, ruas, calçadas, pisos e plataformas
   ctx.groundAt = (x, z, feetY) => {
-    let y = ctx.terrain.heightAt(x, z);
-    const r = roadSurfaceAt(ctx.roads, ctx.terrain, x, z);
-    if (r !== null) y = Math.max(y, r);
-    for (const f of ctx.floors) if (pointInPoly(x, z, f.poly)) y = Math.max(y, f.y);
+    let y = ctx.surfaceAt(x, z);
     const fl = ctx.collision.floorAt(x, z, feetY + 0.45);
     if (fl > y) y = fl;
     return y;

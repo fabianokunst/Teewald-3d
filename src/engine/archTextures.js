@@ -298,4 +298,50 @@ export function makeArchTextures() {
     const c = [168 - y * 1.6, 178 - y * 1.6, 172 - y * 1.4]; // vidro aramado, mais claro em cima
     return (x + y) % 4 === 0 ? mul(c, 0.92) : c;
   }), false);
+
+  // ---- orelhão: cúpula de fibra laranja e aparelho com teclado ----
+  TEX.orelhaoShell = finish(paint(32, 32, (x, y) => {
+    const k = y >= 29 ? 0.7 : 1.08 - y * 0.008 - (x % 8 === 0 ? 0.05 : 0); // borda escura embaixo, gomos
+    const n = ((x * 29 + y * 53) % 5) - 2;
+    return [232 * k + n, 118 * k + n, 28 * k];
+  }), false);
+  TEX.orelhaoPhone = finish(paint(32, 64, (x, y) => {
+    const body = [168, 34, 30];
+    if (x < 2 || x > 29 || y < 2 || y > 61) return mul(body, x === 0 || y === 0 ? 1.2 : 0.75);
+    if (x >= 3 && x <= 8 && y >= 6 && y <= 52) return (x === 3 || y === 6 || y === 52) ? [60, 60, 62] : [22, 22, 24]; // monofone
+    if (x >= 11 && x <= 27 && y >= 6 && y <= 13) return (x === 11 || x === 27 || y === 6 || y === 13) ? [40, 40, 42] : [120, 150, 100]; // visor
+    if (x >= 13 && x <= 25 && y >= 16 && y <= 17) return [20, 20, 20]; // entrada do cartão
+    const kx = x - 12, ky = y - 22;
+    if (kx >= 0 && kx < 15 && ky >= 0 && ky < 24) { // teclado 3x4
+      const bx = kx % 5, by = ky % 6;
+      if (bx < 4 && by < 4) return by === 0 || bx === 0 ? [226, 226, 230] : [176, 178, 184];
+      return mul(body, 0.8);
+    }
+    return mul(body, y < 4 ? 1.1 : 1);
+  }), false);
+
+  // ---- bomba de combustível: faixa da bandeira, visor, etiquetas, bicos e mangueiras ----
+  const DIG = { 0: '111101101101111', 1: '010110010010111', 3: '111001111001111', 4: '101101111001001', 5: '111100111001111', 7: '111001001001001', 9: '111101111001111' };
+  const digits = (x, y, x0, y0, str) => {
+    const i = Math.floor((x - x0) / 4), gx = (x - x0) % 4, gy = y - y0;
+    return i >= 0 && i < str.length && gx < 3 && gy >= 0 && gy < 5 && DIG[str[i]][gy * 3 + gx] === '1';
+  };
+  TEX.pump = finish(paint(32, 64, (x, y) => {
+    const white = [222, 222, 218];
+    if (y < 9) return y === 8 ? [120, 20, 18] : [196, 30, 26];
+    if (x === 0 || x === 31) return mul(white, 0.8);
+    if (x >= 5 && x <= 26 && y >= 12 && y <= 27) { // visor: preço e litros
+      if (x === 5 || x === 26 || y === 12 || y === 27) return [60, 60, 64];
+      if (digits(x, y, 9, 14, '479') || digits(x, y, 9, 21, '350')) return [240, 170, 40];
+      return [24, 26, 24];
+    }
+    if (y >= 30 && y <= 33 && ((x >= 6 && x <= 13) || (x >= 18 && x <= 25))) return x < 16 ? [230, 190, 40] : [40, 150, 70]; // etiquetas
+    for (const [h0, h1] of [[4, 9], [22, 27]]) { // bicos e mangueiras
+      if (x >= h0 && x <= h1 && y >= 37 && y <= 44) return x === h0 || y === 37 ? [70, 70, 74] : [30, 30, 32];
+      const hx = h0 + 2 + Math.round(Math.sin((y - 45) * 0.25) * 2);
+      if (y > 44 && y < 58 && (x === hx || x === hx + 1)) return [18, 18, 18];
+    }
+    if (y >= 58) return mul([150, 152, 156], y === 58 ? 1.2 : 1);
+    return white;
+  }), false);
 }

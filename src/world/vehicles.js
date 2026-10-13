@@ -16,7 +16,7 @@ const WHITE = [1, 1, 1], DARK = [0.85, 0.85, 0.85];
 
 export function car(B, ctx, x, z, rot, color, type) {
   const T = TYPES[type || (Math.abs(Math.round(x * 3 + z * 7)) % 2 ? 'sedan' : 'hatch')];
-  const y0 = ctx.terrain.heightAt(x, z);
+  const y0 = ctx.surfaceAt(x, z);
   const c = Math.cos(rot), s = Math.sin(rot);
   const P = (lx, ly, lz) => [x + lx * c + lz * s, y0 + ly, z - lx * s + lz * c];
   const D = (lx, ly, lz) => [lx * c + lz * s, ly, -lx * s + lz * c];

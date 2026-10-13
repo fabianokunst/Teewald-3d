@@ -129,7 +129,7 @@ export function buildRoads(B, ctx) {
         if (!hit) continue;
         const x = P[i][0] + (P[i + 1][0] - P[i][0]) * hit[0], z = P[i][1] + (P[i + 1][1] - P[i][1]) * hit[0];
         if (bridges.some(b => Math.hypot(b.x - x, b.z - z) < 6)) continue;
-        bridges.push({ x, z, tan: tan[i], road: r, river: rv, len: rv.width + 5 });
+        bridges.push({ x, z, tan: tan[i], road: r, river: rv, len: rv.width + 5, seg: i, t: hit[0] });
       }
     }
   }
@@ -140,32 +140,73 @@ export function buildRoads(B, ctx) {
 
 const UV2 = q => [q[0] / 2, q[1] / 2];
 
+// quadrilátero com a face virada para "out"
+function quadOut(B, mat, a, b, c, d, out, uv) {
+  const u = [b[0] - a[0], b[1] - a[1], b[2] - a[2]], v = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
+  const n = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
+  if (n[0] * out[0] + n[1] * out[1] + n[2] * out[2] < 0) B.quad(mat, d, c, b, a, uv && [uv[3], uv[2], uv[1], uv[0]]);
+  else B.quad(mat, a, b, c, d, uv);
+}
+
+// Ponte que acompanha o traçado e o perfil da rua (curvas e rampas): tabuleiro e
+// muretas contínuos, sem degraus entre trechos
 function buildBridge(B, ctx, br) {
   const { terrain, collision } = ctx;
-  const r = br.road, [tx, tz] = br.tan, nx = tz, nz = -tx;
-  const half = br.len / 2, hw = r.hw + (r.sidewalk ? 2 : 0) + 0.15;
-  const rot = Math.atan2(tx, tz);
-  // trechos de ~2 m que acompanham o perfil da rua: uma caixa reta afundaria
-  // na cabeceira mais alta e viraria um muro baixo no meio da pista
-  const n = Math.max(1, Math.round(br.len / 2)), seg = br.len / n;
-  for (let i = 0; i < n; i++) {
-    const t = -half + (i + 0.5) * seg;
-    const px = br.x + tx * t, pz = br.z + tz * t;
-    const y = terrain.roadHeight(px, pz) + r.off;
-    for (const side of [1, -1]) {
-      const cx = px + nx * hw * side, cz = pz + nz * hw * side;
-      // na cabeceira a mureta pode cair dentro de outra rua ou do barranco: se mal
-      // aparece, não entra (seria um muro invisível no meio do caminho)
-      const rs = roadSurfaceAt(ctx.roads, terrain, cx, cz);
-      if (Math.max(terrain.heightAt(cx, cz), rs ?? -Infinity) > y + 0.5) continue;
-      // mureta de concreto
-      B.box('concreteW', cx, y - 0.9, cz, 0.3, 1.9, seg + 0.02, rot, { uvScale: 2 });
+  const r = br.road, P = r.pts, half = br.len / 2, hw = r.hw + (r.sidewalk ? 2 : 0) + 0.15;
+  const acc = [0];
+  for (let i = 1; i < P.length; i++) acc.push(acc[i - 1] + Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]));
+  const s0 = acc[br.seg] + (acc[br.seg + 1] - acc[br.seg]) * br.t;
+  const pointAt = s => {
+    let i = 1;
+    while (i < P.length - 1 && acc[i] < s) i++;
+    const a = P[i - 1], b = P[i], f = Math.max(0, Math.min(1, (s - acc[i - 1]) / ((acc[i] - acc[i - 1]) || 1)));
+    return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
+  };
+  const sA = Math.max(0, s0 - half), sB = Math.min(acc[acc.length - 1], s0 + half);
+  const ss = [sA, ...acc.filter(v => v > sA + 0.3 && v < sB - 0.3), sB];
+  const st = ss.map(v => { const [x, z] = pointAt(v); return { x, z, s: v, y: terrain.roadHeight(x, z) + r.off }; });
+  st.forEach((p, k) => { // tangente média e normal (lado esquerdo = +n)
+    const a = st[Math.max(k - 1, 0)], b = st[Math.min(k + 1, st.length - 1)];
+    const l = Math.hypot(b.x - a.x, b.z - a.z) || 1;
+    p.tx = (b.x - a.x) / l; p.tz = (b.z - a.z) / l; p.nx = p.tz; p.nz = -p.tx;
+  });
+  // altura no ponto lateral (a rua pode ter caimento para um lado)
+  const V = (p, w, dy) => { const x = p.x + p.nx * w, z = p.z + p.nz * w; return [x, terrain.roadHeight(x, z) + r.off + dy, z]; };
+  const N = (p, k) => [p.nx * k, 0, p.nz * k];
+  const T = (p, k) => [p.tx * k, 0, p.tz * k];
+  const uvs = (a, b, y0, y1) => [[a.s / 2, y0 / 2], [b.s / 2, y0 / 2], [b.s / 2, y1 / 2], [a.s / 2, y1 / 2]];
+  // na cabeceira a mureta pode cair dentro de outra rua ou do barranco: ali não entra
+  const blocked = (a, b, side) => {
+    const m = { x: (a.x + b.x) / 2, z: (a.z + b.z) / 2, nx: (a.nx + b.nx) / 2, nz: (a.nz + b.nz) / 2, y: (a.y + b.y) / 2 };
+    const [cx, , cz] = V(m, hw * side, 0);
+    const rs = roadSurfaceAt(ctx.roads, terrain, cx, cz);
+    return Math.max(terrain.heightAt(cx, cz), rs ?? -Infinity) > m.y + 0.5;
+  };
+  const W0 = hw - 0.15, W1 = hw + 0.15;
+  for (const side of [1, -1]) {
+    let run = false;
+    for (let k = 0; k < st.length - 1; k++) {
+      const a = st[k], b = st[k + 1];
+      const on = !blocked(a, b, side);
+      if (on !== run) { const p = on ? a : st[k]; quadOut(B, 'concreteW', V(p, W0 * side, -0.9), V(p, W1 * side, -0.9), V(p, W1 * side, 1.0), V(p, W0 * side, 1.0), T(p, on ? -1 : 1)); run = on; }
+      if (!on) continue;
+      quadOut(B, 'concreteW', V(a, W1 * side, -0.9), V(b, W1 * side, -0.9), V(b, W1 * side, 1.0), V(a, W1 * side, 1.0), N(a, side), uvs(a, b, -0.9, 1.0));
+      quadOut(B, 'concreteW', V(a, W0 * side, -0.05), V(b, W0 * side, -0.05), V(b, W0 * side, 1.0), V(a, W0 * side, 1.0), N(a, -side), uvs(a, b, -0.05, 1.0));
+      quadOut(B, 'concreteW', V(a, W0 * side, 1.0), V(b, W0 * side, 1.0), V(b, W1 * side, 1.0), V(a, W1 * side, 1.0), [0, 1, 0], uvs(a, b, 0, 0.3));
+      quadOut(B, 'concreteW', V(a, W0 * side, -0.9), V(b, W0 * side, -0.9), V(b, W1 * side, -0.9), V(a, W1 * side, -0.9), [0, -1, 0], uvs(a, b, 0, 0.3));
+      const L = Math.hypot(b.x - a.x, b.z - a.z), rot = Math.atan2(b.x - a.x, b.z - a.z);
+      const c = V({ x: (a.x + b.x) / 2, z: (a.z + b.z) / 2, nx: (a.nx + b.nx) / 2, nz: (a.nz + b.nz) / 2, y: Math.min(a.y, b.y) }, hw * side, 0);
       // walk: pela pista bloqueia (1 m), mas se o barranco chega quase no topo dá para pisar nela
-      collision.addBox(cx, cz, 0.15, seg / 2, rot, y - 0.9, y + 1.0, { walk: true });
+      collision.addBox(c[0], c[2], 0.15, L / 2, rot, c[1] - 0.9, c[1] + 1.0 + Math.abs(a.y - b.y) / 2, { walk: true });
+      if (k === st.length - 2) quadOut(B, 'concreteW', V(b, W0 * side, -0.9), V(b, W1 * side, -0.9), V(b, W1 * side, 1.0), V(b, W0 * side, 1.0), T(b, 1));
     }
-    // tabuleiro (plataforma caminhável); a caixa começa onde o tabuleiro começa,
-    // para quem passa por baixo da ponte não bater no vazio
-    B.box('concrete', px, y - 0.75, pz, hw * 2, 0.7, seg + 0.02, rot, { top: false });
-    collision.addBox(px, pz, hw, seg / 2, rot, y - 0.75, y, { walk: true });
   }
+  // tabuleiro: face de baixo e testeiras nas cabeceiras
+  for (let k = 0; k < st.length - 1; k++) {
+    const a = st[k], b = st[k + 1];
+    quadOut(B, 'concrete', V(a, -hw, -0.75), V(b, -hw, -0.75), V(b, hw, -0.75), V(a, hw, -0.75), [0, -1, 0], uvs(a, b, -hw, hw));
+    const L = Math.hypot(b.x - a.x, b.z - a.z), rot = Math.atan2(b.x - a.x, b.z - a.z);
+    collision.addBox((a.x + b.x) / 2, (a.z + b.z) / 2, hw, L / 2, rot, Math.min(a.y, b.y) - 0.75, (a.y + b.y) / 2, { walk: true });
+  }
+  for (const [p, k] of [[st[0], -1], [st[st.length - 1], 1]]) quadOut(B, 'concrete', V(p, -hw, -0.75), V(p, hw, -0.75), V(p, hw, -0.35), V(p, -hw, -0.35), T(p, k));
 }

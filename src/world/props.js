@@ -11,7 +11,7 @@ const rotP = (x, z, rot) => {
 };
 
 export function bench(B, ctx, x, z, rot) {
-  const y = ctx.terrain.heightAt(x, z);
+  const y = ctx.surfaceAt(x, z);
   const P = rotP(x, z, rot);
   B.col = [1, 1, 1];
   for (const lx of [-0.75, 0.75]) {
@@ -34,7 +34,7 @@ export function bench(B, ctx, x, z, rot) {
 }
 
 export function picnicTable(B, ctx, x, z, rot) {
-  const y = ctx.terrain.heightAt(x, z);
+  const y = ctx.surfaceAt(x, z);
   const P = rotP(x, z, rot);
   B.box('woodBench', x, y + 0.72, z, 1.9, 0.06, 0.8, rot, { uvScale: 1 });
   for (const lx of [-0.7, 0.7]) { const p = P(lx, 0, 0); B.box('woodBench', p[0], y, p[2], 0.1, 0.72, 0.1, rot, { uvScale: 1 }); }
@@ -47,7 +47,7 @@ export function picnicTable(B, ctx, x, z, rot) {
 }
 
 export function bin(B, ctx, x, z) {
-  const y = ctx.terrain.heightAt(x, z);
+  const y = ctx.surfaceAt(x, z);
   B.col = [0.35, 0.5, 0.35];
   B.cylinder('metalGray', x, y, z, 0.25, 0.28, 0.8, 6, { cap: true, capMat: 'iron' });
   B.col = [1, 1, 1];
@@ -56,7 +56,7 @@ export function bin(B, ctx, x, z) {
 
 // lampião de ferro (praça / calçadão)
 export function lantern(B, ctx, x, z, h = 3.6) {
-  const y = ctx.terrain.heightAt(x, z);
+  const y = ctx.surfaceAt(x, z);
   B.col = [1, 1, 1];
   B.cylinder('iron', x, y, z, 0.16, 0.12, 0.5, 6, { cap: true });
   B.cylinder('iron', x, y + 0.5, z, 0.06, 0.05, h - 0.5, 5);
@@ -68,7 +68,7 @@ export function lantern(B, ctx, x, z, h = 3.6) {
 
 // poste de concreto com braço de luz (ruas)
 export function streetPole(B, ctx, x, z, rot, withLamp = true) {
-  const y = ctx.terrain.heightAt(x, z);
+  const y = ctx.surfaceAt(x, z);
   const P = rotP(x, z, rot);
   B.col = [0.85, 0.85, 0.82];
   B.box('concrete', x, y, z, 0.24, 8.5, 0.24, rot, { uvScale: 2 });
@@ -84,34 +84,41 @@ export function streetPole(B, ctx, x, z, rot, withLamp = true) {
   return [P(-0.55, y + 7.7, 0), P(0.55, y + 7.7, 0)];
 }
 
+// orelhão: cúpula de fibra laranja aberta na frente, poste atrás e o aparelho
 export function orelhao(B, ctx, x, z, rot) {
-  const y = ctx.terrain.heightAt(x, z);
+  const y = ctx.surfaceAt(x, z);
   (ctx.phones ||= []).push({ x, z, rot, y });   // o telefone fica do lado +z local
   const P = rotP(x, z, rot);
-  B.col = [0.7, 0.7, 0.7];
-  B.box('metalGray', x, y, z, 0.1, 2.0, 0.1, rot, { uvScale: 1 });
+  B.col = [0.62, 0.62, 0.64];
+  B.box('metalGray', x, y, z, 0.1, 2.15, 0.1, rot, { uvScale: 1 });
+  // cúpula: elipsoide sem a frente (|a| > 2 rad) e sem o fundo
   B.col = [1, 1, 1];
-  // concha (telhado de orelhão)
-  const c = P(0, y + 1.25, 0.32);
-  const n = 8, r = 0.62;
-  for (let i = 0; i < n; i++) {
-    for (let j = 0; j < 3; j++) {
-      const a0 = (i / n) * Math.PI * 2, a1 = ((i + 1) / n) * Math.PI * 2;
-      const b0 = (j / 3) * (Math.PI / 2), b1 = ((j + 1) / 3) * (Math.PI / 2);
-      const pt = (a, b) => { const q = P(Math.cos(a) * Math.cos(b) * r * 0.9, 0, 0.32 + Math.sin(a) * Math.cos(b) * r); return [q[0], c[1] + Math.sin(b) * r * 1.1, q[2]]; };
-      B.quad('orelhaoShell', pt(a1, b0), pt(a0, b0), pt(a0, b1), pt(a1, b1), [[(i + 1) / n, j / 3], [i / n, j / 3], [i / n, (j + 1) / 3], [(i + 1) / n, (j + 1) / 3]]);
-    }
+  const C = [0, y + 1.62, 0.34], RX = 0.42, RY = 0.62, RZ = 0.46, NA = 10, NE = 5;
+  const A0 = -1.9, E0 = -0.35, E1 = Math.PI / 2;
+  const pt = (a, e) => P(C[0] + Math.sin(a) * Math.cos(e) * RX, C[1] + Math.sin(e) * RY, C[2] - Math.cos(a) * Math.cos(e) * RZ);
+  for (let i = 0; i < NA; i++) for (let j = 0; j < NE; j++) {
+    const a0 = A0 + (i / NA) * -A0 * 2, a1 = A0 + ((i + 1) / NA) * -A0 * 2;
+    const e0 = E0 + (j / NE) * (E1 - E0), e1 = E0 + ((j + 1) / NE) * (E1 - E0);
+    const uv = [[i / NA, j / NE], [(i + 1) / NA, j / NE], [(i + 1) / NA, (j + 1) / NE], [i / NA, (j + 1) / NE]];
+    B.col = [1, 1, 1];
+    B.quad('orelhaoShell', pt(a0, e0), pt(a0, e1), pt(a1, e1), pt(a1, e0), [uv[0], uv[3], uv[2], uv[1]]);
+    B.col = [0.45, 0.42, 0.4]; // dentro, na sombra
+    B.quad('orelhaoShell', pt(a0, e0), pt(a1, e0), pt(a1, e1), pt(a0, e1), uv);
   }
-  // aparelho
-  const ph = P(0, 0, 0.12);
-  B.box('orelhao', ph[0], y + 1.2, ph[2], 0.28, 0.5, 0.16, rot, { faceUV: true });
-  // a concha fica na altura da cabeça: o círculo cobre a concha, não só o poste
-  const sc = P(0, 0, 0.3);
-  ctx.collision.addCircle(sc[0], sc[2], 0.6, y, y + 2.0);
+  // aparelho preso ao poste, virado para +z
+  const ph = P(0, 0, 0.14);
+  B.col = [0.55, 0.12, 0.1];
+  B.box('metalGray', ph[0], y + 1.2, ph[2], 0.3, 0.52, 0.18, rot, { uvScale: 1 });
+  B.col = [1, 1, 1];
+  B.quad('orelhaoPhone', P(-0.15, y + 1.2, 0.234), P(0.15, y + 1.2, 0.234), P(0.15, y + 1.72, 0.234), P(-0.15, y + 1.72, 0.234));
+  // poste e aparelho; a cúpula só na altura da cabeça
+  ctx.collision.addCircle(ph[0], ph[2], 0.3, y, y + 2.2);
+  const sc = P(0, 0, 0.36);
+  ctx.collision.addCircle(sc[0], sc[2], 0.55, y + 1.45, y + 2.3);
 }
 
 export function stopSign(B, ctx, x, z, rot) {
-  const y = ctx.terrain.heightAt(x, z);
+  const y = ctx.surfaceAt(x, z);
   const P = rotP(x, z, rot);
   B.col = [0.75, 0.75, 0.75];
   B.box('metalGray', x, y, z, 0.07, 2.2, 0.07, rot, { uvScale: 1 });
@@ -127,7 +134,7 @@ export function stopSign(B, ctx, x, z, rot) {
 }
 
 export function busStop(B, ctx, x, z, rot) {
-  const y = ctx.terrain.heightAt(x, z);
+  const y = ctx.surfaceAt(x, z);
   const P = rotP(x, z, rot);
   B.box('concrete', x, y - 0.3, z, 3.4, 0.45, 1.8, rot, { uvScale: 2 });
   for (const lx of [-1.5, 1.5]) { const p = P(lx, 0, -0.6); B.box('metalGray', p[0], y + 0.15, p[2], 0.1, 2.3, 0.1, rot); }
@@ -172,7 +179,7 @@ export function railing(B, ctx, pts, o = {}) {
 
 // letreiro colorido da cidade (como o do Calçadão do Rio Cadeia)
 export function letreiro(B, ctx, x, z, rot, text = 'TEEWALD') {
-  const y = ctx.terrain.heightAt(x, z);
+  const y = ctx.surfaceAt(x, z);
   const P = rotP(x, z, rot);
   // tinta velha, desbotada e encardida
   const colors = [[0.46, 0.22, 0.19], [0.52, 0.45, 0.26], [0.25, 0.36, 0.28], [0.26, 0.32, 0.4], [0.5, 0.33, 0.22], [0.36, 0.26, 0.33], [0.46, 0.22, 0.19]];
@@ -210,7 +217,7 @@ function glyph(B, P, lx, y, lz, w, h, ch, rot) {
 
 // Monumento ao Imigrante: pedras grandes e mãos segurando o globo
 export function monumento(B, ctx, x, z, rot) {
-  const y = ctx.terrain.heightAt(x, z);
+  const y = ctx.surfaceAt(x, z);
   const P = rotP(x, z, rot);
   const R = rng(73);
   B.col = [1, 1, 1];

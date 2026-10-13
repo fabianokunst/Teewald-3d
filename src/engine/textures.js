@@ -195,8 +195,6 @@ const DEFS = [
   ['clouds', 'Elements/Elements_05-256x256.png', 128, 128, {}],
   ['water', 'elements2/Elements_17-256x256.png', 64, 64, { saturate: 0.3, tint: [0.5, 0.52, 0.4], contrast: 0.9 }],
   // objetos
-  ['orelhao', 'orelhao.jpg', 64, 64, {}],
-  ['orelhaoShell', 'orelhão-teto.png', 64, 64, {}],
   ['pare', 'placa-pare.jpg', 64, 64, {}],
   ['marble', 'Marble/Mat_Marble_White_01-256x256.png', 64, 64, {}],
   ['granite', 'Stone/Mat_Stone_Gray_01-256x256.png', 64, 64, {}],
