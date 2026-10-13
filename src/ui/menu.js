@@ -31,9 +31,11 @@ export const CREDITS = [
   ['Prédios: Microsoft Building Footprints (ODbL)', ''],
   ['Relevo: SRTM 30m (NASA) via OpenTopoData', ''],
   ['', ''],
-  ['Texturas: biblioteca do projeto', ''],
-  ['Motor: Three.js', ''],
+  ['Criado por Fabiano Kunst', 'name'],
 ];
+
+// site do autor: abre numa aba nova a partir dos créditos
+export const SITE = { label: 'fabianokunst.fkweb.com.br', url: 'https://fabianokunst.fkweb.com.br' };
 
 export class Menu {
   constructor(input, audio, settings, onChange) {
@@ -48,7 +50,8 @@ export class Menu {
   open(screen) {
     if (screen === 'options' || screen === 'credits') this.returnTo = this.screen === 'pause' ? 'pause' : 'main';
     if (screen === 'confirm') this.returnTo = 'pause';
-    this.screen = screen; this.sel = 0; this.t = 0;
+    // nos créditos começa no VOLTAR, para ENTER não abrir o site sem querer
+    this.screen = screen; this.sel = screen === 'credits' ? 1 : 0; this.t = 0;
   }
 
   options() {
@@ -61,7 +64,7 @@ export class Menu {
     // sair da partida pede confirmação (o item marcado de início é o seguro)
     if (this.screen === 'confirm') return [{ label: 'CONTINUAR JOGANDO', act: 'back' }, { label: 'SAIR PARA O MENU', act: 'quit' }];
     if (this.screen === 'options') return [...this.options().map(o => ({ label: o.label, opt: o })), { label: 'VOLTAR', act: 'back' }];
-    if (this.screen === 'credits') return [{ label: 'VOLTAR', act: 'back' }];
+    if (this.screen === 'credits') return [{ label: SITE.label, act: 'site' }, { label: 'VOLTAR', act: 'back' }];
     return [];
   }
 
@@ -79,6 +82,7 @@ export class Menu {
     this.audio.menuOk();
     if (it.act === 'options' || it.act === 'credits' || it.act === 'confirm') { this.open(it.act); return null; }
     if (it.act === 'back') { this.audio.menuBack(); this.open(this.returnTo); return null; }
+    if (it.act === 'site') { window.open(SITE.url, '_blank', 'noopener'); return null; }
     return it.act;
   }
 
@@ -164,9 +168,11 @@ export class Menu {
         CREDITS.forEach(([line, style], i) => {
           if (!line) return;
           if (style === 'title') drawText(g, line, W / 2, 44 * k, 26 * k, { align: 'center', font: FONT_TITLE, color: '#e9dcc0', shadow: '#4a0d08' });
+          else if (style === 'name') drawText(g, line, W / 2, 52 * k + i * 11.5 * k, 14 * k, { align: 'center', color: '#efe2c4' });
           else drawText(g, line, W / 2, 52 * k + i * 11.5 * k, 12 * k, { align: 'center', color: style === 'dim' ? '#a89878' : '#e8dcc0' });
         });
-        this._list(g, W, H, k, 196 * k);
+        // site do autor (clicável) e VOLTAR
+        this._list(g, W, H, k, 183 * k);
       }
       return;
     }

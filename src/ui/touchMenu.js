@@ -1,5 +1,5 @@
 import { drawText, FONT_TITLE } from './overlay.js';
-import { CREDITS } from './menu.js';
+import { CREDITS, SITE } from './menu.js';
 import { buzz } from '../engine/touch.js';
 
 // Menus no celular: botões grandes (≥ 44 px CSS) desenhados na camada de toque,
@@ -224,15 +224,19 @@ export class TouchMenu {
     const y0 = top + hh + gap, availH = vh - y0 - m * 0.6;
 
     if (M.screen === 'credits') {
+      // texto em cima, botão do site do autor embaixo
       const lines = CREDITS;
-      const step = Math.min(availH / lines.length, Math.max(18, 6 * u));
+      const step = Math.min((availH - bh - gap) / lines.length, Math.max(18, 6 * u));
       const size = step * 0.72;
       lines.forEach(([line, style], i) => {
         if (!line) return;
         const y = y0 + i * step;
         if (style === 'title') text(line, vw / 2, y - step * 0.6, step * 1.8, C.text, { align: 'center', font: FONT_TITLE, shadow: '#4a0d08' });
+        else if (style === 'name') text(line, vw / 2, y, size * 1.15, C.text, { align: 'center' });
         else text(line, vw / 2, y, size, style === 'dim' ? C.soft : '#e8dcc0', { align: 'center' });
       });
+      const sy = Math.min(y0 + lines.length * step + gap, vh - m * 0.6 - bh);
+      button('item:0', (vw - bw) / 2, sy, bw, bh, SITE.label, { size: Math.min(bh * 0.38, bw / (SITE.label.length * 0.5)) });
       return;
     }
 
