@@ -93,6 +93,9 @@ feitos em código. O cenário fica em `src/world/chupaSites.js` e a missão em
   Monumento ao Imigrante. O jogo começa aqui.
 - Cemitério, Kartoffelfest, Sociedade, Prefeitura, Museu (enxaimel), Posto
   Calçadão, fábricas de calçados, escola, hospital e comércio.
+- **Carros** low poly (`src/world/vehicles.js`): sedã de quatro portas e hatch
+  de duas, com vidros, faróis, lanternas, placa cinza, para-choques, frisos e
+  rodas de aço desenhados em pixel art (`src/engine/carTextures.js`).
 - Cerca de 600 construções nos **contornos reais dos prédios** (Microsoft
   Building Footprints): alvenaria, madeira, enxaimel (vigas escuras com reboco
   branco, creme ou tijolo à vista, alinhadas com portas e janelas), comércio
