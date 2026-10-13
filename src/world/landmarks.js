@@ -355,7 +355,7 @@ function buildCemetery(B, ctx, cm) {
   const y = ctx.terrain.heightAt(c[0], c[1]);
   B.box('granite', c[0], y - 0.2, c[1], 1.4, 0.8, 1.4, ang, { uvScale: 1 });
   B.box('granite', c[0], y + 0.6, c[1], 0.3, 4.2, 0.3, ang, { uvScale: 1 });
-  B.box('granite', c[0], y + 3.5, c[1], 2.0, 0.3, 0.3, ang, { uvScale: 1 });
+  B.box('granite', c[0], y + 3.5, c[1], 2.0, 0.3, 0.3, ang, { uvScale: 1, bottom: true });
   ctx.collision.addCircle(c[0], c[1], 1.0, y - 0.5, y + 4.8);
   for (let i = 0; i < poly.length; i++) {
     const p = poly[i];
@@ -580,7 +580,7 @@ function buildField(B, ctx, f) {
     // traves
     B.col = [1, 1, 1];
     for (const x of [-3.66, 3.66]) { const p = P(x, 0, s * hl); B.box('concreteW', p[0], y, p[2], 0.12, 2.44, 0.12, ang, { uvScale: 1 }); ctx.collision.addCircle(p[0], p[2], 0.1, y, y + 2.44); }
-    const t = P(0, 0, s * hl); B.box('concreteW', t[0], y + 2.38, t[2], 7.44, 0.12, 0.12, ang, { uvScale: 1 });
+    const t = P(0, 0, s * hl); B.box('concreteW', t[0], y + 2.38, t[2], 7.44, 0.12, 0.12, ang, { uvScale: 1, bottom: true });
   }
   // arquibancada simples num lado
   for (let i = 0; i < 4; i++) {
@@ -791,13 +791,13 @@ function buildSpecials(B, ctx) {
     // cobertura: frente em z local = o.hz
     const cc = P(0, 0, o.hz - cd / 2);
     B.col = [1, 1, 1];
-    B.box('metalWhite', cc[0], y + 5, cc[2], cw, 0.7, cd, o.rot, { uvScale: 3 });
+    B.box('metalWhite', cc[0], y + 5, cc[2], cw, 0.7, cd, o.rot, { uvScale: 3, bottom: true });
     const fz = o.hz + 0.02;
     B.quad(sign('POSTO CALÇADÃO', { bg: '#f4f0e8', fg: '#a01818' }), P(-5, y + 5.02, fz), P(5, y + 5.02, fz), P(5, y + 5.68, fz), P(-5, y + 5.68, fz));
     // luminárias embaixo da cobertura
     for (const lx of [-cw / 4, cw / 4]) {
-      const a = P(lx - 1.2, y + 4.99, o.hz - cd / 2 - 0.4), b = P(lx + 1.2, y + 4.99, o.hz - cd / 2 - 0.4);
-      const c = P(lx + 1.2, y + 4.99, o.hz - cd / 2 + 0.4), d = P(lx - 1.2, y + 4.99, o.hz - cd / 2 + 0.4);
+      const a = P(lx - 1.2, y + 4.96, o.hz - cd / 2 - 0.4), b = P(lx + 1.2, y + 4.96, o.hz - cd / 2 - 0.4);
+      const c = P(lx + 1.2, y + 4.96, o.hz - cd / 2 + 0.4), d = P(lx - 1.2, y + 4.96, o.hz - cd / 2 + 0.4);
       B.quad('lamp', a, b, c, d);
     }
     // ilhas com bombas de combustível (visor dos dois lados)

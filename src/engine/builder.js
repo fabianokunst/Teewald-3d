@@ -62,6 +62,13 @@ export class MeshBuilder {
     }
   }
 
+  // quadrilátero com a face virada para "out" (qualquer ordem de vértices)
+  quadOut(mat, a, b, c, d, out, uv, cols) {
+    const u = sub(b, a), v = sub(c, a), n = cross(u, v);
+    if (n[0] * out[0] + n[1] * out[1] + n[2] * out[2] < 0) this.quad(mat, d, c, b, a, uv && [uv[3], uv[2], uv[1], uv[0]], cols && [cols[3], cols[2], cols[1], cols[0]]);
+    else this.quad(mat, a, b, c, d, uv, cols);
+  }
+
   // parede vertical de (x0,z0) a (x1,z1), normal para a direita do sentido p0->p1
   // uvScale = metros por repetição da textura
   wall(mat, x0, z0, x1, z1, y0, y1, o = {}) {
@@ -101,7 +108,9 @@ export class MeshBuilder {
         [tu(p[0][0], p[0][1]), tu(p[3][0], p[3][1]), tu(p[2][0], p[2][1]), tu(p[1][0], p[1][1])], col ? [col, col, col, col] : null);
     }
     if (o.bottom) {
-      this.quad(mat, [p[0][0], y, p[0][1]], [p[1][0], y, p[1][1]], [p[2][0], y, p[2][1]], [p[3][0], y, p[3][1]]);
+      const tu = o.faceUV ? null : o.topUV || ((x, z) => [x / us, z / us]);
+      this.quad(mat, [p[0][0], y, p[0][1]], [p[1][0], y, p[1][1]], [p[2][0], y, p[2][1]], [p[3][0], y, p[3][1]],
+        tu ? [tu(p[0][0], p[0][1]), tu(p[1][0], p[1][1]), tu(p[2][0], p[2][1]), tu(p[3][0], p[3][1])] : undefined, col ? [col, col, col, col] : null);
     }
   }
 

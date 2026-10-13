@@ -68,11 +68,11 @@ const BASE = {
   lace: [200, 170, 120],
 };
 
-// protagonista: tons sóbrios (jogo de terror), couro marrom, suéter cinza e camisa escura
+// protagonista: loiro, tons sóbrios na roupa (jogo de terror), couro marrom, suéter cinza e camisa escura
 const HERO_COLORS = {
   jacket: [92, 62, 44], pants: [56, 52, 50], boot: [58, 42, 32], sole: [34, 30, 28],
   skin: [194, 150, 122], shirt: [40, 40, 44], sweater: [96, 94, 90],
-  hair: [[24, 18, 14], [50, 37, 28], [86, 64, 47]], brow: [42, 31, 24],
+  hair: BASE.hair, brow: [112, 80, 48],
   lid: [58, 40, 34], white: [196, 186, 176], iris: [70, 84, 92], pupil: [20, 18, 18],
   lip: [150, 98, 90], lipLow: [172, 118, 106], brass: [52, 38, 30], lace: [96, 86, 72], stitch: [120, 96, 72],
 };

@@ -101,6 +101,7 @@ export function scatterVegetation(ctx) {
     const rv = rivers.index.nearest(x, z);
     if (rv.seg && rv.d < rv.seg.data.width / 2 + 1.2) return false;
     if (zones.insideBuilding(x, z, 1.8)) return false;
+    if (ctx.fenceIndex && ctx.fenceIndex.nearest(x, z).d < 0.9) return false; // muros e cercas
     if (!allowBlocked && zones.isBlocked(x, z)) return false;
     return true;
   };

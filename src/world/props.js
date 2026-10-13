@@ -22,7 +22,7 @@ export function bench(B, ctx, x, z, rot) {
   }
   for (let i = 0; i < 3; i++) {
     const p = P(0, 0, 0.16 - i * 0.16);
-    B.box('woodBench', p[0], y + 0.42, p[2], 1.8, 0.05, 0.12, rot, { uvScale: 1 });
+    B.box('woodBench', p[0], y + 0.42, p[2], 1.8, 0.05, 0.12, rot, { uvScale: 1, bottom: true });
   }
   for (let i = 0; i < 2; i++) {
     const p = P(0, 0, -0.24);
@@ -36,11 +36,11 @@ export function bench(B, ctx, x, z, rot) {
 export function picnicTable(B, ctx, x, z, rot) {
   const y = ctx.surfaceAt(x, z);
   const P = rotP(x, z, rot);
-  B.box('woodBench', x, y + 0.72, z, 1.9, 0.06, 0.8, rot, { uvScale: 1 });
+  B.box('woodBench', x, y + 0.72, z, 1.9, 0.06, 0.8, rot, { uvScale: 1, bottom: true });
   for (const lx of [-0.7, 0.7]) { const p = P(lx, 0, 0); B.box('woodBench', p[0], y, p[2], 0.1, 0.72, 0.1, rot, { uvScale: 1 }); }
   for (const lz of [-0.75, 0.75]) {
     const p = P(0, 0, lz);
-    B.box('woodBench', p[0], y + 0.42, p[2], 1.9, 0.05, 0.3, rot, { uvScale: 1 });
+    B.box('woodBench', p[0], y + 0.42, p[2], 1.9, 0.05, 0.3, rot, { uvScale: 1, bottom: true });
     for (const lx of [-0.7, 0.7]) { const q = P(lx, 0, lz); B.box('woodBench', q[0], y, q[2], 0.08, 0.42, 0.08, rot, { uvScale: 1 }); }
   }
   ctx.collision.addBox(x, z, 1.0, 1.0, rot, y, y + 0.8, { cam: false });
@@ -60,7 +60,7 @@ export function lantern(B, ctx, x, z, h = 3.6) {
   B.col = [1, 1, 1];
   B.cylinder('iron', x, y, z, 0.16, 0.12, 0.5, 6, { cap: true });
   B.cylinder('iron', x, y + 0.5, z, 0.06, 0.05, h - 0.5, 5);
-  B.box('lamp', x, y + h, z, 0.36, 0.5, 0.36, 0, { faceUV: true, top: false, topMat: 'iron' });
+  B.box('lamp', x, y + h, z, 0.36, 0.5, 0.36, 0, { faceUV: true, top: false, topMat: 'iron', bottom: true });
   pyramid(B, 'iron', [x, y + h + 0.5, z], 0.3, 0.35, Math.PI / 4, 4);
   ctx.collision.addCircle(x, z, 0.18, y, y + h + 0.8);
   ctx.lights?.push([x, y + h + 0.25, z]);
@@ -72,12 +72,12 @@ export function streetPole(B, ctx, x, z, rot, withLamp = true) {
   const P = rotP(x, z, rot);
   B.col = [0.85, 0.85, 0.82];
   B.box('concrete', x, y, z, 0.24, 8.5, 0.24, rot, { uvScale: 2 });
-  B.box('concrete', x, y + 7.6, z, 1.2, 0.12, 0.12, rot, { uvScale: 1 });
+  B.box('concrete', x, y + 7.6, z, 1.2, 0.12, 0.12, rot, { uvScale: 1, bottom: true });
   if (withLamp) {
     const a = P(0, 0, 1.0);
     B.box('metalGray', (x + a[0]) / 2, y + 7.2, (z + a[2]) / 2, 0.08, 0.08, 1.2, rot, { uvScale: 1 });
     B.col = [1, 1, 1];
-    B.box('lamp', a[0], y + 7.0, a[2], 0.25, 0.14, 0.45, rot, { faceUV: true });
+    B.box('lamp', a[0], y + 7.0, a[2], 0.25, 0.14, 0.45, rot, { faceUV: true, bottom: true });
   }
   B.col = [1, 1, 1];
   ctx.collision.addCircle(x, z, 0.2, y, y + 8.5);
@@ -141,10 +141,10 @@ export function busStop(B, ctx, x, z, rot) {
   const back = P(0, 0, -0.7);
   B.box('glass', back[0], y + 0.4, back[2], 3.0, 1.6, 0.05, rot, { faceUV: true });
   B.col = [0.85, 0.85, 0.85];
-  B.box('metalWhite', x, y + 2.45, z, 3.6, 0.1, 2.0, rot, { uvScale: 2 });
+  B.box('metalWhite', x, y + 2.45, z, 3.6, 0.1, 2.0, rot, { uvScale: 2, bottom: true });
   B.col = [1, 1, 1];
   const seat = P(0, 0, -0.4);
-  B.box('woodBench', seat[0], y + 0.6, seat[2], 2.4, 0.06, 0.35, rot);
+  B.box('woodBench', seat[0], y + 0.6, seat[2], 2.4, 0.06, 0.35, rot, { bottom: true });
   ctx.collision.addBox(back[0], back[2], 1.6, 0.15, rot, y, y + 2.5);
   // banco e plataforma (a plataforma é um degrau baixo: dá para subir)
   ctx.collision.addBox(seat[0], seat[2], 1.2, 0.2, rot, y, y + 0.66, { cam: false });
@@ -234,9 +234,9 @@ export function monumento(B, ctx, x, z, rot) {
   B.col = [1, 1, 1];
   for (const side of [-1, 1]) {
     const p = P(side * 0.45, 0, 0);
-    B.box('bronze', p[0], y + 1.8, p[2], 0.35, 1.3, 0.4, rot + side * 0.25, { uvScale: 1 });
+    B.box('bronze', p[0], y + 1.8, p[2], 0.35, 1.3, 0.4, rot + side * 0.25, { uvScale: 1, bottom: true });
     const f = P(side * 0.62, 0, 0);
-    B.box('bronze', f[0], y + 2.8, f[2], 0.2, 0.7, 0.35, rot + side * 0.5, { uvScale: 1 });
+    B.box('bronze', f[0], y + 2.8, f[2], 0.2, 0.7, 0.35, rot + side * 0.5, { uvScale: 1, bottom: true });
   }
   // globo (icosfera baixa)
   sphere(B, 'globe', x, y + 3.55, z, 0.75, 8, 5);

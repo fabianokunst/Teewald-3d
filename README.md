@@ -137,7 +137,7 @@ feitos em código. O cenário fica em `src/world/chupaSites.js` e a missão em
 - **Protagonista** com ~1200 triângulos numa malha única com esqueleto
   (cotovelos e joelhos contínuos ao dobrar), sombreamento suave e visual sério,
   no estilo dos survival horror de PS1: rosto realista pintado com pincel macio
-  (olhos fundos, sobrancelhas retas, barba por fazer), cabelo castanho-escuro
+  (olhos fundos, sobrancelhas retas, barba por fazer), cabelo loiro
   penteado para trás, jaqueta de couro marrom com lapelas sobre suéter cinza em V,
   calça escura e botas.
 - Milhares de árvores (araucárias, plátanos de outono, nativas, pinheiros,

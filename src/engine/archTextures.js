@@ -344,4 +344,15 @@ export function makeArchTextures() {
     if (y >= 58) return mul([150, 152, 156], y === 58 ? 1.2 : 1);
     return white;
   }), false);
+
+  // ---- cerca de ripas: tábuas pontudas com duas travessas (a cor vem do vértice) ----
+  const ripa = sampler('woodGray');
+  TEX.picket = canvasTex(processPixels(paint(32, 32, (x, y) => {
+    const bx = x % 8, rail = (y >= 9 && y <= 11) || (y >= 24 && y <= 26);
+    const board = bx >= 1 && bx <= 5 && y >= Math.abs(bx - 3); // ponta triangular
+    if (!board && !rail) return null;
+    const base = mul([226, 222, 212], 0.85 + 0.15 * ripa(x, y)[0] / 170);
+    if (!board) return mul(base, 0.62);           // travessa (atrás das tábuas)
+    return mul(base, bx === 1 ? 1.1 : bx === 5 ? 0.78 : 1);
+  }), { alpha: true }), true); // recortada e repetida ao longo da cerca
 }

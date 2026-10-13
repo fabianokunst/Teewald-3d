@@ -140,13 +140,7 @@ export function buildRoads(B, ctx) {
 
 const UV2 = q => [q[0] / 2, q[1] / 2];
 
-// quadrilátero com a face virada para "out"
-function quadOut(B, mat, a, b, c, d, out, uv) {
-  const u = [b[0] - a[0], b[1] - a[1], b[2] - a[2]], v = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
-  const n = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
-  if (n[0] * out[0] + n[1] * out[1] + n[2] * out[2] < 0) B.quad(mat, d, c, b, a, uv && [uv[3], uv[2], uv[1], uv[0]]);
-  else B.quad(mat, a, b, c, d, uv);
-}
+const quadOut = (B, mat, a, b, c, d, out, uv) => B.quadOut(mat, a, b, c, d, out, uv);
 
 // Ponte que acompanha o traçado e o perfil da rua (curvas e rampas): tabuleiro e
 // muretas contínuos, sem degraus entre trechos

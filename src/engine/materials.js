@@ -4,7 +4,7 @@ import { TEX, signTexture } from './textures.js';
 import { makeHeroTexture } from '../game/heroTexture.js';
 
 // Um material PS1 para cada textura carregada, com ajustes por tipo
-const CUTOUT = ['araucaria', 'araucariaBranch', 'crownAutumn', 'crownGreen', 'bush', 'hortensia', 'pine', 'cypress', 'mapleLeaf', 'flags', 'chLancet', 'chRose', 'chPortal', 'chTowerWin'];
+const CUTOUT = ['araucaria', 'araucariaBranch', 'crownAutumn', 'crownGreen', 'bush', 'hortensia', 'pine', 'cypress', 'mapleLeaf', 'flags', 'chLancet', 'chRose', 'chPortal', 'chTowerWin', 'picket'];
 const FOLIAGE = ['araucaria', 'araucariaBranch', 'crownAutumn', 'crownGreen', 'bush', 'hortensia', 'pine', 'cypress', 'hedge'];
 const NO_AFFINE = ['paint'];
 

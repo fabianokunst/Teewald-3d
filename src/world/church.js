@@ -122,7 +122,7 @@ export function buildChurch(B, ctx, s) {
     B.box(trim, p[0], fy, p[2], 0.6, C.towerH + 0.2, 0.6, s.rot, { uvScale: 2 });
   }
   for (const y of [C.wallH + 1.2, C.towerH - 0.6]) {
-    B.box(trim, tc[0], fy + y, tc[2], C.towerW + 0.4, 0.6, C.towerD + 0.4, s.rot, { uvScale: 2 });
+    B.box(trim, tc[0], fy + y, tc[2], C.towerW + 0.4, 0.6, C.towerD + 0.4, s.rot, { uvScale: 2, bottom: true });
   }
   // portal, rosácea e janelas do campanário
   B.col = [1, 1, 1];

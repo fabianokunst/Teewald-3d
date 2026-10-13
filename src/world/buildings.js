@@ -1,4 +1,4 @@
-import { rng, obbCorners, clamp } from './geo.js';
+import { rng, obbCorners, clamp, SegmentIndex } from './geo.js';
 import { signMaterial } from '../engine/materials.js';
 import { roadSurfaceAt } from './roads.js';
 
@@ -25,6 +25,21 @@ const SHOPS = ['PADARIA WEBER', 'FARMÁCIA', 'MERCADO SCHMITT', 'CALÇADOS', 'AR
   'FERRAGEM KLEIN', 'CONFECÇÕES', 'ÓTICA', 'AÇOUGUE', 'AGROPECUÁRIA', 'BAR DO ALEMÃO', 'FLORICULTURA', 'PAPELARIA',
   'SAPATARIA', 'CAFÉ COLONIAL', 'ELETRO', 'MÓVEIS', 'MALHAS', 'BRECHÓ', 'PIZZARIA', 'VIDEOLOCADORA'];
 const SIGN_COLORS = [['#7a2a1c', '#f2e6c8'], ['#1f3f6b', '#f0f0e0'], ['#2f5a2a', '#f6eecf'], ['#e8dcc0', '#5a2a18'], ['#b8860b', '#1a1a1a'], ['#5a1f4a', '#f6e6f0']];
+
+// cercamento da frente do lote, conforme o estilo da casa
+export function pickFence(R, s, dist) {
+  const plaster = ['plWhite', 'plCream', 'plYellow', 'plBeige', 'plGray'];
+  let f;
+  if (s.style === 'wood' || s.style === 'shed') f = R.chance(0.75) ? { kind: 'madeira' } : { kind: 'pedra' };
+  else if (s.style === 'enxaimel') f = R.chance(0.55) ? { kind: 'pedra' } : { kind: 'madeira' };
+  else {
+    const r = R();
+    f = r < 0.4 ? { kind: 'muro', mat: R.chance(0.6) ? s.wall : R.pick(plaster) } : r < 0.75 ? { kind: 'grade', mat: R.chance(0.5) ? 'brick' : R.pick(plaster) } : { kind: 'tijolo' };
+  }
+  if (f.kind === 'madeira') f.col = R.pick([[1, 1, 1], [1, 1, 1], [0.62, 0.78, 0.62], [0.68, 0.76, 0.9], [0.92, 0.86, 0.72]]);
+  f.dist = dist;
+  return f;
+}
 
 export function frame(s) {
   const c = Math.cos(s.rot), sn = Math.sin(s.rot);
@@ -249,6 +264,7 @@ function addOpenings(B, s, P, y0, ctx) {
   // patamar e escada descendo rente à parede, sem avançar sobre a calçada
   if (s.style !== 'commercial' && doorT !== null) {
     const dx = -hw + s.w * doorT;
+    s.doorFoot = [dx, hd + 0.75];
     const ground = (lx, lz) => { const q = P(lx, 0, lz); return ctx.terrain.heightAt(q[0], q[2]); };
     const base = Math.min(ground(dx - 0.6, hd + 0.65), ground(dx + 0.6, hd + 0.65)) - 0.1;
     const h = y0 - base;
@@ -280,6 +296,7 @@ function addOpenings(B, s, P, y0, ctx) {
       }
       if (best.steps.length) {
         const run = best.steps.length * TREAD, c = P(dx + best.dir * (0.7 + run / 2), 0, hd + 0.55);
+        s.doorFoot = [dx + best.dir * (0.7 + run + 0.3), hd + 0.55];
         ctx.collision.addBox(c[0], c[2], 0.5, run / 2, s.rot + best.dir * Math.PI / 2, base, y0, { walk: true, cam: false, ramp: [y0, best.steps[best.steps.length - 1].top] });
       }
     }
@@ -327,36 +344,131 @@ function addSign(B, s, P, y0, top) {
   }
 }
 
+// medidas de cada tipo: altura, espessura, material, coroa e pilares
+const FENCE = {
+  muro: { h: 1.0, t: 0.18, cap: 'concreteW', pillars: true },
+  tijolo: { h: 1.0, t: 0.2, mat: 'brick', cap: 'concreteW', pillars: true },
+  grade: { h: 0.5, t: 0.18, cap: 'concreteW', pillars: true, grid: 0.9 },
+  pedra: { h: 0.75, t: 0.4, mat: 'stoneWall' },
+  madeira: { h: 1.0, picket: true },
+};
+
+// muro/cerca da frente do lote: frente inteira com portão alinhado à porta e
+// laterais voltando até os fundos da casa (param ao encontrar vizinho, rua ou rio).
+// Se a frente não cabe inteira, a casa fica sem cercamento (nada de pedaços soltos).
 function addFence(B, ctx, s, P) {
-  const f = s.fence, hw = s.w / 2 + 1.2, z = s.d / 2 + f.dist;
-  const gateX = -s.w / 2 + s.w * (s.doorAt ?? 0.5);
+  const f = s.fence, T = FENCE[f.kind], hw = s.w / 2, hd = s.d / 2, W = hw + 1.2;
+  const fi = ctx.fenceIndex ||= new SegmentIndex(10, 2);
+  const L = (lx, lz) => { const p = P(lx, 0, lz); return [p[0], p[2]]; };
   // chão onde se pisa: terreno, rua ou calçada
-  const ground = (x, zz) => {
-    const t = ctx.terrain.heightAt(x, zz), r = roadSurfaceAt(ctx.roads, ctx.terrain, x, zz);
+  const ground = (x, z) => {
+    const t = ctx.terrain.heightAt(x, z), r = roadSurfaceAt(ctx.roads, ctx.terrain, x, z);
     return r === null ? t : Math.max(t, r);
   };
-  const segs = [[-hw, gateX - 0.7], [gateX + 0.7, hw]];
-  for (const [a, b] of segs) {
-    if (b - a < 0.3) continue;
-    // trechos curtos que acompanham o terreno (um muro reto afundaria na subida)
-    const n = Math.max(1, Math.ceil((b - a) / 2.5));
-    for (let i = 0; i < n; i++) {
-      const a0 = a + (b - a) * i / n, a1 = a + (b - a) * (i + 1) / n;
-      const pa = P(a0, 0, z), pb = P(a1, 0, z);
-      const cx = (pa[0] + pb[0]) / 2, cz = (pa[2] + pb[2]) / 2;
-      const onRoad = [[pa[0], pa[2]], [pb[0], pb[2]], [cx, cz]].some(([x, zz]) => {
-        const rc = ctx.roads.index.clearance(x, zz);
-        return rc.d < (rc.seg && rc.seg.data.sidewalk ? 2.1 : 0.3) || ctx.zones.insideBuilding(x, zz, 0.2);
-      });
-      if (onRoad) continue;
-      const gs = [ground(pa[0], pa[2]), ground(pb[0], pb[2]), ground(cx, cz)];
-      const y = Math.min(...gs) - 0.3, yTop = Math.max(...gs) + f.h;
-      const len = a1 - a0;
-      B.col = f.col || [1, 1, 1];
-      B.box(f.mat, cx, y, cz, len, yTop - y, 0.16, s.rot, { uvScale: 2 });
+  const free = ([x, z]) => {
+    const rc = ctx.roads.index.clearance(x, z);
+    if (rc.d < (rc.seg && rc.seg.data.sidewalk ? 2.1 : 0.4)) return false;
+    const rv = ctx.rivers.index.nearest(x, z);
+    if (rv.seg && rv.d < rv.seg.data.width / 2 + 1.5) return false;
+    if (ctx.zones.insideBuilding(x, z, 0.25) || ctx.zones.isBlocked(x, z)) return false;
+    return fi.nearest(x, z).d > 0.5;
+  };
+  const pieceFree = (a, b) => [0, 0.5, 1].every(k => free(L(a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k)));
+  // pedaços de até 2,5 m
+  const split = (a, b) => {
+    const n = Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / 2.5)), out = [];
+    for (let k = 0; k < n; k++) out.push([[a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n], [a[0] + (b[0] - a[0]) * (k + 1) / n, a[1] + (b[1] - a[1]) * (k + 1) / n]]);
+    return out;
+  };
+  // frente: recua até caber
+  const foot = s.doorFoot || [0, hd + 0.75];
+  let zF = null, gx = 0, front = null;
+  for (let dist = f.dist; dist >= 1.4; dist -= 0.4) {
+    const z = hd + dist;
+    gx = clamp(foot[0], -W + 0.9, W - 0.9);
+    const left = split([-W, z], [gx - 0.55, z]), right = split([gx + 0.55, z], [W, z]);
+    if ([...left, ...right].every(([a, b]) => pieceFree(a, b))) { zF = z; front = [left, right]; break; }
+  }
+  if (zF === null) return;
+  // laterais: da frente até os fundos da casa, parando no primeiro obstáculo
+  const sides = [-W, W].map(x => {
+    const run = [];
+    for (const [a, b] of split([x, zF], [x, -hd])) { if (!pieceFree(a, b)) break; run.push([a, b]); }
+    return run;
+  });
+  const runs = [[...sides[0]].reverse().map(([a, b]) => [b, a]).concat(front[0]), front[1].concat(sides[1])];
+
+  const mat = f.mat || T.mat || 'plWhite';
+  const col = f.col || [1, 1, 1];
+  for (const run of runs) {
+    if (!run.length) continue;
+    for (let k = 0; k < run.length; k++) {
+      const [a, b] = run[k];
+      const A = L(a[0], a[1]), Bw = L(b[0], b[1]);
+      const ga = ground(A[0], A[1]), gb = ground(Bw[0], Bw[1]);
+      const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      // normal local do pedaço (para os dois lados do muro)
+      const nx = -(b[1] - a[1]) / len, nz = (b[0] - a[0]) / len;
+      const off = (p, k2) => P(p[0] + nx * k2, 0, p[1] + nz * k2);
+      const W3 = (p, k2, y) => { const q = off(p, k2); return [q[0], y, q[2]]; };
+      const dirW = (p, dx, dz) => { const q0 = P(p[0], 0, p[1]), q1 = P(p[0] + dx, 0, p[1] + dz); return [q1[0] - q0[0], 0, q1[2] - q0[2]]; };
+      const outN = sd => dirW(a, nx * sd, nz * sd);
+      const u0 = (k * 2.5) / 2, u1 = u0 + len / 2;
+      fi.add(A[0], A[1], Bw[0], Bw[1], s);
+      const rot = Math.atan2(Bw[0] - A[0], Bw[1] - A[1]);
+      if (T.picket) {
+        // cerca de ripas (textura recortada) e mourões
+        B.col = col;
+        B.quadOut('picket', W3(a, 0, ga - 0.05), W3(b, 0, gb - 0.05), W3(b, 0, gb + T.h), W3(a, 0, ga + T.h), outN(1), [[u0 * 2, 0], [u1 * 2, 0], [u1 * 2, 1], [u0 * 2, 1]]);
+        B.col = [0.8, 0.8, 0.8];
+        for (const [p, g] of [[a, ga], ...(k === run.length - 1 ? [[b, gb]] : [])]) {
+          const q = P(p[0], 0, p[1]);
+          B.box('woodDark', q[0], g - 0.2, q[2], 0.1, T.h + 0.25, 0.1, s.rot, { uvScale: 1 });
+        }
+        B.col = [1, 1, 1];
+        ctx.collision.addBox((A[0] + Bw[0]) / 2, (A[1] + Bw[1]) / 2, 0.06, len / 2, rot, Math.min(ga, gb) - 0.3, Math.max(ga, gb) + T.h, { cam: false });
+        continue;
+      }
+      // muro maciço: duas faces, topo e (nas pontas) cabeceiras; o topo acompanha o terreno
+      const t = T.t / 2, h = T.h;
+      B.col = col;
+      for (const sd of [1, -1]) {
+        B.quadOut(mat, W3(a, sd * t, ga - 0.4), W3(b, sd * t, gb - 0.4), W3(b, sd * t, gb + h), W3(a, sd * t, ga + h), outN(sd), [[u0, (ga - 0.4) / 2], [u1, (gb - 0.4) / 2], [u1, (gb + h) / 2], [u0, (ga + h) / 2]]);
+      }
+      const capM = T.cap || mat, ct = T.cap ? t + 0.03 : t;
+      B.col = T.cap ? [1, 1, 1] : col;
+      B.quadOut(capM, W3(a, -ct, ga + h), W3(a, ct, ga + h), W3(b, ct, gb + h), W3(b, -ct, gb + h), [0, 1, 0], [[0, 0], [0.2, 0], [0.2, len / 2], [0, len / 2]]);
+      B.col = col;
+      if (k === 0) B.quadOut(mat, W3(a, -t, ga - 0.4), W3(a, t, ga - 0.4), W3(a, t, ga + h), W3(a, -t, ga + h), dirW(a, -(b[0] - a[0]), -(b[1] - a[1])));
+      if (k === run.length - 1) B.quadOut(mat, W3(b, -t, gb - 0.4), W3(b, t, gb - 0.4), W3(b, t, gb + h), W3(b, -t, gb + h), dirW(b, b[0] - a[0], b[1] - a[1]));
+      // grade sobre a mureta
+      if (T.grid) {
+        B.col = [0.85, 0.85, 0.85];
+        B.quadOut('fenceGrid', W3(a, 0, ga + h), W3(b, 0, gb + h), W3(b, 0, gb + h + T.grid), W3(a, 0, ga + h + T.grid), outN(1), [[u0 * 2, 0], [u1 * 2, 0], [u1 * 2, 1], [u0 * 2, 1]]);
+      }
+      // pilares nas pontas e nas emendas
+      if (T.pillars) {
+        const top = h + (T.grid || 0) + 0.15;
+        for (const [p, g] of [[a, ga], ...(k === run.length - 1 ? [[b, gb]] : [])]) {
+          const q = P(p[0], 0, p[1]);
+          B.col = col;
+          B.box(mat, q[0], g - 0.4, q[2], 0.34, top + 0.4, 0.34, s.rot, { uvScale: 2, top: false });
+          B.col = [1, 1, 1];
+          B.box(T.cap, q[0], g + top, q[2], 0.42, 0.06, 0.42, s.rot, { uvScale: 1, bottom: true });
+        }
+      }
       B.col = [1, 1, 1];
-      ctx.collision.addBox(cx, cz, len / 2, 0.12, s.rot, y, yTop, { cam: false });
+      ctx.collision.addBox((A[0] + Bw[0]) / 2, (A[1] + Bw[1]) / 2, t + 0.04, len / 2, rot, Math.min(ga, gb) - 0.4, Math.max(ga, gb) + h + (T.grid || 0), { cam: false });
     }
+  }
+  // calçadinha do portão até a porta
+  const pts = [[gx, zF + 0.1], [gx, (zF + foot[1]) / 2], foot];
+  B.col = [1, 1, 1];
+  for (let m = 0; m < pts.length - 1; m++) for (const [a, b] of split(pts[m], pts[m + 1])) {
+    const len = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1, nx = -(b[1] - a[1]) / len * 0.5, nz = (b[0] - a[0]) / len * 0.5;
+    const V = (p, k2) => { const q = P(p[0] + nx * k2, 0, p[1] + nz * k2); return [q[0], ground(q[0], q[2]) + 0.04, q[2]]; };
+    const vs = [V(a, -1), V(b, -1), V(b, 1), V(a, 1)];
+    B.quadOut('stonePath', ...vs, [0, 1, 0], vs.map(v => [v[0] / 2, v[2] / 2]));
   }
 }
 
@@ -513,7 +625,7 @@ export function placeTownBuildings(ctx, B) {
           // muro ou cerca na frente
           if (style !== 'commercial' && R.chance(0.45)) {
             const dist = setback - road.hw - sidewalk - 0.4;
-            if (dist > 1.2) spec.fence = { dist, h: R.range(0.7, 1.2), mat: R.pick(['plWhite', 'brick', 'plCream', 'woodPlank', 'stoneBase']), col: [1, 1, 1] };
+            if (dist > 1.4) spec.fence = pickFence(R, spec, dist);
           }
           zones.addBuilding(obb);
           placed.push(spec);
@@ -597,7 +709,7 @@ export function placeFootprintBuildings(ctx, B) {
     s.w = Math.min(s.w, w); s.d = Math.min(s.d, d);
     if (style === 'shed') { s.floors = 1; s.roof = R.pick(['metalRoof', 'metalRust', 'roofOld']); }
     if (style !== 'commercial' && style !== 'factory' && front > 2.2 && R.chance(0.5)) {
-      s.fence = { dist: Math.min(front - 0.6, 7), h: R.range(0.7, 1.2), mat: R.pick(['plWhite', 'brick', 'plCream', 'woodPlank', 'stoneBase']), col: [1, 1, 1] };
+      s.fence = pickFence(R, s, Math.min(front - 0.6, 7));
     }
     zones.addBuilding({ x: s.x, z: s.z, hx: s.w / 2, hz: s.d / 2, rot: s.rot });
     f.used = true;
