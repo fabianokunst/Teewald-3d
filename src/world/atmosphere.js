@@ -112,7 +112,7 @@ const ADV = {
     sun: MOON, sunC: C(0.16, 0.2, 0.33), sky: C(0.07, 0.08, 0.125), gnd: C(0.032, 0.035, 0.048),
     fog: C(0.035, 0.045, 0.07), fogSun: C(0.11, 0.13, 0.19), fogSunK: 0.7, fogK: 0.65,
     zenith: C(0.008, 0.012, 0.032), glow: C(0.12, 0.14, 0.2), cloudC: C(0.045, 0.05, 0.07), cloudLit: C(0.2, 0.22, 0.28),
-    cover: 0.5, opaque: 0, moon: 1, moonSize: 140, stars: 1, milky: 0.06,
+    cover: 0.5, opaque: 0, moon: 1, moonSize: 170, stars: 1, milky: 0.12,
     shadow: 0.55, sunWrap: 0.4, sat: 0.72,
   },
   // lua cheia enorme, céu quase limpo, sombras azuladas bem marcadas
@@ -120,7 +120,7 @@ const ADV = {
     sun: MOON, sunC: C(0.25, 0.29, 0.42), sky: C(0.095, 0.11, 0.165), gnd: C(0.04, 0.045, 0.06),
     fog: C(0.065, 0.085, 0.125), fogSun: C(0.2, 0.24, 0.33), fogSunK: 0.8,
     zenith: C(0.015, 0.025, 0.06), glow: C(0.22, 0.25, 0.33), cloudC: C(0.07, 0.08, 0.11), cloudLit: C(0.35, 0.38, 0.46),
-    cover: 0.35, opaque: 0, moon: 1, moonSize: 260, stars: 0.85, milky: 0.04,
+    cover: 0.35, opaque: 0, moon: 1, moonSize: 260, stars: 0.85, milky: 0.07,
     shadow: 0.8, sunWrap: 0.4, sat: 0.72,
   },
   // neblina fechada: sem céu, os postes viram bolas de luz
@@ -296,7 +296,7 @@ export class Atmosphere {
     G.uSunFog.value.setRGB(c.fogSun[0] + flash * 0.25, c.fogSun[1] + flash * 0.27, c.fogSun[2] + flash * 0.33);
     G.uSunWrap.value = adv ? c.sunWrap : 0;
     G.uSat.value = adv ? c.sat : 0.6;
-    this.shadowStrength = adv && out ? c.shadow * (1 - Math.min(1, c.rain * 2)) : 0;
+    this.shadowStrength = adv && out ? c.shadow * (1 - Math.min(1, c.rain * 2)) * (this.shadowDip ?? 1) : 0;
     const S = this.sky;
     if (S) {
       const stars = c.stars * (1 - Math.min(1, c.rain * 3));
@@ -312,7 +312,7 @@ export class Atmosphere {
       if (S.adv) {
         S.starsHD.visible = adv && stars > 0.01 && out;
         S.starsHD.material.uniforms.uStars.value = stars;
-        S.starsHD.material.uniforms.uScale.value = Math.max(0.5, this.viewH / 720);
+        S.starsHD.material.uniforms.uScale.value = Math.max(0.6, this.viewH / 720);
         S.moonHD.visible = adv && c.moon > 0.01 && out;
         S.moonHD.material.opacity = Math.min(1, c.moon);
         S.moonHD.material.color.setRGB(...c.moonC);
@@ -332,6 +332,7 @@ export class Atmosphere {
 
   // player: posição/direção da lanterna (o jogador), camera: para a chuva e os postes
   update(dt, camera, player, aimDir = null) {
+    this.shadowDip = 1;
     if (this.to) {
       this.t += dt;
       const k = Math.min(1, this.t / this.dur), e = k * k * (3 - 2 * k);
@@ -339,6 +340,10 @@ export class Atmosphere {
         const a = this.from[key], b = this.to[key];
         this.cur[key] = Array.isArray(b) ? mixV(a, b, e) : typeof b === 'number' ? lerp(a, b, e) : b;
       }
+      // a luz troca de lado (sol se pondo, lua nascendo): a sombra some no meio em vez de girar
+      const f = this.from.sun, t = this.to.sun;
+      const cos = (f[0] * t[0] + f[1] * t[1] + f[2] * t[2]) / (Math.hypot(...f) * Math.hypot(...t) || 1);
+      this.shadowDip = 1 - Math.sin(Math.PI * e) * Math.min(1, Math.max(0, (1 - cos) * 1.5));
       if (k >= 1) this.to = null;
     }
     this._storm(dt);

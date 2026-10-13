@@ -306,15 +306,17 @@ export function ps1LineMaterial(color = 0x1a1a1a) {
   return new THREE.ShaderMaterial({
     uniforms: { ...G, uColor: { value: rawColor(color) } },
     vertexShader: /* glsl */`
-      uniform float uFogNear; uniform float uFogFar;
-      varying float vFog;
+      uniform float uFogNear; uniform float uFogFar; uniform vec3 uSunDir; uniform float uSunFogK;
+      varying float vFog; varying float vSunFog;
       void main() {
         vec4 vp = modelViewMatrix * vec4(position, 1.0);
         gl_Position = projectionMatrix * vp;
         vFog = clamp((length(vp.xyz) - uFogNear) / (uFogFar - uFogNear), 0.0, 1.0);
+        vec3 wp = (modelMatrix * vec4(position, 1.0)).xyz;
+        vSunFog = uSunFogK > 0.0 ? pow(max(dot(normalize(wp - cameraPosition), uSunDir), 0.0), 5.0) * uSunFogK : 0.0;
       }`,
     fragmentShader: /* glsl */`
-      uniform vec3 uColor; uniform vec3 uFogColor; varying float vFog;
-      void main() { gl_FragColor = vec4(mix(uColor, uFogColor, vFog), 1.0); }`,
+      uniform vec3 uColor; uniform vec3 uFogColor; uniform vec3 uSunFog; varying float vFog; varying float vSunFog;
+      void main() { gl_FragColor = vec4(mix(uColor, mix(uFogColor, uSunFog, vSunFog), vFog), 1.0); }`,
   });
 }

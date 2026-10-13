@@ -76,11 +76,14 @@ function skyAdvMaterial() {
         vec2 p = d.xz / (d.y + 0.11);
         vec2 w = vec2(uTime * 0.0035, uTime * 0.0012);
         float cl = texture2D(uClouds, p * 0.16 + w).r * 0.65 + texture2D(uClouds, p * 0.41 - w * 1.7 + 0.37).r * 0.35;
-        cl = smoothstep(0.18, 0.75, cl) * uCover * smoothstep(0.0, 0.16, d.y);
+        // cobertura: com pouca nuvem só as partes densas ficam (o resto do céu abre)
+        cl = smoothstep(mix(0.72, 0.16, uCover), 0.86, cl) * smoothstep(0.0, 0.16, d.y);
         // nuvens acesas por baixo do lado do sol (ou da lua), bordas mais claras
         float lit = pow(sd, 3.0) * 1.1 + 0.35 * pow(1.0 - h, 2.0) * (0.3 + 0.7 * sd);
         vec3 cc = uCloudC + uCloudLit * lit * (1.25 - cl * 0.6);
         vec3 col = mix(sky, cc, cl);
+        // perto do horizonte tudo se desfaz na neblina (emenda com os morros distantes)
+        col = mix(col, hor, pow(1.0 - h, 10.0) * 0.85);
         col += uFlash * vec3(0.55, 0.6, 0.78) * (0.35 + cl);
         gl_FragColor = vec4(col, max(cl, uOpaque));
       }`,
@@ -112,7 +115,7 @@ function starFieldHD() {
   for (let i = 0; i < 1700; i++) {
     const a = rnd() * Math.PI * 2, y = rnd(), r = Math.sqrt(1 - y * y);
     const k = Math.pow(rnd(), 5);
-    add(Math.cos(a) * r, y, Math.sin(a) * r, 1.3 + k * 2.6, 0.3 + k * 0.7);
+    add(Math.cos(a) * r, y, Math.sin(a) * r, 1.5 + k * 2.6, 0.35 + k * 0.65);
   }
   for (let i = 0; i < 1600; i++) {
     const a = rnd() * Math.PI * 2, off = (rnd() + rnd() + rnd() - 1.5) * 0.14;
@@ -135,15 +138,15 @@ function starFieldHD() {
         float ph = fract(position.x * 0.0137 + position.z * 0.0291) * 6.2832;
         float tw = 0.72 + 0.28 * sin(uTime * (1.3 + ph * 0.5) + ph * 7.0);
         float h = normalize(position).y;
-        vC = aCol * aBright * tw * uStars * smoothstep(0.02, 0.22, h);
+        vC = aCol * aBright * tw * uStars * 2.2 * smoothstep(0.02, 0.22, h);
         gl_PointSize = max(1.0, aSize * uScale);
       }`,
     fragmentShader: /* glsl */`
       varying vec3 vC;
       void main() {
         float r = length(gl_PointCoord - 0.5) * 2.0;
-        float a = 1.0 - smoothstep(0.0, 1.0, r);
-        gl_FragColor = vec4(vC * a * a, 1.0);
+        float a = 1.0 - smoothstep(0.25, 1.0, r);
+        gl_FragColor = vec4(vC * a, 1.0);
       }`,
     depthWrite: false,
     blending: THREE.CustomBlending, blendSrc: THREE.OneFactor, blendDst: THREE.OneFactor,

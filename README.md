@@ -293,11 +293,24 @@ feitos em código. O cenário fica em `src/world/chupaSites.js` e a missão em
     se quiser, distorção de textura.
   - O tremor de vértices (a malha "se mexendo") foi removido do jogo. Dá para
     forçar o estilo pela URL com `?visual=ps1` ou `?visual=clean`.
+- **Iluminação** (em **Opções**, vale para os dois estilos):
+  - **AVANÇADA** (padrão): entardecer com sol baixo e avermelhado no oeste,
+    céu em brasa do lado do sol, nuvens acesas por baixo e neblina dourada
+    olhando para o sol; crepúsculo vermelho no capítulo 2. Sombras projetadas
+    do sol e do luar (prédios, árvores, postes, personagem, moradores e
+    criaturas). Noites claras com lua detalhada, estrelas que piscam, Via
+    Láctea e nuvens passando na frente; halos quentes nos lampiões. Chuva,
+    neblina fechada e interiores ficam sem sombra.
+  - **CLÁSSICA**: a luz antiga, encoberta e sem sombras.
+  - Para ficar leve, a sombra da parte fixa da cidade é guardada e só refeita
+    a cada poucos metros andados; por quadro só o que se mexe é desenhado de
+    novo (no celular o mapa de sombra é menor). Pela URL: `?light=classic` ou
+    `?light=advanced`.
 
 ## Estrutura
 
 ```
-src/engine   motor: material PS1 (com luzes dinâmicas), texturas, renderizador, colisão, controles, som
+src/engine   motor: material PS1 (com luzes dinâmicas), sombras (shadows.js), texturas, renderizador, colisão, controles, som
 src/world    cidade: relevo, ruas, rio, prédios, igreja, praça, calçadão, árvores, alvos, cenário da missão,
              clima e hora (atmosphere.js), interiores (interiors.js e interiors/: fábrica, cripta, gruta)
 src/game     personagem, controle do jogador, câmera, itens, armas, mira assistida, combate, efeitos,

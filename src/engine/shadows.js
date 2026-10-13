@@ -85,20 +85,8 @@ export class Shadows {
     this.copyCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
   }
 
-  // muda a resolução (celular usa um mapa menor)
-  configure({ size, radius }) {
-    if (size && size !== this.size) { this.size = size; this._dispose(); }
-    if (radius) this.radius = radius;
-    this.dirty = true;
-  }
-
-  // a parte fixa mudou (entrou/saiu de um interior, capítulo novo)
+  // força refazer o mapa fixo no próximo quadro
   invalidate() { this.dirty = true; }
-
-  _dispose() {
-    for (const rt of [this.rtStatic, this.rtMain]) if (rt) { rt.depthTexture.dispose(); rt.dispose(); }
-    this.rtStatic = this.rtMain = null;
-  }
 
   _targets() {
     if (this.rtMain) return;
@@ -191,8 +179,9 @@ export class Shadows {
     this._targets();
     const L = G.uSunDir.value;
     const moved = Math.hypot(focus.x - this.center.x, focus.z - this.center.z) > this.radius * 0.15 || Math.abs(focus.y - this.center.y) > 8;
-    // sol mudando (troca de clima): refaz no máximo a cada 6 quadros
-    const turned = 1 - L.dot(this.lastDir) > 2e-6 && this.frame - this.lastStatic >= 6;
+    // sol mudando (troca de clima): refaz no máximo a cada 6 quadros; troca brusca, na hora
+    const dd = 1 - L.dot(this.lastDir);
+    const turned = dd > 0.003 || (dd > 2e-6 && this.frame - this.lastStatic >= 6);
     this.statics.length = 0; this.dynamics.length = 0;
     for (const o of scene.children) {
       if (!o.visible || o.userData.noShadow) continue;
