@@ -48,6 +48,7 @@ export class Interiors {
     if (def.objects) this.scene.add(def.objects);
     def.name = name; def.group = group;
     this.defs[name] = def;
+    (this.ctx.interiorList ||= []).push(def);   // chão dos interiores (world.groundAt)
     return def;
   }
 

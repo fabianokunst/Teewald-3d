@@ -1,5 +1,6 @@
 // Revisão técnica do mundo num Chrome headless: superfícies enterradas no terreno,
-// pisos flutuando, objetos encaixados uns nos outros e objetos no meio da pista.
+// pisos flutuando, objetos encaixados uns nos outros, objetos no meio da pista e
+// lugares onde os pés do jogador afundam no desenho ou flutuam acima dele.
 // uso: npm run dev (em outro terminal) e depois: npm run audit
 import puppeteer from 'puppeteer-core';
 import fs from 'node:fs';
@@ -72,6 +73,71 @@ const onRoad = await page.evaluate(() => {
     return { trees: trees.slice(0, 60), nt: trees.length, small: small.slice(0, 60), ns: small.length };
 });
 
+// pés do jogador: o desenho e o chão físico (ctx.groundAt) precisam coincidir.
+// Afundando = superfície desenhada acima do chão onde se pisa; flutuando = o contrário
+const feet = await page.evaluate(() => {
+  const T = window.__teewald, ctx = T.ctx, ter = ctx.terrain, C = ctx.collision, CW = C.constructor, PB = ctx.playBounds;
+  const SKIP = new Set(['water', 'sky', 'leafFall', 'blob']), CELL = 4, grid = new Map(), tris = [];
+  T.scene.traverse(o => {
+    if (!o.isMesh || o.isSkinnedMesh || o.isInstancedMesh || !o.name || SKIP.has(o.name)) return;
+    for (let p = o; p; p = p.parent) if (!p.visible) return;
+    const pos = o.geometry.getAttribute('position'), idx = o.geometry.index, n = idx ? idx.count : pos.count, m = o.matrixWorld.elements;
+    for (let t = 0; t < n; t += 3) {
+      const v = [];
+      for (let k = 0; k < 3; k++) {
+        const i = idx ? idx.getX(t + k) : t + k, x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+        v.push(m[0] * x + m[4] * y + m[8] * z + m[12], m[1] * x + m[5] * y + m[9] * z + m[13], m[2] * x + m[6] * y + m[10] * z + m[14]);
+      }
+      const ax = v[3] - v[0], ay = v[4] - v[1], az = v[5] - v[2], bx = v[6] - v[0], by = v[7] - v[1], bz = v[8] - v[2];
+      const ny = az * bx - ax * bz, nl = Math.hypot(ay * bz - az * by, ny, ax * by - ay * bx);
+      if (nl < 1e-9 || ny / nl < 0.6) continue;   // só o que se pisa: virado para cima
+      const x0 = Math.min(v[0], v[3], v[6]), x1 = Math.max(v[0], v[3], v[6]), z0 = Math.min(v[2], v[5], v[8]), z1 = Math.max(v[2], v[5], v[8]);
+      if (x1 < PB.x0 || x0 > PB.x1 || z1 < PB.z0 || z0 > PB.z1) continue;
+      const tri = { v, name: o.name, x0, x1, z0, z1 };
+      tris.push(tri);
+      for (let i = Math.floor(x0 / CELL); i <= Math.floor(x1 / CELL); i++) for (let j = Math.floor(z0 / CELL); j <= Math.floor(z1 / CELL); j++) {
+        const k = i * 100000 + j; let l = grid.get(k); if (!l) grid.set(k, l = []); l.push(tri);
+      }
+    }
+  });
+  const yIn = (v, x, z) => {
+    const det = (v[5] - v[8]) * (v[0] - v[6]) + (v[6] - v[3]) * (v[2] - v[8]);
+    if (Math.abs(det) < 1e-12) return null;
+    const l0 = ((v[5] - v[8]) * (x - v[6]) + (v[6] - v[3]) * (z - v[8])) / det, l1 = ((v[8] - v[2]) * (x - v[6]) + (v[0] - v[6]) * (z - v[8])) / det, l2 = 1 - l0 - l1;
+    return l0 < -1e-6 || l1 < -1e-6 || l2 < -1e-6 ? null : l0 * v[1] + l1 * v[4] + l2 * v[7];
+  };
+  // dá para estar ali com os pés em g? (nenhuma colisão em volta segura o corpo)
+  const blocked = (x, z, g) => C.near(x, z, 0.6).some(it => {
+    if (it.y0 >= g + 1.7) return false;
+    const top = it.ramp ? CW.topAt(it, Math.max(-it.hz, Math.min(it.hz, CW.local(it, x, z)[1]))) : it.y1;
+    if (top <= g + 0.45 && (it.walk || top <= g + 0.05)) return false;
+    if (it.t === 'circle') return Math.hypot(x - it.x, z - it.z) < it.r + 0.3;
+    const [lx, lz] = CW.local(it, x, z);
+    return Math.abs(lx) < it.hx + 0.3 && Math.abs(lz) < it.hz + 0.3;
+  });
+  const add = (map, key, d, x, z) => { const e = map.get(key) || { n: 0, d: 0, x, z }; e.n++; if (d > e.d) { e.d = d; e.x = x; e.z = z; } map.set(key, e); };
+  const sink = new Map(), float = new Map();
+  for (const { v, name, x0, x1, z0, z1 } of tris) {
+    for (let x = Math.ceil(x0 * 2) / 2; x <= x1; x += 0.5) for (let z = Math.ceil(z0 * 2) / 2; z <= z1; z += 0.5) {
+      const y = yIn(v, x, z);
+      if (y === null || y < ter.heightAt(x, z) - 0.02) continue;
+      const g = ctx.groundAt(x, z, y), d = y - g;
+      if (d < 0.06 || d > 0.7 || blocked(x, z, g) || ctx.isDeepWater(x, z, g)) continue;
+      add(sink, name + '@' + Math.round(x / 8) * 8 + ',' + Math.round(z / 8) * 8, d, x, z);
+    }
+  }
+  for (let x = PB.x0; x <= PB.x1; x += 1) for (let z = PB.z0; z <= PB.z1; z += 1) {
+    const g = ctx.groundAt(x, z, ctx.surfaceAt(x, z));
+    let vy = ter.heightAt(x, z), vn = 'terreno';
+    for (const t of grid.get(Math.floor(x / CELL) * 100000 + Math.floor(z / CELL)) || []) { const y = yIn(t.v, x, z); if (y !== null && y <= g + 0.03 && y > vy) { vy = y; vn = t.name; } }
+    const d = g - vy;
+    if (d < 0.06 || d > 1.2 || blocked(x, z, g) || ctx.isDeepWater(x, z, g)) continue;
+    add(float, vn + '@' + Math.round(x / 8) * 8 + ',' + Math.round(z / 8) * 8, d, x, z);
+  }
+  const fmt = m => [...m.entries()].sort((a, b) => b[1].d * Math.sqrt(b[1].n) - a[1].d * Math.sqrt(a[1].n)).slice(0, 60).map(([k, e]) => `${k} n=${e.n} d=${e.d.toFixed(2)} @(${e.x.toFixed(1)},${e.z.toFixed(1)}) ${ctx.placeName(e.x, e.z) || ''}`);
+  return { sink: fmt(sink), float: fmt(float) };
+});
+
 const list = (title, items) => { console.log(`
 ${title} (${items.length})`); for (const l of items) console.log('  ' + l); };
 list('ENTERRADAS', surfaces.buried);
@@ -79,4 +145,6 @@ list('FLUTUANDO (pisos 0,35 a 2 m acima do terreno; telhados planos e pontes sã
 list('ENCAIXADOS (peças do mesmo objeto, como torre e igreja, são normais)', overlaps.items);
 list('ÁRVORES NA PISTA', onRoad.trees);
 list('OBJETOS NA PISTA', onRoad.small);
+list('PÉS AFUNDANDO (desenho acima do chão físico; degrau de escada externa é normal)', feet.sink);
+list('PÉS FLUTUANDO (chão físico acima do desenho; degraus de escada com rampa são normais)', feet.float);
 await browser.close();

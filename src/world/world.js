@@ -110,12 +110,16 @@ export async function buildWorld(scene, onStep) {
 
   // altura do chão para o jogador: terreno, ruas, calçadas, pisos e plataformas
   ctx.indoor = null;   // interior atual (world/interiors.js)
+  // interior que contém o ponto (os interiores ficam longe da cidade, x >= 1200)
+  const interiorAt = (x, z) => x > 1000 && ctx.interiorList?.find(d => x >= d.bounds.x0 && x <= d.bounds.x1 && z >= d.bounds.z0 && z <= d.bounds.z1);
   ctx.groundAt = (x, z, feetY) => {
-    if (ctx.indoor) {
+    // o interior atual, ou o de um bicho que ficou lá dentro com o jogador fora
+    const ind = ctx.indoor || interiorAt(x, z);
+    if (ind) {
       const f = ctx.collision.floorAt(x, z, feetY + 0.45);
       // interior com chão irregular (gruta): a altura exata da malha desenhada
-      if (ctx.indoor.ground) return Math.max(f, ctx.indoor.ground(x, z));
-      return f > -Infinity ? f : ctx.indoor.floorY;
+      if (ind.ground) return Math.max(f, ind.ground(x, z));
+      return f > -Infinity ? f : ind.floorY;
     }
     let y = ctx.surfaceAt(x, z);
     const fl = ctx.collision.floorAt(x, z, feetY + 0.45);

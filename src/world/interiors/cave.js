@@ -286,8 +286,8 @@ export function build(ctx, B, o) {
     }
     const top = pt(0, ne);
     for (let i = 0; i < na; i++) K.triOut('int:g:rock', top, pt(i, ne - 1), pt(i + 1, ne - 1), [0, 1, 0], [0, 0], [r, 0], [0, r], gray(k * 1.2), gray(k * 1.1), gray(k * 1.1));
-    // raio médio da pedra (cada ponto varia de 0,75 a 1,25 r): com 0,75 r o corpo entrava nela
-    if (coll && y + r * flat > H(x, z) + 0.3) K.round(x, z, r, y - r, y + r * flat, r > 0.9);
+    // cada ponto da pedra fica de 0,75 a 1,25 r do centro: com 0,75 r o corpo entrava nela
+    if (coll && y + r * flat > H(x, z) + 0.3) K.round(x, z, r * 1.15, y - r, y + r * flat, r > 0.9);
   };
   const cone = (x, y, z, r, len, down, k = 0.38) => {
     const tip = [x + (hash(x * 9 | 0, 1) - 0.5) * 0.1, y + (down ? -len : len), z];

@@ -19,7 +19,10 @@ O navegador abre em `http://localhost:5173`.
 
 Com o jogo rodando, `npm run audit` faz uma revisão técnica do mundo: lista
 superfícies enterradas no terreno, pisos flutuando, objetos encaixados uns nos
-outros e objetos no meio da pista.
+outros, objetos no meio da pista e lugares onde os pés do jogador afundariam no
+chão desenhado (ou flutuariam acima dele). Todo piso desenhado acima do terreno
+precisa entrar no chão do jogador (`ctx.floors`, `ctx.walkways` ou uma caixa
+caminhável), senão as pernas somem dentro dele.
 
 ## Controles
 
