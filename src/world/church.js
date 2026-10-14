@@ -5,6 +5,8 @@ import { frame } from './buildings.js';
 // Local: fachada em +z, nave estendida para -z.
 
 export const CHURCH = { W: 18, L: 34, wallH: 9.5, ridge: 17.5, towerW: 6, towerD: 5, towerH: 24, spire: 40, floor: 0.9 };
+// porta da sacristia na lateral (z local da igreja; o interior fica em interiors/igreja.js)
+export const SACRISTY_DOOR_Z = -13.3;
 
 export function buildChurch(B, ctx, s) {
   const { P } = frame(s);
@@ -165,6 +167,24 @@ export function buildChurch(B, ctx, s) {
     ctx.collision.addBox(p[0], p[2], 5.5, sd / 2, s.rot, y0 - 1, y0 + h, { walk: true, cam: false });
   }
   B.col = [1, 1, 1];
+
+  // porta lateral da sacristia (lado direito de quem olha o altar, perto dos fundos)
+  // com três degraus de granito até o piso da igreja
+  {
+    const z = SACRISTY_DOOR_Z, x = hw + 0.04;
+    B.col = [0.55, 0.42, 0.32];
+    B.quad('woodDark', P(x, fy, z + 0.55), P(x, fy, z - 0.55), P(x, fy + 2.3, z - 0.55), P(x, fy + 2.3, z + 0.55), [[0, 0], [1, 0], [1, 2], [0, 2]]);
+    B.col = pink;
+    for (const dz of [-0.62, 0.62]) { const p = P(hw + 0.1, 0, z + dz); B.box(trim, p[0], fy, p[2], 0.2, 2.45, 0.14, s.rot, { uvScale: 1 }); }
+    { const p = P(hw + 0.1, 0, z); B.box(trim, p[0], fy + 2.3, p[2], 0.22, 0.2, 1.4, s.rot, { uvScale: 1 }); }
+    B.col = [0.95, 0.95, 0.95];
+    for (let i = 0; i < 3; i++) {
+      const p = P(hw + 0.4 + 0.18 + i * 0.36, 0, z), h = ((3 - i) / 3) * C.floor;
+      B.box('granite', p[0], y0 - 0.4, p[2], 0.36, h + 0.4, 1.5, s.rot, { uvScale: 2 });
+      ctx.collision.addBox(p[0], p[2], 0.18, 0.75, s.rot, y0 - 1, y0 + h, { walk: true, cam: false });
+    }
+    B.col = [1, 1, 1];
+  }
 
   // colisão
   const col = ctx.collision;

@@ -386,9 +386,22 @@ function machado(B) {
 function pedra(B) { B.col = [0.55, 0.53, 0.5]; rock(B, 'carPaint', 0, 0.05, 0, 0.065, 3); B.col = [1, 1, 1]; }
 function tijolo(B) { B.col = [0.7, 0.36, 0.24]; block(B, 'carPaint', -0.05, 0.05, 0, 0.055, -0.1, 0.1); B.col = [1, 1, 1]; }
 
+// coleira de couro vermelho, arrebentada, com a plaquinha
+function coleira(B) {
+  B.col = [0.62, 0.08, 0.06];
+  for (let i = 0; i < 12; i++) {
+    if (i === 5) continue;
+    const a = (i / 12) * Math.PI * 2, b = ((i + 1) / 12) * Math.PI * 2;
+    rod(B, 'carPaint', [Math.cos(a) * 0.06, 0, Math.sin(a) * 0.06], [Math.cos(b) * 0.06, 0, Math.sin(b) * 0.06], 0.008, 4);
+  }
+  B.col = [0.8, 0.78, 0.7];
+  block(B, 'carPaint', 0.052, 0.072, -0.012, 0.012, -0.012, 0.012);
+  B.col = [1, 1, 1];
+}
+
 const BUILDERS = {
   pistol, ammo9: ammoBox, shotgun, shells, revolver, silver, raygun, dartgun, darts, lantern, oil, dynamite,
-  cuca, cha, cross: crossItem, medal, shoe, card, key: keyItem, silverware, crystal, diary,
+  cuca, cha, cross: crossItem, medal, shoe, card, key: keyItem, silverware, crystal, diary, coleira,
   pau, cano, pa, foice, machado, pedra, tijolo,
 };
 

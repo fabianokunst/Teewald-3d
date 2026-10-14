@@ -30,6 +30,8 @@ import { Owls } from './game/owls.js';
 import { Mission } from './game/mission.js';
 import { Campaign, loadCreatureTypes, loadInteriors } from './game/campaign.js';
 import { CHAPTERS } from './game/chapters/index.js';
+import { Extras } from './game/extras.js';
+import { Journal } from './ui/journal.js';
 import { loadFonts, drawText, FONT_TITLE } from './ui/overlay.js';
 
 const params = new URLSearchParams(location.search);
@@ -58,7 +60,8 @@ G.uSunDir.value.set(-0.62, 0.4, -0.68).normalize();
 
 let ctx, character, player, tpc, menu, minimap, touchMenu;
 let inventory, pistol, effects, targets, invScreen, combat;
-let npcs, mission, atmo, interiors, campaign, owls;
+let npcs, mission, atmo, interiors, campaign, owls, extras, journal;
+let journalFrom = 'pause';
 let endingT = 0;
 let state = 'loading';
 let time = 0, stateT = 0, fade = 1, fadeTarget = 0, onFaded = null;
@@ -93,7 +96,7 @@ const touchUI = () => input.lastDevice === 'touch';
 const invPanel = () => touchUI() && !!input.touch.L?.portrait;
 
 // jogando: salva o status ao sair da aba ou fechar a página
-const inGame = () => ['play', 'pause', 'inventory', 'read', 'cutscene', 'talk'].includes(state);
+const inGame = () => ['play', 'pause', 'inventory', 'read', 'cutscene', 'talk', 'extra', 'journal'].includes(state);
 addEventListener('pagehide', () => { if (inGame()) campaign?.autosave('saiu', true); });
 
 // trocou de aplicativo ou de aba: pausa, salva e silencia
@@ -176,14 +179,18 @@ async function boot() {
   campaign = new Campaign({ ctx, scene, audio, input, player, character, tpc, camera, inventory, pistol, targets, effects, hud, R, npcs, combat, atmo, interiors, mission,
     fadeTo: (cb, speed = 1.6) => fadeTo(() => { cb(); fadeTarget = 0; fadeSpeed = 1.2; }, speed) });
   campaign.onEnding = () => { setState('ending'); endingT = 0; atmo.set('amanhecer', 0); fadeTarget = 0; };
+  // documentos, lendas, orelhões, portas da igreja, pedidos, a presença e a bandinha
+  extras = new Extras({ ctx, scene, audio, input, player, camera, tpc, hud, R, npcs, combat, campaign, mission, interiors, inventory, atmo, effects, pistol });
   menu = new Menu(input, audio, settings, applySettings);
+  menu.extras = extras;
+  journal = new Journal(input, audio, extras);
   menu.campaign = campaign; menu.chapterTitles = CHAPTERS.map(c => c?.title);
   // no toque, as mesmas telas com botões grandes na tela inteira
   touchMenu = new TouchMenu(menu, input, audio);
   // dedo num botão do jogo sobre a imagem (PEGAR, FALAR, LER...) não gira a câmera nem anda
   input.touch.uiHit = (x, y) => {
     const [ix, iy] = R.toInternal(x, y), pad = 6 * (R.H / 240);
-    return [combat.chip, npcs.chip, campaign.chip, mission.chip].some(c => c && ix >= c.x - pad && ix <= c.x + c.w + pad && iy >= c.y - pad && iy <= c.y + c.h + pad);
+    return [combat.chip, npcs.chip, campaign.chip, mission.chip, extras.chip].some(c => c && ix >= c.x - pad && ix <= c.x + c.w + pad && iy >= c.y - pad && iy <= c.y + c.h + pad);
   };
   setupStart();
   exposeDebug();
@@ -279,7 +286,8 @@ function frame(now) {
     titleCamera(dt);
     const act = touchUI() ? touchMenu.update(dt) : menu.update(dt, mouseInt);
     if (act === 'newgame' && !onFaded) fadeTo(() => { startGame({ chapter: 1, intro: true }); fadeTarget = 0; fadeSpeed = 0.5; });
-    if (act === 'erase') { campaign.eraseSave(); menu.open('main'); audio.menuBack(); }
+    if (act === 'erase') { campaign.eraseSave(); extras.erase(); menu.open('main'); audio.menuBack(); }
+    if (act === 'journal' && !onFaded) { journalFrom = 'title'; journal.open(); setState('journal'); }
     if (act === 'continue' && !onFaded) fadeTo(() => { startGame({ chapter: campaign.save.chapter || 1, fromSave: true }); fadeTarget = 0; fadeSpeed = 0.6; });
     if (typeof act === 'string' && act.startsWith('chapter:') && !onFaded) { const n = +act.slice(8); fadeTo(() => { startGame({ chapter: n, intro: n === 1 }); fadeTarget = 0; fadeSpeed = 0.6; }); }
   } else if (state === 'intro') {
@@ -289,6 +297,8 @@ function frame(now) {
     else if (input.inventory()) { invScreen.open(); setState('inventory'); input.unlock(); }
     else if (npcs.talkHit(input)) { npcs.startTalk(); setState('talk'); }
     else if (campaign.interactHit(input)) { campaign.startRead(); setState('read'); }
+    else if (extras.interactHit(input)) setState('extra');
+    else if (input.hit('KeyJ')) { journalFrom = 'play'; journal.open(); setState('journal'); input.unlock(); }
     else {
       combat.pickHit(input);
       if (input.mouse.clicked && !input.locked && input.lastDevice === 'keyboard') input.lock();
@@ -318,6 +328,21 @@ function frame(now) {
     player.update(dt, tpc.yaw, null);
     tpc.update(dt, player, null, settings, false);
     if (done) setState('play');
+  } else if (state === 'extra') {
+    // documento na mão ou conversa no orelhão
+    const done = extras.updateModal(dt, input) === 'close';
+    player.update(dt, tpc.yaw, null);
+    tpc.update(dt, player, null, settings, false);
+    if (done) setState('play');
+  } else if (state === 'journal') {
+    // caderno de arquivos, lendas e pedidos (da pausa, do título ou da tecla J)
+    // em pé no celular, abas e ações viram botões grandes na parte de baixo
+    const panelClose = invPanel() && touchMenu.updateJournal(journal) === 'close';
+    if (panelClose || journal.update(dt, input, mouseInt) === 'close') {
+      if (journalFrom === 'title') { menu.open('main'); setState('title'); }
+      else if (journalFrom === 'play') setState('play');
+      else { menu.open('pause'); setState('pause'); }
+    }
   } else if (state === 'cutscene' || state === 'dying') {
     // encontro com o chupacabras (a missão move a câmera) ou jogador caído
     player.update(dt, tpc.yaw, null);
@@ -331,6 +356,7 @@ function frame(now) {
     const resume = menu.screen === 'pause' && (input.padHit('start') || input.hit('KeyP'));
     const act = resume ? 'resume' : touchUI() ? touchMenu.update(dt) : menu.update(dt, mouseInt);
     if (act === 'resume') { setState('play'); }
+    if (act === 'journal') { journalFrom = 'pause'; journal.open(); setState('journal'); }
     if (act === 'quit') campaign.autosave('menu', true);
     if (act === 'quit') fadeTo(() => { if (ctx.indoor) interiors.exit(); menu.open('main'); setState('title'); audio.setAmbience(false); atmo.set(titleWeather(), 0); fadeTarget = 0; fadeSpeed = 1.2; });
   } else if (state === 'ending') {
@@ -354,14 +380,15 @@ function frame(now) {
   ctx.leaves.mesh.visible = !ctx.indoor;
   if (!ctx.indoor) ctx.leaves.update(dt, focus, time);
   interiors.update(dt);
-  if (state !== 'inventory' && state !== 'pause') {
+  if (state !== 'inventory' && state !== 'pause' && state !== 'journal') {
     targets.update(dt, player, state === 'play');
     // conversa com morador, falas da história ou narração: as criaturas não atacam
-    combat.update(dt, state, state === 'talk' || state === 'read' || (state === 'cutscene' && campaign.narrating));
+    combat.update(dt, state, state === 'talk' || state === 'read' || state === 'extra' || (state === 'cutscene' && campaign.narrating));
     pistol.lights(dt);
     npcs.update(dt, state);
     owls.update(dt, state === 'title' || state === 'ending' || state === 'debug' ? null : player, camera);
     const ev = state === 'ending' ? null : campaign.update(dt, state);
+    extras.update(dt, state);
     if (ev === 'cutscene' || ev === 'read' || ev === 'play') setState(ev);
     else if (ev === 'dead') {
       setState('dying');
@@ -388,7 +415,8 @@ function frame(now) {
   const menuOnTouch = touchUI() && (state === 'title' || state === 'pause');
   input.touch.draw(R, state === 'play' && input.lastDevice === 'touch', input.touchPrimary,
     menuOnTouch ? (g, v) => touchMenu.draw(g, v)
-      : state === 'inventory' && invPanel() ? (g, v) => touchMenu.drawInventory(g, v, invScreen) : null);
+      : state === 'inventory' && invPanel() ? (g, v) => touchMenu.drawInventory(g, v, invScreen)
+        : state === 'journal' && invPanel() ? (g, v) => touchMenu.drawJournal(g, v, journal) : null);
   input.endFrame();
 }
 
@@ -442,6 +470,10 @@ function drawUI() {
     npcs.drawTalk(g, W, H, input.lastDevice);
   } else if (state === 'read') {
     campaign.drawRead(g, W, H, input.lastDevice);
+  } else if (state === 'extra') {
+    extras.drawModal(g, W, H, input.lastDevice);
+  } else if (state === 'journal') {
+    journal.draw(g, W, H, input.lastDevice);
   } else if (state === 'cutscene') {
     campaign.drawCutscene(g, W, H);
   } else if (state === 'dying') {
@@ -463,6 +495,7 @@ function drawUI() {
       rightPad: showMap && !touch ? 96 * (H / 240) : 0,
     });
     campaign.drawHud(g, W, H, device);
+    extras.drawHud(g, W, H, device);
   }
 }
 
@@ -497,11 +530,14 @@ function drawEnding(g, W, H) {
 
 function exposeDebug() {
   window.__teewald = {
-    ctx, player, camera, tpc, settings, atmo, shadows, combat, interiors, audio, character, scene, renderer: R, G, input, menu, touchMenu, inventory, pistol, targets, effects, invScreen, npcs, mission, owls,
+    ctx, player, camera, tpc, settings, atmo, shadows, combat, interiors, audio, character, scene, renderer: R, G, input, menu, touchMenu, inventory, pistol, targets, effects, invScreen, npcs, mission, owls, extras, journal,
     get state() { return state; },
+    get fading() { return !!onFaded || fade > 0.02; },
     setState: s => setState(s),
     startGame: (intro = false) => { startGame({ intro }); fade = 0; fadeTarget = 0; },
     chapter: (n) => { startGame({ chapter: n }); fade = 0; fadeTarget = 0; },
+    // CONTINUAR do menu: volta para o progresso salvo (usado pelo teste da campanha)
+    continueSaved: () => { startGame({ chapter: campaign.save.chapter || 1, fromSave: true }); fade = 0; fadeTarget = 0; },
     campaign,
     simulate: (secs, step = 1 / 30) => { noRender = true; try { for (let t = 0; t < secs; t += step) { last -= step * 1000; frame(performance.now()); } } finally { noRender = false; } return state; },
     teleport: (x, z, heading = 0) => { player.place(x, z, heading); tpc.snap(player); },

@@ -83,6 +83,7 @@ export const ITEMS = {
   silverware: { name: 'PRATA', kind: 'key', desc: ['Peças de prata para fundir.'], stack: true, max: 9 },
   crystal: { name: 'CRISTAL VERDE', kind: 'key', desc: ['Pedaço da pedra que caiu do céu.', 'Brilha e zumbe na mão.'], stack: true, max: 9 },
   diary: { name: 'DIÁRIO DE 1878', kind: 'key', desc: ['Diário do Pastor Wendt, em alemão', 'antigo. Fala da bruxa Otília.'], stack: false },
+  coleira: { name: 'COLEIRA VERMELHA', kind: 'key', desc: ['A coleira do Bóris, arrebentada.', 'Tem sangue seco no couro.'], stack: false },
 };
 
 export const PISTOL_MAG = 12;

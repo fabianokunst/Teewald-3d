@@ -35,8 +35,10 @@ export class Player {
     character.onStroke = k => this._stroke(k);
   }
 
-  place(x, z, heading) {
-    this.pos.set(x, this.ctx.groundAt(x, z, 1000), z);
+  // feetY: altura aproximada dos pés (prédio de vários andares, como a torre da igreja);
+  // sem ela, o piso mais alto no ponto
+  place(x, z, heading, feetY = null) {
+    this.pos.set(x, this.ctx.groundAt(x, z, feetY == null ? 1000 : feetY + 0.6), z);
     this.heading = heading;
     this.vel.set(0, 0, 0);
     this.grounded = true;

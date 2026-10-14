@@ -14,16 +14,17 @@ import { M } from '../engine/materials.js';
 //     title: 'FÁBRICA DE CALÇADOS',
 //     bounds: { x0, x1, z0, z1 },        // área jogável (coordenadas do mundo)
 //     floorY: y,                          // piso padrão (onde não há caixa caminhável)
-//     spawn: { x, z, h },                 // onde o jogador aparece ao entrar
+//     spawn: { x, z, h, y? },             // onde o jogador aparece ao entrar (y: andar, se houver vários)
 //     exits: [{ x, z, r, label }],        // porta de saída (o jogo mostra SAIR)
 //     lights: [{ x, y, z, col: [r,g,b], range, flicker: 0..1 }],
 //     points: { nome: { x, y, z, h } },   // lugares para a missão (itens, chefe...)
 //     objects: THREE.Object3D (opcional)  // peças com animação (máquinas, ventiladores)
+//     atmoFor(presetDeFora) (opcional)    // nome do clima de dentro (padrão: 'interior')
 //     update(dt, t) (opcional)            // anima as peças
 //   }
 
 export const INTERIOR_Y = 400;
-const ORIGINS = { fabrica: [1300, 1300], cripta: [1700, 1300], gruta: [1300, 1700], torre: [1700, 1700] };
+const ORIGINS = { fabrica: [1300, 1300], cripta: [1700, 1300], gruta: [1300, 1700], torre: [1700, 1700], igreja: [2100, 1700] };
 
 export class Interiors {
   // o: { ctx, scene, atmo, player, tpc, hud }
@@ -65,9 +66,10 @@ export class Interiors {
     const b = this.ctx.playBounds;
     if (!this.savedBounds) this.savedBounds = { ...b };
     Object.assign(b, d.bounds);
-    this.atmo.set(d.atmo || 'interior', 0);
+    // atmoFor: o clima de dentro depende de fora (a igreja de dia tem a luz dos vitrais)
+    this.atmo.set(d.atmoFor?.(this.outside?.preset) || d.atmo || 'interior', 0);
     const s = at && d.points?.[at] ? d.points[at] : d.spawn;
-    P.place(s.x, s.z, s.h ?? 0);
+    P.place(s.x, s.z, s.h ?? 0, s.y ?? null);
     this.tpc.snap(P);
     this.hud.place = null;
   }

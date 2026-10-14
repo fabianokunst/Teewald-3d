@@ -56,7 +56,7 @@ function carve(c, lines) {
   return c;
 }
 
-function makeMats() {
+export function makeMats() {
   if (M['int:c:slabs']) return;
   const marble = sampler('marble'), granite = sampler('granite'), stone = sampler('stoneWall'), wood = sampler('woodDark');
   // lápides das famílias (mármore manchado, moldura, cruz, nome e datas)
@@ -551,7 +551,7 @@ function skull(K, x, y, z, rot, s = 1, k = 0.8) {
   F.face('int:c:skull', 0, 0.02 * s, 0.076 * s, 0.13 * s, 0.13 * s, UV1, [k, k, k]);
 }
 
-function web(K, x, y, z, rot, s) {
+export function web(K, x, y, z, rot, s) {
   // canto superior: a teia desce do ponto (x, y, z) para dentro do plano virado para rot
   const c = Math.cos(rot), sn = Math.sin(rot);
   const P = (u, v) => [x + c * u * s, y - v * s, z - sn * u * s];
@@ -559,7 +559,7 @@ function web(K, x, y, z, rot, s) {
 }
 
 // chama com brilho (peça animada) registrada para tremular
-function flame(objects, anim, ctx, x, y, z, light, ph) {
+export function flame(objects, anim, ctx, x, y, z, light, ph) {
   const g = part(ctx, k => {
     k.quad('int:c:flame', [-0.05, 0, 0], [0.05, 0, 0], [0.05, 0.16, 0], [-0.05, 0.16, 0], UV1);
     k.quad('int:c:flame', [0, 0, -0.05], [0, 0, 0.05], [0, 0.16, 0.05], [0, 0.16, -0.05], UV1);
@@ -569,7 +569,7 @@ function flame(objects, anim, ctx, x, y, z, light, ph) {
 }
 
 // castiçal de ferro com três velas
-function candelabra(K, objects, anim, x, z, h, light, fallen = false) {
+export function candelabra(K, objects, anim, x, z, h, light, fallen = false) {
   const o = K.o, iron = [0.25, 0.24, 0.24], wax = [0.86, 0.82, 0.7];
   if (fallen) {
     const F = K.frame(x, 0.06, z, 0.7, 0, Math.PI / 2);
@@ -594,7 +594,7 @@ function candelabra(K, objects, anim, x, z, h, light, fallen = false) {
 }
 
 // grupo de velas derretidas no chão ou numa pedra
-function candleCluster(K, objects, anim, x, z, y, n, light) {
+export function candleCluster(K, objects, anim, x, z, y, n, light) {
   const o = K.o, wax = [0.84, 0.8, 0.68];
   for (let i = 0; i < n; i++) {
     const a = i * 2.4, d = i === 0 ? 0 : 0.12 + (i % 2) * 0.08, cx = x + Math.cos(a) * d, cz = z + Math.sin(a) * d, h = 0.08 + hash(i, n) * 0.25;
@@ -605,7 +605,7 @@ function candleCluster(K, objects, anim, x, z, y, n, light) {
 }
 
 // lustre de ferro (aro com velas) pendurado por corrente, balançando
-function chandelier(ctx, objects, anim, o, x, y, z, light) {
+export function chandelier(ctx, objects, anim, o, x, y, z, light) {
   const n = 6, rr = 0.7, drop = 1.6;
   const g = part(ctx, k => {
     k.beam('iron', [0, 0, 0], [0, -drop, 0], 0.025, 0.025, [0.2, 0.2, 0.2]);

@@ -14,10 +14,12 @@ import * as WitchM from './creatures/witch.js';
 import { build as buildFactory } from '../world/interiors/factory.js';
 import { build as buildCrypt } from '../world/interiors/crypt.js';
 import { build as buildCave } from '../world/interiors/cave.js';
+import { build as buildChurch } from '../world/interiors/igreja.js';
 import { SFX } from './creatures/sfx.js';
 import { GunAudio } from './gunAudio.js';
 import { ITEMS } from './items.js';
 import { CHAPTERS } from './chapters/index.js';
+import { difficulty } from './difficulty.js';
 
 // Campanha: os dez capítulos de Teewald. O capítulo 1 (o chupacabras na tarde de
 // neblina) é a missão original (game/mission.js); do 2 em diante, a noite que não
@@ -56,9 +58,9 @@ export async function loadCreatureTypes() {
   });
 }
 
-// interiores (fábrica, cripta, gruta): montados no começo, longe da cidade
+// interiores (fábrica, cripta, gruta, igreja): montados no começo, longe da cidade
 export async function loadInteriors(interiors) {
-  for (const [name, build] of [['fabrica', buildFactory], ['cripta', buildCrypt], ['gruta', buildCave]]) {
+  for (const [name, build] of [['fabrica', buildFactory], ['cripta', buildCrypt], ['gruta', buildCave], ['igreja', buildChurch]]) {
     try { interiors.add(name, build); } catch (e) { console.warn('interior não montou:', name, e); }
   }
 }
@@ -121,7 +123,7 @@ export class Campaign {
 
   // criatura derrotada às vezes larga alguma coisa (munição das armas que o jogador tem, comida, querosene)
   _drop(e) {
-    if (e.static || e.passive || !e.pos || Math.random() > 0.4) return;
+    if (e.static || e.passive || !e.pos || Math.random() > difficulty().drop) return;
     const inv = this.inventory, opts = [['ammo9', 6, 4]];
     if (inv.has('shotgun')) opts.push(['shells', 3, 3]);
     if (inv.has('revolver')) opts.push(['silver', 2, 2]);
@@ -226,7 +228,7 @@ export class Campaign {
     def.loadState?.(this, S, R.custom || {});
     if (R.indoor && this.interiors.defs[R.indoor]) this.interiors.enter(R.indoor);
     const p = R.pos || R.cp;
-    if (p) { this.player.place(p.x, p.z, p.h ?? 0); this.tpc.snap(this.player); }
+    if (p) { this.player.place(p.x, p.z, p.h ?? 0, p.y ?? null); this.tpc.snap(this.player); }
     if (R.cp) S.checkpoint = { ...R.cp };
     // etapas que dependem de algo criado na etapa anterior (um chefe, por exemplo) recomeçam por ela
     let id = R.step;
@@ -263,7 +265,7 @@ export class Campaign {
     if (C.dead) return false;
     // posição segura: a atual se não houver perigo; senão, o último ponto de retorno
     const safe = !C.inFight && P.grounded && !P.swimming && !(C.boss && !C.boss.dead);
-    const here = { x: +P.pos.x.toFixed(2), z: +P.pos.z.toFixed(2), h: +P.heading.toFixed(3) };
+    const here = { x: +P.pos.x.toFixed(2), z: +P.pos.z.toFixed(2), h: +P.heading.toFixed(3), y: +P.pos.y.toFixed(2) };
     sv.inv = this.inventory.serialize();
     sv.melee = C.melee ? { ...C.melee } : null;
     if (this.index === 1) {
@@ -272,7 +274,9 @@ export class Campaign {
       if (M.step === 'escaped' || M.step === 'done') { sv.chapter = 2; sv.unlocked = Math.max(sv.unlocked || 1, 2); sv.run = null; }
       else {
         sv.chapter = 1;
-        sv.run = { chapter: 1, step: M.step, pos: safe ? here : null, hp: Math.round(C.hp) };
+        // dentro da igreja: volta na porta (a missão 1 não guarda interior)
+        const out = this.interiors.indoor && this.interiors.outside;
+        sv.run = { chapter: 1, step: M.step, pos: !safe ? null : out ? { x: +out.x.toFixed(2), z: +out.z.toFixed(2), h: +out.h.toFixed(3) } : here, hp: Math.round(C.hp) };
       }
     } else {
       const S = this.S;
@@ -496,7 +500,7 @@ export class Campaign {
 
   boss(e, name = null) { this.combat.boss = e; if (name) e.bossName = name; return e; }
 
-  checkpoint(x, z, h = 0) { this.S.checkpoint = { x, z, h }; this._saveSoon = 0.4; }
+  checkpoint(x, z, h = 0, y = null) { this.S.checkpoint = { x, z, h, y }; this._saveSoon = 0.4; }
 
   after(secs, fn) { this.S.timers.push({ t: secs, fn }); }
 
@@ -607,6 +611,8 @@ export class Campaign {
 
   _exitInterior(ex) {
     const S = this.S, d = S?.def;
+    // saída com destino próprio (portas da igreja): não é a saída do interior do capítulo
+    if (ex.to) { this.leave(ex.to); return; }
     const to = d?.exitTo?.(this, this.interiors.indoor?.name) || null;
     this.leave(to, null, () => d?.onExit?.(this, S));
   }
@@ -678,13 +684,16 @@ export class Campaign {
     // as criaturas soltas e as das ondas vão embora; o capítulo remonta o encontro
     this.combat.clearEnemies(e => e.ambient);
     if (this.combat.projectiles) this.combat.projectiles.length = 0;
-    this.player.place(cp.x, cp.z, cp.h ?? 0);
+    // caiu dentro de um interior com o ponto de retorno lá fora (a igreja): sai antes
+    const ind = this.interiors.indoor, b = ind?.bounds;
+    if (b && (cp.x < b.x0 - 1 || cp.x > b.x1 + 1 || cp.z < b.z0 - 1 || cp.z > b.z1 + 1)) this.interiors.exit(null, S.def.weather);
+    this.player.place(cp.x, cp.z, cp.h ?? 0, cp.y ?? null);
     this.tpc.snap(this.player);
     S.def.steps[S.i]?.onRespawn?.(this, S);
     S.def.onRespawn?.(this, S);
     // munição mínima para não ficar sem saída
-    for (const [id, min] of [['ammo9', 24], ['shells', 6], ['silver', 6], ['oil', 1]]) {
-      const gun = ITEMS[id].for;
+    for (const [id, m0] of [['ammo9', 24], ['shells', 6], ['silver', 6], ['oil', 1]]) {
+      const gun = ITEMS[id].for, min = Math.max(1, Math.round(m0 * difficulty().refill));
       if (this.inventory.find(gun) && this.inventory.count(id) < min) this.inventory.add(id, min - this.inventory.count(id));
     }
     this.hud.toast('VOCÊ CAIU...');

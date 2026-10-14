@@ -1,9 +1,12 @@
 import { drawText, panel, FONT_TITLE, FONT_UI } from './overlay.js';
 import { saveSettings } from '../config.js';
+import { DIFFICULTY_NAMES } from '../game/difficulty.js';
 
 // Tela título, menu principal, opções, créditos e pausa
 const ps1Only = s => s.visual === 'ps1';
 const OPTIONS = [
+  // dano recebido, resistência dos bichos, o que eles largam e munição depois de cair
+  { key: 'difficulty', label: 'DIFICULDADE', values: [0, 1, 2], fmt: v => DIFFICULTY_NAMES[v] ?? 'NORMAL' },
   { key: 'visual', label: 'ESTILO VISUAL', values: ['clean', 'ps1'], fmt: v => (v === 'ps1' ? 'PS1 RETRÔ' : '3D LIMPO') },
   { key: 'resolution', label: 'RESOLUÇÃO (PS1)', values: [240, 360, 480, 720, 1080, 0], fmt: v => (v === 0 ? 'NATIVA' : v + 'p' + (v === 240 ? ' (PS1)' : '')), needs: ps1Only },
   { key: 'aspect', label: 'PROPORÇÃO', values: ['wide', '4:3'], fmt: v => (v === 'wide' ? 'TELA CHEIA' : '4:3') },
@@ -82,6 +85,9 @@ export class Menu {
       if ((sv.chapter || 1) > 1 || sv.run) list.push({ label: 'CONTINUAR  · CAP. ' + (sv.chapter || 1), act: 'continue' });
       list.push({ label: 'NOVO JOGO', act: 'newgame' });
       list.push({ label: 'CAPÍTULOS', act: 'chapters' });
+      // documentos e lendas já achados (relidos fora do jogo)
+      const ex = this.extras?.state;
+      if (ex && (ex.docs.length || ex.legends.length)) list.push({ label: 'ARQUIVOS', act: 'journal' });
       list.push({ label: 'OPÇÕES', act: 'options' }, { label: 'CRÉDITOS', act: 'credits' });
       return list;
     }
@@ -99,7 +105,7 @@ export class Menu {
       return list;
     }
     if (this.screen === 'erase') return [{ label: 'NÃO, VOLTAR', act: 'back' }, { label: 'APAGAR TUDO', act: 'erase' }];
-    if (this.screen === 'pause') return [{ label: 'CONTINUAR', act: 'resume' }, { label: 'OPÇÕES', act: 'options' }, { label: 'MENU PRINCIPAL', act: 'confirm' }];
+    if (this.screen === 'pause') return [{ label: 'CONTINUAR', act: 'resume' }, { label: 'ARQUIVOS', act: 'journal' }, { label: 'OPÇÕES', act: 'options' }, { label: 'MENU PRINCIPAL', act: 'confirm' }];
     // sair da partida pede confirmação (o item marcado de início é o seguro)
     if (this.screen === 'confirm') return [{ label: 'CONTINUAR JOGANDO', act: 'back' }, { label: 'SAIR PARA O MENU', act: 'quit' }];
     if (this.screen === 'options') return [...this.options().map(o => ({ label: o.label, opt: o })), { label: 'VOLTAR', act: 'back' }];

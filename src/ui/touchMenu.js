@@ -105,6 +105,52 @@ export class TouchMenu {
     });
   }
 
+  // ---------- caderno (ARQUIVOS) em pé: abas, rolagem e ações em botões grandes embaixo ----------
+  // devolve 'close' para fechar o caderno
+  updateJournal(J) {
+    const I = this.input, T = I.touch;
+    if (this.screen !== 'journal') { this.screen = 'journal'; this.press = null; this.tapId = null; this.scrollMax = 0; }
+    const started = T.tap && T.tap.id !== this.tapId && this._hit(T.tap.x0, T.tap.y0);
+    const id = this._track(T.tap, T.tapUp, 0);
+    if (started || this.press || id) { I.mouse.clicked = false; I.mouse.moved = false; }
+    if (T.tapUp && this.buttons.length && this._hit(T.tapUp.x0, T.tapUp.y0)) I.mouse.clicked = false;
+    if (!id) return null;
+    const kind = id.split(':')[1];
+    if (kind === 'close') { this.audio.menuBack(); return 'close'; }
+    J.touchAct(kind);
+    return null;
+  }
+
+  drawJournal(g, v, J) {
+    this.buttons = [];
+    if (!v.portrait) return;
+    const s = v.s, P = x => x / s, R = Math.round, vw = v.vw, gr = v.gr, u = v.u;
+    const top = gr.y + gr.h, m = Math.max(14, 4 * u), bh = Math.max(48, Math.min(60, 13 * u)), gap = Math.max(10, 3 * u);
+    const grd = g.createLinearGradient(0, R(P(top)), 0, v.ch);
+    grd.addColorStop(0, '#1c140e'); grd.addColorStop(1, '#070504');
+    g.fillStyle = grd; g.fillRect(0, R(P(top)), v.cw, v.ch - R(P(top)));
+    // linhas de botões: [◀ aba ▶] [▲ ▼] [ABRIR] [FECHAR] (com o papel aberto: PRÓXIMA e VOLTAR)
+    const more = J.paper.isOpen && J.paper.page < J.paper.pages.length - 1;
+    const rows = J.paper.isOpen ? [...(more ? [[['jr:next', 'PRÓXIMA PÁGINA', 1]]] : []), [['jr:back', 'VOLTAR', 1]]]
+      : [[['jr:prev', '◀ ABA', 0.5], ['jr:tab', '▶ ABA', 0.5]], [['jr:up', '▲', 0.5], ['jr:down', '▼', 0.5]], ...(J.canOpen() ? [[['jr:open', 'ABRIR', 1]]] : []), [['jr:close', 'FECHAR', 1]]];
+    const bw = Math.min(380, vw - 2 * m - 16), h = rows.length * bh + (rows.length - 1) * gap;
+    const y0 = top + Math.max(m, (v.vh - top - h) * 0.4);
+    rows.forEach((row, i) => {
+      let x = (vw - bw) / 2;
+      const y = y0 + i * (bh + gap);
+      for (const [id, label, f] of row) {
+        const w = bw * f - (row.length > 1 ? gap / 2 : 0);
+        this.buttons.push({ id, x, y, w, h: bh });
+        const on = this.press === id && this.pressInside, lw = Math.max(1, R(1.6 / s));
+        g.globalAlpha = on ? 0.95 : 0.85; g.fillStyle = on ? C.gold : C.panel; g.fillRect(R(P(x)), R(P(y)), R(P(w)), R(P(bh))); g.globalAlpha = 1;
+        g.strokeStyle = on ? C.gold : C.edge; g.lineWidth = lw; g.strokeRect(R(P(x)) + lw / 2, R(P(y)) + lw / 2, R(P(w)) - lw, R(P(bh)) - lw);
+        const px = Math.max(10, R(P(bh * 0.4)));
+        drawText(g, label, P(x + w / 2), P(y + bh / 2) - px * 0.62, px, { align: 'center', color: on ? C.dark : C.text, shadow: on ? null : undefined });
+        x += w + gap;
+      }
+    });
+  }
+
   _act(id) {
     const M = this.menu, items = M.items();
     if (id === 'back') {

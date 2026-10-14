@@ -24,6 +24,15 @@ chão desenhado (ou flutuariam acima dele). Todo piso desenhado acima do terreno
 precisa entrar no chão do jogador (`ctx.floors`, `ctx.walkways` ou uma caixa
 caminhável), senão as pernas somem dentro dele.
 
+`npm run teste` testa a campanha inteira sozinho: compila o jogo, abre num Chrome
+sem janela e um robô passa por todas as etapas dos dez capítulos até os créditos
+(pula falas e cenas, derruba as criaturas, usa os pontos da história). Em cada
+etapa ele salva e volta pelo CONTINUAR, e uma vez por capítulo deixa o jogador cair,
+conferindo se o jogo volta para a mesma etapa. No fim mostra onde travou e os erros
+do console. `npm run teste -- 6` começa no capítulo 6, `npm run teste -- 6 6` testa só
+ele e `--rapido` usa a última compilação (`tools/test-campaign.mjs` e
+`tools/campaign-bot.js`).
+
 ## Controles
 
 | Ação | Teclado / mouse | Controle | Toque (celular/tablet) |
@@ -45,6 +54,7 @@ caminhável), senão as pernas somem dentro dele.
 | Atirar (segurar: luz do lampião) | botão esquerdo | R2 (segurar: continua atirando) | botão ATIRAR (segurar: continua) |
 | Recarregar / reabastecer | R | X | botão REC |
 | Pausa | Esc ou P | Start | botão ❚❚ |
+| Arquivos, lendas e pedidos | J | Start → ARQUIVOS | ❚❚ → ARQUIVOS |
 | Minimapa (liga/desliga) | M | Select | Opções |
 | Tela cheia | F11 | — | botão ⛶ (Android e iPad) |
 | Mostrar FPS | F3 | — | — |
@@ -135,6 +145,12 @@ um ícone de disquete com PROGRESSO SALVO aparece no canto.
 
 Para testes: `?chapter=5` na URL começa direto num capítulo.
 
+### Dificuldade
+
+Em Opções, **DIFICULDADE** (fácil, normal, difícil) muda o dano que o jogador recebe,
+o quanto as criaturas aguentam, a chance de largarem munição ou comida e a munição
+devolvida depois de uma queda (`src/game/difficulty.js`).
+
 Arquivos: `src/game/campaign.js` (objetivos, conversas, narração, cenas de câmera,
 ondas, criaturas soltas, pontos de retorno, cartelas, salvamento) e
 `src/game/chapters/` (um arquivo por capítulo; `common.js` tem os lugares da cidade
@@ -176,8 +192,47 @@ tiros e das explosões, velas e cristais. A chuva tem gotas, respingos no chão 
 (abafado dentro de casa); de noite há grilos e coruja no lugar dos corvos.
 
 Interiores (`src/world/interiors.js` e `src/world/interiors/`): a fábrica de
-calçados, a cripta dos fundadores e a gruta do chupacabras são montados longe da
-cidade, com colisão e luzes próprias; entrar e sair passa por uma tela preta.
+calçados, a cripta dos fundadores, a gruta do chupacabras e a Igreja Matriz são
+montados longe da cidade, com colisão e luzes próprias; entrar e sair passa por uma
+tela preta.
+
+## A cidade de noite (extras)
+
+Valem em todos os capítulos (`src/game/extras.js`; os textos estão em `src/game/lore.js`):
+
+- **Igreja Matriz por dentro** (`src/world/interiors/igreja.js`): entra-se pelo portal
+  ou pela porta lateral da sacristia. Lá dentro há vestíbulo sob a torre, nave com
+  bancos e colunas, abóbada azul com estrelas, vitrais (de tarde, com feixes de luz
+  dourada; de noite, quase apagados), púlpito, confessionário, via-sacra, coro com
+  órgão, presbitério com mesa de comunhão, retábulo de Nossa Senhora Auxiliadora,
+  lamparina vermelha, altares laterais com velas votivas, sacristia e um depósito
+  com imagens cobertas. Subindo pela escada do coro chega-se à torre, onde dá para
+  TOCAR O SINO. A água benta cura um pouco, uma vez por capítulo. Nas lutas ao lado
+  da igreja (a defesa do capítulo 2 e a rainha dos morcegos no 8) a porta fica
+  fechada. No capítulo 3 o lampião bento está na mesa da sacristia. No 6 o padre
+  entrega os castiçais de prata no altar, e depois disso eles somem de lá.
+- **Arquivos**: 18 documentos espalhados pela cidade e dentro da igreja: recortes
+  da Folha de Teewald, páginas do diário do Pastor Wendt, cartas, cartazes e fotos.
+  Brilham no chão ou presos em postes; LER abre o papel, que fica guardado.
+- **Lendas do Herval**: uma ficha para cada criatura, liberada ao vê-la de perto.
+- **Pedidos**: a gata Mimi da Dona Hilda (escondida na torre da igreja) e o
+  cachorro Bóris do Lucas (a coleira está no mato, perto da clareira). De noite,
+  os dois esperam na porta de casa, e a entrega rende chá, cuca ou munição.
+- **Orelhões que tocam sozinhos**: de noite, um orelhão perto toca (até duas vezes
+  por capítulo). ATENDER traz uma voz diferente em cada capítulo. Além do orelhão
+  da praça, há orelhões perto do ponto de telefone real, dos Correios, do hospital
+  e da escola.
+- **A presença** (`src/game/presence.js`): do capítulo 2 ao 8, de vez em quando o
+  chupacabras aparece na beira da neblina comendo uma ovelha. Quando o jogador chega
+  perto, mira nele ou fica olhando muito tempo, ele guincha e foge aos pulos,
+  deixando sangue.
+- **A bandinha fantasma** (`src/game/ghostBand.js`): de noite, perto do pavilhão
+  da Kartoffelfest, três músicos translúcidos tocam uma valsa desafinada no palco
+  vazio. Quando o jogador chega perto demais, a música para e alguém sussurra.
+
+Documentos, lendas e pedidos ficam salvos à parte (localStorage
+`teewald.extras.v1`) e aparecem em ARQUIVOS, na pausa, na tela título e com a
+tecla J. APAGAR PROGRESSO também apaga esses.
 
 ## Missão 1: O Chupacabras
 

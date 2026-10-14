@@ -1,4 +1,4 @@
-import { places, crate } from './common.js';
+import { places } from './common.js';
 import { SFX } from '../creatures/sfx.js';
 
 // Capítulo 3 — A Moça da Fábrica. Chuva. A Kátia viu uma moça chorando perto do
@@ -59,12 +59,15 @@ export default {
       },
     },
     {
+      // a sacristia tem porta para fora, na lateral da igreja (extras.js cuida das portas)
       id: 'sacristia', obj: 'Pegue o lampião na sacristia',
-      marker: G => { const s = places(G).sacristy; return [s.x, null, s.z]; },
+      marker: G => {
+        if (G.interiors.indoor?.name === 'igreja') { const p = ipt(G, 'igreja', 'lampiao'); return p ? { x: p.x, y: p.y + 0.8, z: p.z } : null; }
+        const s = places(G).sacristy; return [s.x, null, s.z];
+      },
       enter(G) {
-        const s = places(G).sacristy;
-        G.build(B => crate(B, G, s.x, s.z, s.h, 0.7, 'SACRISTIA'));
-        G.use('lamp', [s.x, G.y(s.x, s.z) + 1, s.z], 2.6, 'PEGAR O LAMPIÃO', () => {
+        const p = ipt(G, 'igreja', 'lampiao') || { ...places(G).sacristy, y: G.y(places(G).sacristy.x, places(G).sacristy.z) };
+        G.use('lamp', [p.x, p.y + 0.6, p.z], 1.8, 'PEGAR O LAMPIÃO', () => {
           G.give('lantern', 1, { fuel: 100 });
           G.give('oil', 2);
           G.guns.equip('lantern'); G.guns.teach();

@@ -86,6 +86,18 @@ export const PRESETS = {
     fog: C(0.012, 0.012, 0.016), fogK: 0.2, skyTint: C(0, 0, 0), sunGlow: 0, moon: 0, stars: 0,
     lamps: 0, rain: 0, storm: 0, night: 1, flashlight: 1, wind: 0, crickets: 0, indoor: 1,
   },
+  // dentro da igreja de noite: quase nada entra pelos vitrais, só as velas e a lamparina
+  igreja: {
+    sun: [0.3, 0.85, 0.4], sunC: C(0.06, 0.065, 0.09), sky: C(0.1, 0.1, 0.12), gnd: C(0.05, 0.045, 0.05),
+    fog: C(0.016, 0.015, 0.02), fogK: 0.28, skyTint: C(0, 0, 0), sunGlow: 0, moon: 0, stars: 0,
+    lamps: 0, rain: 0, storm: 0, night: 1, flashlight: 1, wind: 0, crickets: 0, indoor: 1,
+  },
+  // dentro da igreja no fim de tarde: luz dourada e fraca dos vitrais
+  igrejaDia: {
+    sun: [-0.6, 0.55, -0.55], sunC: C(0.26, 0.2, 0.15), sky: C(0.24, 0.22, 0.2), gnd: C(0.11, 0.095, 0.08),
+    fog: C(0.1, 0.085, 0.07), fogK: 0.45, skyTint: C(0, 0, 0), sunGlow: 0, moon: 0, stars: 0,
+    lamps: 0, rain: 0, storm: 0, night: 0, flashlight: 0, wind: 0, crickets: 0, indoor: 1,
+  },
 };
 for (const k in PRESETS) PRESETS[k] = { ...BASE, ...PRESETS[k] };
 
@@ -153,6 +165,8 @@ const ADV = {
     shadow: 0.85, sunWrap: 0.5, sat: 0.85,
   },
   interior: { zenith: C(0, 0, 0), cloudC: C(0, 0, 0), opaque: 1 },
+  igreja: { zenith: C(0, 0, 0), cloudC: C(0, 0, 0), opaque: 1 },
+  igrejaDia: { zenith: C(0, 0, 0), cloudC: C(0, 0, 0), opaque: 1, sat: 0.75 },
 };
 const ADV_PRESETS = {};
 for (const k in PRESETS) ADV_PRESETS[k] = { ...PRESETS[k], ...ADV[k] };

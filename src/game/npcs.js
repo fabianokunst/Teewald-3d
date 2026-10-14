@@ -26,7 +26,11 @@ const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 
 // altura em que um morador fica de pé no ponto: chão, calçada, piso ou o degrau
 // mais alto (até 1,45 m acima do terreno) que esteja embaixo dele
-const standY = (ctx, x, z) => ctx.groundAt(x, z, ctx.terrain.heightAt(x, z) + 1);
+// (dentro de um interior, como o padre no altar da igreja: o piso de baixo do interior)
+const standY = (ctx, x, z) => {
+  const d = ctx.interiorList?.find(q => x >= q.bounds.x0 && x <= q.bounds.x1 && z >= q.bounds.z0 && z <= q.bounds.z1);
+  return ctx.groundAt(x, z, d ? d.floorY + 1.5 : ctx.terrain.heightAt(x, z) + 1);
+};
 
 // ponto livre para um morador (sem obstáculo, prédio ou água num raio r)
 function clearAt(ctx, x, z, r) {

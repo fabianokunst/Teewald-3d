@@ -5,6 +5,7 @@ import { ITEMS } from './items.js';
 import { castRay, GUNS } from './weapon.js';
 import { drawText, textSprite, panel, FONT_UI } from '../ui/overlay.js';
 import { settings } from '../config.js';
+import { difficulty } from './difficulty.js';
 
 // Combate corpo a corpo e tudo que é comum às lutas:
 // - vida do jogador (golpe com empurrão, tela vermelha, invencível por um instante);
@@ -103,6 +104,12 @@ export class Combat {
   spawn(e) {
     this.enemies.add(e);
     e.combat = this;
+    // dificuldade: o mesmo golpe fere mais (fácil) ou menos (difícil)
+    if (e.damage && !e._foeK) {
+      const dmg = e.damage;
+      e._foeK = true;
+      e.damage = function (n, info) { return dmg.call(this, n * difficulty().foe, info); };
+    }
     (this.targets.extra ||= []).includes(e) || this.targets.extra.push(e);
     return e;
   }
@@ -137,6 +144,7 @@ export class Combat {
   // dmg em pontos (vida máxima 100); dx/dz = direção do empurrão
   hurt(dmg, dx = 0, dz = 0, o = {}) {
     if (this.dead || this.calm || this.invuln > 0 || this.dodge?.iframes > 0) return false;
+    dmg *= difficulty().hurt;
     this.hp = Math.max(0, this.hp - dmg);
     this.hurtT = 0; this.flash = Math.min(1, 0.5 + dmg / 30); this.shake = Math.max(this.shake, 0.25 + dmg / 60); this.hpShow = 4;
     this.invuln = o.invuln ?? 0.55;

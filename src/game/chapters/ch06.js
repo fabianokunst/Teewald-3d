@@ -1,4 +1,5 @@
 import { places, crate, frame } from './common.js';
+import { ipt } from './ch03.js';
 import { SFX } from '../creatures/sfx.js';
 
 // Capítulo 6 — Lua Cheia. O céu abre e a lua cheia aparece. O professor conta a lenda
@@ -76,11 +77,16 @@ export default {
       },
     },
     {
-      id: 'prata', obj: 'Peça a prata ao padre, na igreja',
-      marker: G => { const n = G.npcs.byId.bernardo; return n ? [n.pos.x, n.pos.y + 2.2, n.pos.z] : null; },
+      // o padre espera no altar, dentro da igreja (os castiçais estão em cima dele)
+      id: 'prata', obj: 'Peça a prata ao padre, no altar da igreja',
+      marker: G => {
+        const n = G.npcs.byId.bernardo;
+        if (G.interiors.indoor?.name === 'igreja' && n) return [n.pos.x, n.pos.y + 2.2, n.pos.z];
+        const d = places(G).churchDoor; return [d.x, null, d.z];
+      },
       enter(G) {
-        const d = places(G).churchDoor;
-        G.npcs.stage('bernardo', { x: d.x, z: d.z, h: d.h + Math.PI, talks: [[
+        const p = ipt(G, 'igreja', 'padre'), d = places(G).churchDoor;
+        G.npcs.stage('bernardo', { ...(p ? { x: p.x, z: p.z, h: p.h } : { x: d.x, z: d.z, h: d.h + Math.PI }), talks: [[
           'Os castiçais do altar? São da primeira capela, de 1880. Prata de verdade, trazida da Alemanha.',
           'Se é pra salvar o Rudi, Deus entende. Leva os três. E volta inteiro.',
         ]], onTalkEnd: () => { if (G.S.def.steps[G.S.i]?.id === 'prata') { G.give('silverware', 3); G.toast('CASTIÇAIS DE PRATA'); G.next(); } } });
