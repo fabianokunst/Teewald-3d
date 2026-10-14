@@ -216,6 +216,11 @@ function addOpenings(B, s, P, y0, ctx) {
   ];
   const floors = s.floors;
   let doorT = null; // onde a porta da frente ficou de fato
+  // à noite, metade das casas tem gente acordada: alguns cômodos (andar de uma face)
+  // com a luz acesa. Sorteio pela posição, para ser sempre igual
+  const LR = rng((Math.floor(s.x * 7.3) * 92821) ^ Math.floor(s.z * 9.1));
+  const awake = LR.chance(s.style === 'shed' ? 0.15 : 0.5);
+  const winLit = ['window1', 'window2', 'window3'].includes(win) ? win + 'Lit' : win;
   for (const f of faces) {
     const at = (t, y) => {
       const lx = f.a[0] + (f.b[0] - f.a[0]) * t, lz = f.a[1] + (f.b[1] - f.a[1]) * t;
@@ -229,9 +234,11 @@ function addOpenings(B, s, P, y0, ctx) {
       // vitrine no térreo do comércio
       if (ground && f.name === 'front' && s.style === 'commercial') {
         const m = 0.6 / f.len;
-        quadOn(s.roll ? 'rollDoor' : 'shop', m, 1 - m, yb + 0.05, yb + 2.45, [[0, 0], [Math.max(1, Math.round(f.len / 4)), 0], [Math.max(1, Math.round(f.len / 4)), 1], [0, 1]]);
+        // algumas vitrines ficam acesas a noite toda
+        quadOn(s.roll ? 'rollDoor' : LR.chance(0.35) ? 'shopLit' : 'shop', m, 1 - m, yb + 0.05, yb + 2.45, [[0, 0], [Math.max(1, Math.round(f.len / 4)), 0], [Math.max(1, Math.round(f.len / 4)), 1], [0, 1]]);
         continue;
       }
+      const roomLit = awake && LR.chance(0.5);
       let doorDone = !(ground && f.name === 'front');
       const doorAt = s.doorAt ?? (n >= 2 ? 0.5 : 0.3);
       for (let i = 0; i < n; i++) {
@@ -244,7 +251,7 @@ function addOpenings(B, s, P, y0, ctx) {
           continue;
         }
         const ww = 1.1 / f.len / 2;
-        quadOn(win, t - ww, t + ww, yb + 0.95, yb + 2.25);
+        quadOn(roomLit && LR.chance(0.75) ? winLit : win, t - ww, t + ww, yb + 0.95, yb + 2.25);
         if (s.shutters) {
           const sw = 0.5 / f.len;
           B.col = s.shutters;

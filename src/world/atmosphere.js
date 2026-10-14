@@ -171,34 +171,38 @@ function streakTex() {
 }
 
 // halo quente em volta dos lampiões acesos (luz avançada): placas viradas para a câmera,
-// somadas à imagem e apagadas pela neblina
+// somadas à imagem e apagadas pela neblina. Luz [x, y, z, tipo]: 0 = lampião da praça,
+// 1 = poste de rua (sódio: halo maior e mais alaranjado)
 function lampHalos(lights) {
   const g = new THREE.InstancedBufferGeometry();
   g.setAttribute('position', new THREE.Float32BufferAttribute([-1, -1, 0, 1, -1, 0, 1, 1, 0, -1, 1, 0], 3));
   g.setIndex([0, 1, 2, 0, 2, 3]);
-  g.setAttribute('aPos', new THREE.InstancedBufferAttribute(new Float32Array(lights.flat()), 3));
+  g.setAttribute('aPos', new THREE.InstancedBufferAttribute(new Float32Array(lights.flatMap(l => [l[0], l[1], l[2]])), 3));
+  g.setAttribute('aKind', new THREE.InstancedBufferAttribute(new Float32Array(lights.map(l => l[3] || 0)), 1));
   g.instanceCount = lights.length;
   const mat = new THREE.ShaderMaterial({
     uniforms: { uK: { value: 0 }, uFogNear: G.uFogNear, uFogFar: G.uFogFar },
     vertexShader: /* glsl */`
       attribute vec3 aPos;
+      attribute float aKind;
       uniform float uK, uFogNear, uFogFar;
-      varying vec2 vP; varying float vK;
+      varying vec2 vP; varying float vK; varying float vKind;
       void main() {
         vec4 mv = viewMatrix * vec4(aPos, 1.0);
         float d = length(mv.xyz);
         vK = uK * (1.0 - clamp((d - uFogNear) / (uFogFar - uFogNear), 0.0, 1.0)) * smoothstep(1.0, 4.0, d);
         mv.xyz += normalize(-mv.xyz) * 0.4;
-        mv.xy += position.xy * 1.6;
+        mv.xy += position.xy * mix(1.6, 2.2, aKind);
         vP = position.xy;
+        vKind = aKind;
         gl_Position = projectionMatrix * mv;
       }`,
     fragmentShader: /* glsl */`
-      varying vec2 vP; varying float vK;
+      varying vec2 vP; varying float vK; varying float vKind;
       void main() {
         float r2 = dot(vP, vP);
         float a = (exp(-r2 * 9.0) * 0.7 + exp(-r2 * 2.5) * 0.3) * clamp(1.0 - r2, 0.0, 1.0);
-        gl_FragColor = vec4(vec3(1.0, 0.7, 0.4) * a * vK, 1.0);
+        gl_FragColor = vec4(mix(vec3(1.0, 0.7, 0.4), vec3(1.0, 0.58, 0.26), vKind) * a * vK, 1.0);
       }`,
     transparent: true, depthWrite: false,
     blending: THREE.CustomBlending, blendSrc: THREE.OneFactor, blendDst: THREE.OneFactor,
@@ -290,6 +294,10 @@ export class Atmosphere {
     // postes: o vidro do lampião acende
     if (M.lamp) M.lamp.uniforms.uEmissive.value.setRGB(lerp(0.133, 0.95, c.lamps), lerp(0.125, 0.82, c.lamps), lerp(0.094, 0.55, c.lamps));
     if (M.glassLit) M.glassLit.uniforms.uEmissive.value.setRGB(lerp(0.06, 0.32, c.lamps), lerp(0.06, 0.25, c.lamps), lerp(0.06, 0.12, c.lamps));
+    if (M.lampLens) M.lampLens.uniforms.uEmissive.value.setRGB(1.05 * c.lamps, 0.68 * c.lamps, 0.3 * c.lamps);
+    // janelas e vitrines acesas: a luz dos cômodos acompanha a dos postes
+    this.glowMats ||= Object.values(M).filter(m => m.uniforms?.uGlow);
+    for (const m of this.glowMats) m.uniforms.uGlow.value = c.lamps * 0.9;
     // luz avançada: neblina do lado do sol, sol baixo que ainda ilumina o chão, saturação, sombra
     const adv = this.adv, out = c.indoor < 0.5;
     G.uSunFogK.value = adv ? c.fogSunK : 0;
@@ -420,18 +428,21 @@ export class Atmosphere {
   // ---------- luzes dinâmicas ----------
   _lights(camera, player, aimDir) {
     const L = G.uLights.value, LC = G.uLightCols.value, spot = G.uSpot.value, c = this.cur;
-    // postes acesos mais perto da câmera
+    // postes acesos mais perto de um ponto um pouco à frente da câmera; o último vai
+    // apagando conforme o próximo se aproxima, para a luz não "pular" no chão na troca
     if (c.lamps > 0.05 && this.ctx?.lights) {
-      const cp = camera.position, near = [];
+      const cp = camera.position, fw = camera.getWorldDirection(this._fw ||= new THREE.Vector3());
+      const fx = cp.x + fw.x * 8, fz = cp.z + fw.z * 8, near = [];
       for (const l of this.ctx.lights) {
-        const d = Math.hypot(l[0] - cp.x, l[2] - cp.z);
+        const d = Math.hypot(l[0] - fx, l[2] - fz);
         if (d < 70) near.push([d, l]);
       }
       near.sort((a, b) => a[0] - b[0]);
-      const k = c.lamps;
-      for (let i = 0; i < Math.min(3, near.length); i++) {
-        const l = near[i][1];
-        this.light(l[0], l[1] - 0.3, l[2], [1.25 * k, 0.95 * k, 0.6 * k], 13, 1);
+      const N = 4, cut = near[N]?.[0] ?? Infinity;
+      for (let i = 0; i < Math.min(N, near.length); i++) {
+        const l = near[i][1], k = c.lamps * Math.min(1, (cut - near[i][0]) / 6);
+        if (l[3] === 1) this.light(l[0], l[1], l[2], [1.45 * k, 0.92 * k, 0.42 * k], 17, 1);
+        else this.light(l[0], l[1] - 0.3, l[2], [1.25 * k, 0.95 * k, 0.6 * k], 13, 1);
       }
     }
     // lanterna (luz 0, em foco) + luz fraca em volta do jogador

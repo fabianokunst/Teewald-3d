@@ -4,14 +4,15 @@
 import { VISUAL } from '../engine/ps1material.js';
 
 const cache = new Map();
-export const FONT_TITLE = '"UnifrakturMaguntia", "Old English Text MT", Georgia, serif';
+// gótica híbrida (legível); só o peso 600 é carregado, então o canvas usa ele mesmo pedindo peso normal
+export const FONT_TITLE = '"Grenze Gotisch", Georgia, serif';
 export const FONT_UI = '"VT323", "Lucida Console", monospace';
 
 export async function loadFonts() {
   if (!document.fonts) return;
   try {
     await Promise.race([
-      Promise.all([document.fonts.load('48px "UnifrakturMaguntia"'), document.fonts.load('16px "VT323"')]),
+      Promise.all([document.fonts.load('48px "Grenze Gotisch"'), document.fonts.load('16px "VT323"')]),
       new Promise(r => setTimeout(r, 2500)),
     ]);
   } catch (e) { /* usa fontes reserva */ }

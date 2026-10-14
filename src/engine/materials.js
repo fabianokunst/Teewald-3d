@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { ps1Material } from './ps1material.js';
 import { TEX, signTexture } from './textures.js';
+import { GLOW } from './archTextures.js';
 import { makeHeroTexture } from '../game/heroTexture.js';
 
 // Um material PS1 para cada textura carregada, com ajustes por tipo
@@ -32,6 +33,10 @@ export function makeMaterials() {
   M.glassLit = ps1Material({ map: TEX.glass, emissive: 0x101010 });
   M.hero = ps1Material({ map: makeHeroTexture() });
   M.letter = ps1Material({ map: TEX.carPaint, color: new THREE.Color(1.5, 1.5, 1.5), emissive: 0x141414 });
+  // janelas e vitrines acesas à noite: mesma textura + brilho do vidro (world/atmosphere.js acende)
+  for (const name of Object.keys(GLOW)) M[name + 'Lit'] = ps1Material({ map: TEX[name], glowMap: GLOW[name] });
+  // lente leitosa da luminária dos postes de rua (o brilho também vem da atmosfera)
+  M.lampLens = ps1Material({ color: 0xa8a69e });
   return M;
 }
 

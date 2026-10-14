@@ -140,7 +140,25 @@ export function lantern(B, ctx, x, z, h = 3.6) {
   ctx.lights?.push([x, y + h + 0.25, z]);
 }
 
-// poste de concreto com braço de luz (ruas)
+// tubo de seção quadrada entre dois pontos (braço curvo da luminária)
+function tube(B, mat, a, b, r) {
+  const l = Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
+  const ax = [(b[0] - a[0]) / l, (b[1] - a[1]) / l, (b[2] - a[2]) / l];
+  // u: perpendicular ao eixo, o mais perto possível da vertical; v = eixo x u
+  const u = [-ax[0] * ax[1], 1 - ax[1] * ax[1], -ax[2] * ax[1]], ul = Math.hypot(...u) || 1;
+  u[0] /= ul; u[1] /= ul; u[2] /= ul;
+  const v = [ax[1] * u[2] - ax[2] * u[1], ax[2] * u[0] - ax[0] * u[2], ax[0] * u[1] - ax[1] * u[0]];
+  const off = (p, su, sv) => [p[0] + (u[0] * su + v[0] * sv) * r, p[1] + (u[1] * su + v[1] * sv) * r, p[2] + (u[2] * su + v[2] * sv) * r];
+  const ring = [[1, 1], [-1, 1], [-1, -1], [1, -1]];
+  for (let i = 0; i < 4; i++) {
+    const [s0, t0] = ring[i], [s1, t1] = ring[(i + 1) % 4];
+    B.quad(mat, off(a, s0, t0), off(a, s1, t1), off(b, s1, t1), off(b, s0, t0));
+  }
+}
+
+// poste de concreto com braço de luz (ruas): braço curvo de metal saindo abaixo da
+// cruzeta dos fios, carcaça cinza e a lente leitosa embaixo, que acende à noite
+// (lâmpada de sódio, mais alaranjada que os lampiões da praça)
 export function streetPole(B, ctx, x, z, rot, withLamp = true) {
   const y = ctx.surfaceAt(x, z);
   const P = rotP(x, z, rot);
@@ -148,10 +166,16 @@ export function streetPole(B, ctx, x, z, rot, withLamp = true) {
   B.box('concrete', x, y, z, 0.24, 8.5, 0.24, rot, { uvScale: 2 });
   B.box('concrete', x, y + 7.6, z, 1.2, 0.12, 0.12, rot, { uvScale: 1, bottom: true });
   if (withLamp) {
-    const a = P(0, 0, 1.0);
-    B.box('metalGray', (x + a[0]) / 2, y + 7.2, (z + a[2]) / 2, 0.08, 0.08, 1.2, rot, { uvScale: 1 });
+    B.col = [0.72, 0.72, 0.7];
+    B.box('metalGray', x, y + 6.42, z, 0.3, 0.2, 0.3, rot, { uvScale: 1, bottom: true });   // abraçadeira
+    tube(B, 'metalGray', P(0, y + 6.5, 0.13), P(0, y + 6.98, 0.72), 0.035);
+    tube(B, 'metalGray', P(0, y + 6.98, 0.72), P(0, y + 7.17, 1.46), 0.035);
+    const h = P(0, 0, 1.72);
+    B.col = [0.8, 0.8, 0.78];
+    B.box('metalGray', h[0], y + 7.1, h[2], 0.34, 0.14, 0.62, rot, { uvScale: 1 });
     B.col = [1, 1, 1];
-    B.box('lamp', a[0], y + 7.0, a[2], 0.25, 0.14, 0.45, rot, { faceUV: true, bottom: true });
+    B.box('lampLens', h[0], y + 7.02, h[2], 0.24, 0.08, 0.48, rot, { uvScale: 1, top: false, bottom: true });
+    ctx.lights?.push([h[0], y + 6.95, h[2], 1]);
   }
   B.col = [1, 1, 1];
   ctx.collision.addCircle(x, z, 0.2, y, y + 8.5);
@@ -345,7 +369,6 @@ export function fountain(B, ctx, x, z, y) {
 // postes e fios ao longo das ruas
 export function utilityLines(ctx, B) {
   const { roads } = ctx;
-  const R = rng(99);
   const segs = [];
   for (const r of roads.list) {
     if (r.rank < 3) continue;
@@ -362,7 +385,7 @@ export function utilityLines(ctx, B) {
       const rv = ctx.rivers.index.nearest(x, z);
       if (rv.seg && rv.d < rv.seg.data.width / 2 + 1.5) { prev = null; continue; }
       const rot = Math.atan2(dx / l, dz / l) + Math.PI / 2;
-      const ends = streetPole(B, ctx, x, z, rot, R.chance(0.7));
+      const ends = streetPole(B, ctx, x, z, rot);
       if (prev) for (let k = 0; k < 2; k++) segs.push(prev[k], ends[k]);
       prev = ends;
     }

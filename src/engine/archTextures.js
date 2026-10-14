@@ -5,6 +5,9 @@ import { TEX, makeCanvas, canvasTex, processPixels } from './textures.js';
 // industriais. Pedra, reboco e madeira vêm das texturas da pasta; só a
 // forma é desenhada aqui, sem recortes de fotos.
 
+// mapas de brilho (luz própria) das janelas e vitrines acesas à noite, pelo nome da textura
+export const GLOW = {};
+
 // lê uma textura já reduzida para amostrar com repetição; swap = veio na horizontal
 export function sampler(name, scale = 1, swap = false) {
   const c = TEX[name].image, w = c.width, h = c.height;
@@ -202,21 +205,27 @@ export function makeArchTextures() {
   // ---- vitrine de loja: caixilho de alumínio, prateleiras com produtos e reflexo ----
   const metal = sampler('metalWhite'), shelf = sampler('woodPlank', 1, true);
   const ITEMS = [[170, 60, 50], [200, 160, 70], [70, 130, 80], [70, 100, 150], [210, 200, 180], [150, 80, 120], [220, 120, 60]];
-  TEX.shop = finish(paint(64, 32, (x, y) => {
+  // lit = mapa de brilho da vitrine acesa à noite: lâmpada fria no fundo, produtos
+  // e prateleiras na luz, caixilho apagado
+  const shopTex = lit => finish(paint(64, 32, (x, y) => {
     const mx = x % 21; // três vidros por repetição
-    if (y <= 1 || y >= 30 || mx <= 1) return mul(metal(x, y), mx === 1 || y === 1 || y === 30 ? 0.8 : 1.05);
-    let c = y >= 25 ? mul(shelf(x, y), 0.5) : [34 + y * 0.4, 38 + y * 0.3, 44]; // balcão e fundo da loja
+    if (y <= 1 || y >= 30 || mx <= 1) return lit ? null : mul(metal(x, y), mx === 1 || y === 1 || y === 30 ? 0.8 : 1.05);
+    // balcão e fundo da loja
+    let c = y >= 25 ? mul(shelf(x, y), lit ? 0.7 : 0.5) : lit ? [206 - y * 2, 212 - y * 2, 192 - y * 1.5] : [34 + y * 0.4, 38 + y * 0.3, 44];
     for (const sy of [11, 21]) {
-      if (y === sy) c = mul(shelf(x, y), 1.1);
-      else if (y === sy + 1) c = mul(shelf(x, y), 0.55);
+      if (y === sy) c = mul(shelf(x, y), lit ? 0.9 : 1.1);
+      else if (y === sy + 1) c = mul(shelf(x, y), lit ? 0.3 : 0.55);
       else if (y < sy && y >= sy - 5 && (x + sy) % 3 !== 2) { // produtos
         const h = (Math.floor((x + sy) / 3) * 2654435761 + sy * 40503) >>> 0;
-        if (sy - y <= 2 + (h >>> 3) % 4 && (h >>> 9) % 5) c = mul(ITEMS[(h >>> 13) % ITEMS.length], 0.75);
+        if (sy - y <= 2 + (h >>> 3) % 4 && (h >>> 9) % 5) c = mul(ITEMS[(h >>> 13) % ITEMS.length], lit ? 1 : 0.75);
       }
     }
+    if (lit) return c;
     const r = (((x - y * 1.3) % 37) + 37) % 37; // reflexo do céu
     return r < 4 ? c.map(v => v + 46) : r < 6 ? c.map(v => v + 20) : c;
   }), false);
+  TEX.shop = shopTex(false);
+  GLOW.shop = shopTex(true);
 
   // ---- janelas: moldura de reboco, caixilho recuado, vidro com reflexo e peitoril ----
   const trim = (x, y, k = 1) => mul(tint(plWhite(x, y), [1.04, 1.02, 0.98]), k);
@@ -240,24 +249,40 @@ export function makeArchTextures() {
       return bar(x, y - 1) || bar(x, y - 2) ? mul(c, 0.68) : c; // sombra sob o caixilho
     }), false);
   };
+  // janela acesa à noite (mapa de brilho): só o vidro tem luz. Luz amarela do cômodo,
+  // mais forte perto do teto, cortina iluminada por trás, persiana em listras e,
+  // nas casas, o encosto de um sofá em silhueta
+  const windowGlow = o => {
+    const bar = (x, y) => x < 4 || x > 59 || y < 4 || y > 55 || o.bars(x, y);
+    return finish(paint(64, 64, (x, y) => {
+      if (bar(x, y)) return null;
+      const gy = y / 56;
+      let c = mul([255, 188, 104], 0.6 + 0.4 * (1 - gy) * (1 - gy));
+      if (o.room && y > 44 && x > 12 && x < 42 && !(y < 47 && (x < 15 || x > 39))) c = mul(c, 0.32);
+      if (o.curtain?.(x, y)) c = mul([255, 212, 146], x % 3 === 0 ? 0.74 : 0.92);
+      else if (o.blinds?.(x, y)) c = mul([236, 214, 160], y % 3 === 0 ? 0.3 : 0.9);
+      return bar(x, y - 1) || bar(x, y - 2) ? mul(c, 0.78) : c; // sombra sob o caixilho
+    }), false);
+  };
+  const windowPair = (name, o) => { TEX[name] = windowTex(o); GLOW[name] = windowGlow(o); };
   const leafEdge = (x, y) => (x >= 8 && x <= 12) || (x >= 51 && x <= 55);
   // colonial: caixilho pintado de branco, duas folhas de seis vidros, cortina
-  TEX.window1 = windowTex({
+  windowPair('window1', {
     frame: (x, y) => mul([226, 224, 216], 0.9 + 0.1 * woodG(x, y)[0] / 200),
     bars: (x, y) => x <= 7 || x >= 56 || y <= 7 || y >= 52 || (x >= 30 && x <= 33) || x === 18 || x === 19 || x === 44 || x === 45 || y === 22 || y === 23 || y === 37 || y === 38,
-    curtain: leafEdge,
+    curtain: leafEdge, room: true,
   });
   // alumínio: duas folhas de correr com persiana (comércio, hospital, galpões)
-  TEX.window2 = windowTex({
+  windowPair('window2', {
     frame: (x, y) => tint(metal(x, y), [0.82, 0.85, 0.88]),
     bars: (x, y) => x <= 6 || x >= 57 || y <= 6 || y >= 53 || x === 31 || x === 32,
     blinds: (x, y) => y < 26,
   });
   // madeira: bandeira em cima e duas folhas de quatro vidros
-  TEX.window3 = windowTex({
+  windowPair('window3', {
     frame: (x, y) => mul(plank(x, y), 0.95),
     bars: (x, y) => x <= 7 || x >= 56 || y <= 7 || y >= 52 || (y >= 20 && y <= 22) || (y < 20 ? x === 31 || x === 32 : (x >= 30 && x <= 33) || x === 18 || x === 19 || x === 44 || x === 45 || y === 36 || y === 37),
-    curtain: (x, y) => y > 22 && leafEdge(x, y),
+    curtain: (x, y) => y > 22 && leafEdge(x, y), room: true,
   });
 
   // ---- veneziana: quadro e palhetas (a cor vem da cor do vértice) ----
