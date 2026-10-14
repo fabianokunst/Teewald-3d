@@ -21,11 +21,11 @@ import { START } from '../config.js';
 
 const SPECIES = {
   suindara: {
-    size: 0.42, legH: 0.1, legR: [0.05, 0.036], bodyW: 0.94, headR: 0.235, faceCap: 0.55, faceK: 0.95,
-    back: [0.8, 0.62, 0.4], belly: [0.97, 0.94, 0.88], crown: [0.76, 0.58, 0.38],
-    disc: [0.98, 0.96, 0.93], rim: [0.5, 0.33, 0.2], brow: null, throat: null, band: null,
+    heart: true, size: 0.42, legH: 0.1, legR: [0.05, 0.036], bodyW: 0.94, headR: 0.235, faceCap: 0.55, faceK: 0.95,
+    back: [0.72, 0.55, 0.36], belly: [1, 0.98, 0.95], crown: [0.66, 0.5, 0.33],
+    disc: [1, 0.99, 0.97], rim: [0.42, 0.27, 0.16], brow: null, throat: null, band: null,
     eye: [0.04, 0.03, 0.03], iris: null, beak: [0.9, 0.83, 0.75], leg: [0.92, 0.88, 0.82],
-    wing: [0.8, 0.63, 0.42], tip: [0.62, 0.58, 0.54], under: [0.97, 0.95, 0.91],
+    wing: [0.72, 0.56, 0.36], tip: [0.52, 0.49, 0.46], under: [1, 0.98, 0.95],
     flush: 10, alert: 19, hear: 120, every: [35, 80], freq: 3.1,
     perch: { church: 4, chimney: 1.2, ridge: 1, pole: 0.7, arm: 0.6, lamp: 0.4, tree: 0.3 },
   },
@@ -51,8 +51,8 @@ const SPECIES = {
 const PLAN = [['suindara', 11], ['murucututu', 7], ['buraqueira', 8]];
 
 // asa aberta (x = envergadura, z = corda, bordo de ataque em +z): braço e mão
-const ARM = [[0, 0.1], [0.25, 0.11], [0.5, 0.09], [0.5, -0.24], [0.25, -0.28], [0, -0.22]];
-const HAND = [[0, 0.08], [0.22, 0.07], [0.42, 0.03], [0.56, -0.05], [0.58, -0.13], [0.48, -0.22], [0.25, -0.25], [0, -0.24]];
+const ARM = [[0, 0.12], [0.25, 0.13], [0.5, 0.11], [0.5, -0.3], [0.25, -0.34], [0, -0.28]];
+const HAND = [[0, 0.1], [0.22, 0.09], [0.4, 0.05], [0.53, -0.03], [0.57, -0.13], [0.51, -0.24], [0.3, -0.3], [0, -0.3]];
 
 const AX = new THREE.Vector3(1, 0, 0), AY = new THREE.Vector3(0, 1, 0), AZ = new THREE.Vector3(0, 0, 1);
 // no voo o corpo deita para a frente; a asa aberta fica na horizontal, bordo para a cabeça
@@ -160,14 +160,45 @@ function bodyColor(S, t, a) {
   return mix3(S.back, S.belly, smooth(clamp((front + 0.05) / 0.55, 0, 1)));
 }
 
-// cabeça: fz = quanto o ponto avança para a frente (>= 1 é o disco facial achatado)
-function headColor(S, t, a, fz) {
-  const side = Math.abs(Math.cos(a));
-  if (S.brow && fz > 0.75 && t > 0.6 && t < 0.73 && side > 0.08) return S.brow;
-  if (S.throat && fz > 0.6 && t > 0.14 && t < 0.3) return S.throat;
-  if (fz >= 1) return S.disc;
-  if (fz > 0.82) return S.rim;
-  return S.crown;
+// disco facial: r = 0 no meio ... 1 na borda, th = ângulo (π/2 em cima). Borda escura;
+// sobrancelhas e garganta brancas nas que têm
+function faceColor(S, r, th) {
+  const up = Math.sin(th), side = Math.abs(Math.cos(th));
+  if (S.brow && r > 0.6 && up > 0.3 && side > 0.2) return S.brow;
+  if (S.throat && r > 0.6 && up < -0.6) return S.throat;
+  return r > 0.9 ? S.rim : S.disc;
+}
+
+// o rosto como peça própria, colado na parte achatada da cabeça (em coração na suindara:
+// recorte em cima e queixo pontudo)
+function faceDisc(S, R, hy, yr, sx, sz, cap) {
+  const lim = Math.sqrt(Math.max(0.05, 1 - (cap / (R * sz)) ** 2)) * 0.97, N = 24, rings = [0, 0.45, 0.72, 1];
+  const pos = [], uv = [], col = [], idx = [];
+  for (const rho of rings) for (let k = 0; k < (rho ? N : 1); k++) {
+    const th = (k / N) * TAU;
+    let r = rho * lim;
+    if (S.heart) r *= (1 - 0.2 * Math.max(0, Math.sin(th)) ** 12) * (1 + 0.12 * Math.max(0, -Math.sin(th)) ** 3);
+    const x = Math.cos(th) * r * R * sx, y = hy + Math.sin(th) * r * yr;
+    const zs = sz * R * Math.sqrt(Math.max(0, 1 - (x / (R * sx)) ** 2 - ((y - hy) / yr) ** 2));
+    pos.push(x, y, cap + Math.max(0, zs - cap) * (1 - S.faceK) + 0.004);
+    uv.push(0.5 + x * 2, 0.5 + y * 2);
+    col.push(...faceColor(S, rho, th));
+  }
+  for (let k = 0; k < N; k++) idx.push(0, 1 + k, 1 + (k + 1) % N);
+  for (let ri = 1; ri < rings.length - 1; ri++) {
+    const a0 = 1 + (ri - 1) * N, b0 = 1 + ri * N;
+    for (let k = 0; k < N; k++) {
+      const a = a0 + k, b = a0 + (k + 1) % N, c = b0 + k, d = b0 + (k + 1) % N;
+      idx.push(a, c, d, a, d, b);
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  return g;
 }
 
 // a coruja em unidades (corpo com ~0,67 de altura; a escala da espécie dá o tamanho real).
@@ -179,7 +210,7 @@ function buildOwl(S, M) {
   const parts = [];
   // sino arredondado: barriga cheia, ombros largos, a cabeça encaixa sem pescoço
   parts.push(blob([[-0.32, 0], [-0.3, 0.1], [-0.24, 0.19], [-0.14, 0.245], [-0.02, 0.265], [0.1, 0.26], [0.2, 0.235], [0.28, 0.19], [0.33, 0.1], [0.35, 0]], 10,
-    { sx: S.bodyW, sz: 0.86, col: (t, a) => bodyColor(S, t, a), uRep: 2, vRep: 1.5 }));
+    { sx: S.bodyW, sz: 0.86, col: (t, a) => bodyColor(S, t, a), uRep: 4, vRep: 3 }));
   const tail = cone(0.2, 0.1, S.wing, S.tip, 4, 0.3);
   tail.rotateX(-2.75); tail.translate(0, -0.18, -0.15);
   parts.push(tail);
@@ -206,18 +237,18 @@ function buildOwl(S, M) {
   const head = blob(prof, 12, {
     sx: 1.08, sz,
     off: (y, a) => { const z = rAt(y) * Math.sin(a) * sz; return [0, z > cap ? -(z - cap) * S.faceK : 0]; },
-    col: (t, a) => headColor(S, t, a, rAt(lerp(prof[0][0], prof[8][0], t)) * Math.sin(a) * sz / cap),
-    uRep: 2,
+    col: () => S.crown,
+    uRep: 3, vRep: 2,
   });
   head.computeVertexNormals();
   const eyeZ = cap + Math.max(0, R * 0.84 - cap) * (1 - S.faceK) - 0.016;
   const beak = cone(0.07, 0.024, S.beak, mix3(S.beak, [0.2, 0.2, 0.2], 0.4), 4);
   beak.rotateX(2.1); beak.translate(0, hy - R * 0.22, eyeZ + 0.004);
-  headJ.add(new THREE.Mesh(merge([head, beak]), M.body));
+  headJ.add(new THREE.Mesh(merge([head, faceDisc(S, R, hy, yr, 1.08, sz, cap), beak]), M.body));
   // olhos (piscam achatando em y); à noite refletem a luz
   const eyeJ = joint(headJ, 0, hy + R * 0.06, 0);
   const eyes = [-1, 1].map(s => {
-    const e = ellipsoid(0.05, 0.032, 0.034, 8, t => (t > 0.7 ? S.eye : S.iris || S.eye), 4);
+    const e = ellipsoid(0.055, 0.036, 0.04, 8, t => (t > 0.85 ? S.eye : S.iris || S.eye), 4);
     e.translate(s * R * 0.38, 0, eyeZ);
     return e;
   });
@@ -380,14 +411,16 @@ function openGround(ctx, x, z) {
 // { x, y, z, h (para onde a coruja olha), out (lado aberto, por onde chega), kind, owl }
 function gatherPerches(ctx) {
   const list = [], b = ctx.playBounds, R = rng(5150);
+  const ch = ctx.landmarks?.church, c0 = ch || { x: -110, z: -10 };
+  // só na cidade e em volta (as araucárias do mato, mais perto)
   const add = (x, y, z, h, kind) => {
     if (x < b.x0 + 5 || x > b.x1 - 5 || z < b.z0 + 5 || z > b.z1 - 5) return;
+    if (Math.hypot(x - c0.x, z - c0.z) > (kind === 'tree' ? 380 : 480)) return;
     list.push({ x, y, z, h, out: [Math.sin(h), Math.cos(h)], kind, owl: null });
   };
   // postes, cruzetas, lampiões, chaminés e cumeeiras (registrados ao montar a cidade)
   for (const p of ctx.perches || []) add(p.x, p.y, p.z, p.h ?? R() * TAU, p.kind);
   // igreja: beiral da torre ao lado da agulha, friso sob a rosácea e a cumeeira da nave
-  const ch = ctx.landmarks?.church;
   if (ch) {
     const { P } = frame(ch), C = CHURCH, fy = ch.y + C.floor, hl = C.L / 2, tz1 = hl + 1.2;
     for (const s of [-1, 1]) {
@@ -399,18 +432,18 @@ function gatherPerches(ctx) {
       add(p[0], fy + C.ridge, p[2], ch.rot + s * Math.PI / 2, 'church');
     }
   }
-  // araucárias: num galho do verticilo de baixo (o mais largo), ao lado da folhagem vertical
+  // araucárias: perto da ponta de um galho do verticilo de baixo (o mais largo), ao lado
+  // da folhagem vertical (mais para dentro, a copa esconde a coruja)
   for (const t of ctx.trees) {
     if (t.t !== 'araucaria' || t.far || t.rot === undefined || !R.chance(0.6)) continue;
-    const s = t.s || 1, sy = t.sy || s, L = 4.4, f = 0.4;
-    const a = (R.int(0, 5) / 6) * TAU, dx = Math.cos(a), dz = Math.sin(a), off = R.chance(0.5) ? 0.32 : -0.32;
+    const s = t.s || 1, sy = t.sy || s, L = 4.4, f = 0.88;
+    const a = (R.int(0, 5) / 6) * TAU, dx = Math.cos(a), dz = Math.sin(a), off = R.chance(0.5) ? 0.42 : -0.42;
     const lx = dx * (0.2 + (L - 0.2) * f) - dz * off, lz = dz * (0.2 + (L - 0.2) * f) + dx * off;
     const ly = 12.2 + (L * 0.38 + 0.3) * f;
     const c = Math.cos(t.rot), sn = Math.sin(t.rot);
     add(t.x + (lx * c + lz * sn) * s, t.y + ly * sy, t.z + (-lx * sn + lz * c) * s, Math.atan2(dx * c + dz * sn, -dx * sn + dz * c), 'tree');
   }
   // campo aberto em volta da cidade (as buraqueiras ficam no chão)
-  const c0 = ch || { x: -110, z: -10 };
   for (let k = 0, n = 0; k < 5000 && n < 60; k++) {
     const x = c0.x + (R() - 0.5) * 900, z = c0.z + (R() - 0.5) * 900;
     if (Math.hypot(x - c0.x, z - c0.z) > 450 || !openGround(ctx, x, z)) continue;
@@ -451,16 +484,16 @@ export class Owls {
     this.core = ctx.landmarks?.church || { x: -110, z: -10 };
     this.list = [];
     this.voiceCd = 4;
-    this.time = 0;
     this.listener = { p: new THREE.Vector3(), right: new THREE.Vector3(1, 0, 0) };
     this._f = new THREE.Vector3();
-    // duas para começar: uma suindara na igreja e uma buraqueira perto do calçadão
+    // as primeiras: uma suindara no friso da igreja e uma buraqueira num lampião perto do
+    // calçadão (onde o jogo começa); as outras espalhadas, mais delas perto do centro
     const show = [['suindara', p => p.kind === 'church' && p.y - this.core.y < 15],
       ['buraqueira', p => p.kind === 'lamp' && Math.hypot(p.x - START.x, p.z - START.z) < 140]];
-    for (const [kind, n] of PLAN) for (let i = 0; i < n; i++) {
+    const plan = [...show.map(s => [s[0], 1, s[1]]), ...PLAN.map(([kind, n]) => [kind, n - (show.some(s => s[0] === kind) ? 1 : 0)])];
+    for (const [kind, n, want] of plan) for (let i = 0; i < n; i++) {
       const o = new Owl(kind, SPECIES[kind], this.M);
-      const want = i === 0 && show.find(s => s[0] === kind);
-      const p = (want && this.perches.find(q => !q.owl && want[1](q))) || this.choose(o, null, null);
+      const p = (want && this.perches.find(q => !q.owl && want(q))) || this.choose(o, null, null);
       if (!p) continue;
       this.seat(o, p, p.h);
       this.root.add(o.root);
@@ -517,7 +550,6 @@ export class Owls {
     const ctx = this.ctx;
     this.root.visible = !ctx.indoor;
     if (ctx.indoor) return;
-    this.time += dt;
     this.voiceCd -= dt;
     const L = this.listener, night = this.atmo?.cur?.night ?? 0;
     L.p.copy(camera.position);
@@ -532,7 +564,7 @@ export class Owls {
       if (o.state === 'perch') this.perched(o, dt, player, dc, night);
       else this.flight(o, dt, player);
       o.root.visible = dc < cull;
-      if (o.root.visible) this.animate(o, dt, player);
+      if (o.root.visible) this.animate(o, dt);
       o.root.rotation.y = o.heading;
     }
   }
@@ -655,7 +687,7 @@ export class Owls {
     }
   }
 
-  animate(o, dt, player) {
+  animate(o, dt) {
     const S = o.S, st = o.state, perched = st === 'perch';
     // postura: em pé pousada, deitada voando; no pouso, freia em pé com as asas abertas
     let pitchT = 0.1 + o.alert * 0.06, openT = 0, ampT = 0;
