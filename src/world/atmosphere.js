@@ -441,7 +441,7 @@ export class Atmosphere {
       const N = 4, cut = near[N]?.[0] ?? Infinity;
       for (let i = 0; i < Math.min(N, near.length); i++) {
         const l = near[i][1], k = c.lamps * Math.min(1, (cut - near[i][0]) / 6);
-        if (l[3] === 1) this.light(l[0], l[1], l[2], [1.45 * k, 0.92 * k, 0.42 * k], 17, 1);
+        if (l[3] === 1) this.light(l[0], l[1], l[2], [2.3 * k, 1.46 * k, 0.68 * k], 19, 1);
         else this.light(l[0], l[1] - 0.3, l[2], [1.25 * k, 0.95 * k, 0.6 * k], 13, 1);
       }
     }

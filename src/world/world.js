@@ -138,6 +138,13 @@ export async function buildWorld(scene, onStep) {
     const w = ctx.terrain.waterAt(x, z);
     return w && w.river.width > 5 && y < w.level + 0.2;
   };
+  // superfície da água sobre o ponto (null fora d'água e nos interiores) e quanto de
+  // água há acima da altura y (0 = seco)
+  ctx.waterLevel = (x, z) => (ctx.indoor ? null : ctx.terrain.waterLevel(x, z));
+  ctx.waterDepth = (x, z, y) => {
+    const l = ctx.waterLevel(x, z);
+    return l === null ? 0 : Math.max(0, l - y);
+  };
   ctx.placeName = (x, z) => (ctx.indoor ? ctx.indoor.title : ctx.zones.placeAt(x, z));
   ctx.streetName = (x, z) => {
     if (ctx.indoor) return null;

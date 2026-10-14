@@ -64,6 +64,14 @@ export const SFX = {
     noise(a, t, 0.3, { type: 'bandpass', f: 600, q: 0.7, vol: 0.06 * v, attack: 0.05 });
     if (Math.random() < 0.5) noise(a, t + Math.random() * 0.2, 0.02, { type: 'highpass', f: 3500, vol: 0.1 * v });
   },
+  // brasa caindo na água: chiado longo de vapor
+  hiss(a, d = 0) {
+    if (!ok(a) || fall(d, 50) <= 0) return;
+    const t = a.ctx.currentTime, v = fall(d, 50);
+    noise(a, t, 1.3, { type: 'highpass', f: 5200, f1: 1600, q: 0.6, vol: 0.2 * v, attack: 0.02 });
+    noise(a, t, 0.5, { type: 'bandpass', f: 900, f1: 300, q: 0.8, vol: 0.12 * v });
+    for (let i = 0; i < 4; i++) noise(a, t + 0.05 + Math.random() * 0.5, 0.02, { type: 'highpass', f: 3000, vol: 0.08 * v });
+  },
   // morcego: guincho agudo e bater de asas
   screech(a, d = 0, p = 1) {
     if (!ok(a) || fall(d) <= 0) return;

@@ -216,10 +216,10 @@ function addOpenings(B, s, P, y0, ctx) {
   ];
   const floors = s.floors;
   let doorT = null; // onde a porta da frente ficou de fato
-  // à noite, metade das casas tem gente acordada: alguns cômodos (andar de uma face)
+  // à noite, dois terços das casas têm gente acordada: alguns cômodos (andar de uma face)
   // com a luz acesa. Sorteio pela posição, para ser sempre igual
   const LR = rng((Math.floor(s.x * 7.3) * 92821) ^ Math.floor(s.z * 9.1));
-  const awake = LR.chance(s.style === 'shed' ? 0.15 : 0.5);
+  const awake = LR.chance(s.style === 'shed' ? 0.15 : 0.65);
   const winLit = ['window1', 'window2', 'window3'].includes(win) ? win + 'Lit' : win;
   for (const f of faces) {
     const at = (t, y) => {
@@ -251,7 +251,7 @@ function addOpenings(B, s, P, y0, ctx) {
           continue;
         }
         const ww = 1.1 / f.len / 2;
-        quadOn(roomLit && LR.chance(0.75) ? winLit : win, t - ww, t + ww, yb + 0.95, yb + 2.25);
+        quadOn(roomLit && LR.chance(0.8) ? winLit : win, t - ww, t + ww, yb + 0.95, yb + 2.25);
         if (s.shutters) {
           const sw = 0.5 / f.len;
           B.col = s.shutters;

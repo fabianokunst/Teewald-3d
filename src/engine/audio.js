@@ -228,8 +228,39 @@ export class Audio {
     }
   }
 
+  // ruído filtrado curto (respingos e braçadas)
+  _wash(t, dur, f0, f1, vol, type = 'bandpass', q = 0.9) {
+    const c = this.ctx, src = c.createBufferSource(); src.buffer = this.white;
+    const f = c.createBiquadFilter(), g = c.createGain();
+    f.type = type; f.Q.value = q;
+    f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + Math.min(0.03, dur * 0.3));
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(f).connect(g).connect(this.master);
+    src.start(t, Math.random() * 1.5, dur + 0.02);
+  }
+
+  // respingo: k = 0,5 passo na água rasa ... 2 mergulho
+  splash(k = 1) {
+    if (!this.ctx) return;
+    const t = this.ctx.currentTime;
+    this._wash(t, 0.12 + 0.18 * k, 2600, 700, 0.07 + 0.06 * k);
+    this._wash(t + 0.01, 0.06 + 0.06 * k, 420, 160, 0.05 + 0.05 * k, 'lowpass', 0.7);
+    if (k > 1) this._wash(t + 0.08, 0.6, 1400, 500, 0.06, 'bandpass', 0.6);
+  }
+
+  // braçada: a água empurrada (k = 0 boiando ... 1 nadando rápido)
+  stroke(k = 1) {
+    if (!this.ctx) return;
+    const t = this.ctx.currentTime;
+    this._wash(t, 0.4, 700, 1500, 0.035 + 0.04 * k, 'bandpass', 0.8);
+    this._wash(t + 0.28, 0.16, 2200, 900, 0.025 + 0.035 * k);
+  }
+
   step(surface = 'grass', run = false) {
     if (!this.ctx) return;
+    if (surface === 'water') { this.splash(run ? 0.75 : 0.45); return; }
     const c = this.ctx, t = c.currentTime;
     const src = c.createBufferSource(); src.buffer = this.white;
     const f = c.createBiquadFilter();

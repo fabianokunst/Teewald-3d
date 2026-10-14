@@ -271,6 +271,20 @@ export class Terrain {
     return { level: rv.levelAt(w.seg, w.t), river: rv };
   }
 
+  // nível da superfície da água desenhada sobre o ponto (leito e beira molhada), ou null.
+  // Onde o barranco sobe acima desse nível o chão está seco
+  waterLevel(x, z) {
+    if (!this.riverIndex) return null;
+    let lv = null;
+    for (const w of this._riversNear(x, z)) {
+      const rv = w.seg.data;
+      if (w.d > rv.width / 2 + rv.bank * 0.5) continue;
+      const l = rv.levelAt(w.seg, w.t);
+      if (lv === null || l > lv) lv = l;
+    }
+    return lv;
+  }
+
   // margem molhada: escurece a cor do vértice perto da água (degradê contínuo, sem
   // a escada de quadradinhos que uma textura de barro por célula fazia no talude)
   wetTint(x, z) {

@@ -257,9 +257,9 @@ export function makeArchTextures() {
     return finish(paint(64, 64, (x, y) => {
       if (bar(x, y)) return null;
       const gy = y / 56;
-      let c = mul([255, 188, 104], 0.6 + 0.4 * (1 - gy) * (1 - gy));
+      let c = mul([255, 174, 84], 0.6 + 0.4 * (1 - gy) * (1 - gy));
       if (o.room && y > 44 && x > 12 && x < 42 && !(y < 47 && (x < 15 || x > 39))) c = mul(c, 0.32);
-      if (o.curtain?.(x, y)) c = mul([255, 212, 146], x % 3 === 0 ? 0.74 : 0.92);
+      if (o.curtain?.(x, y)) c = mul([255, 200, 124], x % 3 === 0 ? 0.74 : 0.92);
       else if (o.blinds?.(x, y)) c = mul([236, 214, 160], y % 3 === 0 ? 0.3 : 0.9);
       return bar(x, y - 1) || bar(x, y - 2) ? mul(c, 0.78) : c; // sombra sob o caixilho
     }), false);

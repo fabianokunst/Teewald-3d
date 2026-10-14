@@ -6,7 +6,7 @@ import { canvasTex, makeCanvas, processPixels } from '../engine/textures.js';
 // de bala nas superfícies e o clarão do cano. Partículas são quadrados virados
 // para a câmera que encolhem até sumir (sem transparência, como no PS1).
 
-const MAX_P = 640, MAX_D = 60;
+const MAX_P = 640, MAX_D = 60, MAX_R = 48;
 
 // cores das partículas por superfície
 const DUST = {
@@ -38,6 +38,19 @@ function holeTexture() {
     const v = r < 2.2 ? 14 : r < 3.6 ? 38 : 70;
     d.data[i] = v; d.data[i + 1] = v * 0.92; d.data[i + 2] = v * 0.85;
     d.data[i + 3] = r < jag ? 255 : 0;
+  }
+  g.putImageData(d, 0, 0);
+  return canvasTex(c, false);
+}
+
+// marola: anel claro de borda macia (somado à água)
+function ringTexture() {
+  const c = makeCanvas(32, 32), g = c.getContext('2d'), d = g.createImageData(32, 32);
+  for (let y = 0; y < 32; y++) for (let x = 0; x < 32; x++) {
+    const r = Math.hypot(x - 15.5, y - 15.5), i = (y * 32 + x) * 4;
+    const v = Math.max(0, 1 - Math.abs(r - 12.5) / 2.4) * 255;
+    d.data[i] = d.data[i + 1] = d.data[i + 2] = v;
+    d.data[i + 3] = 255;
   }
   g.putImageData(d, 0, 0);
   return canvasTex(c, false);
@@ -84,6 +97,19 @@ export class Effects {
     // clarão (somado à cena)
     this.flashMat = ps1Material({ map: flashTexture(), lit: false, fog: false, transparent: true, side: THREE.DoubleSide, depthWrite: false });
     this.flashMat.blending = THREE.AdditiveBlending;
+
+    // marolas: anéis deitados na água que abrem e apagam (somados à cena)
+    const rg = ensureColor(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2));
+    this.rMat = ps1Material({ map: ringTexture(), lit: false, transparent: true, depthWrite: false, side: THREE.DoubleSide });
+    this.rMat.blending = THREE.AdditiveBlending;
+    this.rMesh = new THREE.InstancedMesh(rg, this.rMat, MAX_R);
+    this.rMesh.frustumCulled = false;
+    this.rMesh.renderOrder = 3;
+    this.rMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    this.rips = [];
+    for (let i = 0; i < MAX_R; i++) { this.rMesh.setMatrixAt(i, zero); this.rMesh.setColorAt(i, col); this.rips.push({ life: 0 }); }
+    scene.add(this.rMesh);
+    this.rNext = 0;
 
     this._m = new THREE.Matrix4(); this._q = new THREE.Quaternion(); this._q2 = new THREE.Quaternion();
     this._v = new THREE.Vector3(); this._s = new THREE.Vector3(); this._c = new THREE.Color();
@@ -155,6 +181,24 @@ export class Effects {
     if (surface !== 'water' && decal) this.decal(p, n);
   }
 
+  // marola na superfície da água (y = nível da água); size = diâmetro final em metros
+  ripple(x, y, z, size = 1, life = 1.1, bright = 0.3) {
+    const R = this.rips[this.rNext];
+    this.rNext = (this.rNext + 1) % MAX_R;
+    R.x = x; R.y = y + 0.05; R.z = z;
+    R.s0 = size * 0.2; R.s1 = size; R.life = R.max = life; R.b = bright;
+  }
+
+  // respingo: gotas para cima e uma marola; k = força (0,3 passo na água rasa, 1 queda, 2 mergulho)
+  splash(x, y, z, k = 1) {
+    const cols = DUST.water, rnd = a => (Math.random() - 0.5) * 2 * a;
+    for (let i = 0, n = Math.round(3 + 9 * k); i < n; i++) {
+      const c = cols[i % 2], up = (1.2 + Math.random() * 2.2) * Math.min(1.6, 0.5 + k * 0.6);
+      this.spawn({ p: this._v.set(x + rnd(0.18 * k), y + 0.04, z + rnd(0.18 * k)), v: new THREE.Vector3(rnd(0.9 + k * 0.5), up, rnd(0.9 + k * 0.5)), life: 0.35 + Math.random() * 0.35, s0: 0.035 + Math.random() * 0.03 * k, s1: 0.015, color: c, grav: 9.8, drag: 0.6 });
+    }
+    this.ripple(x, y, z, 0.7 + k * 0.9, 0.9 + k * 0.4, 0.22 + 0.1 * Math.min(1, k));
+  }
+
   // garrafa quebrando
   shatter(p, dir, color) {
     const rnd = (a = 1) => (Math.random() - 0.5) * 2 * a;
@@ -210,5 +254,19 @@ export class Effects {
       this.pMesh.setMatrixAt(i, this._m);
     }
     this.pMesh.instanceMatrix.needsUpdate = true;
+    // marolas: abrem rápido no começo e apagam até sumir
+    let live = false;
+    for (let i = 0; i < MAX_R; i++) {
+      const R = this.rips[i];
+      if (R.life <= 0) continue;
+      R.life -= dt;
+      if (R.life <= 0) { this._m.makeScale(0, 0, 0); this.rMesh.setMatrixAt(i, this._m); live = true; continue; }
+      const t = 1 - R.life / R.max, s = R.s0 + (R.s1 - R.s0) * (1 - (1 - t) * (1 - t)), b = R.b * (1 - t);
+      this._m.makeScale(s, 1, s).setPosition(R.x, R.y, R.z);
+      this.rMesh.setMatrixAt(i, this._m);
+      this.rMesh.setColorAt(i, this._c.setRGB(b, b * 1.04, b * 1.06));
+      live = true;
+    }
+    if (live) { this.rMesh.instanceMatrix.needsUpdate = true; this.rMesh.instanceColor.needsUpdate = true; }
   }
 }
