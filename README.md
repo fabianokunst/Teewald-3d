@@ -227,10 +227,12 @@ feitos em código. O cenário fica em `src/world/chupaSites.js` e a missão em
 - Cemitério, Sociedade, Prefeitura, Museu (enxaimel), Posto Calçadão, fábricas
   de calçados, escola, hospital e comércio.
 - **Pavilhão da Kartoffelfest** montado em cima da Rua Beno Closs, a rua da
-  Prefeitura, no trecho reto da saída do estacionamento. A rua está fechada com
-  cavaletes ("RUA FECHADA – ENTRADA SÓ A PÉ"). Tem lona listrada com bambinela,
-  pórtico enxaimel, palco das bandinhas, mesas compridas com toalha xadrez,
-  Kartoffelhaus com sacos de batata, chope, bandeirolas e varais de lâmpadas que
+  Prefeitura: uns 70 m de lona listrada com bambinela, do começo da rua (cruzamento
+  com a VRS-873) até a saída do estacionamento da Prefeitura. A rua está fechada
+  com cavaletes nas duas pontas ("RUA FECHADA – ENTRADA SÓ A PÉ"). Entrando pelo
+  pórtico enxaimel: batata do produtor, café colonial, barraca de tiro, salsichão,
+  mesas compridas com toalha xadrez, Kartoffelhaus com sacos de batata, chope,
+  pista de dança e palco das bandinhas, com bandeirolas e varais de lâmpadas que
   acendem à noite. É uma subtrama paralela: a festa deste ano foi cancelada (faixa
   CANCELADA nos letreiros), e o vigia, a cozinheira, a rainha da festa e a
   Prefeitura falam disso sem mexer na história dos capítulos.

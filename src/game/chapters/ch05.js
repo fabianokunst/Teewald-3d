@@ -112,7 +112,7 @@ export default {
         G.checkpoint(G.player.pos.x, G.player.pos.z, G.player.heading);
         // a Fera chega pelo lado do estacionamento da Prefeitura e entra entre os postes
         // (pelas pontas, os cavaletes e o palco fecham a passagem)
-        const fs = frame(a.x, a.z, k.rot)(-11, -16), f = G.freeSpot(fs[0], fs[1], 0, 6, 30) || fs;
+        const fs = frame(a.x, a.z, k.rot)(0, -12), f = G.freeSpot(fs[0], fs[1], 0, 6, 30) || fs;
         S.boss = G.spawn('fera', f[0], f[1], { arena: { x: a.x, z: a.z, r: 30 } });
         G.boss(S.boss, 'A FERA');
         SFX.roar(G.audio, 10, 0.9, 2.2);
