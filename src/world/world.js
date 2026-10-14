@@ -45,7 +45,8 @@ function walkwayLift(index, x, z) {
 
 // Monta a cidade inteira. onStep(fração, texto) atualiza a tela de carregamento.
 export async function buildWorld(scene, onStep) {
-  const ctx = { mapdata, trees: [], floors: [], lights: [], playBounds: PLAY_BOUNDS };
+  // perches: onde as corujas pousam (postes, lampiões, chaminés, cumeeiras)
+  const ctx = { mapdata, trees: [], floors: [], lights: [], perches: [], playBounds: PLAY_BOUNDS };
   const step = async (f, t) => { onStep?.(f, t); await frame(); };
 
   await step(0.05, 'relevo');

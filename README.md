@@ -224,8 +224,16 @@ feitos em código. O cenário fica em `src/world/chupaSites.js` e a missão em
   frente livre até o caminho (sem poste, lixeira, canteiro ou grade no meio), e
   a frente dos bancos, das mesas, da parada e do letreiro fica reservada:
   árvores, postes e placas posteriores desviam dela.
-- Cemitério, Kartoffelfest, Sociedade, Prefeitura, Museu (enxaimel), Posto
-  Calçadão, fábricas de calçados, escola, hospital e comércio.
+- Cemitério, Sociedade, Prefeitura, Museu (enxaimel), Posto Calçadão, fábricas
+  de calçados, escola, hospital e comércio.
+- **Pavilhão da Kartoffelfest** montado em cima da Rua Beno Closs, a rua da
+  Prefeitura, no trecho reto da saída do estacionamento. A rua está fechada com
+  cavaletes ("RUA FECHADA – ENTRADA SÓ A PÉ"). Tem lona listrada com bambinela,
+  pórtico enxaimel, palco das bandinhas, mesas compridas com toalha xadrez,
+  Kartoffelhaus com sacos de batata, chope, bandeirolas e varais de lâmpadas que
+  acendem à noite. É uma subtrama paralela: a festa deste ano foi cancelada (faixa
+  CANCELADA nos letreiros), e o vigia, a cozinheira, a rainha da festa e a
+  Prefeitura falam disso sem mexer na história dos capítulos.
 - **Carros** low poly (`src/world/vehicles.js`): sedã de quatro portas e hatch
   de duas, com vidros, faróis, lanternas, placa cinza, para-choques, frisos e
   rodas de aço desenhados em pixel art (`src/engine/carTextures.js`).
@@ -250,7 +258,7 @@ feitos em código. O cenário fica em `src/world/chupaSites.js` e a missão em
   barraca no Pavilhão da Kartoffelfest; atrás de um gol do campo). Lata voa e
   quica, garrafa quebra; o estande limpo se remonta. Ao lado de cada estande há
   uma caixa de munição (+12), que reaparece depois de um minuto.
-- **23 moradores com falas** (`src/game/npcData.js`), todos com medo e cada um
+- **24 moradores com falas** (`src/game/npcData.js`), todos com medo e cada um
   com um pedaço da história: o pescador que viu olhos vermelhos na outra margem,
   a senhora procurando a gata, o rapaz atrás do cachorro que sumiu, a repórter
   de Porto Alegre, o professor que conta do Blutsauger dos colonos e de 1978,
@@ -258,7 +266,8 @@ feitos em código. O cenário fica em `src/world/chupaSites.js` e a missão em
   parado na fonte, a moça ligando para a tia que não atende, o casal que teve a
   janela arranhada, o padre do sino que tocou sozinho, a beata, o zelador do
   cemitério, o carteiro das casas que ninguém atende, a Prefeitura que diz que
-  é graxaim, a festa adiada, o campo vazio, a floricultura e a loja fechando
+  é graxaim, a Kartoffelfest cancelada (o vigia, a cozinheira e a rainha da
+  festa sentada sozinha no pavilhão), o campo vazio, a floricultura e a loja fechando
   cedo. Roupa própria no mesmo esqueleto do protagonista (suéter, camisa xadrez,
   batina, terno, jardineira, vestido com avental, uniforme), chapéu, lenço,
   cabelo comprido ou objeto na mão. Andam, sentam, murmuram quando o jogador

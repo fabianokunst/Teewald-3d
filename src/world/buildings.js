@@ -102,12 +102,33 @@ export function buildHouse(B, ctx, s) {
     const cx = hw * 0.45, cz = -hd * 0.3;
     const p = P(cx, 0, cz);
     B.box('brickOld', p[0], top - 0.5, p[2], 0.6, (roofTop - top) + 1.2, 0.6, s.rot, { uvScale: 1.5 });
+    ctx.perches?.push({ x: p[0], y: roofTop + 0.7, z: p[2], kind: 'chimney' });
+  }
+  // corujas: na cumeeira, de frente para uma das águas (na laje, sobre a platibanda da frente)
+  const rp = roofPerch(s);
+  if (rp) {
+    const p = P(rp[0], 0, rp[1]);
+    ctx.perches?.push({ x: p[0], y: roofTop, z: p[2], h: s.rot + rp[2], kind: 'ridge' });
   }
 
   // colisão
   ctx.collision.addBox(s.x, s.z, hw + 0.06, hd + 0.06, s.rot, yMin - 1, roofTop);
   if (s.fence) addFence(B, ctx, s, P);
   return { y0, top, roofTop };
+}
+
+// ponto local [x, z, rumo] na linha mais alta do telhado (a altura é a devolvida por buildRoof)
+function roofPerch(s) {
+  const hw = s.w / 2, hd = s.d / 2, ov = s.ov ?? 0.45, type = s.roofType || 'gable';
+  const side = Math.random() < 0.5 ? 1 : -1, flip = Math.random() < 0.5 ? 0 : Math.PI;
+  if (type === 'gable') return [side * hw * 0.5, 0, flip];
+  if (type === 'gableFront') return [0, side * hd * 0.5, Math.PI / 2 + flip];
+  if (type === 'flat') return [side * hw * 0.4, hd, 0];
+  if (type === 'shed') return null;
+  // quatro águas: cumeeira curta ao longo do lado maior
+  const along = s.w >= s.d;
+  const rx = Math.max((along ? hw : hd) - (along ? hd : hw), 0) * 0.6;
+  return along ? [side * rx, 0, flip] : [0, -side * rx, Math.PI / 2 + flip];
 }
 
 function slopeUV(a, b, c, d, scale = 2.2) {

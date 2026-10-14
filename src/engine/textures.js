@@ -167,6 +167,10 @@ const DEFS = [
   ['awnRed', 'Cloth/Cloth_02-256x256.png', 32, 32, { saturate: 0.8 }],
   ['awnBlue', 'Cloth/Cloth_01-256x256.png', 32, 32, { saturate: 0.8 }],
   ['awnCream', 'Cloth/Cloth_03-256x256.png', 32, 32, {}],
+  // Kartoffelfest: lona do pavilhão, toalha xadrez e saco de batata
+  ['lonaCanvas', 'Cloth/Mat_Cloth_Canvas_06-256x256.png', 64, 64, {}],
+  ['tablecloth', 'Cloth/Cloth_06-256x256.png', 32, 32, { saturate: 0.8 }],
+  ['sack', 'Box/Box_17-256x256.png', 32, 32, { saturate: 0.8, tint: [1.0, 0.95, 0.85] }],
   ['fenceGrid', 'gradeado.png', 64, 64, { alpha: true, repeat: true }],
   // telhados
   ['roofRed', 'Roofs/Roofs_10-256x256.png', 64, 64, { saturate: 0.85 }],
@@ -274,6 +278,58 @@ function generateTextures() {
     g7.beginPath(); g7.moveTo(i * 8, 0); g7.lineTo(i * 8 + 8, 0); g7.lineTo(i * 8 + 4, 14); g7.closePath(); g7.fill();
   }
   TEX.flags = canvasTex(processPixels(fl, { alpha: true }), true);
+
+  // lona do pavilhão: gomo creme e gomo vermelho (cada um 1 m), costuras e o pé
+  // encardido de chuva (v = 0 na beirada)
+  const lo = makeCanvas(64, 64), g10 = lo.getContext('2d');
+  g10.drawImage(TEX.lonaCanvas.image, 0, 0, 64, 64);
+  g10.globalCompositeOperation = 'multiply';
+  pxRect(g10, 32, 0, 32, 64, '#c42c22');
+  g10.globalCompositeOperation = 'source-over';
+  g10.fillStyle = 'rgba(70,46,30,0.35)'; g10.fillRect(0, 0, 1, 64); g10.fillRect(31, 0, 2, 64); g10.fillRect(63, 0, 1, 64);
+  const dirt = g10.createLinearGradient(0, 64, 0, 44);
+  dirt.addColorStop(0, 'rgba(60,52,36,0.45)'); dirt.addColorStop(1, 'rgba(60,52,36,0)');
+  g10.fillStyle = dirt; g10.fillRect(0, 44, 64, 20);
+  TEX.awnLona = canvasTex(processPixels(lo));
+
+  // bambinela (babado recortado na beira da lona), listrada
+  const va = makeCanvas(64, 16), g11 = va.getContext('2d');
+  g11.beginPath();
+  for (let i = 0; i < 4; i++) { g11.rect(i * 16, 0, 16, 8); g11.moveTo(i * 16 + 16, 8); g11.arc(i * 16 + 8, 8, 7.5, 0, Math.PI); }
+  g11.clip();
+  g11.drawImage(TEX.lonaCanvas.image, 0, 0, 64, 16);
+  g11.globalCompositeOperation = 'multiply';
+  for (let i = 0; i < 8; i += 2) pxRect(g11, i * 8 + 8, 0, 8, 16, '#c42c22');
+  g11.globalCompositeOperation = 'source-over';
+  pxRect(g11, 0, 1, 64, 1, 'rgba(60,40,28,0.5)');
+  TEX.awnValance = canvasTex(processPixels(va, { alpha: true }), true);
+
+  // tábua de cavalete: listras vermelhas e brancas na diagonal, pintadas na madeira
+  const cv = makeCanvas(32, 8), g12 = cv.getContext('2d');
+  g12.drawImage(TEX.woodPlank.image, 0, 0, 32, 8);
+  for (let i = -1; i < 5; i++) {
+    g12.fillStyle = i % 2 ? 'rgba(236,232,222,0.88)' : 'rgba(180,30,26,0.88)';
+    g12.beginPath(); g12.moveTo(i * 8, 8); g12.lineTo(i * 8 + 8, 8); g12.lineTo(i * 8 + 16, 0); g12.lineTo(i * 8 + 8, 0); g12.closePath(); g12.fill();
+  }
+  TEX.barrier = canvasTex(processPixels(cv));
+
+  // batatas amontoadas (boca do saco, caixas da Kartoffelhaus)
+  const bt = makeCanvas(32, 32), g13 = bt.getContext('2d');
+  g13.drawImage(TEX.dirt.image, 0, 0, 32, 32);
+  pxRect(g13, 0, 0, 32, 32, 'rgba(30,22,14,0.55)');
+  let seed = 4417;
+  const pr = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < 26; i++) {
+    const x = pr() * 32, y = pr() * 32, rx = 3 + pr() * 2.5, ry = 2.2 + pr() * 1.6, a = pr() * Math.PI;
+    for (const [dx, dy] of [[0, 0], [-32, 0], [32, 0], [0, -32], [0, 32]]) {
+      g13.fillStyle = ['#a5814c', '#b8915a', '#94703e', '#c09c62'][i % 4];
+      g13.beginPath(); g13.ellipse(x + dx, y + dy, rx, ry, a, 0, Math.PI * 2); g13.fill();
+      g13.fillStyle = 'rgba(255,240,200,0.25)';
+      g13.beginPath(); g13.ellipse(x + dx - 0.8, y + dy - 0.8, rx * 0.45, ry * 0.4, a, 0, Math.PI * 2); g13.fill();
+      g13.fillStyle = 'rgba(60,40,20,0.6)'; g13.fillRect(Math.round(x + dx + rx * 0.3), Math.round(y + dy), 1, 1);
+    }
+  }
+  TEX.potatoes = canvasTex(processPixels(bt));
 
   // cruz / lápide
   const cr = makeCanvas(32, 32), g8 = cr.getContext('2d');

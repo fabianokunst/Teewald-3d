@@ -278,7 +278,8 @@ export const NPC_DEFS = [
     barks: ['Está tudo sob controle.', 'Não há motivo para pânico.'],
     talks: [
       ['A Prefeitura está acompanhando os casos. Não há motivo para pânico.', 'Muito provavelmente um cachorro do mato. Ou um graxaim.'],
-      ['A recompensa do cartaz? Sim, é verdade.', 'Mas não comente com a moça do jornal. A Kartoffelfest está chegando, e a cidade vive dela.'],
+      ['A recompensa do cartaz? Sim, é verdade.', 'Mas não comente com a moça do jornal. Já basta a Kartoffelfest cancelada. A cidade vive dela.'],
+      ['O pavilhão fica montado aí na frente. Desmontar também custa.', 'Quando isso passar, a gente faz a festa. Nem que seja no inverno.'],
       ['Eu? Eu não acredito nessas histórias de colono.', '...', 'Mas deixo a luz da varanda acesa a noite inteira.'],
     ],
     scared: 'Meu Deus! Que foi isso?!',
@@ -356,43 +357,65 @@ export const NPC_DEFS = [
     gun: 'Arma no cemitério. Aqui ninguém mais precisa de susto.',
   },
 
-  // ---------------- Kartoffelfest e campo ----------------
+  // ---------------- Kartoffelfest (pavilhão na Rua Benno Closs) e campo ----------------
+  // Subtrama: o pavilhão já estava montado e a rua fechada quando a comissão cancelou
+  // a festa deste ano. Só conversa e cenário; não mexe na história dos capítulos.
   {
     id: 'ivo', name: 'SEU IVO', voice: 112, bulk: 1.14, stare: true,
     look: { seed: 116, top: 'shirt', pattern: 'plaid', accent: [180, 176, 166], beard: 'mustache', colors: { jacket: [112, 38, 34], pants: [80, 62, 42], hair: HAIR.red, skin: SKIN.rosy, iris: EYES.blue, boot: [62, 44, 30] } },
     hat: ['chapeu', [48, 46, 40]], item: 'caneca', pose: 'hold',
+    // na entrada do pavilhão, de olho na rua
     spawn: S => {
-      const k = S.L.kartoffel, at = S.frame(k.x, k.z, k.rot), [x, z] = S.free(...at(-3, 9.5));
-      return { mode: 'stand', x, z, h: k.rot };
+      const k = S.L.kartoffel, at = S.frame(k.x, k.z, k.rot), [x, z] = S.free(...at(k.hl - 1.2, -2.8));
+      return { mode: 'stand', x, z, h: k.rot + Math.PI / 2 };
     },
     hi: 'Boa tarde.',
-    barks: ['Tanto trabalho pra nada.', 'Adiaram tudo...'],
+    barks: ['Esse ano não tem festa.', 'Montaram tudo pra nada...', 'Carro não passa. Só a pé.'],
     talks: [
-      ['A Kartoffelfest foi adiada. A Prefeitura não queria, mas as famílias não vêm.', 'Ninguém quer voltar pra casa de madrugada.'],
-      ['Eu fico aqui cuidando do pavilhão de noite.', 'Ontem ouvi alguma coisa andando no telhado. Pesada. Aos pulos.', 'Fiquei quieto no escuro até clarear.'],
+      ['Esse ano não vai ter Kartoffelfest. A comissão cancelou.', 'A lona já tava montada, o palco pronto, o chope encomendado.', 'Mas com bicho sangrando criação, quem é que traz a família pra cá de noite?'],
+      ['A rua ficou fechada assim mesmo. Ninguém veio desmontar.', 'Eu fico cuidando do pavilhão de noite. Deixo as lâmpadas acesas.', 'Ontem ouvi alguma coisa andando em cima da lona. Pesada. Aos pulos.'],
       ['Grumbeer, como diziam os antigos. Batata.', 'A festa existe pra lembrar a fome que os colonos passaram aqui.', 'Parece que o mato também lembra.'],
     ],
     scared: 'Mein Gott! Que foi isso?',
     aimed: 'Ô! Calma! Calma!',
-    gun: 'Se for atrás do bicho, a barraca de tiro ainda tá montada. Treina antes.',
+    gun: 'Se for atrás do bicho, a barraca de tiro ainda tá montada lá no fundo. Treina antes.',
   },
   {
     id: 'gertrud', name: 'DONA GERTRUD', voice: 260, bulk: 1.15,
     look: { seed: 117, top: 'dress', female: true, old: true, bottom: 'stockings', feet: 'shoe', colors: { jacket: [100, 40, 40], pants: [160, 140, 126], hair: HAIR.gray, skin: SKIN.rosy, iris: EYES.blue, apron: [200, 196, 188], boot: [56, 42, 34] } },
     hair: 'coque', skirt: { color: [100, 40, 40], long: true, apron: [200, 196, 188] }, item: 'cesta',
+    // atrás do balcão da Kartoffelhaus, do lado da panela
     spawn: S => {
-      const k = S.L.kartoffel, at = S.frame(k.x, k.z, k.rot), [x, z] = S.free(...at(5, 3));
-      return { mode: 'stand', x, z, h: k.rot + 0.6 };
+      const k = S.L.kartoffel, at = S.frame(k.x, k.z, k.rot), [x, z] = S.free(...at(10, 4.2));
+      return { mode: 'stand', x, z, h: k.rot + Math.PI };
     },
     hi: 'Oi, querido.',
-    barks: ['Sopa pra quem vai procurar...', 'Ai, meu Deus...'],
+    barks: ['Sopa pra quem vai procurar...', 'Ai, meu Deus...', 'Batata não falta.'],
     talks: [
-      ['Tô fazendo sopa pros homens que vão procurar no mato hoje de noite.', 'Panela grande.', 'Da última vez, sobrou sopa.'],
+      ['As batatas da festa já tinham chegado quando cancelaram. Saco e mais saco.', 'Eu não vou deixar apodrecer.', 'Tô fazendo sopa pros homens que vão procurar no mato hoje de noite.'],
       ['O meu neto jura que viu o bicho no telhado do pavilhão.', 'Corcunda, com espinho nas costas, os olhos brilhando vermelho.', 'Eu mandei ele rezar. E rezei junto.'],
+      ['Desde a primeira festa eu frito Kartoffelpuffer nessa barraca.', 'Só não teve no ano da enchente.', 'E agora esse.'],
     ],
     scared: 'Mein Gott!',
     aimed: 'Ai, não... Eu só cozinho, querido.',
     gun: 'Come alguma coisa antes de ir. Ninguém entra no mato de barriga vazia.',
+  },
+  {
+    id: 'luana', name: 'LUANA', voice: 370,
+    look: { seed: 124, top: 'dress', female: true, longHair: true, bottom: 'stockings', feet: 'shoe', colors: { jacket: [46, 82, 60], pants: [226, 220, 206], hair: HAIR.blond, skin: SKIN.fair, iris: EYES.blue, apron: [214, 206, 188], boot: [40, 32, 28], lip: [160, 90, 92] } },
+    hair: 'longo', skirt: { color: [46, 82, 60], apron: [214, 206, 188] },
+    // a rainha da festa, sozinha numa das mesas compridas, de vestido típico
+    spawn: S => ({ mode: 'sit', seat: S.seat(S.L.kartoffel.x, S.L.kartoffel.z, 'festa') }),
+    hi: 'Oi.',
+    barks: ['Era pra ser sábado...', 'Tanto ensaio.'],
+    talks: [
+      ['Eu sou a rainha da Kartoffelfest. Ia ser coroada no sábado, ali no palco.', 'A mãe costurou o vestido. Seis semanas.', 'Agora não tem mais festa.'],
+      ['A comissão diz que é só esse ano. Que no ano que vem tem.', 'Vim sentar aqui porque em casa ninguém fala de outra coisa.'],
+      ['De noite as lâmpadas ficam acesas e não tem ninguém. Só o Seu Ivo.', 'Eu vou pra casa antes de escurecer. Prometi pra mãe.'],
+    ],
+    scared: 'Ai! O que foi isso?',
+    aimed: 'Não! Por favor!',
+    gun: 'Tu vai atrás do bicho? ...Toma cuidado.',
   },
   {
     id: 'tiago', name: 'TIAGO', voice: 200, stare: true,

@@ -180,6 +180,8 @@ export function buildVegetation(ctx, materials) {
     if (!g) { g = { type: t.t, list: [] }; groups.set(key, g); }
     const tint = t.c || (t.t === 'platano' || t.t === 'far' ? R.pick(AUTUMN) : t.t === 'nativa' ? R.pick(GREEN) : t.t === 'araucaria' || t.t === 'farA' ? [R.range(0.85, 1.05), R.range(0.9, 1.05), R.range(0.85, 1)] : [R.range(0.9, 1.05), R.range(0.9, 1.05), R.range(0.85, 1.0)]);
     g.list.push({ x: t.x, y: y - 0.1, z: t.z, s: t.s || 1, r: R.range(0, Math.PI * 2), c: tint });
+    // posição exata da instância (as corujas pousam nos galhos das araucárias)
+    t.y = y - 0.1; t.rot = g.list.at(-1).r; t.sy = (t.s || 1) * (0.9 + ((g.list.length - 1) % 5) * 0.05);
     // colisão do tronco
     const rad = T[t.t].radius * (t.s || 1);
     if (rad > 0 && !t.far) ctx.collision.addCircle(t.x, t.z, rad, y - 1, y + 8, { cam: t.t === 'araucaria' || t.t === 'platano' });

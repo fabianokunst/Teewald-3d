@@ -61,7 +61,7 @@ export class Minimap {
     // pavilhão da Kartoffelfest
     {
       const k = L.kartoffel, c0 = Math.cos(k.rot), s0 = Math.sin(k.rot);
-      poly([[-15, -9], [15, -9], [15, 9], [-15, 9]].map(([lx, lz]) => [k.x + lx * c0 + lz * s0, k.z - lx * s0 + lz * c0]), COLORS.pavilion, '#3a3a38');
+      poly([[-k.hl, -k.hw], [k.hl, -k.hw], [k.hl, k.hw], [-k.hl, k.hw]].map(([lx, lz]) => [k.x + lx * c0 + lz * s0, k.z - lx * s0 + lz * c0]), COLORS.pavilion, '#3a3a38');
     }
     // igreja (destacada, com cruz)
     {

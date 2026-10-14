@@ -26,6 +26,7 @@ import { Combat } from './game/combat.js';
 import { Targets } from './world/targets.js';
 import { InventoryScreen } from './ui/inventory.js';
 import { NPCs } from './game/npcs.js';
+import { Owls } from './game/owls.js';
 import { Mission } from './game/mission.js';
 import { Campaign, loadCreatureTypes, loadInteriors } from './game/campaign.js';
 import { CHAPTERS } from './game/chapters/index.js';
@@ -57,7 +58,7 @@ G.uSunDir.value.set(-0.62, 0.4, -0.68).normalize();
 
 let ctx, character, player, tpc, menu, minimap, touchMenu;
 let inventory, pistol, effects, targets, invScreen, combat;
-let npcs, mission, atmo, interiors, campaign;
+let npcs, mission, atmo, interiors, campaign, owls;
 let endingT = 0;
 let state = 'loading';
 let time = 0, stateT = 0, fade = 1, fadeTarget = 0, onFaded = null;
@@ -165,6 +166,8 @@ async function boot() {
   invScreen = new InventoryScreen(R, input, audio, inventory, pistol, M, combat);
   // moradores com falas (F / A / toque em FALAR para conversar)
   npcs = new NPCs({ ctx, scene, M, audio, player, tpc, camera, pistol, R });
+  // corujas pousadas pela cidade (voam quando o jogador chega perto)
+  owls = new Owls({ ctx, scene, audio, atmo });
   // missão 1: o chupacabras (cartaz, galinheiro, pegadas, luta na clareira)
   mission = new Mission({ ctx, scene, audio, input, player, character, tpc, camera, inventory, pistol, targets, effects, hud, R, npcs, combat, atmo });
   // campanha: capítulo 1 = a missão acima; do 2 ao 10, a noite que não termina
@@ -357,6 +360,7 @@ function frame(now) {
     combat.update(dt, state, state === 'talk' || state === 'read' || (state === 'cutscene' && campaign.narrating));
     pistol.lights(dt);
     npcs.update(dt, state);
+    owls.update(dt, state === 'title' || state === 'ending' || state === 'debug' ? null : player, camera);
     const ev = state === 'ending' ? null : campaign.update(dt, state);
     if (ev === 'cutscene' || ev === 'read' || ev === 'play') setState(ev);
     else if (ev === 'dead') {
@@ -493,7 +497,7 @@ function drawEnding(g, W, H) {
 
 function exposeDebug() {
   window.__teewald = {
-    ctx, player, camera, tpc, settings, atmo, shadows, combat, interiors, audio, character, scene, renderer: R, G, input, menu, touchMenu, inventory, pistol, targets, effects, invScreen, npcs, mission,
+    ctx, player, camera, tpc, settings, atmo, shadows, combat, interiors, audio, character, scene, renderer: R, G, input, menu, touchMenu, inventory, pistol, targets, effects, invScreen, npcs, mission, owls,
     get state() { return state; },
     setState: s => setState(s),
     startGame: (intro = false) => { startGame({ intro }); fade = 0; fadeTarget = 0; },

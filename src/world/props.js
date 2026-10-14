@@ -138,10 +138,11 @@ export function lantern(B, ctx, x, z, h = 3.6) {
   pyramid(B, 'iron', [x, y + h + 0.5, z], 0.3, 0.35, Math.PI / 4, 4);
   ctx.collision.addCircle(x, z, 0.18, y, y + h + 0.8);
   ctx.lights?.push([x, y + h + 0.25, z]);
+  ctx.perches?.push({ x, y: y + h + 0.85, z, kind: 'lamp' });
 }
 
 // tubo de seção quadrada entre dois pontos (braço curvo da luminária)
-function tube(B, mat, a, b, r) {
+export function tube(B, mat, a, b, r) {
   const l = Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
   const ax = [(b[0] - a[0]) / l, (b[1] - a[1]) / l, (b[2] - a[2]) / l];
   // u: perpendicular ao eixo, o mais perto possível da vertical; v = eixo x u
@@ -179,6 +180,10 @@ export function streetPole(B, ctx, x, z, rot, withLamp = true) {
   }
   B.col = [1, 1, 1];
   ctx.collision.addCircle(x, z, 0.2, y, y + 8.5);
+  // corujas: no topo do poste ou na cruzeta, ao lado do fio (de frente para a rua ou para o lote)
+  ctx.perches?.push({ x, y: y + 8.5, z, kind: 'pole' });
+  const arm = P(Math.random() < 0.5 ? -0.32 : 0.32, y + 7.72, 0);
+  ctx.perches?.push({ x: arm[0], y: arm[1], z: arm[2], h: rot + (Math.random() < 0.5 ? 0 : Math.PI), kind: 'arm' });
   return [P(-0.55, y + 7.7, 0), P(0.55, y + 7.7, 0)];
 }
 

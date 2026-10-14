@@ -588,6 +588,8 @@ export class Guns {
     }
     // clarão, som, cápsula, coice
     GunAudio[c.sound]?.(this.audio);
+    // o estampido espanta as corujas em volta
+    this.ctx.scare?.(this.player.pos.x, this.player.pos.z, 55);
     const fl = this.flashes[id];
     if (fl) {
       fl.visible = true; this.flashT = 0.05;

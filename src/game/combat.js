@@ -594,6 +594,7 @@ export class Combat {
   // explosão: fogo, fumaça, terra, luz, tremor; fere criaturas e o jogador no raio
   explode(p, r = 4.5, dmg = 6, owner = 'player') {
     const P = this.player;
+    this.ctx.scare?.(p.x, p.z, 90);
     for (const e of this.enemies) {
       if (e.dead) continue;
       const dx = e.pos.x - p.x, dz = e.pos.z - p.z, dy = e.pos.y + 0.8 - p.y, d = Math.hypot(dx, dy, dz);

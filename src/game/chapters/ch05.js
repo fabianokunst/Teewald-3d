@@ -14,8 +14,9 @@ export default {
   weather: 'madrugada',
   deathText: 'A FERA TE ESMAGOU',
   start(G) {
-    const k = places(G).kartoffel, f = frame(k.x, k.z, k.rot)(0, -24);
-    return { x: f[0], z: f[1], h: k.rot };
+    // no meio da Rua Benno Closs, rua acima do pavilhão
+    const s = places(G).kartoffel.start;
+    return { x: s.x, z: s.z, h: s.h };
   },
   setup(G, S) {
     const P = places(G), st = G.player.pos, k = P.kartoffel;
@@ -26,7 +27,7 @@ export default {
       'O meu pai contava de uma fera assim na Linha Nova, nos anos setenta. Ninguém acreditava. Eu dei um tiro de espingarda nela e a bala voltou.',
       'O rastro vai pelo lado da Prefeitura. Vai com Deus.',
     ]], onTalkEnd: () => { if (G.S.def.steps[G.S.i]?.id === 'romeu') G.next(); } });
-    // rastro: da Kartoffelfest até a Prefeitura, com pegadas enormes, sangue e tábuas quebradas
+    // rastro: da Benno Closs até os fundos da Prefeitura, com pegadas enormes, sangue e tábuas quebradas
     const a = { x: st.x, z: st.z }, b = P.prefeituraBack;
     S.trail = [];
     for (let i = 1; i <= 3; i++) {
@@ -109,13 +110,15 @@ export default {
         G.ambient(null);
         G.combat.clearEnemies(e => e.ambient);
         G.checkpoint(G.player.pos.x, G.player.pos.z, G.player.heading);
-        const f = frame(k.x, k.z, k.rot)(0, 26);
+        // a Fera chega pelo lado do estacionamento da Prefeitura e entra entre os postes
+        // (pelas pontas, os cavaletes e o palco fecham a passagem)
+        const fs = frame(k.x, k.z, k.rot)(-2, -17), f = G.freeSpot(fs[0], fs[1], 0, 6, 30) || fs;
         S.boss = G.spawn('fera', f[0], f[1], { arena: { x: k.x, z: k.z, r: 30 } });
         G.boss(S.boss, 'A FERA');
         SFX.roar(G.audio, 10, 0.9, 2.2);
         G.combat.shake = 0.6;
         // caixa de dinamite que volta
-        const c = frame(k.x, k.z, k.rot)(-12, -8);
+        const c = frame(k.x, k.z, k.rot)(-10.5, -4);
         G.pickup('dynamite', c[0], c[1], { n: 2, respawn: 22 });
         G.pickup('cuca', c[0] + 1, c[1] + 1, { respawn: 50 });
         return true;
