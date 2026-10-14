@@ -105,6 +105,12 @@ export class ThirdPersonCamera {
     this._place(dt);
   }
 
+  // chão para a câmera: o terreno ou a superfície da água (nadando, a câmera não afunda)
+  _floor(x, z) {
+    const g = this.ctx.terrain.heightAt(x, z), w = this.ctx.waterLevel?.(x, z);
+    return w != null && w > g ? w : g;
+  }
+
   _place(dt) {
     // mirando, a câmera desce para o nível do ombro sem mudar o ângulo guardado
     const pitch = this.pitch - AIM_DROP * this.aim - this.kickP, yaw = this.yaw + this.kickY;
@@ -125,13 +131,13 @@ export class ThirdPersonCamera {
     // não entra no chão
     for (let k = 1; k <= 6; k++) {
       const s = (k / 6) * d;
-      const g = this.ctx.terrain.heightAt(t.x + dx * s, t.z + dz * s);
+      const g = this._floor(t.x + dx * s, t.z + dz * s);
       if (t.y + dy * s < g + 0.35) { d = Math.max(0.6, s - 0.3); break; }
     }
     this.curDist += (d - this.curDist) * Math.min(1, dt * (d < this.curDist ? 20 : 4));
     const cd = this.curDist;
     this.cam.position.set(t.x + dx * cd, t.y + dy * cd, t.z + dz * cd);
-    const g = this.ctx.terrain.heightAt(this.cam.position.x, this.cam.position.z);
+    const g = this._floor(this.cam.position.x, this.cam.position.z);
     if (this.cam.position.y < g + 0.35) this.cam.position.y = g + 0.35;
     this.cam.lookAt(t.x, t.y - 0.1, t.z);
     this.camPos.copy(this.cam.position);

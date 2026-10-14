@@ -772,7 +772,7 @@ export class Character {
     const hipsX = lerp(0.2, 1.05, mv) - 0.12 * breath, spineX = lerp(0.04, 0.16, mv) - 0.1 * breath;
     const H = this.hips, S = this.spine;
     H.rotation.set(lerp(H.rotation.x, hipsX, w), lerp(H.rotation.y, 0, w), lerp(H.rotation.z, 0, w));
-    H.position.set(lerp(H.position.x, 0, w), lerp(H.position.y, lerp(0.54 + Math.sin(P * 2) * 0.02, 0.86 + breath * 0.05, mv), w), lerp(H.position.z, -0.12 * mv, w));
+    H.position.set(lerp(H.position.x, 0, w), lerp(H.position.y, lerp(0.5 + Math.sin(P * 2) * 0.02, 0.78 + breath * 0.05, mv), w), lerp(H.position.z, -0.12 * mv, w));
     S.rotation.set(lerp(S.rotation.x, spineX, w), lerp(S.rotation.y, 0, w), lerp(S.rotation.z, 0, w));
     // pescoço e cabeça compensam o tronco: olha para a frente, rente à água
     const T = hipsX + spineX;

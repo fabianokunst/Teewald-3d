@@ -7,6 +7,8 @@ import { SFX } from './sfx.js';
 // com rachaduras em brasa pelo corpo, olhos amarelos e fogo saindo das costas.
 // Vem em matilha: rodeia, um ou dois de cada vez agacham rosnando (o aviso) e dão
 // o bote. Imune a fogo; morre se desfazendo em brasas. Os cães da bruxa.
+// É o fogo que os mantém vivos: seguem o jogador para dentro da água e se apagam
+// num chiado de vapor assim que molham as patas.
 
 const COAL = [0.09, 0.07, 0.07], EMBER = [1.0, 0.42, 0.08], ASH = [0.22, 0.18, 0.16];
 // costas e lados escuros com veios em brasa, barriga cinza
@@ -30,6 +32,33 @@ export class FireDog extends Creature {
     this.state = o.state || 'prowl';
     this.nextSound = 1 + Math.random() * 2;
     this.fireT = 0;
+    this.wades = true;   // não para na beira do rio: entra atrás do jogador
+    this.dry = null;     // último ponto seco (onde larga o que tinha)
+  }
+
+  update(dt, env) {
+    super.update(dt, env);
+    if (this.dead) return;
+    const wl = this.ctx.waterLevel(this.pos.x, this.pos.z);
+    if (wl !== null && wl > this.pos.y + 0.05) this._douse(wl, env);
+    else if (this.dry) { this.dry.x = this.pos.x; this.dry.z = this.pos.z; }
+    else this.dry = { x: this.pos.x, z: this.pos.z };
+  }
+
+  // a água apaga o fogo: vapor, chiado, brasas morrendo e o cão some
+  _douse(wl, env) {
+    const p = this.pos, rnd = a => (Math.random() - 0.5) * a;
+    for (let i = 0; i < 26; i++) {
+      const k = 0.62 + Math.random() * 0.2;
+      this.effects.spawn({ p: new THREE.Vector3(p.x + rnd(0.8), wl + 0.1 + Math.random() * 0.45, p.z + rnd(0.8)), v: new THREE.Vector3(rnd(0.9), 1 + Math.random() * 1.6, rnd(0.9)), life: 1 + Math.random() * 0.9, s0: 0.1, s1: 0.38 + Math.random() * 0.2, color: [k, k, k * 1.03], drag: 1.4 });
+    }
+    for (let i = 0; i < 10; i++) this.effects.spawn({ p: new THREE.Vector3(p.x + rnd(0.6), wl + 0.3 + Math.random() * 0.3, p.z + rnd(0.6)), v: new THREE.Vector3(rnd(2), 1 + Math.random() * 1.5, rnd(2)), life: 0.35 + Math.random() * 0.25, s0: 0.06, s1: 0, color: [1, 0.45, 0.1], grav: 6, drag: 1 });
+    this.effects.splash?.(p.x, wl, p.z, 1.3);
+    this.effects.ripple?.(p.x, wl, p.z, 2.8, 1.7, 0.22);
+    SFX.hiss(this.audio, this.toPlayer(env).d);
+    this.burstColor = [0.75, 0.75, 0.78];   // o resto do corpo vira vapor
+    if (this.dry) this.dropAt = this.dry;
+    this.die({ kind: 'water', dir: new THREE.Vector3(Math.sin(this.heading), 0, Math.cos(this.heading)) });
   }
 
   build() {

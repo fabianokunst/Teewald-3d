@@ -83,7 +83,8 @@ export class Creature {
     if (b) { this.pos.x = clamp(this.pos.x, b.x0, b.x1); this.pos.z = clamp(this.pos.z, b.z0, b.z1); }
     if (!this.flying) {
       const g = this.ground();
-      if (this.ctx.isDeepWater(this.pos.x, this.pos.z, g) || (g > this.pos.y + 0.9 && !this.ghost)) { this.pos.x = ox; this.pos.z = oz; }
+      // rio fundo barra quem não entra na água (wades: o cão de fogo entra, e se apaga)
+      if ((!this.wades && this.ctx.isDeepWater(this.pos.x, this.pos.z, g)) || (g > this.pos.y + 0.9 && !this.ghost)) { this.pos.x = ox; this.pos.z = oz; }
     }
     this.speed = Math.hypot(this.pos.x - ox, this.pos.z - oz) / Math.max(dt, 1e-4);
     // preso: conta para trocar de rumo

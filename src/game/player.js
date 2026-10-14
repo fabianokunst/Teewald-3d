@@ -5,7 +5,7 @@ import { pointInPoly } from '../world/geo.js';
 
 // água: até a cintura anda (mais devagar quanto mais funda); mais funda, nada.
 // Nadando, a raiz (os pés em pé) fica SWIM_Y abaixo da superfície
-const SWIM_IN = 1.05, SWIM_OUT = 0.9, SWIM_Y = 1.0;
+const SWIM_IN = 1.05, SWIM_OUT = 0.9, SWIM_Y = 0.85;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
 // Controle do protagonista: andar/correr relativo à câmera, pulo, gravidade e colisão
@@ -197,7 +197,8 @@ export class Player {
   // braçada: barulho de água e gotas nas mãos
   _stroke(k) {
     this.audio.stroke?.(k);
-    if (this.waterY === null || !this.effects) return;
+    // boiando parado as mãos só abanam por baixo d'água
+    if (this.waterY === null || !this.effects || k < 0.4) return;
     const h = this.heading, fx = Math.sin(h), fz = Math.cos(h);
     for (const s of [-1, 1]) this.effects.splash(this.pos.x + fx * 0.55 + fz * 0.35 * s, this.waterY, this.pos.z + fz * 0.55 - fx * 0.35 * s, 0.12 + 0.25 * k);
   }
@@ -212,7 +213,7 @@ export class Player {
     this.rippleT = this.swimming ? 0.55 - 0.3 * mv : mv > 0.1 ? 0.3 : 0.9;
     if (!this.swimming && mv <= 0.1 && depth < 0.3) return;
     const back = this.swimming ? 0.35 : 0;
-    this.effects.ripple(this.pos.x - Math.sin(this.heading) * back, this.waterY, this.pos.z - Math.cos(this.heading) * back, this.swimming ? 1.3 + 0.6 * mv : 0.9 + 0.5 * mv, 1.2, 0.2 + 0.08 * mv);
+    this.effects.ripple(this.pos.x - Math.sin(this.heading) * back, this.waterY, this.pos.z - Math.cos(this.heading) * back, this.swimming ? 1.3 + 0.6 * mv : 0.9 + 0.5 * mv, 1.2, 0.13 + 0.05 * mv);
   }
 
   sync(ground = this.pos.y) {

@@ -196,7 +196,7 @@ export class Effects {
       const c = cols[i % 2], up = (1.2 + Math.random() * 2.2) * Math.min(1.6, 0.5 + k * 0.6);
       this.spawn({ p: this._v.set(x + rnd(0.18 * k), y + 0.04, z + rnd(0.18 * k)), v: new THREE.Vector3(rnd(0.9 + k * 0.5), up, rnd(0.9 + k * 0.5)), life: 0.35 + Math.random() * 0.35, s0: 0.035 + Math.random() * 0.03 * k, s1: 0.015, color: c, grav: 9.8, drag: 0.6 });
     }
-    this.ripple(x, y, z, 0.7 + k * 0.9, 0.9 + k * 0.4, 0.22 + 0.1 * Math.min(1, k));
+    this.ripple(x, y, z, 0.7 + k * 0.9, 0.9 + k * 0.4, 0.15 + 0.08 * Math.min(1, k));
   }
 
   // garrafa quebrando

@@ -154,6 +154,7 @@ async function boot() {
   atmo.setDrawDistance(settings.drawDistance);
   atmo.setAdvanced(advancedLight(settings));
   atmo.effects = effects;
+  player.effects = effects;
   inventory = new Inventory(16);
   targets = new Targets(scene, ctx, M, { effects, audio, inventory, hud });
   // combate: vida, soco, armas brancas, arremesso, explosões, itens no chão e criaturas

@@ -24,11 +24,15 @@ const lerp = (a, b, t) => a + (b - a) * t;
 const pick = a => a[Math.floor(Math.random() * a.length)];
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 
+// altura em que um morador fica de pé no ponto: chão, calçada, piso ou o degrau
+// mais alto (até 1,45 m acima do terreno) que esteja embaixo dele
+const standY = (ctx, x, z) => ctx.groundAt(x, z, ctx.terrain.heightAt(x, z) + 1);
+
 // ponto livre para um morador (sem obstáculo, prédio ou água num raio r)
 function clearAt(ctx, x, z, r) {
   const T = ctx.terrain;
   if (T.waterAt(x, z) || ctx.zones.insideBuilding(x, z, 0.2)) return false;
-  const y = ctx.groundAt(x, z, T.heightAt(x, z) + 1);
+  const y = standY(ctx, x, z);
   for (const it of ctx.collision.near(x, z, r + 2)) {
     if (it.walk || it.y1 < y + 0.25 || it.y0 > y + 1.8) continue;
     if (it.t === 'circle') { if (Math.hypot(x - it.x, z - it.z) < it.r + r) return false; continue; }
@@ -226,22 +230,22 @@ class NPC {
       this.homePos = [spec.x, spec.z];
       this.home = spec.h;
       this.heading = spec.h;
-      this.pos.set(spec.x, ctx.groundAt(spec.x, spec.z, ctx.terrain.heightAt(spec.x, spec.z) + 1), spec.z);
+      this.pos.set(spec.x, standY(ctx, spec.x, spec.z), spec.z);
     } else if (spec.mode === 'route') {
       this.pts = spec.pts; this.speedBase = spec.speed;
       this.ri = Math.floor(Math.random() * this.pts.length); this.dir = Math.random() < 0.5 ? 1 : -1;
       const p = this.pts[this.ri];
-      this.pos.set(p[0], ctx.groundAt(p[0], p[1], ctx.terrain.heightAt(p[0], p[1]) + 1), p[1]);
+      this.pos.set(p[0], standY(ctx, p[0], p[1]), p[1]);
     } else if (spec.mode === 'wander') {
       this.poly = spec.poly; this.speedBase = spec.speed; this.rest = spec.rest || [1, 4];
       const p = this._randomIn(sys) || sys.S.L.praca.c;
-      this.pos.set(p[0], ctx.groundAt(p[0], p[1], ctx.terrain.heightAt(p[0], p[1]) + 1), p[1]);
+      this.pos.set(p[0], standY(ctx, p[0], p[1]), p[1]);
       this.heading = Math.random() * TAU;
     } else if (spec.mode === 'follow') {
       this.leaderId = spec.leader; this.off = spec.off;
     }
     if (spec.stall) {
-      const st = spec.stall, y = ctx.groundAt(st.x, st.z, ctx.terrain.heightAt(st.x, st.z) + 1);
+      const st = spec.stall, y = standY(ctx, st.x, st.z);
       const m = makeStall(sys.M, st.text, st.closed);
       m.position.set(st.x, y, st.z); m.rotation.y = st.rot;
       sys.scene.add(m);
@@ -433,7 +437,13 @@ class NPC {
       this.stuck = 0;
       if (this.mode === 'route' && !this.returnTo) { this.ri = clamp(this.ri + this.dir, 0, this.pts.length - 1); }
       else if (this.mode === 'wander') this.goal = this._randomIn(sys);
-      else if (this.returnTo && this.fear <= 0) { p.x = this.returnTo[0]; p.z = this.returnTo[1]; this.returnTo = null; }
+      else if (this.returnTo && this.fear <= 0) {
+        // volta direto para o lugar, na altura de lá: vindo pelo lado da escadaria da
+        // igreja ele empaca nos degraus altos e, com a altura do chão de baixo, ficava
+        // enterrado dentro deles
+        p.x = this.returnTo[0]; p.z = this.returnTo[1]; this.returnTo = null;
+        p.y = standY(ctx, p.x, p.z);
+      }
     }
   }
 

@@ -132,8 +132,10 @@ export class Campaign {
     let r = Math.random() * tot;
     for (const [id, n, w] of opts) {
       if ((r -= w) > 0) continue;
-      const y = this.ctx.groundAt(e.pos.x, e.pos.z, e.pos.y + 1) + 0.04;
-      this.combat.addPickup(id, e.pos.x, e.pos.z, { n, y, life: 45 });
+      // cão que morreu na água larga na margem (no fundo do rio ninguém veria)
+      const at = e.dropAt || e.pos;
+      const y = this.ctx.groundAt(at.x, at.z, e.pos.y + 1) + 0.04;
+      this.combat.addPickup(id, at.x, at.z, { n, y, life: 45 });
       break;
     }
   }
@@ -260,7 +262,7 @@ export class Campaign {
     const sv = this.save, P = this.player, C = this.combat;
     if (C.dead) return false;
     // posição segura: a atual se não houver perigo; senão, o último ponto de retorno
-    const safe = !C.inFight && P.grounded && !(C.boss && !C.boss.dead);
+    const safe = !C.inFight && P.grounded && !P.swimming && !(C.boss && !C.boss.dead);
     const here = { x: +P.pos.x.toFixed(2), z: +P.pos.z.toFixed(2), h: +P.heading.toFixed(3) };
     sv.inv = this.inventory.serialize();
     sv.melee = C.melee ? { ...C.melee } : null;
@@ -416,8 +418,9 @@ export class Campaign {
       if (x < b.x0 + 2 || x > b.x1 - 2 || z < b.z0 + 2 || z > b.z1 - 2) continue;
       if (!ctx.indoor) {
         if (ctx.zones.insideBuilding(x, z, 1)) continue;
+        // nem na água rasa (um cão de fogo nasceria já apagando)
         const g = ctx.groundAt(x, z, 1000);
-        if (ctx.isDeepWater(x, z, g)) continue;
+        if (ctx.waterDepth(x, z, g) > 0.02) continue;
         if (o.notForest && ctx.zones.isForest(x, z)) continue;
       }
       let ok = true;

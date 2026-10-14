@@ -167,10 +167,12 @@ export function buildRoads(B, ctx) {
         if (bridges.some(b => Math.hypot(b.x - x, b.z - z) < 6)) continue;
         // o vão cobre a margem escavada inteira (o terreno embaixo da rua desce até o
         // rio ao longo de rv.bank); mais curta, a rua ficava no ar depois da cabeceira.
-        // Cruzando o rio na diagonal, o caminho sobre a margem é mais comprido
-        const kx = rv.pts[k + 1][0] - rv.pts[k][0], kz = rv.pts[k + 1][1] - rv.pts[k][1];
-        const sin = Math.abs(tan[i][0] * kz - tan[i][1] * kx) / (Math.hypot(kx, kz) || 1);
-        const len = (rv.width + rv.bank * 2 + 1) / Math.max(sin, 0.6);
+        // Cruzando o rio na diagonal, a borda da rua (e da calçada) que fica do lado
+        // agudo só sai da margem bem depois do eixo
+        const kx = rv.pts[k + 1][0] - rv.pts[k][0], kz = rv.pts[k + 1][1] - rv.pts[k][1], kl = Math.hypot(kx, kz) || 1;
+        const sin = Math.max(Math.abs(tan[i][0] * kz - tan[i][1] * kx) / kl, 0.5), cos = Math.sqrt(1 - sin * sin);
+        const W = r.hw + (r.sidewalk ? 2 : 0);
+        const len = 2 * ((rv.width / 2 + rv.bank + 0.5 + W * cos) / sin);
         bridges.push({ x, z, tan: tan[i], road: r, river: rv, len, seg: i, t: hit[0] });
       }
     }

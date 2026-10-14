@@ -199,15 +199,17 @@ export function defineLandmarks(ctx) {
     L.kartoffel = { x, z, rot: fr.rot, y };
   }
 
-  // ---------------- Posto Calçadão (pátio de concreto plano) ----------------
+  // ---------------- Posto Calçadão (pátio de concreto) ----------------
+  // O pátio acompanha a altura das ruas (caimento suave, como num posto de verdade).
+  // Plano na altura da rua mais alta, ele virava um palanque de até 1,4 m sobre o
+  // terreno, com uma vala de grama entre ele e a avenida
   {
     const a = md.areas.find(x => x.n === 'Posto Calçadão');
     if (a) {
       const o = orientToRoad(ctx, polyToOBB(a.p));
       const slab = rectPoly(o.x, o.z, o.rot, -o.hx - 3, o.hx + 3, -o.hz - 2, o.hz + 2);
-      const y = Math.max(terrain.roadHeight(o.x, o.z), ...slab.map(([x, z]) => terrain.roadHeight(x, z)));
-      terrain.addPad(slab, y, 5, y + 0.05);
-      L.posto = { o, y };
+      terrain.addPad(slab, (x, z) => terrain.roadHeight(x, z), 5);
+      L.posto = { o, slab, y: terrain.roadHeight(o.x, o.z) };
     }
   }
 }
@@ -786,7 +788,18 @@ function buildKartoffel(B, ctx, k) {
   // chão de concreto
   B.quad('concrete', P(-hw - 1, y + 0.05, hd + 1), P(hw + 1, y + 0.05, hd + 1), P(hw + 1, y + 0.05, -hd - 1), P(-hw - 1, y + 0.05, -hd - 1),
     [[0, 0], [10, 0], [10, 6], [0, 6]], null, 6);
-  ctx.floors.push({ poly: [[-hw - 1, hd + 1], [hw + 1, hd + 1], [hw + 1, -hd - 1], [-hw - 1, -hd - 1]].map(([a, b]) => { const p = P(a, 0, b); return [p[0], p[2]]; }), y: y + 0.05 });
+  const floor = [[-hw - 1, hd + 1], [hw + 1, hd + 1], [hw + 1, -hd - 1], [-hw - 1, -hd - 1]].map(([a, b]) => { const p = P(a, 0, b); return [p[0], p[2]]; });
+  ctx.floors.push({ poly: floor, y: y + 0.05 });
+  // saia de concreto onde o terreno fica abaixo do piso (perto da rua ele não pode
+  // ser erguido até o pavilhão, e a borda do piso ficava no ar)
+  for (const [a, b] of outwardEdges(floor)) {
+    const len = Math.hypot(b[0] - a[0], b[1] - a[1]), n = Math.ceil(len / 3);
+    for (let i = 0; i < n; i++) {
+      const p = [a[0] + (b[0] - a[0]) * i / n, a[1] + (b[1] - a[1]) * i / n], q = [a[0] + (b[0] - a[0]) * (i + 1) / n, a[1] + (b[1] - a[1]) * (i + 1) / n];
+      const lo = Math.min(ctx.terrain.heightAt(p[0], p[1]), ctx.terrain.heightAt(q[0], q[1])) - 0.1;
+      if (lo < y - 0.02) B.wall('concrete', p[0], p[1], q[0], q[1], lo, y + 0.05, { uvScale: 2, ao: 0.9 });
+    }
+  }
   // pilares
   for (let i = 0; i <= 5; i++) for (const s of [1, -1]) {
     const p = P(-hw + i * (hw * 2 / 5), 0, s * hd);
@@ -961,21 +974,20 @@ function buildSpecials(B, ctx) {
 
   // Posto Calçadão: cobertura, bombas e loja
   {
-    const { o, y } = ctx.landmarks.posto;
+    const { o, slab } = ctx.landmarks.posto;
     const { P } = frame(o);
-    B.quad('concrete', P(-o.hx - 3, y + 0.05, o.hz + 2), P(o.hx + 3, y + 0.05, o.hz + 2), P(o.hx + 3, y + 0.05, -o.hz - 2), P(-o.hx - 3, y + 0.05, -o.hz - 2), [[0, 0], [8, 0], [8, 8], [0, 8]], null, 5);
-    const slab = [[-o.hx - 3, o.hz + 2], [o.hx + 3, o.hz + 2], [o.hx + 3, -o.hz - 2], [-o.hx - 3, -o.hz - 2]].map(([a, b]) => { const p = P(a, 0, b); return [p[0], p[2]]; });
-    ctx.floors.push({ poly: slab, y: y + 0.05 });
-    // saia de concreto onde o terreno fica abaixo da laje
-    for (const [a, b] of outwardEdges(slab)) {
-      const lo = Math.min(ctx.terrain.heightAt(a[0], a[1]), ctx.terrain.heightAt(b[0], b[1])) - 0.1;
-      if (lo < y - 0.05) B.wall('concrete', a[0], a[1], b[0], b[1], lo, y + 0.05, { uvScale: 2, ao: 0.9 });
-    }
+    // pátio colado no chão, 9 cm acima dele: cobre o acesso de concreto que entra
+    // no posto e fica abaixo do asfalto da avenida
+    const DY = 0.09, fy = (x, z) => ctx.terrain.heightAt(x, z) + DY;
+    drapeFloor(B, ctx, 'concrete', slab, DY, (x, z) => [x / 4.8, z / 4.8]);
     const cw = Math.min(o.hx * 2, 18), cd = 9;
-    for (const [lx, lz] of [[-cw / 2 + 1, 2], [cw / 2 - 1, 2], [-cw / 2 + 1, 2 + cd - 2], [cw / 2 - 1, 2 + cd - 2]]) {
-      const p = P(lx, 0, o.hz - lz);
-      B.box('concreteW', p[0], y, p[2], 0.45, 5, 0.45, o.rot);
-      ctx.collision.addBox(p[0], p[2], 0.25, 0.25, o.rot, y, y + 5);
+    const legs = [[-cw / 2 + 1, 2], [cw / 2 - 1, 2], [-cw / 2 + 1, 2 + cd - 2], [cw / 2 - 1, 2 + cd - 2]].map(([lx, lz]) => P(lx, 0, o.hz - lz));
+    // a cobertura é plana: 5 m acima do pé mais alto
+    const y = Math.max(...legs.map(p => fy(p[0], p[2])));
+    for (const p of legs) {
+      const b = fy(p[0], p[2]);
+      B.box('concreteW', p[0], b - 0.05, p[2], 0.45, y + 5.05 - b, 0.45, o.rot);
+      ctx.collision.addBox(p[0], p[2], 0.25, 0.25, o.rot, b, y + 5);
     }
     // cobertura: frente em z local = o.hz
     const cc = P(0, 0, o.hz - cd / 2);
@@ -992,15 +1004,19 @@ function buildSpecials(B, ctx) {
     // ilhas com bombas de combustível (visor dos dois lados)
     for (const lx of [-3, 3]) {
       const p = P(lx, 0, o.hz - cd / 2);
+      // a ilha tem o topo plano: do ponto mais baixo do pátio embaixo dela até 18 cm
+      // acima do mais alto
+      const hs = [[-0.65, -1.7], [0.65, -1.7], [0.65, 1.7], [-0.65, 1.7]].map(([a, b]) => { const q = P(lx + a, 0, o.hz - cd / 2 + b); return fy(q[0], q[2]); });
+      const lo = Math.min(...hs) - 0.05, iy = Math.max(...hs) + 0.18;
       B.col = [0.95, 0.95, 0.95];
-      B.box('concreteW', p[0], y + 0.05, p[2], 1.3, 0.18, 3.4, o.rot, { uvScale: 1 });
+      B.box('concreteW', p[0], lo, p[2], 1.3, iy - lo, 3.4, o.rot, { uvScale: 1 });
       B.col = [1, 1, 1];
-      B.box('metalWhite', p[0], y + 0.23, p[2], 0.5, 1.75, 0.8, o.rot, { uvScale: 2 });
+      B.box('metalWhite', p[0], iy, p[2], 0.5, 1.75, 0.8, o.rot, { uvScale: 2 });
       for (const s of [1, -1]) {
         const q = (dz, yy) => P(lx + s * 0.252, yy, o.hz - cd / 2 + dz * s);
-        B.quad('pump', q(0.4, y + 0.23), q(-0.4, y + 0.23), q(-0.4, y + 1.98), q(0.4, y + 1.98));
+        B.quad('pump', q(0.4, iy), q(-0.4, iy), q(-0.4, iy + 1.75), q(0.4, iy + 1.75));
       }
-      ctx.collision.addBox(p[0], p[2], 0.65, 1.7, o.rot, y, y + 2.0);
+      ctx.collision.addBox(p[0], p[2], 0.65, 1.7, o.rot, lo, iy + 1.77);
     }
     // loja de conveniência nos fundos
     const st = { x: P(0, 0, -o.hz + 4)[0], z: P(0, 0, -o.hz + 4)[2], rot: o.rot, w: Math.min(o.hx * 2, 14), d: 7, style: 'commercial', floors: 1, wall: 'plWhite', roofType: 'flat', roof: 'concrete', win: 'window2', sign: sign('CONVENIÊNCIA', { bg: '#a01818', fg: '#f6eed8' }), signH: 1.0, found: 'concrete', plinth: 0.1 };
