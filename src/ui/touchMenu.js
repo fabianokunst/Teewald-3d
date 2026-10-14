@@ -251,7 +251,9 @@ export class TouchMenu {
       // texto em cima, botão do site do autor embaixo
       const lines = CREDITS;
       const step = Math.min((availH - bh - gap) / lines.length, Math.max(18, 6 * u));
-      const size = step * 0.72;
+      // a linha mais comprida tem que caber na largura (retrato); VT323 ≈ 0,4 em por letra
+      const longest = Math.max(...lines.filter(([, st]) => st !== 'title').map(([l]) => l.length));
+      const size = Math.min(step * 0.72, (vw - 2 * m) / (longest * 0.44));
       lines.forEach(([line, style], i) => {
         if (!line) return;
         const y = y0 + i * step;

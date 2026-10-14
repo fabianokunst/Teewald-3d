@@ -35,14 +35,17 @@ export const CREDITS = [
   ['Teewald', 'title'],
   ['', ''],
   ['protótipo 0.1', 'dim'],
-  ['Cidade inspirada em', 'dim'],
-  ['Santa Maria do Herval - RS', ''],
+  ['Cidade inspirada em Santa Maria do Herval - RS', ''],
   ['', ''],
-  ['Ruas, rio e lugares: © OpenStreetMap (ODbL)', ''],
-  ['Prédios: Microsoft Building Footprints (ODbL)', ''],
-  ['Relevo: SRTM 30m (NASA) via OpenTopoData', ''],
+  ['Ruas, rio e lugares: © OpenStreetMap (ODbL)', 'dim'],
+  ['Prédios: Microsoft Building Footprints (ODbL)', 'dim'],
+  ['Relevo: SRTM 30m (NASA) via OpenTopoData', 'dim'],
   ['', ''],
-  ['Criado por Fabiano Kunst', 'name'],
+  // aviso de ficção
+  ['Obra de ficção: todos os nomes, personagens e histórias', 'note'],
+  ['são inventados e não têm nenhuma relação real com a cidade.', 'note'],
+  ['', ''],
+  ['Um trabalho independente de Fabiano Kunst', 'name'],
 ];
 
 // site do autor: abre numa aba nova a partir dos créditos
@@ -225,11 +228,14 @@ export class Menu {
         this._options(g, W, H, k, touch);
         help('↑↓ escolher   ◀▶ mudar   B voltar', '↑↓ escolher   ←→ mudar   ESC voltar', 'toque à esquerda do valor diminui, à direita aumenta');
       } else {
-        CREDITS.forEach(([line, style], i) => {
-          if (!line) return;
-          if (style === 'title') drawText(g, line, W / 2, 44 * k, 26 * k, { align: 'center', font: FONT_TITLE, color: '#e9dcc0', shadow: '#4a0d08' });
-          else if (style === 'name') drawText(g, line, W / 2, 52 * k + i * 11.5 * k, 14 * k, { align: 'center', color: '#efe2c4' });
-          else drawText(g, line, W / 2, 52 * k + i * 11.5 * k, 12 * k, { align: 'center', color: style === 'dim' ? '#a89878' : '#e8dcc0' });
+        // cada estilo tem seu tamanho; linha vazia só afasta um pouco os blocos
+        let y = 70 * k;
+        CREDITS.forEach(([line, style]) => {
+          if (style === 'title') { drawText(g, line, W / 2, 44 * k, 26 * k, { align: 'center', font: FONT_TITLE, color: '#e9dcc0', shadow: '#4a0d08' }); return; }
+          if (!line) { y += 5 * k; return; }
+          const size = style === 'name' ? 13 : style === 'dim' || style === 'note' ? 11 : 12;
+          drawText(g, line, W / 2, y, size * k, { align: 'center', color: style === 'name' ? '#efe2c4' : style === 'dim' ? '#a89878' : style === 'note' ? '#d8c8a8' : '#e8dcc0' });
+          y += (size - 0.5) * k;
         });
         // site do autor (clicável) e VOLTAR
         this._list(g, W, H, k, 183 * k);

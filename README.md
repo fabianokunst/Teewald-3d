@@ -326,3 +326,7 @@ do cache em `tools/cache`. Com `-- --refresh`, baixa tudo de novo da internet.
 
 Dados de mapa © colaboradores do OpenStreetMap (ODbL). Contornos de prédios:
 Microsoft Global ML Building Footprints (ODbL).
+
+**Obra de ficção.** Todos os nomes, personagens e histórias do jogo são
+inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval
+ou com seus moradores. Teewald é um trabalho independente de Fabiano Kunst.

@@ -472,9 +472,11 @@ const ENDING = [
   ['A cruz de ferro voltou para cima de uma pedra no mato, presa com cimento.', 'dim'],
   ['E a Marlene publicou a reportagem. Ninguém acreditou.', 'dim'], ['', ''],
   ['FIM', 'title2'], ['', ''],
-  ['Uma história de Santa Maria do Herval - RS', ''], ['', ''],
+  ['Uma obra de ficção ambientada em Santa Maria do Herval - RS', ''],
+  ['Todos os nomes, personagens e histórias são inventados', 'dim'],
+  ['e não têm nenhuma relação real com a cidade ou seus moradores.', 'dim'], ['', ''],
   ['Ruas, rio e lugares: © OpenStreetMap (ODbL)', 'dim'], ['Prédios: Microsoft Building Footprints (ODbL)', 'dim'], ['Relevo: SRTM 30m (NASA)', 'dim'], ['', ''],
-  ['Criado por Fabiano Kunst', 'name'],
+  ['Um trabalho independente de Fabiano Kunst', 'name'],
 ];
 function drawEnding(g, W, H) {
   const k = H / 240, t = endingT;
