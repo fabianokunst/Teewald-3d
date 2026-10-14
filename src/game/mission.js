@@ -274,7 +274,7 @@ export class Mission {
     this.prevPos = { x: P.pos.x, z: P.pos.z };
 
     C.update(dt, {
-      player: P, playerVel: this.pvel, arena: S.clearing, playerAlive: this.hp > 0,
+      player: P, playerVel: this.pvel, arena: S.clearing, playerAlive: this.hp > 0 && !this.combat.calm,
       onHitPlayer: (d, x, z) => this._hitPlayer(d, x, z),
     });
 

@@ -156,6 +156,10 @@ uniform sampler2DShadow uShadowMap;
 uniform float uShadowOn;
 uniform float uShadowTexel;
 uniform vec4 uShadowFade;
+#ifdef USE_GLOW
+uniform sampler2D glowMap;
+uniform float uGlow;
+#endif
 
 varying vec3 vUvAff;
 varying vec2 vUv;
@@ -211,6 +215,10 @@ void main() {
   if (uShadowOn > 0.0 && vSun.r + vSun.g + vSun.b > 0.002) sh = mix(1.0, sunShadow(), uShadowOn * (1.0 - 0.45 * uFoliage));
   vec3 c = min(t.rgb * (vLight + vSun * sh + dyn * vBase), vec3(1.0));
   c = mix(c, mix(uFogColor, uSunFog, vSunFog), vFog);
+  #ifdef USE_GLOW
+  // luz própria (janela acesa): somada depois da neblina, que a apaga mais devagar
+  if (uGlow > 0.0) c = min(c + texture2D(glowMap, uv).rgb * uGlow * (1.0 - vFog * vFog), vec3(1.0));
+  #endif
   gl_FragColor = vec4(c, t.a * uOpacity);
 }
 `;
@@ -266,7 +274,9 @@ export function ps1Material(o = {}) {
       uAlphaTest: { value: o.alphaTest ?? (o.cutout ? cutoutTest() : 0) },
       uAffineMat: { value: o.affine === false ? 0 : 1 },
       uOpacity: { value: o.opacity ?? 1 },
+      ...(o.glowMap ? { glowMap: { value: o.glowMap }, uGlow: { value: 0 } } : {}),
     },
+    defines: o.glowMap ? { USE_GLOW: '' } : {},
     vertexShader: VERT,
     fragmentShader: FRAG,
     vertexColors: true,

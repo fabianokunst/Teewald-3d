@@ -86,6 +86,7 @@ export class Combat {
   reset() {
     this.hp = MAX_HP; this.maxHp = MAX_HP;
     this.hurtT = 99; this.flash = 0; this.shake = 0; this.knock = null; this.hpShow = 0; this.invuln = 0;
+    this.calm = false;
     this.dead = false; this.hitStop = 0; this.t = 0;
     this.melee = null;           // { id, dur, n }
     this.atk = null; this.combo = 0; this.comboT = 0; this.queued = false;
@@ -135,7 +136,7 @@ export class Combat {
   // ---------- vida do jogador ----------
   // dmg em pontos (vida máxima 100); dx/dz = direção do empurrão
   hurt(dmg, dx = 0, dz = 0, o = {}) {
-    if (this.dead || this.invuln > 0 || this.dodge?.iframes > 0) return false;
+    if (this.dead || this.calm || this.invuln > 0 || this.dodge?.iframes > 0) return false;
     this.hp = Math.max(0, this.hp - dmg);
     this.hurtT = 0; this.flash = Math.min(1, 0.5 + dmg / 30); this.shake = Math.max(this.shake, 0.25 + dmg / 60); this.hpShow = 4;
     this.invuln = o.invuln ?? 0.55;
@@ -733,7 +734,8 @@ export class Combat {
 
   // ---------- quadro a quadro ----------
   // tudo que roda fora das telas de pausa: criaturas, projéteis, itens
-  update(dt, state) {
+  // calm: conversa ou narração em curso (ninguém ataca, para não atrapalhar a leitura)
+  update(dt, state, calm = false) {
     this.t += dt;
     this.hitStop = Math.max(0, this.hitStop - dt);
     const sdt = this.hitStop > 0 ? dt * 0.12 : dt;
@@ -741,6 +743,9 @@ export class Combat {
     this.shake = Math.max(0, this.shake - dt);
     this.hpShow = Math.max(0, this.hpShow - dt);
     this.invuln = Math.max(0, this.invuln - dt);
+    // fim da conversa: um instante de folga antes das criaturas voltarem ao ataque
+    if (this.calm && !calm) this.invuln = Math.max(this.invuln, 1.2);
+    this.calm = calm;
     this.lastFight += dt;
     this.hurtT += dt;
     // vida volta devagar longe do perigo, só até 40
@@ -752,7 +757,7 @@ export class Combat {
       this.pvel.z = lerp(this.pvel.z, (P.pos.z - this.prevPos.z) / dt, 0.3);
     }
     this.prevPos = { x: P.pos.x, z: P.pos.z };
-    const env = { player: P, combat: this, playerVel: this.pvel || { x: 0, z: 0 }, playerAlive: !this.dead && state !== 'dying', state };
+    const env = { player: P, combat: this, playerVel: this.pvel || { x: 0, z: 0 }, playerAlive: !this.dead && state !== 'dying' && !calm, state };
     for (const e of [...this.enemies]) {
       if (e.removed) { this.remove(e); continue; }
       if (!e.external) e.update(sdt, env);

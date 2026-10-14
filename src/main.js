@@ -352,7 +352,8 @@ function frame(now) {
   interiors.update(dt);
   if (state !== 'inventory' && state !== 'pause') {
     targets.update(dt, player, state === 'play');
-    combat.update(dt, state);
+    // conversa com morador, falas da história ou narração: as criaturas não atacam
+    combat.update(dt, state, state === 'talk' || state === 'read' || (state === 'cutscene' && campaign.narrating));
     pistol.lights(dt);
     npcs.update(dt, state);
     const ev = state === 'ending' ? null : campaign.update(dt, state);

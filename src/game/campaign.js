@@ -362,6 +362,7 @@ export class Campaign {
     this.pendingRead = true;
   }
   say(name, lines, voice, then) { this.talk([[name, lines, voice]], then); }
+  get narrating() { return !!this.S?.narr; }
 
   // tela preta com texto (entre capítulos, cartas, diários)
   narrate(lines, then = null, o = {}) {
