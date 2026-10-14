@@ -17,6 +17,7 @@ export class InventoryScreen {
     this.R = R; this.input = input; this.audio = audio; this.inv = inventory; this.pistol = pistol; this.combat = combat;
     this.sel = 0; this.menu = null; this.menuSel = 0; this.examine = false;
     this.t = 0; this.rot = { x: 0.25, y: 0 }; this.rects = [];
+    this.hpShown = 0; this.gain = null;
     this.scene = new THREE.Scene();
     this.cam = new THREE.PerspectiveCamera(30, 1.2, 0.02, 20);
     // câmera do lado do sol, para o item aparecer iluminado
@@ -71,6 +72,7 @@ export class InventoryScreen {
     const first = this.inv.slots.findIndex(s => s);
     this.sel = first < 0 ? 0 : first;
     this.menu = null; this.examine = false; this.t = 0;
+    this.hpShown = this.combat ? this.combat.hp : 0; this.gain = null;
     this.audio.menuOk();
   }
 
@@ -105,7 +107,8 @@ export class InventoryScreen {
     else if (act === 'unequip') p.equip(false);
     else if (act.startsWith('load:')) { if (!p.reloadGun(act.slice(5))) this.audio.menuBack(); }
     else if (act === 'use' && s && this.combat) {
-      this.inv.take(s.id, 1); this.combat.heal(ITEMS[s.id].heal);
+      this.inv.take(s.id, 1);
+      this.gain = { n: Math.round(this.combat.heal(ITEMS[s.id].heal)), t: 0 };
       this.audio.tone(523, 0.2, 'triangle', 0.06); setTimeout(() => this.audio.tone(784, 0.3, 'triangle', 0.05), 120);
     }
     else if (act === 'examine') { this.examine = true; this.rot = { x: 0.25, y: 0 }; this.audio.menuOk(); }
@@ -116,6 +119,9 @@ export class InventoryScreen {
   update(dt, mouse) {
     const I = this.input;
     this.t += dt;
+    // a barra de vida sobe aos poucos depois de usar um item de cura
+    if (this.combat) this.hpShown += (this.combat.hp - this.hpShown) * Math.min(1, dt * 3);
+    if (this.gain && (this.gain.t += dt) > 1.6) this.gain = null;
     if (this.examine) {
       if (I.left()) this.rot.y -= 0.35;
       if (I.right()) this.rot.y += 0.35;
@@ -168,6 +174,35 @@ export class InventoryScreen {
     return null;
   }
 
+  // barra de vida: o item de cura selecionado mostra quanto vai recuperar,
+  // e ao usar a barra sobe com um +N
+  _drawHp(g, x, y, w, k, s) {
+    const C = this.combat;
+    if (!C) return;
+    const R = Math.round, max = C.maxHp, hp = C.hp, f = Math.max(0, Math.min(1, this.hpShown / max));
+    const bx = R(x), by = R(y + 11 * k), bw = R(w), bh = Math.max(3, R(4 * k));
+    drawText(g, 'VIDA', x, y, 9 * k, { color: '#a89878' });
+    drawText(g, `${R(this.hpShown)}/${max}`, x + w, y, 9 * k, { align: 'right', color: hp < max * 0.3 ? '#ff7060' : '#e8d8b8' });
+    g.fillStyle = '#140c08'; g.fillRect(bx - 1, by - 1, bw + 2, bh + 2);
+    g.fillStyle = '#2a2018'; g.fillRect(bx, by, bw, bh);
+    const def = s && ITEMS[s.id];
+    if (def?.kind === 'heal' && !this.gain) {
+      if (hp < max) {
+        // prévia de quanto o item recupera
+        const to = Math.min(max, hp + def.heal);
+        g.globalAlpha = 0.45 + Math.sin(this.t * 5) * 0.2; g.fillStyle = '#b8e890';
+        g.fillRect(bx + R(bw * f), by, R(bw * to / max) - R(bw * f), bh); g.globalAlpha = 1;
+        drawText(g, `+${R(to - hp)}`, x + w / 2, y, 9 * k, { align: 'center', color: '#b8e890' });
+      } else drawText(g, 'CHEIA', x + w / 2, y, 9 * k, { align: 'center', color: '#a89878' });
+    }
+    g.fillStyle = f > 0.6 ? '#6aa84a' : f > 0.3 ? '#d8b040' : (Math.floor(this.t * 4) % 2 ? '#c83020' : '#f05030');
+    g.fillRect(bx, by, R(bw * f), bh);
+    if (this.gain) {
+      const t = this.gain.t, a = t < 1 ? 1 : Math.max(0, 1 - (t - 1) / 0.6);
+      drawText(g, `+${this.gain.n}`, x + w / 2, y - Math.min(t, 1) * 3 * k, 10 * k, { align: 'center', color: '#9fe08a', alpha: a });
+    }
+  }
+
   draw(g, W, H) {
     const k = H / 240, R = Math.round;
     this.rects = [];
@@ -197,6 +232,7 @@ export class InventoryScreen {
     g.clearRect(R(box[0]), R(box[1]), R(box[2]), R(box[3]));
     drawText(g, this.examine ? 'EXAMINAR' : 'INVENTÁRIO', px + 10 * k, py + 6 * k, 16 * k, { color: '#f2c879' });
     // fechar (útil no toque)
+    let closeX;
     if (device === 'touch') {
       // no toque, um botão de verdade para fechar
       const bw = 28 * k, bh = 20 * k, bx = R(px + pw - bw - 5 * k), by = R(py + 4 * k);
@@ -204,10 +240,14 @@ export class InventoryScreen {
       g.strokeStyle = '#d8c8a0'; g.strokeRect(bx + 0.5, by + 0.5, R(bw) - 1, R(bh) - 1);
       drawText(g, '✕', bx + bw / 2, by + 3 * k, 14 * k, { align: 'center', color: '#efe2c4' });
       this.rects.push({ kind: 'close', x: bx - 6 * k, y: py - 4 * k, w: bw + 12 * k, h: bh + 12 * k });
+      closeX = bx;
     } else {
       const cs = drawText(g, '✕', px + pw - 8 * k, py + 5 * k, 14 * k, { align: 'right', color: '#c8b898' });
       this.rects.push({ kind: 'close', x: px + pw - 8 * k - cs.w - 4 * k, y: py, w: cs.w + 12 * k, h: 22 * k });
+      closeX = px + pw - 8 * k - cs.w;
     }
+    // vida no cabeçalho, alinhada com a grade
+    this._drawHp(g, px + 176 * k, py + 4 * k, closeX - 8 * k - (px + 176 * k), k, s);
 
     // texto do item
     const ty = this.examine ? py + 160 * k : py + 132 * k;
@@ -215,7 +255,8 @@ export class InventoryScreen {
       drawText(g, def.name, px + 10 * k, ty, 14 * k, { color: '#f2e6c8' });
       def.desc.forEach((l, i) => drawText(g, l, px + 10 * k, ty + (16 + i * 11) * k, 11 * k, { color: '#c8b898' }));
       const g2 = GUNS[s.id], hand = this.inv.equipped === s.id ? '  ·  NA MÃO' : '';
-      const info = !g2 ? `QUANTIDADE ${s.n}`
+      const info = def.kind === 'heal' ? `QUANTIDADE ${s.n}  ·  CURA +${def.heal}`
+        : !g2 ? `QUANTIDADE ${s.n}`
         : g2.beam ? `QUEROSENE ${Math.round(s.data?.fuel ?? 100)}%` + hand
           : g2.energy ? `CARGA ${Math.round(100 * (s.data?.mag ?? g2.mag) / g2.mag)}%` + hand
             : g2.throw ? `QUANTIDADE ${s.n}` + hand

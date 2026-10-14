@@ -364,10 +364,10 @@ export const NPC_DEFS = [
     id: 'ivo', name: 'SEU IVO', voice: 112, bulk: 1.14, stare: true,
     look: { seed: 116, top: 'shirt', pattern: 'plaid', accent: [180, 176, 166], beard: 'mustache', colors: { jacket: [112, 38, 34], pants: [80, 62, 42], hair: HAIR.red, skin: SKIN.rosy, iris: EYES.blue, boot: [62, 44, 30] } },
     hat: ['chapeu', [48, 46, 40]], item: 'caneca', pose: 'hold',
-    // na entrada do pavilhão, de olho na rua
+    // na entrada do pavilhão, no começo da rua, de olho na rodovia
     spawn: S => {
-      const k = S.L.kartoffel, at = S.frame(k.x, k.z, k.rot), [x, z] = S.free(...at(k.hl - 1.2, -2.8));
-      return { mode: 'stand', x, z, h: k.rot + Math.PI / 2 };
+      const k = S.L.kartoffel, at = S.frame(k.x, k.z, k.rot), [x, z] = S.free(...at(-k.hl + 1.6, -2.8));
+      return { mode: 'stand', x, z, h: k.rot - Math.PI / 2 };
     },
     hi: 'Boa tarde.',
     barks: ['Esse ano não tem festa.', 'Montaram tudo pra nada...', 'Carro não passa. Só a pé.'],
@@ -386,7 +386,7 @@ export const NPC_DEFS = [
     hair: 'coque', skirt: { color: [100, 40, 40], long: true, apron: [200, 196, 188] }, item: 'cesta',
     // atrás do balcão da Kartoffelhaus, do lado da panela
     spawn: S => {
-      const k = S.L.kartoffel, at = S.frame(k.x, k.z, k.rot), [x, z] = S.free(...at(10, 4.2));
+      const k = S.L.kartoffel, at = S.frame(k.x, k.z, k.rot), [x, z] = S.free(...at(k.hl - 13, 4.2));
       return { mode: 'stand', x, z, h: k.rot + Math.PI };
     },
     hi: 'Oi, querido.',

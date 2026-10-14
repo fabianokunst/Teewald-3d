@@ -176,34 +176,45 @@ export function defineLandmarks(ctx) {
 
   // ---------------- Kartoffelfest (pavilhão de lona na Rua Benno Closs) ----------------
   // Para a festa, o pavilhão é montado em cima da rua da Prefeitura (Rua Beno Closs, 88),
-  // que fica fechada para carros: só se entra a pé. Vai no trecho reto mais perto da
-  // Prefeitura, na saída do estacionamento (conferido na imagem de satélite). A rua
-  // continua sendo o chão: nada de piso nem de aterro. x local ao longo da rua
+  // que fica fechada para carros: só se entra a pé. Começa logo no começo da rua, no
+  // cruzamento com a VRS-873 (pórtico e cavaletes fora da calçada da rodovia), e vai
+  // pelo trecho reto até a saída do estacionamento da Prefeitura, onde fica o palco
+  // (conferido na imagem de satélite). A rua continua sendo o chão: nada de piso nem
+  // de aterro. x local ao longo da rua, do começo (-hl) para a Prefeitura (+hl)
   {
-    const hl = 18, hw = 5.3;   // meio comprimento e meia largura (linha dos postes, na calçada)
-    const road = roads.list.find(r => r.name === 'Rua Benno Closs');
-    const th = poiK(md, 'townhall')[0];
-    const P = road.pts, K = Math.round(hl / 2.5);
-    let best = null;
-    for (let i = K; i < P.length - K; i++) {
-      const a = P[i - K], b = P[i + K], l = Math.hypot(b[0] - a[0], b[1] - a[1]);
-      const ux = (b[0] - a[0]) / l, uz = (b[1] - a[1]) / l, c = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-      // reto: o eixo da rua não se afasta mais de 30 cm da cumeeira
-      let dev = 0;
-      for (let j = i - K; j <= i + K; j++) dev = Math.max(dev, Math.abs((P[j][1] - c[1]) * ux - (P[j][0] - c[0]) * uz));
-      const d = Math.hypot(c[0] - th.x, c[1] - th.z);
-      if (dev < 0.3 && (!best || d < best.d)) best = { i, c, ux, uz, d };
-    }
-    const { i, c: [x, z], ux, uz } = best;
+    const hw = 5.3;   // meia largura (linha dos postes, na calçada)
+    const road = roads.list.find(r => r.name === 'Rua Benno Closs'), P = road.pts;
+    // corda reta a partir do começo: o eixo da rua não se afasta mais de 40 cm dela
+    const i0 = Math.min(3, P.length - 2);
+    const dev = (a, b) => {
+      const A = P[a], B = P[b], l = Math.hypot(B[0] - A[0], B[1] - A[1]), ux = (B[0] - A[0]) / l, uz = (B[1] - A[1]) / l;
+      let m = 0;
+      for (let j = a; j <= b; j++) m = Math.max(m, Math.abs((P[j][1] - A[1]) * ux - (P[j][0] - A[0]) * uz));
+      return m;
+    };
+    let iE = i0 + 1;
+    while (iE + 1 < P.length && dev(i0, iE + 1) < 0.4) iE++;
+    const E = P[iE], l0 = Math.hypot(E[0] - P[i0][0], E[1] - P[i0][1]);
+    const ux = (E[0] - P[i0][0]) / l0, uz = (E[1] - P[i0][1]) / l0;
+    // ponta do começo: o mais perto do cruzamento em que os cavaletes (3,9 m antes da
+    // lona) ainda ficam fora da pista e da calçada da VRS-873
+    const free = (x, z) => { const q = roads.index.clearance(x, z, d => d !== road); return !q.seg || q.d > (q.seg.data.sidewalk ? 2 : 0) + 0.4; };
+    let sW = -4;
+    const barrierFree = s => [-hw - 0.3, 0, hw + 0.3].every(lz => free(P[i0][0] + ux * (s - 3.9) - uz * lz, P[i0][1] + uz * (s - 3.9) + ux * lz));
+    while (sW < l0 - 30 && !barrierFree(sW)) sW += 0.25;
+    const hl = (l0 - sW) / 2, x = E[0] - ux * hl, z = E[1] - uz * hl;
     const rot = Math.atan2(-uz, ux);
     // pavilhão, pórtico e cavaletes: sem poste de luz, árvore ou casa no meio
-    const poly = rectPoly(x, z, rot, -hl - 4, hl + 4.5, -hw - 0.3, hw + 0.3);
+    const poly = rectPoly(x, z, rot, -hl - 4.5, hl + 3.5, -hw - 0.3, hw + 0.3);
     zones.block(poly, 0);
     zones.clearForest(poly);
     zones.place(poly, 'PAVILHÃO DA KARTOFFELFEST', 3);
-    // no meio da rua, uns 45 m depois do pórtico, rumo ao centro (começo do cap. 5)
-    const s = P[Math.min(P.length - 1, i + K + 20)];
-    L.kartoffel = { x, z, rot, y: terrain.roadHeight(x, z), hl, hw, start: { x: s[0], z: s[1], h: Math.atan2(x - s[0], z - s[1]) } };
+    const W = frame({ x, z, rot }).W;
+    // pista de dança na frente do palco: onde a Fera é atraída (cap. 5)
+    const [ax, az] = W(hl - 9, 0);
+    // no meio da rua, uns 50 m depois do palco, rumo ao centro (começo do cap. 5)
+    const s = P[Math.min(P.length - 1, iE + 20)];
+    L.kartoffel = { x, z, rot, y: terrain.roadHeight(x, z), hl, hw, arena: { x: ax, z: az }, start: { x: s[0], z: s[1], h: Math.atan2(ax - s[0], az - s[1]) } };
   }
 
   // ---------------- Posto Calçadão (pátio de concreto) ----------------
@@ -789,18 +800,21 @@ function buildField(B, ctx, f) {
   }
 }
 
-// Pavilhão de lona da Kartoffelfest em cima da Rua Benno Closs: postes de alumínio,
-// lona listrada com bambinela, bandeirolas e varais de lâmpadas; palco das bandinhas,
-// mesas compridas com toalha xadrez, Kartoffelhaus e chope. Pórtico enxaimel na ponta
-// do centro e cavaletes fechando a rua nas duas pontas (só se entra a pé). A festa
-// deste ano foi cancelada: a faixa CANCELADA está colada por cima dos letreiros
+// Pavilhão de lona da Kartoffelfest em cima da Rua Benno Closs, do começo da rua até a
+// Prefeitura: postes de alumínio, lona listrada com bambinela, bandeirolas e varais de
+// lâmpadas. Entrando pelo pórtico enxaimel: batata do produtor, café colonial, barraca
+// de tiro, salsichão, as mesas compridas com toalha xadrez, Kartoffelhaus e chope, a
+// pista de dança e o palco das bandinhas. Cavaletes fecham a rua nas duas pontas (só
+// se entra a pé). A festa deste ano foi cancelada: a faixa CANCELADA está colada por
+// cima dos letreiros
 function buildKartoffel(B, ctx, k) {
   const { P, W } = frame(k);
   const { hl, hw, rot } = k, col = ctx.collision;
   const S = (lx, lz) => { const [x, z] = W(lx, lz); return ctx.surfaceAt(x, z); };
   const EAVE = 3.5, RISE = 1.9, OVER = 0.45, DROP = OVER * RISE / hw;
   // placa num plano vertical: centro (lx, y, lz), r = direita de quem olha a placa
-  // ([0, -1] = virada para +x local, [1, 0] = para +z), largura, altura e giro no plano
+  // ([0, -1] = virada para +x local, [0, 1] = para -x, [1, 0] = para +z), largura,
+  // altura e giro no próprio plano
   const plate = (mat, lx, y, lz, r, w, h, ang = 0) => {
     const c = Math.cos(ang), s = Math.sin(ang);
     const at = (a, b) => { const ra = a * c - b * s; return P(lx + r[0] * ra, y + a * s + b * c, lz + r[1] * ra); };
@@ -810,11 +824,11 @@ function buildKartoffel(B, ctx, k) {
   const notice = signMaterial('COMUNICADO', { bg: '#f2eee2', fg: '#2a2a2a', w: 96, h: 64, border: false, sub: 'Festa cancelada este ano' });
   B.col = [1, 1, 1];
 
-  // ---- estrutura: tesouras a cada 6 m, cada uma na altura do chão dela ----
-  const xs = [];
-  for (let lx = -hl; lx <= hl + 0.01; lx += 6) xs.push(lx);
+  // ---- estrutura: tesouras a cada ~6 m, cada uma na altura do chão dela ----
+  const nb = Math.max(2, Math.round(hl * 2 / 6)), bay = hl * 2 / nb;
+  const xs = Array.from({ length: nb + 1 }, (_, i) => -hl + i * bay);
   const eave = xs.map(lx => Math.max(S(lx, -hw), S(lx, hw)) + EAVE);
-  const eaveAt = lx => { const t = Math.min(xs.length - 1.001, Math.max(0, (lx + hl) / 6)), i = Math.floor(t); return eave[i] + (eave[i + 1] - eave[i]) * (t - i); };
+  const eaveAt = lx => { const t = Math.min(nb - 0.001, Math.max(0, (lx + hl) / bay)), i = Math.floor(t); return eave[i] + (eave[i + 1] - eave[i]) * (t - i); };
   xs.forEach((lx, i) => {
     const e = eave[i];
     for (const s of [-1, 1]) {
@@ -826,7 +840,7 @@ function buildKartoffel(B, ctx, k) {
     }
     tube(B, 'metalWhite', P(lx, e - 0.05, -hw), P(lx, e - 0.05, hw), 0.04);       // tirante
   });
-  for (let i = 0; i < xs.length - 1; i++) {
+  for (let i = 0; i < nb; i++) {
     const x0 = xs[i], x1 = xs[i + 1], e0 = eave[i], e1 = eave[i + 1];
     tube(B, 'metalWhite', P(x0, e0 + RISE, 0), P(x1, e1 + RISE, 0), 0.05);
     for (const s of [1, -1]) {
@@ -841,7 +855,7 @@ function buildKartoffel(B, ctx, k) {
   }
   // oitões fechados de lona, com a faixa da festa (e a de papel por cima)
   const banner = signMaterial('KARTOFFELFEST', { bg: '#7a4a1a', fg: '#ffe9a0', w: 128, h: 24, sub: 'Festa da Batata' });
-  for (const [i, s] of [[0, -1], [xs.length - 1, 1]]) {
+  for (const [i, s] of [[0, -1], [nb, 1]]) {
     const lx = xs[i] + s * 0.02, e = eave[i], za = s * hw, r = [0, -s];
     B.tri('awnLona', P(lx, e, za), P(lx, e, -za), P(lx, e + RISE, 0), [za / 2, 0], [-za / 2, 0], [0, 1]);
     B.quad('awnValance', P(lx, e - 0.42, za), P(lx, e - 0.42, -za), P(lx, e, -za), P(lx, e, za), [[0, 0], [hw, 0], [hw, 1], [0, 1]]);
@@ -857,111 +871,133 @@ function buildKartoffel(B, ctx, k) {
       B.quad('flags', P(p[0], p[1], p[2]), P(q[0], q[1], q[2]), P(q[0], q[1] - 0.5, q[2]), P(p[0], p[1] - 0.5, p[2]), [[0, 1], [u, 1], [u, 0], [0, 0]]);
     }
   };
-  for (const lz of [-2.7, 0, 2.7]) for (let i = 0; i < xs.length - 1; i++) flagLine([xs[i], eave[i] + 0.2, lz], [xs[i + 1], eave[i + 1] + 0.2, lz], 0.35);
-  for (let i = 1; i < xs.length - 1; i++) flagLine([xs[i], eave[i] + 0.05, -hw], [xs[i], eave[i] + 0.05, hw], 0.3);
+  for (const lz of [-2.7, 0, 2.7]) for (let i = 0; i < nb; i++) flagLine([xs[i], eave[i] + 0.2, lz], [xs[i + 1], eave[i + 1] + 0.2, lz], 0.35);
+  for (let i = 1; i < nb; i++) flagLine([xs[i], eave[i] + 0.05, -hw], [xs[i], eave[i] + 0.05, hw], 0.3);
   for (const lz of [-1.35, 1.35]) {
-    for (let i = 0; i < xs.length - 1; i++) tube(B, 'iron', P(xs[i], eave[i] + 0.8, lz), P(xs[i + 1], eave[i + 1] + 0.8, lz), 0.012);
+    for (let i = 0; i < nb; i++) tube(B, 'iron', P(xs[i], eave[i] + 0.8, lz), P(xs[i + 1], eave[i + 1] + 0.8, lz), 0.012);
     for (let lx = -hl + 0.75; lx < hl; lx += 1.5) { const p = P(lx, eaveAt(lx) + 0.62, lz); B.box('lampLens', p[0], p[1], p[2], 0.1, 0.14, 0.1, rot, { uvScale: 1, bottom: true }); }
   }
-  for (const lx of [-9, 0, 9]) ctx.lights?.push(P(lx, eaveAt(lx) + 0.6, 0));
+  for (let lx = -hl + 6; lx < hl - 2; lx += 12) ctx.lights?.push(P(lx, eaveAt(lx) + 0.6, 0));
 
-  // ---- palco das bandinhas, na ponta de baixo ----
+  // ---- palco das bandinhas, na ponta da Prefeitura, virado para o começo da rua ----
   {
-    const x0 = -hl + 0.4, x1 = -hl + 4.6, zz = hw - 1.0, cx = (x0 + x1) / 2;
+    const x0 = hl - 4.6, x1 = hl - 0.4, zz = hw - 1.0, cx = (x0 + x1) / 2;
     const g = [[x0, -zz], [x1, -zz], [x1, zz], [x0, zz]].map(([a, b]) => S(a, b));
     const top = Math.max(...g) + 0.75, low = Math.min(...g) - 0.1, c = P(cx, 0, 0);
     B.box('woodPlank', c[0], low, c[2], x1 - x0, top - low, zz * 2, rot, { uvScale: 2 });
     col.addBox(c[0], c[2], (x1 - x0) / 2, zz, rot, low, top, { walk: true });
     // degraus no meio da frente (até 0,38 m cada: dá para subir)
-    const fy = S(x1 + 0.5, 0), n = Math.max(1, Math.ceil((top - fy) / 0.38) - 1);
+    const fy = S(x0 - 0.5, 0), n = Math.max(1, Math.ceil((top - fy) / 0.38) - 1);
     for (let j = 1; j <= n; j++) {
-      const sy = top - (top - fy) * j / (n + 1), p = P(x1 + 0.2 + (j - 1) * 0.4, 0, 0);
+      const sy = top - (top - fy) * j / (n + 1), p = P(x0 - 0.2 - (j - 1) * 0.4, 0, 0);
       B.box('woodPlank', p[0], fy - 0.1, p[2], 0.4, sy - fy + 0.1, 2.4, rot, { uvScale: 1 });
       col.addBox(p[0], p[2], 0.2, 1.2, rot, fy - 0.1, sy, { walk: true });
     }
     // fundo com o letreiro, caixas de som e cadeiras empilhadas
-    const b = P(x0 + 0.05, 0, 0);
+    const b = P(x1 - 0.05, 0, 0);
     B.box('woodDark', b[0], top, b[2], 0.1, 2.6, zz * 2, rot, { uvScale: 2 });
     col.addBox(b[0], b[2], 0.05, zz, rot, top, top + 2.6);
-    plate(signMaterial('KARTOFFELFEST', { bg: '#7a4a1a', fg: '#ffe9a0', w: 128, h: 40, sub: 'BANDINHAS · TEEWALD' }), x0 + 0.11, top + 1.55, 0, [0, -1], 5.0, 1.56);
+    plate(signMaterial('KARTOFFELFEST', { bg: '#7a4a1a', fg: '#ffe9a0', w: 128, h: 40, sub: 'BANDINHAS · TEEWALD' }), x1 - 0.11, top + 1.55, 0, [0, 1], 5.0, 1.56);
     for (const s of [-1, 1]) {
-      const p = P(x1 - 0.45, 0, s * (zz - 0.45));
+      const p = P(x0 + 0.45, 0, s * (zz - 0.45));
       B.box('iron', p[0], top, p[2], 0.6, 1.15, 0.6, rot, { uvScale: 1 });
       col.addBox(p[0], p[2], 0.3, 0.3, rot, top, top + 1.15);
-      const q = P(x0 + 0.6, 0, s * (zz - 0.6));
+      const q = P(x1 - 0.6, 0, s * (zz - 0.6));
       for (let j = 0; j < 6; j++) B.box('metalWhite', q[0], top + j * 0.13, q[2], 0.45, 0.13, 0.45, rot + j * 0.04, { uvScale: 1 });
     }
   }
 
-  // ---- mesas compridas (duas fileiras, toalha xadrez) ----
-  for (const lz of [-2.1, 2.1]) for (let j = 0; j < 6; j++) {
-    const lx = -8.5 + j * 2, [x, z] = W(lx, lz), y = ctx.surfaceAt(x, z) + 0.785;
-    picnicTable(B, ctx, x, z, rot);
-    B.quad('tablecloth', P(lx - 0.98, y, lz - 0.44), P(lx - 0.98, y, lz + 0.44), P(lx + 0.98, y, lz + 0.44), P(lx + 0.98, y, lz - 0.44), [[0, 0], [0, 1], [2, 1], [2, 0]]);
-  }
-  // banco onde a rainha da festa espera (de frente para a mesa)
-  { const [x, z] = W(-6.5, 2.85); (ctx.seats ||= []).push({ x, z, rot: rot + Math.PI, y: ctx.surfaceAt(x, z), seat: 0.47, kind: 'festa' }); }
-
-  // ---- barracas: Kartoffelhaus (+z) e chope (-z), viradas para o meio ----
+  // ---- barracas, viradas para o meio: título, legenda, cor, conteúdo dos fundos ----
   const sack = (lx, lz, a = 0) => { const [x, z] = W(lx, lz); B.box('sack', x, S(lx, lz), z, 0.5, 0.62, 0.36, rot + a, { uvScale: 1, topMat: 'potatoes' }); };
-  const crate = (lx, lz, y, a = 0) => { const [x, z] = W(lx, lz); B.box('woodPlank', x, y, z, 0.6, 0.34, 0.45, rot + a, { uvScale: 1, topMat: 'potatoes' }); };
-  for (const [s, title, sub, bg] of [[1, 'KARTOFFELHAUS', 'batata recheada · Kartoffelpuffer', '#3a2a1a'], [-1, 'CHOPE', 'Bier · Schnaps', '#1f3f2a']]) {
-    const x0 = 8.6, x1 = 11.4, cx = (x0 + x1) / 2, zf = s * 3.3, y = S(cx, zf), c = P(cx, 0, zf);
+  const crate = (lx, lz, y, a = 0, mat = 'woodPlank', top = 'potatoes') => { const [x, z] = W(lx, lz); B.box(mat, x, y, z, 0.6, 0.34, 0.45, rot + a, { uvScale: 1, topMat: top }); };
+  const stall = (x0, s, title, sub, bg, back) => {
+    const x1 = x0 + 2.8, cx = (x0 + x1) / 2, zf = s * 3.3, y = S(cx, zf), c = P(cx, 0, zf);
     B.box('woodPlank', c[0], y, c[2], x1 - x0, 1.0, 0.6, rot, { uvScale: 1 });
     B.box('woodDark', c[0], y + 1.0, c[2], x1 - x0 + 0.1, 0.05, 0.7, rot, { uvScale: 1 });
     col.addBox(c[0], c[2], (x1 - x0) / 2, 0.3, rot, y, y + 1.05);
     for (const lx of [x0, x1]) { const p = P(lx, 0, zf); B.box('woodDark', p[0], S(lx, zf), p[2], 0.1, 2.55, 0.1, rot, { uvScale: 1 }); }
     B.box('woodDark', c[0], y + 2.05, c[2], x1 - x0 + 0.1, 0.5, 0.06, rot, { uvScale: 1 });
     plate(signMaterial(title, { bg, fg: '#f0e0c0', w: 128, h: 24, sub }), cx, y + 2.3, zf - s * 0.04, [-s, 0], x1 - x0 - 0.1, 0.46);
-    const zb = s * 4.5;
-    if (s > 0) {
-      // sacos e caixas de batata; panela da sopa da Dona Gertrud no fogareiro
-      sack(8.9, zb, 0.2); sack(8.9, zb + 0.45 * s, -0.3); sack(9.4, zb + 0.3 * s, 0.1);
-      crate(11.0, zb + 0.2 * s, S(11.0, zb)); crate(11.0, zb + 0.2 * s, S(11.0, zb) + 0.34, 0.15);
-      const p = P(11.0, 0, zb - 0.55 * s), py = S(11.0, zb - 0.55 * s);
-      B.box('iron', p[0], py, p[2], 0.45, 0.7, 0.45, rot, { uvScale: 1 });
-      B.cylinder('metalGray', p[0], py + 0.7, p[2], 0.3, 0.3, 0.38, 8, { cap: true, capMat: 'iron' });
-      col.addBox(...W(9.15, zb + 0.15 * s), 0.45, 0.45, rot, y, y + 0.7);
-      col.addBox(...W(11.0, zb), 0.35, 0.75, rot, y, y + 1.1);
-    } else {
-      // barris de chope e engradados
-      for (const [lx, dz] of [[8.9, 0], [9.4, 0.25], [8.95, 0.55]]) { const [x, z] = W(lx, zb + dz * s); B.cylinder('metalGray', x, S(lx, zb), z, 0.22, 0.22, 0.6, 8, { cap: true, capMat: 'metalGray' }); }
-      for (let j = 0; j < 3; j++) { const [x, z] = W(11.0, zb); B.box('woodDark', x, S(11.0, zb) + j * 0.3, z, 0.55, 0.3, 0.4, rot + j * 0.08, { uvScale: 1 }); }
-      col.addBox(...W(9.15, zb + 0.25 * s), 0.5, 0.5, rot, y, y + 0.7);
-      col.addBox(...W(11.0, zb), 0.32, 0.25, rot, y, y + 0.9);
-    }
-  }
-  // batata direto do produtor, na entrada
-  for (const s of [-1, 1]) {
-    for (const [lx, dz, a] of [[15.4, 0, 0.1], [15.9, 0.3, -0.2], [16.4, 0, 0.3], [15.65, 0.65, 0]]) sack(lx, s * (4.3 - dz), a);
-    col.addBox(...W(15.9, s * 4.0), 0.75, 0.55, rot, S(15.9, s * 4.0), S(15.9, s * 4.0) + 0.65);
-  }
-  { const [x, z] = W(14.6, 4.6); signPost(B, ctx, x, z, rot + Math.PI / 2, signMaterial('BATATA DO PRODUTOR', { bg: '#e8dcc0', fg: '#4a2a18', w: 128, h: 24, sub: 'saco de 25 kg' }), 1.4, 0.4); }
+    back(x0, x1, s * 4.5, y);
+  };
+  // Kartoffelhaus: sacos e caixas de batata e a panela da sopa da Dona Gertrud
+  const kh = hl - 14.4;
+  stall(kh, 1, 'KARTOFFELHAUS', 'batata recheada · Kartoffelpuffer', '#3a2a1a', (x0, x1, zb, y) => {
+    sack(x0 + 0.3, zb, 0.2); sack(x0 + 0.3, zb + 0.45, -0.3); sack(x0 + 0.8, zb + 0.3, 0.1);
+    crate(x1 - 0.4, zb + 0.2, S(x1 - 0.4, zb)); crate(x1 - 0.4, zb + 0.2, S(x1 - 0.4, zb) + 0.34, 0.15);
+    const p = P(x1 - 0.4, 0, zb - 0.55), py = S(x1 - 0.4, zb - 0.55);
+    B.box('iron', p[0], py, p[2], 0.45, 0.7, 0.45, rot, { uvScale: 1 });
+    B.cylinder('metalGray', p[0], py + 0.7, p[2], 0.3, 0.3, 0.38, 8, { cap: true, capMat: 'iron' });
+    col.addBox(...W(x0 + 0.55, zb + 0.15), 0.45, 0.45, rot, y, y + 0.7);
+    col.addBox(...W(x1 - 0.4, zb), 0.35, 0.75, rot, y, y + 1.1);
+  });
+  // chope: barris e engradados
+  stall(kh, -1, 'CHOPE', 'Bier · Schnaps', '#1f3f2a', (x0, x1, zb, y) => {
+    for (const [lx, dz] of [[x0 + 0.3, 0], [x0 + 0.8, -0.25], [x0 + 0.35, -0.55]]) { const [x, z] = W(lx, zb + dz); B.cylinder('metalGray', x, S(lx, zb), z, 0.22, 0.22, 0.6, 8, { cap: true, capMat: 'metalGray' }); }
+    for (let j = 0; j < 3; j++) crate(x1 - 0.4, zb, S(x1 - 0.4, zb) + j * 0.34, j * 0.08, 'woodDark', 'woodDark');
+    col.addBox(...W(x0 + 0.55, zb - 0.25), 0.5, 0.5, rot, y, y + 0.7);
+    col.addBox(...W(x1 - 0.4, zb), 0.32, 0.25, rot, y, y + 1.0);
+  });
+  // perto da entrada: café colonial e salsichão (a barraca de tiro fica em frente ao café)
+  stall(-hl + bay * 1.5 - 1.4, 1, 'CAFÉ COLONIAL', 'cuca · Schmier · café', '#5a2a18', (x0, x1, zb, y) => {
+    for (let j = 0; j < 4; j++) crate(x0 + 0.4, zb, S(x0 + 0.4, zb) + j * 0.34, j * 0.06, 'woodDark', 'woodDark');
+    col.addBox(...W(x0 + 0.4, zb), 0.32, 0.25, rot, y, y + 1.4);
+  });
+  stall(-hl + bay * 2.5 - 1.4, 1, 'SALSICHÃO', 'Bratwurst · Sauerkraut', '#7a2a1c', (x0, x1, zb, y) => {
+    const p = P(x1 - 0.5, 0, zb), py = S(x1 - 0.5, zb);
+    B.box('iron', p[0], py, p[2], 1.0, 0.85, 0.5, rot, { uvScale: 1 });    // chapa
+    col.addBox(p[0], p[2], 0.5, 0.25, rot, py, py + 0.85);
+  });
+  // engradados vazios empilhados do outro lado
+  for (const [dx, n] of [[-0.4, 4], [0.3, 3], [-0.05, 2]]) for (let j = 0; j < n; j++) crate(-hl + bay * 2.5 + dx, -4.4 + (dx > 0 ? 0.5 : 0), S(-hl + bay * 2.5, -4.4) + j * 0.34, j * 0.07 + dx, 'woodDark', 'woodDark');
+  col.addBox(...W(-hl + bay * 2.5, -4.2), 0.7, 0.5, rot, S(-hl + bay * 2.5, -4.2), S(-hl + bay * 2.5, -4.2) + 1.3);
 
-  // ---- pórtico enxaimel na ponta do centro ----
+  // ---- mesas compridas: duas fileiras em blocos de cinco, com passagem entre eles ----
+  const t0 = -hl + bay * 3 + 1, t1 = kh - 2.2;
+  let last = null;
+  for (let lx = t0; lx <= t1; lx += 2) {
+    if (Math.round((lx - t0) / 2) % 6 === 5) continue;   // passagem
+    for (const lz of [-2.1, 2.1]) {
+      const [x, z] = W(lx, lz), y = ctx.surfaceAt(x, z) + 0.785;
+      picnicTable(B, ctx, x, z, rot);
+      B.quad('tablecloth', P(lx - 0.98, y, lz - 0.44), P(lx - 0.98, y, lz + 0.44), P(lx + 0.98, y, lz + 0.44), P(lx + 0.98, y, lz - 0.44), [[0, 0], [0, 1], [2, 1], [2, 0]]);
+    }
+    last = lx;
+  }
+  // banco onde a rainha da festa espera (a mesa mais perto do palco, de frente para ela)
+  if (last !== null) { const [x, z] = W(last, 2.85); (ctx.seats ||= []).push({ x, z, rot: rot + Math.PI, y: ctx.surfaceAt(x, z), seat: 0.47, kind: 'festa' }); }
+
+  // ---- batata direto do produtor, logo na entrada ----
+  for (const s of [-1, 1]) {
+    for (const [dx, dz, a] of [[1.4, 0, 0.1], [1.9, 0.3, -0.2], [2.4, 0, 0.3], [1.65, 0.65, 0]]) sack(-hl + dx, s * (4.3 - dz), a);
+    col.addBox(...W(-hl + 1.9, s * 4.0), 0.75, 0.55, rot, S(-hl + 1.9, s * 4.0), S(-hl + 1.9, s * 4.0) + 0.65);
+  }
+  { const [x, z] = W(-hl + 3.4, 4.6); signPost(B, ctx, x, z, rot - Math.PI / 2, signMaterial('BATATA DO PRODUTOR', { bg: '#e8dcc0', fg: '#4a2a18', w: 128, h: 24, sub: 'saco de 25 kg' }), 1.4, 0.4); }
+
+  // ---- pórtico enxaimel no começo da rua, de frente para a VRS-873 ----
   {
-    const lx = hl + 1.3, tz = hw - 0.6, TH = 4.4, tops = [];
+    const lx = -hl - 1.3, tz = hw - 0.6, TH = 4.4, tops = [];
     for (const s of [-1, 1]) {
       const [x, z] = W(lx, s * tz), y0 = S(lx, s * tz);
       B.box('enxCreme', x, y0, z, 0.9, TH, 0.9, rot, { uvScale: 2.2 });
       col.addBox(x, z, 0.45, 0.45, rot, y0, y0 + TH);
       pyramid(B, 'roofClay', [x, y0 + TH, z], 0.78, 1.1, -rot + Math.PI / 4, 4);
-      plate(notice, lx + 0.46, y0 + 1.6, s * tz, [0, -1], 0.6, 0.42, s * 0.05);
+      plate(notice, lx - 0.46, y0 + 1.6, s * tz, [0, 1], 0.6, 0.42, s * 0.05);
       tops.push(y0 + TH);
     }
     const yb = Math.min(...tops) - 0.95, c = P(lx, 0, 0), w = tz * 2 - 0.9;
     B.box('woodDark', c[0], yb, c[2], 0.3, 0.8, w, rot, { uvScale: 1, bottom: true });
     const sign = signMaterial('KARTOFFELFEST', { bg: '#3a2a1a', fg: '#f0d890', w: 128, h: 24, sub: 'Festa da Batata · Teewald' });
-    plate(sign, lx + 0.16, yb + 0.4, 0, [0, -1], w - 0.2, 0.7);
     plate(sign, lx - 0.16, yb + 0.4, 0, [0, 1], w - 0.2, 0.7);
-    plate(cancel, lx + 0.19, yb + 0.42, -0.9, [0, -1], 2.6, 0.42, 0.18);
+    plate(sign, lx + 0.16, yb + 0.4, 0, [0, -1], w - 0.2, 0.7);
+    plate(cancel, lx - 0.19, yb + 0.42, 0.9, [0, 1], 2.6, 0.42, 0.18);
   }
-  // aviso no primeiro poste da outra ponta
-  plate(notice, -hl - 0.07, S(-hl, -hw) + 1.6, -hw, [0, 1], 0.6, 0.42, -0.04);
+  // aviso no último poste, do lado da Prefeitura
+  plate(notice, hl + 0.07, S(hl, -hw) + 1.6, -hw, [0, -1], 0.6, 0.42, -0.04);
 
   // ---- cavaletes fechando a rua nas duas pontas: três por ponta, com vão para pedestre ----
   const closed = signMaterial('RUA FECHADA', { bg: '#f4f0e8', fg: '#a01818', w: 128, h: 32, sub: 'ENTRADA SÓ A PÉ' });
-  for (const [lx, s] of [[-hl - 2.5, -1], [hl + 3.6, 1]]) for (const lz of [-2.45, 0, 2.45]) {
+  for (const [lx, s] of [[-hl - 3.6, -1], [hl + 2.5, 1]]) for (const lz of [-2.45, 0, 2.45]) {
     const [x, z] = W(lx, lz), y = S(lx, lz);
     for (const e of [-0.7, 0.7]) for (const f of [-0.14, 0.14]) { const p = P(lx + f, 0, lz + e); B.box('woodGray', p[0], y, p[2], 0.05, 1.12, 0.05, rot, { uvScale: 1 }); }
     B.box('barrier', x, y + 0.92, z, 0.05, 0.22, 1.6, rot, { faceUV: true });

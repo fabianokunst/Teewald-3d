@@ -53,7 +53,7 @@ export function places(G) {
     cemetery: { x: L.cemetery.c[0], z: L.cemetery.c[1], poly: L.cemetery.poly },
     praca: { x: L.praca.c[0], z: L.praca.c[1] },
     field: { x: L.field.c[0], z: L.field.c[1], ang: L.field.ang },
-    kartoffel: { x: L.kartoffel.x, z: L.kartoffel.z, rot: L.kartoffel.rot, hl: L.kartoffel.hl, hw: L.kartoffel.hw, start: L.kartoffel.start },
+    kartoffel: { x: L.kartoffel.x, z: L.kartoffel.z, rot: L.kartoffel.rot, hl: L.kartoffel.hl, hw: L.kartoffel.hw, arena: L.kartoffel.arena, start: L.kartoffel.start },
     factory: fab, factoryDoor: fab ? front(fab, 2.5) : { x: 6, z: -24, h: Math.PI },
     sociedade: soc, sociedadeDoor: soc ? front(soc, 2.5) : { x: -172, z: 120, h: 0 },
     prefeitura: pref, prefeituraBack: pref ? (() => { const f = frame(pref.x, pref.z, pref.rot)(0, -pref.d / 2 - 3); return { x: f[0], z: f[1], h: pref.rot }; })() : { x: -168, z: 160, h: 0 },

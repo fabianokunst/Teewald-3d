@@ -190,10 +190,11 @@ export class Targets {
         }
       }
     }
-    // 2. pavilhão da Kartoffelfest: barraca de tiro no fundo, tábua de lado a lado da rua
+    // 2. pavilhão da Kartoffelfest: barraca de tiro perto da entrada, em frente ao café
+    //    (tábua ao longo da rua, encostada no meio-fio)
     if (L.kartoffel) {
-      const k = L.kartoffel, at = frame(k.x, k.z, k.rot);
-      for (const lx of [12.4, -12.4]) { const [x, z] = at(lx, 0); if (tryAt(x, z, k.rot - Math.PI / 2, ground)) break; }
+      const k = L.kartoffel, at = frame(k.x, k.z, k.rot), bay = k.hl * 2 / Math.max(2, Math.round(k.hl * 2 / 6));
+      for (const [lx, lz] of [[-k.hl + bay * 1.5, -3.0], [-k.hl + bay * 1.5, 0]]) { const [x, z] = at(lx, lz); if (tryAt(x, z, k.rot, ground)) break; }
     }
     // 3. campo: atrás de um dos gols
     if (L.field) {

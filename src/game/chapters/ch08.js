@@ -17,7 +17,7 @@ export default {
     const P = places(G);
     // três ninhos nas fachadas
     const spots = [];
-    const k = P.kartoffel, kf = frame(k.x, k.z, k.rot)(6, k.hw - 0.6);   // pendurado na beirada da lona
+    const k = P.kartoffel, kf = frame(k.x, k.z, k.rot)(k.hl - 13, k.hw - 0.6);   // pendurado na beirada da lona
     spots.push({ x: kf[0], z: kf[1], name: 'PAVILHÃO' });
     if (P.escola) { const f = front(P.escola, 0.6); spots.push({ x: f.x, z: f.z, name: 'ESCOLA' }); }
     if (P.salao) { const f = front(P.salao, 0.6); spots.push({ x: f.x, z: f.z, name: 'SALÃO PAROQUIAL' }); }

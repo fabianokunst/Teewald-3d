@@ -53,7 +53,7 @@ export default {
         prev = w;
       }
     });
-    G.supplies([['ammo9', 12], ['shells', 8], ['cuca', 1]], k.x, k.z, 30, { r0: 14 });
+    G.supplies([['ammo9', 12], ['shells', 8], ['cuca', 1]], k.arena.x, k.arena.z, 30, { r0: 14 });
     G.supplies([['ammo9', 12], ['cha', 1], ['cano', 1]], b.x, b.z, 20, { r0: 5 });
   },
   steps: [
@@ -102,23 +102,23 @@ export default {
     },
     {
       id: 'pavilhao', obj: 'Atraia a Fera para o pavilhão da Kartoffelfest',
-      marker: G => { const k = places(G).kartoffel; return [k.x, null, k.z]; },
+      marker: G => { const a = places(G).kartoffel.arena; return [a.x, null, a.z]; },
       enter(G) { G.ambient({ types: { dog: 1 }, max: 2, every: [20, 30] }); G.hud.showHints({ keyboard: ['A Fera fica tonta se bater numa coluna', 'Dinamite também a derruba'], pad: ['A Fera fica tonta se bater numa coluna', 'Dinamite também a derruba'], touch: ['A Fera fica tonta se bater numa coluna', 'Dinamite também a derruba'] }); },
       update(G, dt, S) {
-        const k = places(G).kartoffel;
-        if (!G.near(k.x, k.z, 20)) return false;
+        const k = places(G).kartoffel, a = k.arena;
+        if (!G.near(a.x, a.z, 20)) return false;
         G.ambient(null);
         G.combat.clearEnemies(e => e.ambient);
         G.checkpoint(G.player.pos.x, G.player.pos.z, G.player.heading);
         // a Fera chega pelo lado do estacionamento da Prefeitura e entra entre os postes
         // (pelas pontas, os cavaletes e o palco fecham a passagem)
-        const fs = frame(k.x, k.z, k.rot)(-2, -17), f = G.freeSpot(fs[0], fs[1], 0, 6, 30) || fs;
-        S.boss = G.spawn('fera', f[0], f[1], { arena: { x: k.x, z: k.z, r: 30 } });
+        const fs = frame(a.x, a.z, k.rot)(-11, -16), f = G.freeSpot(fs[0], fs[1], 0, 6, 30) || fs;
+        S.boss = G.spawn('fera', f[0], f[1], { arena: { x: a.x, z: a.z, r: 30 } });
         G.boss(S.boss, 'A FERA');
         SFX.roar(G.audio, 10, 0.9, 2.2);
         G.combat.shake = 0.6;
         // caixa de dinamite que volta
-        const c = frame(k.x, k.z, k.rot)(-10.5, -4);
+        const c = frame(a.x, a.z, k.rot)(1.5, -4);
         G.pickup('dynamite', c[0], c[1], { n: 2, respawn: 22 });
         G.pickup('cuca', c[0] + 1, c[1] + 1, { respawn: 50 });
         return true;
