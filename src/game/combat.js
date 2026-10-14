@@ -232,12 +232,15 @@ export class Combat {
     // cura rápida: H, direcional ▲ ou CURA no toque
     if (input.healHit()) this.quickHeal();
     // ataque: V / RB / GOLPE sempre; o clique/R2/ATIRAR também, se não houver arma de fogo
-    const wantAtk = input.meleeHit() || (!gun && input.fireHit());
+    // nadando: sem golpe nem esquiva (um golpe começado na margem acaba ao entrar)
+    const swim = P.swimming;
+    if (swim && this.atk) { this.atk = null; this.queued = false; }
+    const wantAtk = !swim && (input.meleeHit() || (!gun && input.fireHit()));
     if (wantAtk) {
       if (this.atk && this.atk.kind === 'punch' && this.atk.t > this.atk.dur * 0.35) this.queued = true;
       else if (!this.atk && !this.dodge) this._startAttack();
     }
-    if (input.dodgeHit() && !this.dodge && this.dodgeCool <= 0 && P.grounded && (!this.atk || this.atk.t > this.atk.dur * 0.5)) this._startDodge(input);
+    if (input.dodgeHit() && !swim && !this.dodge && this.dodgeCool <= 0 && P.grounded && (!this.atk || this.atk.t > this.atk.dur * 0.5)) this._startDodge(input);
     const busy = !!this.atk || !!this.dodge;
     P.moveScale = this.atk ? 0.25 : this.dodge ? 0 : 1;
     P.lockHeading = busy;
@@ -790,7 +793,8 @@ export class Combat {
       P.pos.x += mx * dt / n; P.pos.z += mz * dt / n;
       this.ctx.collision.resolve(P.pos, P.radius, 1.7);
       const g = this.ctx.groundAt(P.pos.x, P.pos.z, P.pos.y);
-      if (this.ctx.isDeepWater(P.pos.x, P.pos.z, g) || g > P.pos.y + 0.5) { P.pos.x = ox; P.pos.z = oz; break; }
+      // (empurrado para o rio fundo, cai na água e nada)
+      if (g > P.pos.y + 0.5) { P.pos.x = ox; P.pos.z = oz; break; }
       P.pos.y = Math.max(P.pos.y, g);
     }
     const b = this.ctx.playBounds;

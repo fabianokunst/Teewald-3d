@@ -1,3 +1,4 @@
+import { ShapeUtils, Vector2 } from 'three';
 import { rng, polyCentroid, pointInPoly, distSeg, resample, chaikin, obbCorners } from './geo.js';
 import { buildChurch, CHURCH, pyramid } from './church.js';
 import { buildHouse, makeSpec, lotValid, facingRoad, frame, orientToRoad as orientFP, fitBox } from './buildings.js';
@@ -7,6 +8,9 @@ import { signMaterial } from '../engine/materials.js';
 
 // Lugares marcantes: Igreja Matriz, Praça 10 de Abril, Calçadão do Rio Cadeia,
 // cemitério, campo, Kartoffelfest, prefeitura e outros prédios conhecidos (OSM).
+
+// altura do piso da praça acima do terreno (meio-fio)
+const PRACA_DY = 0.12;
 
 const area = (md, k, n) => md.areas.find(a => a.k === k && (n === undefined || a.n === n));
 const poi = (md, n) => md.pois.find(p => p.n === n);
@@ -72,29 +76,34 @@ export function defineLandmarks(ctx) {
   {
     const pr = area(md, 'park', 'Praça 10 de Abril');
     const c = polyCentroid(pr.p);
-    // encaixa o polígono longe das ruas e do rio
+    // encaixa o polígono longe das ruas e do rio (fora da margem escavada: o piso
+    // acompanha o terreno e afundaria no talude)
     const poly = pr.p.map(p => {
       let [x, z] = p;
       for (let k = 0; k < 60; k++) {
         const rc = roads.index.clearance(x, z);
         const rv = rivers.index.nearest(x, z);
         const okRoad = rc.d > (rc.seg && rc.seg.data.sidewalk ? 2.4 : 0.8);
-        const okRiver = !rv.seg || rv.d > rv.seg.data.width / 2 + 3;
+        const okRiver = !rv.seg || rv.d > rv.seg.data.width / 2 + rv.seg.data.bank + 1;
         if (okRoad && okRiver) break;
         const dx = c[0] - x, dz = c[1] - z, l = Math.hypot(dx, dz) || 1;
         x += dx / l * 0.5; z += dz / l * 0.5;
       }
       return [x, z];
     });
-    // arredonda os cantos
-    const smoothPoly = chaikin([...poly, poly[0]], 2).slice(0, -1);
+    // arredonda os cantos (sem vértices repetidos: o piso é triangulado)
+    const smoothPoly = chaikin([...poly, poly[0]], 2).slice(0, -1)
+      .filter((p, i, a) => Math.hypot(p[0] - a[(i + 1) % a.length][0], p[1] - a[(i + 1) % a.length][1]) > 0.05);
     const pc = polyCentroid(smoothPoly);
-    const y = terrain.roadHeight(pc[0], pc[1]) + 0.12;
-    terrain.addPad(smoothPoly, y - 0.15, 4, y);
+    // A praça fica num declive (uns 4 m de um canto ao outro, descendo para o rio).
+    // O chão acompanha a altura das ruas em volta e o piso vai colado nele. Plana,
+    // na altura do centro, ela ficava 2,5 m abaixo da rua de um lado (um fosso, com
+    // a rua e a calçada no ar) e 2 m acima do barranco do outro
+    terrain.addPad(smoothPoly, (x, z) => terrain.roadHeight(x, z), 4);
     zones.block(smoothPoly, 1);
     zones.clearForest(smoothPoly);
     zones.place(smoothPoly, 'PRAÇA 10 DE ABRIL', 3);
-    L.praca = { poly: smoothPoly, c: pc, y };
+    L.praca = { poly: smoothPoly, c: pc, y: terrain.roadHeight(pc[0], pc[1]) + PRACA_DY };
   }
 
   // ---------------- Calçadão do Rio Cadeia ----------------
@@ -406,26 +415,54 @@ function buildCemetery(B, ctx, cm) {
 
 function buildPraca(B, ctx, pr) {
   const R = rng(1004);
-  const poly = pr.poly, y = pr.y;
-  // piso em espinha de peixe com meio-fio
-  B.polygon('herring', poly, y, 2.5);
-  // meio-fio que vira muro de arrimo onde o terreno cai (beira do rio)
-  for (const [a, b] of outwardEdges(poly)) {
-    const lo = Math.min(ctx.terrain.heightAt(a[0], a[1]), ctx.terrain.heightAt(b[0], b[1]), y - 0.3) - 0.1;
-    B.wall('concreteW', a[0], a[1], b[0], b[1], lo, y, { uvScale: 2, ao: 0.9 });
+  const poly = pr.poly, T = ctx.terrain;
+  // piso em espinha de peixe colado no declive: o contorno é triangulado e cada
+  // triângulo recortado na malha do terreno (a mesma do chão em volta)
+  const y = (x, z) => T.heightAt(x, z) + PRACA_DY;
+  const up = p => [p[0], p[1] + PRACA_DY, p[2]], uv = p => [p[0] / 2.5, p[2] / 2.5];
+  for (const [a, b, c] of ShapeUtils.triangulateShape(poly.map(([x, z]) => new Vector2(x, z)), [])) {
+    T.drape([poly[a], poly[b], poly[c]], (p, q, r) => B.tri('herring', up(p), up(q), up(r), uv(p), uv(q), uv(r)));
   }
-  ctx.floors.push({ poly, y });
-  fountain(B, ctx, pr.c[0], pr.c[1], y);
-  // canteiros de hortênsias em volta da fonte
+  ctx.floors.push({ poly, y, surface: 'stone' });
+  // meio-fio acompanhando o declive, em trechos de até 1 m; onde o terreno cai
+  // para fora (lado do rio) ele desce até o chão
+  let u = 0;
+  for (const [a, b] of outwardEdges(poly)) {
+    const len = Math.hypot(b[0] - a[0], b[1] - a[1]), nx = -(b[1] - a[1]) / len, nz = (b[0] - a[0]) / len;
+    const n = Math.max(1, Math.ceil(len));
+    const at = t => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+    const lo = ([x, z]) => Math.min(T.heightAt(x, z), T.heightAt(x + nx * 0.6, z + nz * 0.6)) - 0.12;
+    const cb = B.col.map(v => v * 0.9);
+    for (let k = 0; k < n; k++) {
+      const p = at(k / n), q = at((k + 1) / n), u1 = u + len / n / 2;
+      const yp = y(p[0], p[1]), yq = y(q[0], q[1]), lp = lo(p), lq = lo(q);
+      B.quad('concreteW', [p[0], lp, p[1]], [q[0], lq, q[1]], [q[0], yq, q[1]], [p[0], yp, p[1]],
+        [[u, lp / 2], [u1, lq / 2], [u1, yq / 2], [u, yp / 2]], [cb, cb, B.col, B.col]);
+      u = u1;
+    }
+  }
+  // a fonte fica numa base de pedra nivelada (o espelho d'água é plano): no lado
+  // de baixo do declive a base aparece como um degrau alto
+  {
+    const [cx, cz] = pr.c, rim = circlePoly(cx, cz, 3.0, 12).map(([x, z]) => y(x, z));
+    const top = Math.max(...rim) + 0.05, lo = Math.min(...rim) - 0.1;
+    B.col = [0.92, 0.92, 0.92];
+    B.cylinder('granite', cx, lo, cz, 3.0, 3.0, top - lo, 12, { cap: true, uRepeat: 6, vRepeat: (top - lo) / 2 });
+    B.col = [1, 1, 1];
+    fountain(B, ctx, cx, cz, top);
+    ctx.collision.addCircle(cx, cz, 3.0, lo - 0.3, top + 2.6);
+  }
+  // canteiros de hortênsias em volta da fonte (a borda segue o declive por fora)
   for (let i = 0; i < 6; i++) {
     const a = (i / 6) * Math.PI * 2 + 0.3;
     const x = pr.c[0] + Math.cos(a) * 5.2, z = pr.c[1] + Math.sin(a) * 5.2;
     if (!pointInPoly(x, z, poly)) continue;
+    const rim = circlePoly(x, z, 1.3, 8).map(([px, pz]) => y(px, pz)), lo = Math.min(...rim) - 0.1, top = Math.max(...rim) + 0.35;
     B.col = [0.9, 0.9, 0.9];
-    B.cylinder('granite', x, y - 0.1, z, 1.3, 1.3, 0.45, 8, { cap: true, capMat: 'dirt' });
+    B.cylinder('granite', x, lo, z, 1.3, 1.3, top - lo, 8, { cap: true, capMat: 'dirt' });
     B.col = [1, 1, 1];
     tree(ctx, 'hortensia', x, z, 1.0);
-    ctx.collision.addCircle(x, z, 1.35, y - 0.2, y + 0.35, { cam: false });
+    ctx.collision.addCircle(x, z, 1.35, lo - 0.1, top, { cam: false });
   }
   // bancos, lampiões e árvores perto da borda
   const ring = [];
@@ -464,7 +501,7 @@ function buildPraca(B, ctx, pr) {
   if (tel) {
     // vai para a borda da praça mais perto do ponto real, num lugar livre de
     // bancos, canteiros, postes e árvores, com o aparelho virado para a praça
-    const free = ([x, z]) => pointInPoly(x, z, poly) && freeGap(ctx, x, z, y - 0.5) > 1.4 && ctx.trees.every(t => Math.hypot(t.x - x, t.z - z) > 2.2);
+    const free = ([x, z]) => pointInPoly(x, z, poly) && freeGap(ctx, x, z, y(x, z) - 0.5) > 1.4 && ctx.trees.every(t => Math.hypot(t.x - x, t.z - z) > 2.2);
     const cands = [];
     for (let i = 0; i < poly.length; i++) {
       const a = poly[i], b = poly[(i + 1) % poly.length];

@@ -413,6 +413,33 @@ const lerp = (a, b, t) => a + (b - a) * t;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const ease = t => t * t * (3 - 2 * t);
 const wrapPi = a => a - Math.round(a / TAU) * TAU;
+
+// nado de peito, quadros-chave pela fase da braçada (0..1, volta ao começo)
+// braço: [fase, ombro x (- = para a frente), ombro z (abre), cotovelo x, mão x]
+const SWIM_ARM = [
+  [0.00, -2.6, 0.12, -0.1, 0.1],     // deslizando: braços esticados à frente
+  [0.12, -2.55, 0.35, -0.15, 0.3],   // começa a abrir
+  [0.38, -1.75, 0.95, -1.1, 0.45],   // puxada: para fora e para baixo
+  [0.52, -1.15, 0.25, -2.1, -0.2],   // mãos juntas embaixo do queixo
+  [0.70, -2.6, 0.1, -0.15, 0.05],    // estica de novo
+];
+// perna: [fase, quadril x (- = coxa para a frente), quadril z (abre), joelho, tornozelo (+ = ponta)]
+const SWIM_LEG = [
+  [0.00, 0.05, 0.05, 0.1, 1.2],      // juntas e esticadas, pés em ponta
+  [0.40, 0.05, 0.08, 0.15, 1.1],
+  [0.56, -0.7, 0.4, 2.0, -0.1],      // encolhe: calcanhares sobem, joelhos abrem
+  [0.68, -0.25, 0.6, 0.5, 0.0],      // chuta para fora
+  [0.80, 0.05, 0.06, 0.1, 1.2],      // fecha
+];
+function keyAt(K, u, out) {
+  let i = K.length - 1;
+  for (let j = 0; j < K.length; j++) if (K[j][0] <= u) i = j;
+  const a = K[i], b = K[(i + 1) % K.length];
+  const span = (b[0] - a[0] + 1) % 1 || 1, t = ease(((u - a[0] + 1) % 1) / span);
+  for (let j = 1; j < a.length; j++) out[j - 1] = lerp(a[j], b[j], t);
+  return out;
+}
+const _kA = [0, 0, 0, 0], _kL = [0, 0, 0, 0], _eu2 = new THREE.Euler();
 const _hj = new THREE.Vector3(), _d = new THREE.Vector3(), _pn = new THREE.Vector3(), _th = new THREE.Vector3();
 const _X = new THREE.Vector3(), _Y = new THREE.Vector3(), _Z = new THREE.Vector3(), _tg = new THREE.Vector3(), _pole = new THREE.Vector3();
 const _q = new THREE.Quaternion(), _q2 = new THREE.Quaternion(), _m4 = new THREE.Matrix4(), _eu = new THREE.Euler(0, 0, 0, 'YXZ');
@@ -535,16 +562,22 @@ export class Character {
     this.feet = [{}, {}]; this.from = null; this.fade = 0;
     this.g = {}; this.F = {};
     this.onStep = null;
+    // água: rasa (wade 0..1 segura as pernas) e funda (swim: nado de peito / boiando)
+    this.wade = 0; this.swim = 0; this.swMove = 0; this.swc = 0;
+    this.onStroke = null;
   }
 
   // dt; speed em m/s; grounded; running (som dos passos);
-  // o = { mx, mz: direção do movimento no espaço do personagem, vy: velocidade vertical }
+  // o = { mx, mz: direção do movimento no espaço do personagem, vy: velocidade vertical,
+  //       wade: 0..1 água pelas pernas, swim: nadando }
   // (um número em `o` é o formato antigo: 1 = para a frente, -1 = de costas)
   update(dt, speed, grounded, running, o = {}) {
     if (typeof o === 'number') o = { mz: o };
     dt = Math.min(dt, 0.1);
     this.t += dt;
     const v = Math.max(0, speed || 0), k = rate => Math.min(1, dt * rate);
+    this.swim += ((o.swim ? 1 : 0) - this.swim) * k(o.swim ? 3 : 4);
+    this.wade += ((o.wade ?? 0) - this.wade) * k(6);
 
     // giro do corpo: quem move o personagem gira a raiz depois de animar (um quadro de atraso)
     const yaw = this.root.rotation.y;
@@ -593,7 +626,7 @@ export class Character {
     gaitParams(v, act, r, g);
     const prev = this.cyc;
     if (grounded) this.cyc = (this.cyc + this.back * g.f * dt * this.move + 1) % 1;
-    if (grounded && act > 0.3) {
+    if (grounded && act > 0.3 && this.swim < 0.3) {
       for (let i = 0; i < 2; i++) {
         const u0 = (prev + i * 0.5) % 1, u1 = (this.cyc + i * 0.5) % 1;
         if (this.back > 0 ? u1 < u0 - 0.5 : u0 >= g.duty && u1 < g.duty && u0 - u1 < 0.5) this.onStep?.(running);
@@ -646,6 +679,8 @@ export class Character {
       ft.pitch = F.pitch * m; ft.toe = F.toe * m;
       ft.yaw = lerp(s * (0.13 + 0.05 * free), s * lerp(0.06, 0.03, r), m) + lowYaw;
       ft.w = lerp(1, F.w, m);
+      // na água rasa: o pé no ar sobe mais (tira a perna da água a cada passo)
+      if (this.wade > 0.01) ft.y += this.wade * 0.1 * (1 - ft.w);
       // no ar: a perna da frente encolhe e a outra fica para trás; caindo, as duas descem para o pouso
       if (air > 0.001) {
         const ld = i === this.lead;
@@ -709,11 +744,60 @@ export class Character {
         shx = lerp(shx, lerp(-0.42, -0.15, fall), air); shz = lerp(shz, s * lerp(0.42, 0.72, fall), air);
         elx = lerp(elx, -0.55, air);
       }
+      // na água rasa: braços um pouco abertos e dobrados, equilibrando
+      shz += s * 0.22 * this.wade * (1 - air); elx -= 0.35 * this.wade;
       shx -= this.landY * 2.5;
       A.sh.rotation.set(shx, 0, shz);
       A.el.rotation.set(elx, 0, 0);
       A.hand.rotation.set(hdx, 0, s * 0.05);
       A.sh.position.y = this.shY[i] + 0.004 * br * idle;
+    }
+    if (this.swim > 0.001) this._swim(dt, v, k);
+  }
+
+  // água funda, por cima da pose de terra: nado de peito andando, boiando parado
+  // (corpo quase em pé, mãos abanando, pernas pedalando). A cabeça fica fora d'água
+  _swim(dt, v, k) {
+    const w = ease(clamp(this.swim, 0, 1));
+    this.swMove += (smooth(0.2, 1.0, v) - this.swMove) * k(3);
+    const mv = this.swMove;
+    const prev = this.swc;
+    this.swc = (this.swc + lerp(0.7, lerp(0.75, 1.15, smooth(1.4, 2.2, v)), mv) * dt) % 1;
+    // som da braçada no começo da puxada (boiando: duas abanadas por ciclo)
+    const cross = p => (prev < p && this.swc >= p) || (prev > this.swc && (prev < p || this.swc >= p));
+    if (w > 0.6 && (cross(0.12) || (mv < 0.4 && cross(0.62)))) this.onStroke?.(mv);
+    const u = this.swc, P = TAU * u;
+    // corpo: deitado nadando (o peito sobe na puxada para respirar), quase em pé boiando
+    const breath = mv * Math.sin(Math.PI * clamp(u / 0.55, 0, 1));
+    const hipsX = lerp(0.2, 1.05, mv) - 0.12 * breath, spineX = lerp(0.04, 0.16, mv) - 0.1 * breath;
+    const H = this.hips, S = this.spine;
+    H.rotation.set(lerp(H.rotation.x, hipsX, w), lerp(H.rotation.y, 0, w), lerp(H.rotation.z, 0, w));
+    H.position.set(lerp(H.position.x, 0, w), lerp(H.position.y, lerp(0.54 + Math.sin(P * 2) * 0.02, 0.86 + breath * 0.05, mv), w), lerp(H.position.z, -0.12 * mv, w));
+    S.rotation.set(lerp(S.rotation.x, spineX, w), lerp(S.rotation.y, 0, w), lerp(S.rotation.z, 0, w));
+    // pescoço e cabeça compensam o tronco: olha para a frente, rente à água
+    const T = hipsX + spineX;
+    this.neck.rotation.set(lerp(this.neck.rotation.x, -T * 0.5, w), lerp(this.neck.rotation.y, 0, w), lerp(this.neck.rotation.z, 0, w));
+    this.head.rotation.set(lerp(this.head.rotation.x, -T * 0.5 + 0.08, w), lerp(this.head.rotation.y, this.look.y * (1 - mv) * 0.8, w), lerp(this.head.rotation.z, 0, w));
+    for (let i = 0; i < 2; i++) {
+      const A = this.arms[i], L = this.legs[i], s = A.side;
+      // braços: braçada / mãos abanando à frente, para fora e para dentro
+      keyAt(SWIM_ARM, u, _kA);
+      const sc = Math.sin(P * 2 + i * 0.4);
+      const ax = lerp(-0.75 + 0.1 * sc, _kA[0], mv), az = lerp(0.8 + 0.3 * sc, _kA[1], mv);
+      const ex = lerp(-0.7, _kA[2], mv), hx = lerp(0.2 * sc, _kA[3], mv);
+      A.sh.rotation.set(lerp(A.sh.rotation.x, ax, w), lerp(A.sh.rotation.y, 0, w), lerp(A.sh.rotation.z, s * az, w));
+      A.el.rotation.set(lerp(A.el.rotation.x, ex, w), 0, 0);
+      A.hand.rotation.set(lerp(A.hand.rotation.x, hx, w), 0, lerp(A.hand.rotation.z, s * 0.05, w));
+      A.sh.position.y = this.shY[i];
+      // pernas: pernada de sapo / pedalando (as duas fora de fase)
+      keyAt(SWIM_LEG, u, _kL);
+      const pd = P + i * Math.PI;
+      const lx = lerp(-0.5 + 0.35 * Math.sin(pd), _kL[0], mv), lz = lerp(0.2, _kL[1], mv);
+      const kn = lerp(1.0 + 0.45 * Math.cos(pd), _kL[2], mv), an = lerp(0.4, _kL[3], mv);
+      L.hip.quaternion.slerp(_q.setFromEuler(_eu2.set(lx, 0, s * lz)), w);
+      L.knee.rotation.x = lerp(L.knee.rotation.x, kn, w);
+      L.ankle.quaternion.slerp(_q.setFromEuler(_eu2.set(an, 0, 0)), w);
+      L.toe.rotation.x = lerp(L.toe.rotation.x, 0, w);
     }
   }
 

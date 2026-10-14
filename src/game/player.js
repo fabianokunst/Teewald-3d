@@ -3,6 +3,11 @@ import { PLAY_BOUNDS } from '../config.js';
 import { roadSurfaceAt } from '../world/roads.js';
 import { pointInPoly } from '../world/geo.js';
 
+// água: até a cintura anda (mais devagar quanto mais funda); mais funda, nada.
+// Nadando, a raiz (os pés em pé) fica SWIM_Y abaixo da superfície
+const SWIM_IN = 1.05, SWIM_OUT = 0.9, SWIM_Y = 1.0;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
 // Controle do protagonista: andar/correr relativo à câmera, pulo, gravidade e colisão
 export class Player {
   constructor(ctx, character, audio) {
@@ -21,7 +26,13 @@ export class Player {
     this.lockHeading = false;   // durante um golpe o corpo não vira com o analógico
     this.noJump = false;
     this.stepT = 0;       // tempo que ainda sobe/desce suave depois de um degrau
-    character.onStep = run => this.audio.step(this.surface(), run);
+    this.swimming = false; // na água funda: nada (sem pulo, sem armas, sem esquiva)
+    this.wade = 0;        // 0..1: o quanto a água segura as pernas
+    this.waterY = null;   // superfície da água sobre o jogador (null = seco)
+    this.rippleT = 0;
+    this.effects = null;  // main.js liga (respingos e marolas)
+    character.onStep = run => this._footstep(run);
+    character.onStroke = k => this._stroke(k);
   }
 
   place(x, z, heading) {
@@ -29,6 +40,7 @@ export class Player {
     this.heading = heading;
     this.vel.set(0, 0, 0);
     this.grounded = true;
+    this.swimming = false; this.wade = 0; this.waterY = null;
     this.sync();
   }
 
@@ -64,18 +76,22 @@ export class Player {
     const dl = Math.hypot(dx, dz);
     if (dl > 0) { dx /= dl; dz /= dl; }
     // mirando (aimYaw definido pela arma): sem correr, vira para a mira e anda devagar em qualquer direção
-    const aiming = this.aimYaw != null && !this.auto;
+    const swim = this.swimming;
+    const aiming = this.aimYaw != null && !this.auto && !swim;
     if (aiming) run = false;
-    // analógico: pouco inclinado anda devagar; tecla SHIFT / botão B corre
-    const target = mag > 0.05 ? (run ? 7.2 : aiming ? 1.3 : 1.75) * mag * this.moveScale : 0;
-    const accel = target > this.speed ? (run ? 10 : 7) : 10;
+    // analógico: pouco inclinado anda devagar; tecla SHIFT / botão B corre.
+    // Na água rasa as pernas vão contra a água (correr perde mais); nadando, nado de peito
+    // (correr = braçadas mais rápidas), arrancando e parando devagar
+    const slow = 1 - (run ? 0.6 : 0.35) * this.wade;
+    const target = mag > 0.05 ? (swim ? (run ? 2.3 : 1.35) : (run ? 7.2 : aiming ? 1.3 : 1.75) * slow) * mag * this.moveScale : 0;
+    const accel = swim ? (target > this.speed ? 2.6 : 1.8) : target > this.speed ? (run ? 10 : 7) * (1 - 0.4 * this.wade) : 10;
     this.speed += Math.sign(target - this.speed) * Math.min(Math.abs(target - this.speed), accel * dt);
     if ((aiming || mag > 0.05) && !this.lockHeading) {
       const want = aiming ? this.aimYaw : Math.atan2(dx, dz);
       let d = want - this.heading;
       while (d > Math.PI) d -= Math.PI * 2;
       while (d < -Math.PI) d += Math.PI * 2;
-      this.heading += d * Math.min(1, dt * (aiming ? 16 : run ? 9 : 7));
+      this.heading += d * Math.min(1, dt * (aiming ? 16 : swim ? 3.5 : run ? 9 : 7));
     }
     let hx = Math.sin(this.heading), hz = Math.cos(this.heading);
     if (aiming) {
@@ -91,7 +107,7 @@ export class Player {
     let gPrev = this.ctx.groundAt(this.pos.x, this.pos.z, this.pos.y);
     // maior desnível entre dois passos de 12 cm (degrau, meio-fio, borda de piso), ou
     // entre os pés e o chão (ainda subindo o degrau anterior, esquiva, empurrão)
-    let edge = this.grounded ? Math.abs(gPrev - this.pos.y) : 0;
+    let edge = this.grounded && !swim ? Math.abs(gPrev - this.pos.y) : 0;
     for (let i = 0; i < n; i++) {
       const ox = this.pos.x, oz = this.pos.z;
       this.pos.x += hx * dist / n;
@@ -100,12 +116,8 @@ export class Player {
       const g = this.ctx.groundAt(this.pos.x, this.pos.z, this.pos.y);
       // degrau alto demais (borda de piso elevado, muro de arrimo): não sobe sem pular.
       // Medido em passos de 12 cm, então ladeiras íngremes do terreno continuam subíveis.
-      if (g > Math.max(gPrev, this.pos.y) + 0.5) { this.pos.x = ox; this.pos.z = oz; break; }
-      // não entra no rio fundo (exceto pontes)
-      if (this.ctx.isDeepWater(this.pos.x, this.pos.z, g)) {
-        this.pos.x = ox; this.pos.z = oz; this.speed *= 0.5;
-        break;
-      }
+      // Nadando, sai por qualquer margem que não passe muito da superfície
+      if (swim ? g > this.pos.y + SWIM_Y + 0.35 : g > Math.max(gPrev, this.pos.y) + 0.5) { this.pos.x = ox; this.pos.z = oz; break; }
       edge = Math.max(edge, Math.abs(g - gPrev));
       gPrev = g;
     }
@@ -115,9 +127,34 @@ export class Player {
 
     // gravidade e chão
     const ground = this.ctx.groundAt(this.pos.x, this.pos.z, this.pos.y);
-    if (input && !this.auto && !aiming && !this.noJump && this.grounded && input.jump()) { this.vel.y = 4.6; this.grounded = false; }
+    // água: profundidade sobre o chão; entra a nado (andando para o fundo ou caindo
+    // de cima) e volta a andar quando dá pé
+    const wl = this.ctx.waterLevel(this.pos.x, this.pos.z);
+    const depth = wl === null ? 0 : wl - ground;
+    this.waterY = depth > 0 ? wl : null;
+    if (this.swimming && depth < SWIM_OUT) {
+      this.swimming = false; this.stepT = 0.3;
+      this.grounded = ground > this.pos.y - 0.45;
+      if (this.grounded) this.vel.y = 0;
+    } else if (!this.swimming && depth > SWIM_IN && (this.grounded || this.pos.y < wl - SWIM_Y + 0.3)) {
+      this.swimming = true;
+      const k = this.grounded ? 0.6 : Math.max(0.6, Math.min(2.5, -this.vel.y / 4));
+      this.effects?.splash(this.pos.x, wl, this.pos.z, k);
+      this.audio.splash?.(k);
+      this.grounded = true;
+    }
+    const jumpOk = !this.swimming && depth < 0.6;
+    if (input && !this.auto && !aiming && !this.noJump && jumpOk && this.grounded && input.jump()) { this.vel.y = 4.6; this.grounded = false; }
     if (edge > 0.08) this.stepT = 0.15;
-    if (this.grounded) {
+    if (this.swimming) {
+      // boia: mola até a altura de nado, com um balanço leve (afunda um pouco ao cair na água)
+      this.bobT = (this.bobT || 0) + dt;
+      const goal = wl - SWIM_Y + Math.sin(this.bobT * 2.1) * 0.025;
+      this.vel.y += ((goal - this.pos.y) * 26 - this.vel.y * 7) * dt;
+      this.pos.y += this.vel.y * dt;
+      // nunca abaixo do leito
+      if (this.pos.y < ground - 0.3) { this.pos.y = ground - 0.3; this.vel.y = Math.max(0, this.vel.y); }
+    } else if (this.grounded) {
       if (ground < this.pos.y - 0.45) { this.grounded = false; this.vel.y = 0; }
       // degrau: desce suave (~0,1 s) e sobe quase na hora (no máximo 5 cm dentro do
       // degrau). Ladeira e rampa: os pés acompanham o chão na hora — com o atraso,
@@ -129,13 +166,53 @@ export class Player {
     if (!this.grounded) {
       this.vel.y -= 13 * dt;
       this.pos.y += this.vel.y * dt;
-      if (this.pos.y <= ground) { this.pos.y = ground; this.vel.y = 0; this.grounded = true; }
+      if (this.pos.y <= ground) {
+        // caiu na água rasa: respingo
+        if (depth > 0.05 && this.vel.y < -2.5) { const k = Math.min(1.4, -this.vel.y / 5); this.effects?.splash(this.pos.x, wl, this.pos.z, k); this.audio.splash?.(k); }
+        this.pos.y = ground; this.vel.y = 0; this.grounded = true;
+      }
     }
-    step.vy = this.vel.y;
+    // o quanto a água segura (da canela até a cintura)
+    const wk = this.swimming ? 1 : clamp((depth - 0.12) / 0.8, 0, 1);
+    this.wade += (wk - this.wade) * Math.min(1, dt * 6);
+    this._waterFx(dt, depth);
+    step.vy = this.swimming ? 0 : this.vel.y;
     step.still = !input;   // conversa, leitura, cena: olha para a frente (sem olhar em volta)
+    step.swim = this.swimming;
+    step.wade = this.swimming ? 0 : this.wade;
     this.ch.update(dt, this.speed, this.grounded, run, step);
     this.sync(ground);
     return { moving: mag > 0.05 };
+  }
+
+  // passo: na água o pé espirra
+  _footstep(run) {
+    if (this.waterY !== null && this.waterY - this.pos.y > 0.04) {
+      this.audio.splash?.(run ? 0.75 : 0.45);
+      const h = this.heading, s = Math.random() < 0.5 ? -1 : 1;
+      this.effects?.splash(this.pos.x + Math.sin(h) * 0.25 + Math.cos(h) * 0.1 * s, this.waterY, this.pos.z + Math.cos(h) * 0.25 - Math.sin(h) * 0.1 * s, run ? 0.45 : 0.25);
+    } else this.audio.step(this.surface(), run);
+  }
+
+  // braçada: barulho de água e gotas nas mãos
+  _stroke(k) {
+    this.audio.stroke?.(k);
+    if (this.waterY === null || !this.effects) return;
+    const h = this.heading, fx = Math.sin(h), fz = Math.cos(h);
+    for (const s of [-1, 1]) this.effects.splash(this.pos.x + fx * 0.55 + fz * 0.35 * s, this.waterY, this.pos.z + fz * 0.55 - fx * 0.35 * s, 0.12 + 0.25 * k);
+  }
+
+  // marolas em volta do corpo: nadando, boiando e andando na água
+  _waterFx(dt, depth) {
+    if (this.waterY === null || !this.effects) return;
+    if (!this.swimming && !(depth > 0.15 && this.grounded)) return;
+    this.rippleT -= dt;
+    if (this.rippleT > 0) return;
+    const mv = Math.min(1, this.speed / 1.5);
+    this.rippleT = this.swimming ? 0.55 - 0.3 * mv : mv > 0.1 ? 0.3 : 0.9;
+    if (!this.swimming && mv <= 0.1 && depth < 0.3) return;
+    const back = this.swimming ? 0.35 : 0;
+    this.effects.ripple(this.pos.x - Math.sin(this.heading) * back, this.waterY, this.pos.z - Math.cos(this.heading) * back, this.swimming ? 1.3 + 0.6 * mv : 0.9 + 0.5 * mv, 1.2, 0.2 + 0.08 * mv);
   }
 
   sync(ground = this.pos.y) {
