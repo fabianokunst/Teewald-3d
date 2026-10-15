@@ -55,7 +55,8 @@ export function places(G) {
     praca: { x: L.praca.c[0], z: L.praca.c[1] },
     field: { x: L.field.c[0], z: L.field.c[1], ang: L.field.ang },
     kartoffel: { x: L.kartoffel.x, z: L.kartoffel.z, rot: L.kartoffel.rot, hl: L.kartoffel.hl, hw: L.kartoffel.hw, arena: L.kartoffel.arena, start: L.kartoffel.start },
-    factory: fab, factoryDoor: fab ? front(fab, 2.5) : { x: 6, z: -24, h: Math.PI },
+    // portaria da fábrica: diante da porta pequena (não do portão), y = soleira
+    factory: fab, factoryDoor: fab ? { ...front(fab, 1.3, fab.door?.lx ?? fab.w / 4), y: fab.door?.y } : { x: 6, z: -24, h: Math.PI },
     sociedade: soc, sociedadeDoor: soc ? front(soc, 2.5) : { x: -172, z: 120, h: 0 },
     prefeitura: pref, prefeituraBack: pref ? (() => { const f = frame(pref.x, pref.z, pref.rot)(0, -pref.d / 2 - 3); return { x: f[0], z: f[1], h: pref.rot }; })() : { x: -168, z: 160, h: 0 },
     museu: museu, museuDoor: museu ? front(museu, 2.5) : { x: -128, z: -95, h: 0 },

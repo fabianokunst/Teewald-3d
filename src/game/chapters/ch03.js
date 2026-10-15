@@ -41,6 +41,13 @@ export default {
   loadState(G, S, c) { S.foundIds = [...(c.foundIds || [])]; S.found = S.foundIds.length; },
   exitTo(G) { const f = places(G).factoryDoor; return { x: f.x + Math.sin(f.h + Math.PI) * 2.5, z: f.z + Math.cos(f.h + Math.PI) * 2.5, h: f.h + Math.PI }; },
   onExit(G, S) { if (S.flags.freed) G.complete(); },
+  // luminária da portaria acesa (falhando) enquanto o jogador está do lado de fora
+  tick(G, dt, S) {
+    if (G.interiors.indoor) return;
+    const d = places(G).factoryDoor, t = performance.now() / 1000;
+    const k = Math.sin(t * 9) * Math.sin(t * 4.1 + 1) > 0.55 ? 0.25 : 1;
+    G.atmo.light(d.x + Math.sin(d.h), (d.y ?? G.y(d.x, d.z)) + 2.2, d.z + Math.cos(d.h), [1.3 * k, 0.95 * k, 0.55 * k], 8, 2);
+  },
   steps: [
     {
       id: 'katia', obj: 'Fale com a Kátia',
@@ -90,11 +97,12 @@ export default {
     },
     {
       id: 'ida', obj: 'Vá até a fábrica de calçados',
-      marker: G => { const d = places(G).factoryDoor; return [d.x, null, d.z]; },
+      marker: G => { const d = places(G).factoryDoor; return [d.x, d.y != null ? d.y + 1.4 : null, d.z]; },
       enter(G) {
         G.ambient({ types: { dog: 2, ghost: 1 }, max: 3, every: [14, 24] });
         const d = places(G).factoryDoor;
-        G.use('entrar', [d.x, G.y(d.x, d.z) + 1.2, d.z], 3, 'ENTRAR NA FÁBRICA', () => {
+        // a porta fica no alto da escadinha: dá para entrar já do pé dela
+        G.use('entrar', [d.x, (d.y ?? G.y(d.x, d.z)) + 1.2, d.z], 3.5, 'ENTRAR NA FÁBRICA', () => {
           G.ambient(null);
           G.combat.clearEnemies();
           G.enter('fabrica', null, () => G.next());

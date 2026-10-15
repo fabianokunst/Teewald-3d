@@ -95,7 +95,7 @@ export function buildHouse(B, ctx, s) {
   const roofTop = buildRoof(B, s, P, top, y0);
 
   // aberturas
-  if (s.style === 'factory') addFactoryOpenings(B, s, P, y0, top);
+  if (s.style === 'factory') addFactoryOpenings(B, ctx, s, P, y0, top);
   else if (s.style !== 'pavilion') addOpenings(B, s, P, y0, ctx);
   if (s.sign) addSign(B, s, P, y0, top, ctx);
   if (s.chimney) {
@@ -288,51 +288,54 @@ function addOpenings(B, s, P, y0, ctx) {
       }
     }
   }
-  // degrau embaixo da porta de verdade; se a porta fica alta (terreno em declive),
-  // patamar e escada descendo rente à parede, sem avançar sobre a calçada
-  if (s.style !== 'commercial' && doorT !== null) {
-    const dx = -hw + s.w * doorT;
-    s.doorFoot = [dx, hd + 0.75];
-    const ground = (lx, lz) => { const q = P(lx, 0, lz); return ctx.terrain.heightAt(q[0], q[2]); };
-    const base = Math.min(ground(dx - 0.6, hd + 0.65), ground(dx + 0.6, hd + 0.65)) - 0.1;
-    const h = y0 - base;
-    if (h > 0.08 && h <= 0.7) {
-      const p = P(dx, 0, hd + 0.35);
-      B.box('concrete', p[0], base, p[2], 1.4, h, 0.7, s.rot, { uvScale: 1 });
-      ctx.collision.addBox(p[0], p[2], 0.7, 0.35, s.rot, base, y0, { walk: true, cam: false });
-    } else if (h > 0.7) {
-      const p = P(dx, 0, hd + 0.55);
-      B.box('concrete', p[0], base, p[2], 1.4, h, 1.1, s.rot, { uvScale: 1 });
-      ctx.collision.addBox(p[0], p[2], 0.7, 0.55, s.rot, base, y0, { walk: true, cam: false });
-      // degraus de 19 cm para o lado em que a escada chega ao chão antes (ladeira abaixo)
-      const RISE = 0.19, TREAD = 0.28;
-      const plan = dir => {
-        const steps = [];
-        for (let i = 0; i < 40; i++) {
-          const lx = dx + dir * (0.7 + TREAD * (i + 0.5));
-          const g = Math.max(ground(lx, hd + 0.1), ground(lx, hd + 1.0));
-          const top = y0 - (i + 1) * RISE;
-          if (top < g + 0.02) return { dir, steps, ok: true };
-          steps.push({ lx, top, g: Math.min(ground(lx, hd + 0.1), ground(lx, hd + 1.0)) - 0.1 });
-        }
-        return { dir, steps, ok: false };
-      };
-      const [best] = [plan(1), plan(-1)].sort((p, q) => (q.ok - p.ok) || (p.steps.length - q.steps.length));
-      for (const st of best.steps) {
-        const q = P(st.lx, 0, hd + 0.55);
-        B.box('concrete', q[0], st.g, q[2], TREAD + 0.01, st.top - st.g, 1.0, s.rot, { uvScale: 1 });
+  if (s.style !== 'commercial' && doorT !== null) doorSteps(B, ctx, s, P, y0, -hw + s.w * doorT);
+}
+
+// degrau embaixo da porta da frente (em dx, x local); se a porta fica alta (terreno em
+// declive), patamar e escada descendo rente à parede, sem avançar sobre a calçada
+function doorSteps(B, ctx, s, P, y0, dx) {
+  const hd = s.d / 2;
+  s.doorFoot = [dx, hd + 0.75];
+  const ground = (lx, lz) => { const q = P(lx, 0, lz); return ctx.terrain.heightAt(q[0], q[2]); };
+  const base = Math.min(ground(dx - 0.6, hd + 0.65), ground(dx + 0.6, hd + 0.65)) - 0.1;
+  const h = y0 - base;
+  if (h > 0.08 && h <= 0.7) {
+    const p = P(dx, 0, hd + 0.35);
+    B.box('concrete', p[0], base, p[2], 1.4, h, 0.7, s.rot, { uvScale: 1 });
+    ctx.collision.addBox(p[0], p[2], 0.7, 0.35, s.rot, base, y0, { walk: true, cam: false });
+  } else if (h > 0.7) {
+    const p = P(dx, 0, hd + 0.55);
+    B.box('concrete', p[0], base, p[2], 1.4, h, 1.1, s.rot, { uvScale: 1 });
+    ctx.collision.addBox(p[0], p[2], 0.7, 0.55, s.rot, base, y0, { walk: true, cam: false });
+    // degraus de 19 cm para o lado em que a escada chega ao chão antes (ladeira abaixo)
+    const RISE = 0.19, TREAD = 0.28;
+    const plan = dir => {
+      const steps = [];
+      for (let i = 0; i < 40; i++) {
+        const lx = dx + dir * (0.7 + TREAD * (i + 0.5));
+        const g = Math.max(ground(lx, hd + 0.1), ground(lx, hd + 1.0));
+        const top = y0 - (i + 1) * RISE;
+        if (top < g + 0.02) return { dir, steps, ok: true };
+        steps.push({ lx, top, g: Math.min(ground(lx, hd + 0.1), ground(lx, hd + 1.0)) - 0.1 });
       }
-      if (best.steps.length) {
-        const run = best.steps.length * TREAD, c = P(dx + best.dir * (0.7 + run / 2), 0, hd + 0.55);
-        s.doorFoot = [dx + best.dir * (0.7 + run + 0.3), hd + 0.55];
-        ctx.collision.addBox(c[0], c[2], 0.5, run / 2, s.rot + best.dir * Math.PI / 2, base, y0, { walk: true, cam: false, ramp: [y0, best.steps[best.steps.length - 1].top] });
-      }
+      return { dir, steps, ok: false };
+    };
+    const [best] = [plan(1), plan(-1)].sort((p, q) => (q.ok - p.ok) || (p.steps.length - q.steps.length));
+    for (const st of best.steps) {
+      const q = P(st.lx, 0, hd + 0.55);
+      B.box('concrete', q[0], st.g, q[2], TREAD + 0.01, st.top - st.g, 1.0, s.rot, { uvScale: 1 });
+    }
+    if (best.steps.length) {
+      const run = best.steps.length * TREAD, c = P(dx + best.dir * (0.7 + run / 2), 0, hd + 0.55);
+      s.doorFoot = [dx + best.dir * (0.7 + run + 0.3), hd + 0.55];
+      ctx.collision.addBox(c[0], c[2], 0.5, run / 2, s.rot + best.dir * Math.PI / 2, base, y0, { walk: true, cam: false, ramp: [y0, best.steps[best.steps.length - 1].top] });
     }
   }
 }
 
 // fábrica: uma faixa de janelas industriais por andar, portão de enrolar e porta
-function addFactoryOpenings(B, s, P, y0, top) {
+// (a portaria: marquise, luminária e degraus até a calçada)
+function addFactoryOpenings(B, ctx, s, P, y0, top) {
   const hw = s.w / 2, hd = s.d / 2, out = 0.04;
   const faces = [
     { name: 'front', a: [-hw, hd + out], b: [hw, hd + out], len: s.w },
@@ -355,6 +358,11 @@ function addFactoryOpenings(B, s, P, y0, top) {
       quadOn('rollDoor', 0.35 - gw, 0.35 + gw, y0, y0 + gh, [[0, 0], [gw * f.len * 2 / 1.6, 0], [gw * f.len * 2 / 1.6, gh / 1.6], [0, gh / 1.6]]);
       const dw = 0.5 / f.len;
       quadOn('door', 0.75 - dw, 0.75 + dw, y0, y0 + 2.15);
+      const dx = -hw + s.w * 0.75, c = P(dx, 0, hd + 0.55), l = P(dx, 0, hd + 0.3);
+      B.box('concreteW', c[0], y0 + 2.5, c[2], 2.2, 0.14, 1.1, s.rot, { uvScale: 1 });
+      B.box('lampLens', l[0], y0 + 2.34, l[2], 0.4, 0.16, 0.22, s.rot);
+      s.door = { lx: dx, y: y0 };
+      doorSteps(B, ctx, s, P, y0, dx);
     }
   }
 }
