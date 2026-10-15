@@ -1,5 +1,17 @@
 {
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/auto-sync.sh\"",
+            "timeout": 60,
+            "statusMessage": "Verificando atualizações no GitHub..."
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
