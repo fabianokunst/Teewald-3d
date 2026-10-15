@@ -10,11 +10,15 @@ import { HAIR, SKIN, EYES } from './heroTexture.js';
 // talks: conversas (uma por vez, em sequência) · barks: falas soltas quando o jogador passa perto
 // hi: o que diz quando o jogador chega · scared: depois de um tiro · aimed: com a arma apontada
 // gun: na primeira conversa com a arma na mão
+// jeito (npcs.js + npcActs.js): idle = gestos de parado (ACTS), talkStyle = calm | lively | nervous | stiff,
+//   greet = gesto do cumprimento, devout = se benze (susto, sino), barkActs = gesto junto de cada fala solta,
+//   stops = onde olha nas paradas do caminho ('river' | 'house'), stopAct = o que faz nelas
 
 export const NPC_DEFS = [
   // ---------------- Calçadão do Rio Cadeia ----------------
   {
     id: 'arno', name: 'SEU ARNO', voice: 118,
+    idle: ['glance', 'sky'], talkStyle: 'calm', greet: 'nod',
     look: { seed: 101, top: 'shirt', pattern: 'plaid', accent: [36, 24, 22], old: true, beard: 'full', colors: { jacket: [118, 46, 40], pants: [58, 62, 70], hair: HAIR.gray, skin: SKIN.rosy, boot: [62, 46, 36] } },
     hat: ['palha', [170, 150, 104]], item: 'vara', pose: 'fish',
     spawn: S => { const p = S.calc(-30, -0.82); return { mode: 'stand', x: p.x, z: p.z, h: p.river }; },
@@ -31,6 +35,7 @@ export const NPC_DEFS = [
   },
   {
     id: 'hilda', name: 'DONA HILDA', voice: 300,
+    idle: ['hug', 'glance', 'sign'], talkStyle: 'nervous', devout: true, stops: 'river', stopAct: ['call1', 'glance'], barkActs: ['call1', 'call1'],
     look: { seed: 102, top: 'sweater', female: true, old: true, glasses: true, bottom: 'stockings', feet: 'shoe', colors: { jacket: [98, 44, 52], pants: [64, 60, 62], hair: HAIR.gray, skin: SKIN.fair, boot: [56, 44, 38], lip: [140, 84, 86] } },
     hat: ['lenco', [84, 64, 96]], skirt: { color: [62, 58, 64], long: true },
     spawn: S => ({ mode: 'route', pts: S.route(-46, 16, 0.14), speed: 0.85 }),
@@ -47,6 +52,7 @@ export const NPC_DEFS = [
   },
   {
     id: 'lucas', name: 'LUCAS', voice: 190,
+    idle: ['hips', 'glance', 'scratch'], talkStyle: 'lively', stops: 'river', stopAct: ['call', 'glance'], barkActs: ['call', 'call', 'call1'],
     look: { seed: 103, top: 'jacket', feet: 'sneaker', colors: { jacket: [44, 58, 92], collar: [150, 150, 146], pants: [34, 36, 46], hair: HAIR.brown, skin: SKIN.tan, iris: EYES.brown, boot: [150, 148, 140] } },
     hat: ['bone', [96, 40, 36]],
     spawn: S => ({ mode: 'route', pts: S.route(-130, 40, -0.16), speed: 1.5 }),
@@ -63,6 +69,7 @@ export const NPC_DEFS = [
   },
   {
     id: 'marlene', name: 'MARLENE', voice: 330,
+    idle: ['glance'], talkStyle: 'lively',
     look: { seed: 104, top: 'jacket', female: true, feet: 'sneaker', colors: { jacket: [184, 156, 58], pants: [52, 66, 92], hair: HAIR.dark, skin: SKIN.olive, iris: EYES.brown, boot: [150, 146, 138], lip: [140, 74, 74] } },
     hair: 'rabo', item: 'camera', pose: 'photo',
     spawn: S => {
@@ -82,6 +89,7 @@ export const NPC_DEFS = [
   },
   {
     id: 'edgar', name: 'PROFESSOR EDGAR', voice: 140, stare: true,
+    idle: ['read', 'back', 'glance'], talkStyle: 'calm',
     look: { seed: 105, top: 'suit', old: true, glasses: [150, 140, 120], beard: 'mustache', feet: 'shoe', colors: { jacket: [74, 68, 56], pants: [62, 58, 52], hair: HAIR.white, skin: SKIN.fair, iris: EYES.gray, tie: [44, 50, 70], shirt: [210, 206, 194] } },
     hat: ['boina', [56, 58, 56]], item: 'livro', itemColor: [84, 36, 32],
     spawn: S => {
@@ -103,6 +111,7 @@ export const NPC_DEFS = [
   },
   {
     id: 'lauro', name: 'SEU LAURO', voice: 128,
+    idle: ['watch', 'road', 'lean', 'glance'], talkStyle: 'calm', greet: 'nod',
     look: { seed: 106, top: 'jacket', old: true, colors: { jacket: [66, 74, 60], pants: [76, 70, 58], hair: HAIR.gray, skin: SKIN.tan, iris: EYES.brown, boot: [46, 38, 32] } },
     hat: ['bone', [52, 66, 52]], luggage: true,
     spawn: S => ({ mode: 'sit', seat: S.seat(S.i0x, S.i0z, 'bus') }),
@@ -118,6 +127,7 @@ export const NPC_DEFS = [
   },
   {
     id: 'katia', name: 'KÁTIA', voice: 320,
+    idle: ['glance', 'scratch'], talkStyle: 'nervous', stops: 'river', stopAct: ['glance', 'hug'],
     look: { seed: 119, top: 'shirt', female: true, feet: 'shoe', colors: { jacket: [100, 124, 146], pants: [46, 54, 76], hair: HAIR.dark, skin: SKIN.brown, iris: EYES.brown, boot: [40, 34, 30], button: [200, 200, 200] } },
     hair: 'rabo', item: 'sacola', itemColor: [170, 166, 150],
     spawn: S => ({ mode: 'route', pts: S.routeF(0.02, 0.13, 0.12), speed: 1.35 }),
@@ -134,6 +144,7 @@ export const NPC_DEFS = [
   },
   {
     id: 'bruno', name: 'SEU BRUNO', voice: 160, stare: true,
+    idle: ['water', 'water', 'glance', 'scratch'], talkStyle: 'calm',
     look: { seed: 120, top: 'overall', beard: 'mustache', glasses: true, colors: { jacket: [180, 176, 164], pants: [52, 80, 58], hair: HAIR.brown, skin: SKIN.fair, iris: EYES.green, boot: [62, 46, 34] } },
     item: 'regador', itemColor: [62, 96, 70],
     spawn: S => { const b = S.building(/FLORICULTURA/); const [x, z, h] = b ? S.front(b) : S.near(-235, 160); return { mode: 'stand', x, z, h }; },
@@ -151,6 +162,7 @@ export const NPC_DEFS = [
   // ---------------- Praça 10 de Abril ----------------
   {
     id: 'valdir', name: 'SEU VALDIR', voice: 110,
+    idle: ['lean', 'glance', 'sky'], talkStyle: 'calm',
     look: { seed: 107, top: 'jacket', old: true, beard: 'mustache', colors: { jacket: [46, 40, 38], pants: [86, 80, 70], hair: HAIR.gray, skin: SKIN.tan, iris: EYES.brown, boot: [38, 30, 26], shirt: [120, 40, 34] } },
     hat: ['gaucho', [30, 28, 28]], item: 'cuia', pose: 'hold', thermos: true,
     spawn: S => ({ mode: 'sit', seat: S.seat(S.L.praca.c[0], S.L.praca.c[1], 'bench', S.L.praca.poly) }),
@@ -167,6 +179,7 @@ export const NPC_DEFS = [
   },
   {
     id: 'erna', name: 'DONA ERNA', voice: 280,
+    idle: ['pack', 'pack', 'sign', 'hug'], talkStyle: 'calm', devout: true, greet: 'nod',
     look: { seed: 108, top: 'dress', female: true, bottom: 'stockings', feet: 'shoe', colors: { jacket: [58, 76, 62], pants: [160, 140, 126], hair: [[110, 100, 84], [160, 150, 128], [200, 192, 172]], skin: SKIN.rosy, apron: [196, 192, 182], boot: [62, 46, 38] } },
     hair: 'coque', skirt: { color: [58, 76, 62], long: true, apron: [196, 192, 182] }, pose: 'vendor',
     spawn: S => {
@@ -187,6 +200,7 @@ export const NPC_DEFS = [
   },
   {
     id: 'joao', name: 'JOÃOZINHO', voice: 480, kid: true, stare: true,
+    talkStyle: 'nervous', greet: 'nod',
     look: { seed: 109, top: 'sweater', bottom: 'shorts', feet: 'shoe', colors: { jacket: [92, 86, 74], pants: [44, 50, 66], sock: [170, 166, 156], hair: HAIR.brown, skin: SKIN.fair, iris: EYES.green, boot: [50, 40, 34] } },
     spawn: S => {
       const c = S.L.praca.c, [x, z] = S.free(c[0] + 3.6, c[1] - 1.8, 0.4);
@@ -205,6 +219,7 @@ export const NPC_DEFS = [
   },
   {
     id: 'ana', name: 'ANA', voice: 360,
+    idle: ['glance'], talkStyle: 'nervous',
     look: { seed: 110, top: 'sweater', female: true, longHair: true, band: [96, 40, 50], feet: 'shoe', colors: { jacket: [160, 160, 166], pants: [40, 46, 70], hair: HAIR.auburn, skin: SKIN.fair, iris: EYES.green, boot: [38, 34, 32], lip: [150, 84, 90] } },
     hair: 'longo', item: 'livro', itemColor: [52, 66, 96], pose: 'phone',
     spawn: S => {
@@ -226,9 +241,10 @@ export const NPC_DEFS = [
   },
   {
     id: 'alfredo', name: 'SEU ALFREDO', voice: 120,
+    idle: ['glance', 'sky'], talkStyle: 'calm',
     look: { seed: 122, top: 'suit', old: true, feet: 'shoe', colors: { jacket: [74, 60, 48], pants: [66, 56, 46], hair: HAIR.white, skin: SKIN.fair, iris: EYES.blue, tie: [52, 44, 38], boot: [36, 28, 24] } },
     hat: ['chapeu', [56, 50, 44]], item: 'bengala', pose: 'cane',
-    spawn: S => ({ mode: 'wander', poly: S.L.praca.poly, speed: 0.7, rest: [2, 5] }),
+    spawn: S => ({ mode: 'wander', poly: S.L.praca.poly, speed: 0.7, rest: [4, 9] }),
     hi: 'Boa tarde.',
     barks: ['Vamos pra casa, Wilma.', 'Já vai escurecer.'],
     talks: [
@@ -241,6 +257,7 @@ export const NPC_DEFS = [
   },
   {
     id: 'wilma', name: 'DONA WILMA', voice: 290,
+    idle: ['hug', 'glance'], talkStyle: 'calm', devout: true,
     look: { seed: 123, top: 'sweater', female: true, old: true, glasses: true, band: [170, 164, 170], bottom: 'stockings', feet: 'shoe', colors: { jacket: [120, 104, 126], pants: [96, 90, 96], hair: HAIR.white, skin: SKIN.rosy, iris: EYES.blue, boot: [70, 56, 48] } },
     hair: 'coque', skirt: { color: [70, 62, 80], long: true }, item: 'sacola', itemColor: [130, 96, 106],
     spawn: () => ({ mode: 'follow', leader: 'alfredo', off: [0.72, 0.2] }),
@@ -256,6 +273,7 @@ export const NPC_DEFS = [
   },
   {
     id: 'paula', name: 'PAULA', voice: 350, stare: true,
+    idle: ['cross', 'watch', 'glance', 'hips'], talkStyle: 'lively',
     look: { seed: 121, top: 'polo', female: true, short: true, feet: 'shoe', colors: { jacket: [100, 34, 30], collar: [180, 172, 158], pants: [30, 30, 34], hair: HAIR.red, skin: SKIN.fair, iris: EYES.green, boot: [30, 28, 28], lip: [150, 74, 74] } },
     hair: 'rabo',
     spawn: S => { const b = S.building(/TEEWALD STORE/); const [x, z, h] = b ? S.front(b) : S.near(-165, 42); return { mode: 'stand', x, z, h }; },
@@ -271,6 +289,7 @@ export const NPC_DEFS = [
   },
   {
     id: 'romeu', name: 'SEU ROMEU', voice: 150, stare: true,
+    idle: ['watch', 'read', 'glance'], talkStyle: 'stiff', greet: 'nod',
     look: { seed: 115, top: 'suit', beard: 'mustache', feet: 'shoe', colors: { jacket: [60, 62, 66], pants: [54, 56, 60], hair: HAIR.dark, skin: SKIN.olive, iris: EYES.brown, tie: [96, 32, 34], boot: [26, 22, 20] } },
     item: 'livro', itemColor: [150, 130, 92],
     spawn: S => { const p = S.L.prefeitura; const [x, z, h] = p ? S.front(p) : S.near(-168, 176); return { mode: 'stand', x, z, h }; },
@@ -290,6 +309,7 @@ export const NPC_DEFS = [
   // ---------------- Igreja Matriz e cemitério ----------------
   {
     id: 'bernardo', name: 'PADRE BERNARDO', voice: 135, stare: true,
+    idle: ['back', 'pray', 'sign', 'glance'], talkStyle: 'stiff', devout: true, greet: 'nod',
     look: { seed: 111, top: 'cassock', old: true, glasses: [160, 150, 120], feet: 'shoe', colors: { jacket: [28, 26, 28], pants: [28, 26, 28], hair: HAIR.white, skin: SKIN.fair, button: [64, 62, 64], boot: [24, 22, 22] } },
     skirt: { color: [28, 26, 28], len: -0.8 },
     spawn: S => { const [x, z] = S.free(...S.church(-1.5, 21.5)); return { mode: 'stand', x, z, h: S.L.church.rot }; },
@@ -306,6 +326,7 @@ export const NPC_DEFS = [
   },
   {
     id: 'irma', name: 'DONA IRMA', voice: 270,
+    idle: ['pray', 'sign', 'glance'], talkStyle: 'stiff', devout: true, greet: 'nod', barkActs: ['pray', null, 'pray'],
     look: { seed: 112, top: 'dress', female: true, old: true, bottom: 'stockings', feet: 'shoe', colors: { jacket: [34, 30, 34], pants: [40, 36, 40], hair: HAIR.white, skin: SKIN.fair, iris: EYES.gray, boot: [30, 26, 26] } },
     hat: ['lenco', [40, 36, 42]], skirt: { color: [34, 30, 34], long: true },
     spawn: S => ({ mode: 'sit', seat: S.seat(...S.church(9.5, 19.7), 'bench') }),
@@ -322,6 +343,7 @@ export const NPC_DEFS = [
   },
   {
     id: 'rudi', name: 'RUDI, O CARTEIRO', voice: 175,
+    idle: ['glance'], talkStyle: 'lively', stops: 'house', stopAct: 'deliver',
     look: { seed: 114, top: 'polo', short: true, feet: 'shoe', colors: { jacket: [176, 150, 52], collar: [36, 56, 100], pants: [36, 50, 84], hair: HAIR.dark, skin: SKIN.brown, iris: EYES.brown, boot: [30, 28, 28] } },
     hat: ['bone', [36, 56, 100]], item: 'sacola', itemColor: [170, 146, 60],
     spawn: S => {
@@ -342,6 +364,7 @@ export const NPC_DEFS = [
   },
   {
     id: 'otto', name: 'SEU OTTO', voice: 105, stare: true,
+    idle: ['glance'], talkStyle: 'calm', greet: 'nod',
     look: { seed: 113, top: 'overall', pattern: 'plaid', accent: [40, 46, 52], old: true, beard: 'full', colors: { jacket: [100, 106, 118], pants: [42, 52, 76], hair: HAIR.gray, skin: SKIN.rosy, boot: [56, 42, 30] } },
     hat: ['bone', [58, 70, 52]], item: 'rastelo', pose: 'rake',
     spawn: S => { const c = S.L.cemetery.c, [x, z] = S.free(c[0], c[1], 0.5, 12); return { mode: 'stand', x, z, h: S.face([x, z], S.L.church ? [S.L.church.x, S.L.church.z] : c) }; },
@@ -362,6 +385,7 @@ export const NPC_DEFS = [
   // a festa deste ano. Só conversa e cenário; não mexe na história dos capítulos.
   {
     id: 'ivo', name: 'SEU IVO', voice: 112, stare: true,
+    idle: ['glance', 'sky', 'scratch'], talkStyle: 'lively',
     look: { seed: 116, top: 'shirt', pattern: 'plaid', accent: [180, 176, 166], beard: 'mustache', colors: { jacket: [112, 38, 34], pants: [80, 62, 42], hair: HAIR.red, skin: SKIN.rosy, iris: EYES.blue, boot: [62, 44, 30] } },
     hat: ['chapeu', [48, 46, 40]], item: 'caneca', pose: 'hold',
     // na entrada do pavilhão, no começo da rua, de olho na rodovia
@@ -382,6 +406,7 @@ export const NPC_DEFS = [
   },
   {
     id: 'gertrud', name: 'DONA GERTRUD', voice: 260,
+    idle: ['stir', 'stir', 'sign', 'glance'], talkStyle: 'lively', devout: true,
     look: { seed: 117, top: 'dress', female: true, old: true, bottom: 'stockings', feet: 'shoe', colors: { jacket: [100, 40, 40], pants: [160, 140, 126], hair: HAIR.gray, skin: SKIN.rosy, iris: EYES.blue, apron: [200, 196, 188], boot: [56, 42, 34] } },
     hair: 'coque', skirt: { color: [100, 40, 40], long: true, apron: [200, 196, 188] }, item: 'cesta',
     // atrás do balcão da Kartoffelhaus, do lado da panela
@@ -402,6 +427,7 @@ export const NPC_DEFS = [
   },
   {
     id: 'luana', name: 'LUANA', voice: 370,
+    idle: ['chin', 'glance', 'sky'], talkStyle: 'nervous', greet: 'wave',
     look: { seed: 124, top: 'dress', female: true, longHair: true, bottom: 'stockings', feet: 'shoe', colors: { jacket: [46, 82, 60], pants: [226, 220, 206], hair: HAIR.blond, skin: SKIN.fair, iris: EYES.blue, apron: [214, 206, 188], boot: [40, 32, 28], lip: [160, 90, 92] } },
     hair: 'longo', skirt: { color: [46, 82, 60], apron: [214, 206, 188] },
     // a rainha da festa, sozinha numa das mesas compridas, de vestido típico
@@ -419,6 +445,7 @@ export const NPC_DEFS = [
   },
   {
     id: 'tiago', name: 'TIAGO', voice: 200, stare: true,
+    idle: ['stretch', 'hips', 'cross', 'glance'], talkStyle: 'lively', greet: 'wave',
     look: { seed: 118, top: 'jersey', short: true, number: '9', bottom: 'shorts', feet: 'cleat', colors: { jacket: [112, 34, 32], collar: [176, 172, 164], pants: [24, 24, 28], sock: [112, 34, 32], hair: HAIR.dark, skin: SKIN.brown, iris: EYES.brown, boot: [24, 24, 26] } },
     spawn: S => { const [x, z, h] = S.sideline(); return { mode: 'stand', x, z, h }; },
     hi: 'E aí.',
@@ -440,6 +467,10 @@ export const GENERIC = {
   gun: ['Tu anda armado... Faz bem.'],
   excuse: ['Licença.', 'Com licença.'],
   afraid: ['Me deixa.', 'Não chega perto.', 'Vai embora.'],
+  // arma na mão, chegando perto
+  gunOut: ['Cuidado com isso aí.', 'Pra que essa arma?', 'Guarda isso, guri.'],
+  // o sino tocou (todo mundo olha para a torre)
+  bell: ['O sino...', 'Quem tá tocando o sino?', 'Credo... o sino de novo.', 'Mein Gott, o sino!'],
 };
 
 // Fichas dos moradores. Vão para o modelo e para a página personagens/ (npm run retratos):
@@ -538,9 +569,9 @@ const FICHAS = {
   ana: {
     papel: 'Tenta ligar para a tia que mora na beira do mato', idade: 22, altura: 1.66, porte: 'magro',
     tracos: { bags: true },
-    rosto: 'Cabelo ruivo-escuro comprido com tiara vinho, olhos verdes e olheiras de choro.',
+    rosto: 'Cabelo ruivo-escuro comprido, olhos verdes e olheiras de choro.',
     corpo: 'Magra, de estatura mediana.',
-    roupa: 'Suéter cinza-claro, calça azul-marinho e sapatos.',
+    roupa: 'Suéter cinza-claro com uma faixa bordada vinho, calça azul-marinho e sapatos.',
     jeito: 'Ansiosa; não larga o orelhão.',
   },
   alfredo: {
@@ -554,9 +585,9 @@ const FICHAS = {
   wilma: {
     papel: 'Esposa do Seu Alfredo', idade: 78, altura: 1.53, porte: 'médio', curvado: true,
     tracos: { old: 2 },
-    rosto: 'Cabelo branco em coque com faixa, óculos e olhos azuis.',
+    rosto: 'Cabelo branco em coque, óculos e olhos azuis.',
     corpo: 'Baixinha e um pouco curvada.',
-    roupa: 'Suéter lilás, saia comprida roxa e meia-calça. Sacola na mão.',
+    roupa: 'Suéter lilás com faixa bordada, saia comprida roxa e meia-calça. Sacola na mão.',
     jeito: 'Carinhosa; chama todo mundo de querido.',
   },
   paula: {

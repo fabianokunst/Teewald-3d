@@ -168,7 +168,7 @@ async function boot() {
   combat.guns = pistol;
   invScreen = new InventoryScreen(R, input, audio, inventory, pistol, M, combat);
   // moradores com falas (F / A / toque em FALAR para conversar)
-  npcs = new NPCs({ ctx, scene, M, audio, player, tpc, camera, pistol, R });
+  npcs = new NPCs({ ctx, scene, M, audio, player, tpc, camera, pistol, R, effects });
   // corujas pousadas pela cidade (voam quando o jogador chega perto)
   owls = new Owls({ ctx, scene, audio, atmo });
   // missão 1: o chupacabras (cartaz, galinheiro, pegadas, luta na clareira)

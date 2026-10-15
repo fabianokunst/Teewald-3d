@@ -11,7 +11,8 @@
     "mapdata": "node tools/build-mapdata.mjs",
     "shot": "node tools/screenshot.mjs",
     "audit": "node tools/audit.mjs",
-    "teste": "node tools/test-campaign.mjs"
+    "teste": "node tools/test-campaign.mjs",
+    "retratos": "node tools/retratos.mjs"
   },
   "dependencies": {
     "three": "^0.186.1"

@@ -846,13 +846,13 @@ function paintHead(P, hairAt, rnd, C, L) {
   if (L.bags) for (const cx of [26, 38]) for (let x = cx - 2; x <= cx + 2; x++) p.set(x, 21, mix(p.get(x, 21), [118, 82, 96], 0.32));
   if (L.ruddy) {
     // queimado de sol / corado: bochechas e ponta do nariz vermelhas
-    for (const x0 of [21, 40]) for (let y = 22; y < 26; y++) for (let x = x0; x < x0 + 4; x++) p.set(x, y, mix(p.get(x, y), [214, 110, 92], 0.28));
-    for (let x = 31; x <= 33; x++) p.set(x, 24, mix(p.get(x, 24), [214, 110, 92], 0.3));
+    for (const x0 of [21, 40]) for (let y = 22; y < 26; y++) for (let x = x0; x < x0 + 4; x++) p.set(x, y, mix(p.get(x, y), [214, 110, 92], y === 22 || y === 25 ? 0.1 : 0.18));
+    for (let x = 31; x <= 33; x++) p.set(x, 24, mix(p.get(x, 24), [214, 110, 92], 0.2));
   }
   if (L.freckles) {
     for (let y = 20; y < 27; y++) for (let x = 21; x <= 43; x++) {
       if (Math.abs(x - 32) > 9 && y > 24) continue;
-      if (rnd() < 0.2) p.set(x, y, mix(p.get(x, y), [150, 86, 52], 0.42));
+      if (rnd() < 0.13) p.set(x, y, mix(p.get(x, y), [160, 96, 62], 0.32));
     }
   }
   if (L.stubble) {
