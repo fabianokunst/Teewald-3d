@@ -7,12 +7,15 @@ const cache = new Map();
 // gótica híbrida (legível); só o peso 600 é carregado, então o canvas usa ele mesmo pedindo peso normal
 export const FONT_TITLE = '"Grenze Gotisch", Georgia, serif';
 export const FONT_UI = '"VT323", "Lucida Console", monospace';
+// letra à mão (bilhetes, cartas, diários) e máquina de escrever (ofícios, boletins)
+export const FONT_HAND = '"Caveat", "Segoe Print", "Comic Sans MS", cursive';
+export const FONT_TYPE = '"Special Elite", "Courier New", monospace';
 
 export async function loadFonts() {
   if (!document.fonts) return;
   try {
     await Promise.race([
-      Promise.all([document.fonts.load('48px "Grenze Gotisch"'), document.fonts.load('16px "VT323"')]),
+      Promise.all([document.fonts.load('48px "Grenze Gotisch"'), document.fonts.load('16px "VT323"'), document.fonts.load('16px "Caveat"'), document.fonts.load('16px "Special Elite"')]),
       new Promise(r => setTimeout(r, 2500)),
     ]);
   } catch (e) { /* usa fontes reserva */ }

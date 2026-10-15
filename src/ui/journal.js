@@ -1,98 +1,10 @@
-import { drawText, FONT_UI, FONT_TITLE } from './overlay.js';
+import { drawText } from './overlay.js';
 import { DOCS, LEGENDS } from '../game/lore.js';
+import { Paper } from './paper.js';
 
-// Papel na tela (documento achado, ficha de lenda) e o caderno de ARQUIVOS, LENDAS
-// e PEDIDOS (pausa → ARQUIVOS, tecla J). O caderno funciona com teclado, controle,
-// mouse e toque: ↑↓ escolhe, ←→ (Q/E, LB/RB) troca de aba, ENTER/A abre, ESC/B volta.
-
-let mctx = null;
-function measure(text, size, font = FONT_UI) {
-  mctx ||= document.createElement('canvas').getContext('2d');
-  mctx.font = `${Math.round(size)}px ${font}`;
-  return mctx.measureText(text).width;
-}
-function wrap(text, size, maxW) {
-  const out = [];
-  let line = '';
-  for (const w of text.split(' ')) {
-    const t = line ? line + ' ' + w : w;
-    if (line && measure(t, size) > maxW) { out.push(line); line = w; } else line = t;
-  }
-  if (line) out.push(line);
-  return out;
-}
-
-// ---------- papel ----------
-// doc = { kind, title, pages: [[parágrafos]] }; devolve o layout em páginas (cache por tamanho de tela)
-export class Paper {
-  constructor() { this.doc = null; this.page = 0; this.t = 0; this.key = ''; this.pages = []; }
-
-  open(doc) { this.doc = doc; this.page = 0; this.t = 0; this.key = ''; }
-  get isOpen() { return !!this.doc; }
-  close() { this.doc = null; }
-
-  _layout(W, H) {
-    const k = H / 240, key = W + 'x' + H + ':' + this.doc.title;
-    if (this.key === key) return;
-    this.key = key;
-    const box = this._box(W, H), size = Math.round(12 * k), maxW = box.w - 28 * k;
-    const maxLines = Math.max(4, Math.floor((box.h - 62 * k) / (11.5 * k)));
-    const lines = [];
-    for (const page of this.doc.pages) for (const para of page) { if (lines.length) lines.push(''); lines.push(...wrap(para, size, maxW)); }
-    this.pages = [];
-    let cur = [];
-    for (const l of lines) {
-      if (cur.length >= maxLines) { while (cur.length && cur[cur.length - 1] === '') cur.pop(); this.pages.push(cur); cur = []; if (l === '') continue; }
-      cur.push(l);
-    }
-    if (cur.length) this.pages.push(cur);
-    this.page = Math.min(this.page, this.pages.length - 1);
-  }
-
-  _box(W, H) {
-    const k = H / 240, w = Math.min(W - 20 * k, 320 * k), h = Math.min(H - 24 * k, 206 * k);
-    return { x: Math.round((W - w) / 2), y: Math.round((H - h) / 2) - 4 * k, w: Math.round(w), h: Math.round(h) };
-  }
-
-  // devolve 'close' quando o papel é fechado
-  update(dt, input) {
-    this.t += dt;
-    if (!this.doc || this.t < 0.25) return null;
-    const adv = input.confirm() || input.mouse.clicked || input.hit('KeyF', 'KeyE') || input.padHit('a');
-    if (input.back()) { this.close(); return 'close'; }
-    if (input.right() && this.page < this.pages.length - 1) { this.page++; this.t = 0.1; return null; }
-    if (input.left() && this.page > 0) { this.page--; this.t = 0.1; return null; }
-    if (adv) {
-      if (this.page < this.pages.length - 1) { this.page++; this.t = 0.1; return null; }
-      this.close(); return 'close';
-    }
-    return null;
-  }
-
-  draw(g, W, H, device) {
-    if (!this.doc) return;
-    this._layout(W, H);
-    const k = H / 240, b = this._box(W, H), a = Math.min(1, this.t / 0.2);
-    g.globalAlpha = 0.72 * a; g.fillStyle = '#000'; g.fillRect(0, 0, W, H); g.globalAlpha = a;
-    // folha amarelada com borda escura e manchas
-    g.fillStyle = '#2a1e14'; g.fillRect(b.x - 2, b.y - 2, b.w + 4, b.h + 4);
-    g.fillStyle = '#d6c8a4'; g.fillRect(b.x, b.y, b.w, b.h);
-    g.fillStyle = '#c4b38c';
-    for (let i = 0; i < 26; i++) { const r = ((i * 7919) % 97) / 97, s = ((i * 104729) % 89) / 89; g.fillRect(Math.round(b.x + r * (b.w - 12 * k)), Math.round(b.y + s * (b.h - 8 * k)), Math.round((2 + (i % 5)) * k), Math.max(1, Math.round(k))); }
-    g.fillStyle = '#b8a47a'; g.fillRect(b.x, b.y + b.h - Math.round(3 * k), b.w, Math.round(3 * k));
-    const D = this.doc;
-    drawText(g, D.kind || '', b.x + 14 * k, b.y + 8 * k, 9 * k, { color: '#7a5634', shadow: null, alpha: a });
-    drawText(g, D.title || '', b.x + 14 * k, b.y + 18 * k, 15 * k, { font: FONT_TITLE, color: '#2a1a10', shadow: null, alpha: a });
-    g.fillStyle = '#8a7250'; g.fillRect(Math.round(b.x + 14 * k), Math.round(b.y + 40 * k), Math.round(b.w - 28 * k), Math.max(1, Math.round(k)));
-    const lines = this.pages[this.page] || [];
-    lines.forEach((l, i) => { if (l) drawText(g, l, b.x + 14 * k, b.y + (46 + i * 11.5) * k, 12 * k, { color: '#2a2018', shadow: null, alpha: a }); });
-    const more = this.page < this.pages.length - 1;
-    if (this.pages.length > 1) drawText(g, `${this.page + 1}/${this.pages.length}`, b.x + b.w - 12 * k, b.y + b.h - 14 * k, 10 * k, { align: 'right', color: '#6b5034', shadow: null, alpha: a });
-    const hint = device === 'pad' ? (more ? 'A próxima página' : 'A fechar') : device === 'touch' ? (more ? 'toque: próxima página' : 'toque para fechar') : more ? 'ENTER próxima página' : 'ENTER fechar';
-    drawText(g, hint, W / 2, b.y + b.h + 6 * k, 10 * k, { align: 'center', color: '#c8b898', alpha: a });
-    g.globalAlpha = 1;
-  }
-}
+// O caderno de ARQUIVOS, LENDAS e PEDIDOS (pausa → ARQUIVOS, tecla J); o papel aberto
+// é o de ui/paper.js. O caderno funciona com teclado, controle, mouse e toque: ↑↓
+// escolhe, ←→ (Q/E, LB/RB) troca de aba, ENTER/A abre, ESC/B volta.
 
 // ---------- caderno ----------
 const TABS = ['ARQUIVOS', 'LENDAS', 'PEDIDOS'];

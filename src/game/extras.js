@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { DOCS, LEGENDS, CALLS, CALL_SILENT } from './lore.js';
 import { Dialogue } from '../ui/dialogue.js';
-import { Paper } from '../ui/journal.js';
+import { Paper } from '../ui/paper.js';
 import { drawText, textSprite, panel, FONT_UI } from '../ui/overlay.js';
 import { MeshBuilder } from '../engine/builder.js';
 import { M } from '../engine/materials.js';
@@ -136,6 +136,8 @@ export class Extras {
     this.docGlint = this.combat.glintMat.clone();
     this.docs = [];
     for (const d of DOCS) {
+      // papéis da história (diário da cripta, álbum da paróquia): só o capítulo mostra
+      if (d.story) continue;
       let p = null;
       try { p = at[d.id]?.(); } catch (e) { p = null; }
       if (!p) p = free(P.praca.x + (this.docs.length % 5) * 2, P.praca.z - 4);

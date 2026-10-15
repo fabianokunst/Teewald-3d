@@ -116,6 +116,23 @@ function paper(g, w, h, R, base = [232, 220, 184]) {
   g.putImageData(d, 0, 0);
 }
 
+// o desenho do bicho no cartaz (também no papel lido, game/docArt.js): corpo curvado,
+// espinhos nas costas, pernas de canguru, olhos vermelhos. Ocupa x 19..49, y 25..60 + (ox, oy)
+export function chupaSketch(g, ox, oy) {
+  g.fillStyle = '#2a2420';
+  const r = (x, y, w, h) => g.fillRect(Math.round(x + ox), Math.round(y + oy), w, h);
+  const ell = (cx, cy, rx, ry) => { for (let y = -ry; y <= ry; y++) for (let x = -rx; x <= rx; x++) if ((x * x) / (rx * rx) + (y * y) / (ry * ry) <= 1) r(cx + x, cy + y, 1, 1); };
+  ell(33, 41, 8, 10);          // tronco
+  ell(25, 30, 6, 5);           // cabeça
+  ell(37, 52, 5, 4);           // coxa
+  r(36, 55, 2, 5); r(33, 59, 7, 1);   // perna e pé
+  r(22, 36, 2, 10); r(20, 45, 4, 1);  // braço e garras
+  r(27, 37, 2, 8); r(25, 44, 4, 1);
+  for (let k = 0; k < 6; k++) { const sx = 30 + k * 2.4, sy = 26 + k * 3.2; r(sx + 3, sy, 3, 1); r(sx + 5, Math.round(sy) - 1, 2, 1); }
+  g.fillStyle = '#e0261a'; r(21, 29, 3, 2); r(26, 29, 3, 2);
+  g.fillStyle = '#ffd0b0'; r(22, 29, 1, 1); r(27, 29, 1, 1);
+}
+
 // cartaz de PROCURA-SE com o desenho do bicho
 export function posterTexture() {
   const W = 64, H = 96, c = makeCanvas(W, H), g = c.getContext('2d'), R = rnd(31);
@@ -125,19 +142,7 @@ export function posterTexture() {
   // quadro do retrato
   g.fillStyle = '#c8bc98'; g.fillRect(8, 20, W - 16, 42);
   g.fillStyle = '#4a3a28'; g.fillRect(8, 20, W - 16, 1); g.fillRect(8, 61, W - 16, 1); g.fillRect(8, 20, 1, 42); g.fillRect(W - 9, 20, 1, 42);
-  // silhueta: corpo curvado, espinhos nas costas, pernas de canguru, olhos vermelhos
-  const ink = '#2a2420';
-  g.fillStyle = ink;
-  const ell = (cx, cy, rx, ry) => { for (let y = -ry; y <= ry; y++) for (let x = -rx; x <= rx; x++) if ((x * x) / (rx * rx) + (y * y) / (ry * ry) <= 1) g.fillRect(cx + x, cy + y, 1, 1); };
-  ell(33, 41, 8, 10);          // tronco
-  ell(25, 30, 6, 5);           // cabeça
-  ell(37, 52, 5, 4);           // coxa
-  g.fillRect(36, 55, 2, 5); g.fillRect(33, 59, 7, 1);   // perna e pé
-  g.fillRect(22, 36, 2, 10); g.fillRect(20, 45, 4, 1);  // braço e garras
-  g.fillRect(27, 37, 2, 8); g.fillRect(25, 44, 4, 1);
-  for (let k = 0; k < 6; k++) { const sx = 30 + k * 2.4, sy = 26 + k * 3.2; g.fillRect(Math.round(sx + 3), Math.round(sy), 3, 1); g.fillRect(Math.round(sx + 5), Math.round(sy) - 1, 2, 1); }
-  g.fillStyle = '#e0261a'; g.fillRect(21, 29, 3, 2); g.fillRect(26, 29, 3, 2);
-  g.fillStyle = '#ffd0b0'; g.fillRect(22, 29, 1, 1); g.fillRect(27, 29, 1, 1);
+  chupaSketch(g, 0, 0);
   crispText(g, 'CHUPACABRAS', W / 2, 63, 11, '#2a2018');
   crispText(g, 'RECOMPENSA', W / 2, 74, 11, '#8a1612');
   g.fillStyle = '#6a5a48';
