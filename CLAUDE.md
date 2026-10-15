@@ -29,4 +29,9 @@ Regras:
   sempre que fizer sentido, `git add`, `git rebase --continue`, `git push origin main`.
   Conte ao usuário o que estava em conflito e como ficou.
 - Nunca use `git push --force` nem `git reset --hard` em commits que já estão no GitHub.
-- `node_modules/` e `dist/` não vão para o repositório (`.gitignore`).
+- **Todos os arquivos desta pasta vão para o GitHub** (inclusive `exportados/`, `.psd`,
+  modelos etc.). Só `node_modules/` e `dist/` ficam de fora, porque são regerados
+  (`npm install` / build do GitHub Actions). Não acrescente nada ao `.gitignore` sem o
+  usuário pedir.
+- O GitHub recusa arquivos acima de 100 MB: o hook de publicação deixa esses de fora e
+  avisa ("NÃO ENVIADOS"). Se aparecer o aviso, conte ao usuário e proponha Git LFS.

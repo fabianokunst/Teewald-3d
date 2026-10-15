@@ -1,4 +1,4 @@
-// Exporta o protagonista como .glb para a pasta exportados/ (fora do repositório).
+// Exporta o protagonista como .glb para a pasta exportados/ (versionada com o resto do projeto).
 //   npm run exportar
 // O modelo é gerado por src/engine/exporter.js numa página sem a cidade (tools/exportar/).
 import { createServer } from 'vite';

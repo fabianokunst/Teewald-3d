@@ -384,8 +384,8 @@ feitos em código. O cenário fica em `src/world/chupaSites.js` e a missão em
 O protagonista sai como arquivo `.glb` (glTF binário), que abre no Blender
 (Arquivo → Importar → glTF 2.0) com textura e esqueleto:
 
-- `npm run exportar` grava `exportados/teewald-protagonista.glb` (a pasta fica fora
-  do repositório);
+- `npm run exportar` grava `exportados/teewald-protagonista.glb` (a pasta vai para o
+  GitHub junto com o resto);
 - com o jogo aberto, `__teewald.exportar()` no console do navegador baixa o mesmo arquivo.
 
 O modelo vem na pose de repouso, em metros (1,73 m, pés em y = 0, olhando para +z),

@@ -1,3 +1,5 @@
+# Tudo o que está nesta pasta vai para o GitHub. Só fica de fora o que é regerado
+# automaticamente: node_modules/ (npm install) e dist/ (npm run build, feito pelo
+# GitHub Actions). Não acrescente nada aqui sem o usuário pedir.
 node_modules/
 dist/
-exportados/

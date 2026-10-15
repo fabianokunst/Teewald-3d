@@ -20,16 +20,26 @@ lock="$gitdir/auto-publish.lock"
 mkdir "$lock" 2>/dev/null || exit 0
 trap 'rmdir "$lock"' EXIT
 
-fail() {
-  msg=$(printf '%s' "$2" | tr '\n\r\t"\\' '     ' | tr -d '\000-\037' | cut -c1-300)
-  echo "{\"systemMessage\": \"$1: $msg\"}"
-  exit 0
-}
+esc() { printf '%s' "$1" | tr '\n\r\t"\\' "   ''" | tr -d '\000-\037'; }
+aviso=""
+# mensagem para o usuário, sempre com o aviso de arquivos que ficaram de fora
+say() { echo "{\"systemMessage\": \"$(esc "$1$aviso")\"}"; exit 0; }
+fail() { say "$1: $(esc "$2" | cut -c1-300)"; }
 
 git add -A
+
+# o GitHub recusa arquivos acima de 100 MB, e um commit com um deles travaria todos os
+# envios seguintes: esses ficam de fora (com aviso) e o resto é publicado normalmente
+while IFS= read -r -d '' f; do
+  [ -f "$f" ] && [ "$(wc -c <"$f")" -gt 100000000 ] || continue
+  git reset -q -- "$f"
+  aviso="$aviso $f"
+done < <(git diff --cached --name-only -z --diff-filter=AM)
+[ -n "$aviso" ] && aviso=" | NÃO ENVIADOS (mais de 100 MB, o GitHub recusa):$aviso"
+
 if ! git diff --cached --quiet; then
-  git commit -q -m "Atualização automática $(date '+%Y-%m-%d %H:%M')" \
-    -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" || exit 0
+  out=$(git commit -q -m "Atualização automática $(date '+%Y-%m-%d %H:%M')" \
+    -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" 2>&1) || fail "Falha ao commitar" "$out"
 fi
 
 # duas tentativas: se o outro computador enviar algo entre o rebase e o push, refaz
@@ -44,11 +54,13 @@ for attempt in 1 2; do
   fi
 
   # nada a enviar
-  [ -z "$(git rev-list origin/main..HEAD)" ] && exit 0
+  if [ -z "$(git rev-list origin/main..HEAD)" ]; then
+    [ -n "$aviso" ] && say "Nada novo publicado"
+    exit 0
+  fi
 
   if out=$(git push -q origin main 2>&1); then
-    echo "{\"systemMessage\": \"Publicado no GitHub: $(git log -1 --format=%h) $(git log -1 --format=%s | tr '\"\\' "''")\"}"
-    exit 0
+    say "Publicado no GitHub: $(git log -1 --format='%h %s')"
   fi
 done
 fail "Falha ao publicar no GitHub" "$out"
