@@ -93,18 +93,15 @@ class Pix extends Plot {
 const shade = (c, f) => [c[0] * f, c[1] * f, c[2] * f, c[3]];
 
 // ---------- revelação ----------
-// retícula de jornal: pontos que crescem do centro (no dobro da resolução do filme)
-const DOTS = [12, 5, 6, 13, 4, 0, 1, 7, 11, 3, 2, 8, 15, 10, 9, 14].map(v => (v + 0.5) / 16);
 const SEPIA = v => [34 + 200 * v, 22 + 192 * Math.pow(v, 1.05), 14 + 164 * Math.pow(v, 1.15)];
 const GRAY = v => [22 + 210 * v, 22 + 206 * v, 20 + 198 * v];
 // cor desbotada dos anos 80: sombra arroxeada, luz alaranjada
 const FADED = v => [44 + 196 * Math.pow(v, 0.95), 34 + 180 * v, 46 + 140 * Math.pow(v, 1.2)];
-// retícula de jornal: tinta preta no papel (a mesma cor do papel 'news' em ui/paper.js)
-const NEWS = v => (v ? [212, 207, 194] : [38, 36, 34]);
+// foto de jornal: tinta preta no papel-jornal (a mesma cor do papel 'news' em ui/paper.js)
+const NEWS = v => [38 + 174 * v, 36 + 171 * v, 34 + 160 * v];
 
-// o: { grain, vignette, halftone, lift (tira o preto puro), scratches, seed }
+// o: { grain, vignette, lift (tira o preto puro), scratches, seed }
 function develop(F, pal, o = {}) {
-  if (o.halftone) return halftone(F, pal, o);
   const c = canvas(F.w, F.h), g = c.getContext('2d'), img = g.createImageData(F.w, F.h), R = rnd(o.seed || 7);
   for (let y = 0; y < F.h; y++) for (let x = 0; x < F.w; x++) {
     const i = y * F.w + x;
@@ -123,20 +120,6 @@ function develop(F, pal, o = {}) {
     for (let i = 0; i < o.scratches; i++) { const x = Math.floor(R() * F.w), y = Math.floor(R() * F.h * 0.6); g.fillRect(x, y, 1, 6 + Math.floor(R() * F.h * 0.4)); }
     for (let i = 0; i < o.scratches * 3; i++) g.fillRect(Math.floor(R() * F.w), Math.floor(R() * F.h), 1, 1);
   }
-  return c;
-}
-
-function halftone(F, pal, o) {
-  const W = F.w * 2, H = F.h * 2, c = canvas(W, H), g = c.getContext('2d'), img = g.createImageData(W, H), R = rnd(o.seed || 7);
-  const at = (x, y) => F.d[Math.min(F.h - 1, Math.max(0, y)) * F.w + Math.min(F.w - 1, Math.max(0, x))];
-  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-    const fx = x / 2 - 0.25, fy = y / 2 - 0.25, x0 = Math.floor(fx), y0 = Math.floor(fy), tx = fx - x0, ty = fy - y0;
-    let v = (at(x0, y0) * (1 - tx) + at(x0 + 1, y0) * tx) * (1 - ty) + (at(x0, y0 + 1) * (1 - tx) + at(x0 + 1, y0 + 1) * tx) * ty;
-    v = clamp01(v + (R() - 0.5) * 0.06);
-    const p = pal(v > DOTS[(y & 3) * 4 + (x & 3)] ? 1 : 0), i = (y * W + x) * 4;
-    img.data[i] = p[0]; img.data[i + 1] = p[1]; img.data[i + 2] = p[2]; img.data[i + 3] = 255;
-  }
-  g.putImageData(img, 0, 0);
   return c;
 }
 
@@ -421,7 +404,7 @@ function newsOvelhas() {
   F.line(0, 24, 96, 23, 0.32); F.line(0, 28, 96, 27, 0.32);
   sheep(F, 24, 42, 1); sheep(F, 56, 37, -1); sheep(F, 74, 48, 1);
   folk(F, 88, 30, 'man', 2.2, R);
-  return develop(F, NEWS, { halftone: true, seed: 32 });
+  return develop(F, NEWS, { grain: 0.16, vignette: 0.2, seed: 32 });
 }
 
 function newsFabrica() {
@@ -441,7 +424,7 @@ function newsFabrica() {
   for (let i = 0; i < 7; i++) { F.rect(11 + i * 11, 32, 6, 7, 0.06); F.rect(11 + i * 11, 28, 6, 4, (x, y, o) => o * 0.45); }
   F.rect(70, 37, 9, 10, 0.05);
   for (const x of [18, 24, 86]) folk(F, x, 41, 'man', 1.7, R);
-  return develop(F, NEWS, { halftone: true, seed: 84 });
+  return develop(F, NEWS, { grain: 0.16, vignette: 0.2, seed: 84 });
 }
 
 // ---------- fotos coloridas dos cartazes ----------

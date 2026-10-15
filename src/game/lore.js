@@ -14,10 +14,9 @@ export const DOCS = [
     id: 'jornal1', kind: 'RECORTE DE JORNAL', title: 'Folha de Teewald, 3 de outubro', paper: 'news',
     pages: [[
       { t: 'Folha de Teewald', s: 'mast', align: 'center' },
-      { t: 'SÁBADO, 3 DE OUTUBRO  ·  O JORNAL DO HERVAL', s: 'small', align: 'center' },
       { rule: true },
       { t: 'OVELHAS MORTAS NA LINHA SCHMITT', s: 'head' },
-      { img: 'newsOvelhas', w: 0.6, h: 0.5 },
+      { img: 'newsOvelhas', w: 0.6, h: 0.47 },
       { t: 'O potreiro dos Schmitt na manhã de domingo. (Foto: Marlene K.)', s: 'small', align: 'center' },
     ], [
       'Produtores do interior encontraram sete ovelhas mortas na madrugada de domingo. Os animais não tinham ferimentos grandes, só dois furos no pescoço, e estavam secos, sem sangue.',
@@ -29,7 +28,7 @@ export const DOCS = [
     id: 'cartaz_mimi', kind: 'CARTAZ NUM POSTE', title: 'Procura-se gata cinza', paper: 'white',
     pages: [[
       { t: 'PROCURA-SE', s: 'poster', align: 'center', color: '#8a1612' },
-      { img: 'fotoMimi', w: 0.34, h: 0.42 },
+      { img: 'fotoMimi', w: 0.3, h: 0.42, float: 'left' },
       'Gata cinza, olhos verdes, atende por MIMI. Muito mansa. Sumiu segunda-feira de noite.',
       'Quem encontrar, por favor levar na casa da Dona Hilda, no calçadão. Dou recompensa.',
       { t: 'procura na igreja. os gatos sobem lá quando têm medo', s: 'pencil' },
@@ -39,7 +38,7 @@ export const DOCS = [
     id: 'cartaz_boris', kind: 'CARTAZ NA PONTE', title: 'Perdeu-se cachorro preto', paper: 'white', marks: ['torn', 'stain'],
     pages: [[
       { t: 'PERDEU-SE CACHORRO PRETO', s: 'head', align: 'center', color: '#1a1410' },
-      { img: 'fotoBoris', w: 0.34, h: 0.42 },
+      { img: 'fotoBoris', w: 0.3, h: 0.42, float: 'left' },
       'Grande, coleira vermelha, nome BÓRIS. Arrebentou a corrente na noite de domingo.',
       'Recompensa. Falar com o Lucas, última casa antes da ponte.',
     ]],
@@ -55,7 +54,7 @@ export const DOCS = [
       { t: 'O pavilhão permanece montado na Rua Beno Closs até segunda ordem. Pede-se que ninguém entre na área depois do anoitecer.', s: 'type' },
       { t: 'Os vigias municipais estão autorizados a fechar o comércio às dezoito horas.', s: 'type' },
       { scribble: true, label: 'Prefeito Municipal' },
-      { stamp: 'PREFEITURA MUNICIPAL\nTEEWALD - RS', round: true, color: '#2a4a8a', align: 'left', rot: 0.2 },
+      { stamp: 'PREFEITURA\nTEEWALD-RS', round: true, float: true, color: '#2a4a8a', align: 'center', rot: 0.2 },
     ]],
   },
   {
@@ -76,6 +75,7 @@ export const DOCS = [
       { img: 'foto1910', h: 1 },
     ] }, { paper: 'card', label: 'VERSO', blocks: [
       { t: 'Einweihung der Kirche, 1910', s: 'ink', size: 18 },
+      { space: 40 },
       { t: 'Ninguém sabe quem é a mulher. Ela não estava lá.', s: 'hand' },
     ] }],
   },
@@ -119,10 +119,9 @@ export const DOCS = [
     id: 'jornal1983', kind: 'RECORTE DE JORNAL', title: 'Folha de Teewald, novembro de 1983', paper: 'news', marks: ['fold3'],
     pages: [[
       { t: 'Folha de Teewald', s: 'mast', align: 'center' },
-      { t: 'SEXTA-FEIRA, 18 DE NOVEMBRO DE 1983', s: 'small', align: 'center' },
       { rule: true },
       { t: 'TRAGÉDIA NA FÁBRICA DE CALÇADOS', s: 'head' },
-      { img: 'newsFabrica', w: 0.6, h: 0.5 },
+      { img: 'newsFabrica', w: 0.6, h: 0.47 },
       { t: 'O que sobrou do depósito de cola na manhã de sexta.', s: 'small', align: 'center' },
     ], [
       'Quatro operárias morreram no incêndio que destruiu o depósito de cola da indústria na noite de quinta-feira. As portas estavam trancadas por fora.',
@@ -154,8 +153,8 @@ export const DOCS = [
       { t: 'Tu sabe o que os velhos diziam do sétimo guri. O teu irmão Paulo nunca foi teu padrinho, foi o tio Arnaldo, e eu sempre tive medo disso.', s: 'hand' },
       { t: 'Em noite de lua cheia, fica em casa. Tranca a porta e me liga. Por favor.', s: 'hand' },
       { sign: 'Tua mãe', s: 'hand' },
-    ], { paper: 'envelope', label: 'ENVELOPE', marks: ['selo'], blocks: [
-      { stamp: 'CORREIOS\nTEEWALD-RS\n24 SET', round: true, color: '#2a2a3a', align: 'left', rot: -0.25 },
+    ], { paper: 'envelope', marks: ['selo'], postmark: 'CORREIOS\nTEEWALD-RS\n24 SET', blocks: [
+      { space: 16 },
       { t: 'Sr. Rudi Hoffmann', s: 'hand', size: 17 },
       { t: 'Linha Hoffmann, s/nº  ·  Teewald - RS', s: 'hand' },
       { note: 'Rudi, essa é tua. Tá na tua caixinha aqui na agência faz três semanas. Leva pra casa!  Nelci', s: 'pencil', bg: '#e8d870' },
@@ -170,7 +169,7 @@ export const DOCS = [
       { t: 'Depois ele olhou pra minha janela e eu me escondi em baixo da coberta. A mãe disse que era sonho.', s: 'child', words: ['em', 'baixo'] },
       { t: 'Não era sonho porque de manhã tinha pegada no barro.', s: 'child' },
     ], [
-      { img: 'pegada', w: 0.18, h: 0.3, align: 'left' },
+      { img: 'pegada', w: 0.2, h: 0.4, float: 'left' },
       { t: 'Muito criativo! Cuidado com a ortografia: bicho, vizinha, nem, embaixo.', s: 'red' },
       { t: 'Nota: 7,5', s: 'red', align: 'right', size: 18 },
     ]],
@@ -199,7 +198,7 @@ export const DOCS = [
   {
     id: 'receita', kind: 'PAPEL AMARELADO', title: 'Receita de benzedura',
     pages: [[
-      { img: 'ervas', w: 0.42, h: 0.26 },
+      { img: 'ervas', w: 0.42, h: 0.28 },
       { t: 'Para quebranto e cobreiro: arruda, alecrim, três folhas de guiné. Benzer com a mão esquerda.', s: 'ink', size: 14 },
       { t: 'Para quem fez mal à gente: o nome da pessoa escrito em papel, enterrado embaixo da porteira, com sangue de bicho que não tem nome.', s: 'ink', size: 14 },
       { sign: 'O. K.  1877' },
@@ -225,7 +224,7 @@ export const DOCS = [
     id: 'desenho', kind: 'DESENHO DE CRIANÇA', title: 'Desenho a giz de cera', paper: 'white',
     pages: [[
       { t: 'A MOÇA DO MATO E O CACHORRO DELA', s: 'child', align: 'center', color: '#2a2a8a' },
-      { img: 'desenho', h: 0.86 },
+      { img: 'desenho', h: 0.82 },
     ]],
   },
   {
@@ -243,11 +242,11 @@ export const DOCS = [
   {
     id: 'album', kind: 'ÁLBUM DA PARÓQUIA', title: 'Fotos da Igreja Matriz', paper: 'album', story: true,
     pages: [
-      [{ img: 'album1910', h: 0.84, corners: true }, { t: 'Inauguração, 1910', s: 'chalk', align: 'center' }],
-      [{ img: 'album1935', h: 0.84, corners: true }, { t: 'Corpus Christi, 1935', s: 'chalk', align: 'center' }],
-      [{ img: 'album1957', h: 0.84, corners: true }, { t: 'Casamento Hoffmann, 1957', s: 'chalk', align: 'center' }],
-      [{ img: 'album1983', h: 0.84, corners: true }, { t: 'Lúcia Weber, 1983', s: 'chalk', align: 'center' }],
-      [{ img: 'albumNoite', h: 0.84, corners: true }],
+      [{ img: 'album1910', h: 0.82, corners: true }, { t: 'Inauguração, 1910', s: 'chalk', align: 'center' }],
+      [{ img: 'album1935', h: 0.82, corners: true }, { t: 'Corpus Christi, 1935', s: 'chalk', align: 'center' }],
+      [{ img: 'album1957', h: 0.82, corners: true }, { t: 'Casamento Hoffmann, 1957', s: 'chalk', align: 'center' }],
+      [{ img: 'album1983', h: 0.82, corners: true }, { t: 'Lúcia Weber, 1983', s: 'chalk', align: 'center' }],
+      [{ img: 'albumNoite', h: 0.82, corners: true }],
     ],
   },
 ];
