@@ -29,7 +29,7 @@ import { NPCs } from './game/npcs.js';
 import { Owls } from './game/owls.js';
 import { Mission } from './game/mission.js';
 import { Campaign, loadCreatureTypes, loadInteriors } from './game/campaign.js';
-import { CHAPTERS } from './game/chapters/index.js';
+import { CHAPTERS, LAST_CHAPTER } from './game/chapters/index.js';
 import { Extras } from './game/extras.js';
 import { Journal } from './ui/journal.js';
 import { loadFonts, drawText, FONT_TITLE } from './ui/overlay.js';
@@ -173,7 +173,7 @@ async function boot() {
   owls = new Owls({ ctx, scene, audio, atmo });
   // missão 1: o chupacabras (cartaz, galinheiro, pegadas, luta na clareira)
   mission = new Mission({ ctx, scene, audio, input, player, character, tpc, camera, inventory, pistol, targets, effects, hud, R, npcs, combat, atmo });
-  // campanha: capítulo 1 = a missão acima; do 2 ao 10, a noite que não termina
+  // campanha: capítulo 1 = a missão acima; do 2 em diante, a noite que não termina
   await loadCreatureTypes();
   await loadInteriors(interiors);
   campaign = new Campaign({ ctx, scene, audio, input, player, character, tpc, camera, inventory, pistol, targets, effects, hud, R, npcs, combat, atmo, interiors, mission,
@@ -183,6 +183,7 @@ async function boot() {
   extras = new Extras({ ctx, scene, audio, input, player, camera, tpc, hud, R, npcs, combat, campaign, mission, interiors, inventory, atmo, effects, pistol });
   menu = new Menu(input, audio, settings, applySettings);
   menu.extras = extras;
+  campaign.extras = extras;   // capítulos que usam os orelhões e os documentos
   journal = new Journal(input, audio, extras);
   menu.campaign = campaign; menu.chapterTitles = CHAPTERS.map(c => c?.title);
   // no toque, as mesmas telas com botões grandes na tela inteira
@@ -216,9 +217,9 @@ function setState(s) { state = s; stateT = 0; }
 // a tela título acompanha o progresso: depois da primeira noite, ela também é de noite
 const titleWeather = () => ((campaign?.save?.unlocked || 1) > 1 ? 'noite' : 'tarde');
 
-// o: { chapter (1..10), intro (abertura do capítulo 1), fromSave (inventário salvo) }
+// o: { chapter (1..LAST_CHAPTER), intro (abertura do capítulo 1), fromSave (inventário salvo) }
 function startGame(o = {}) {
-  const n = Math.max(1, Math.min(10, o.chapter || 1));
+  const n = Math.max(1, Math.min(LAST_CHAPTER, o.chapter || 1));
   hud.place = null; hud.card = null;
   audio.setAmbience(true);
   keepAwake();

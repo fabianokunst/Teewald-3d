@@ -29,10 +29,24 @@ const CORO_Y = 4.4, CORO_Z = 6, TW = 2.7, TD = 3.8;
 const LAND_Y = 7.4, BELL_Y = 10.4, TOWER_TOP = 16.4;
 const APSE_R = 4.3, APSE_H = 7.8, APSE_N = 5;
 const COLS_Z = [6, 10, 14, 18, 22];
+// no escuro só fica o luar (torre e janela do depósito)
+const DARK_LIGHTS = new Set(['torre', 'deposito']);
 const WIN_Z = [9.6, 15.2, 20.8];
 // porta da sacristia para fora (parede x = -8,6), no mesmo lugar da porta de fora da igreja
 const SAC_DOOR = [CHURCH.L / 2 - SACRISTY_DOOR_Z - 0.55, CHURCH.L / 2 - SACRISTY_DOOR_Z + 0.55];
 const SAC_IN = [27.4, 28.5];              // porta da sacristia para o presbitério (x = -4,3)
+// imagens cobertas do depósito: [x a partir do meio do depósito, z, altura]
+export const SHEETS = [[1.2, 32.4, 1.7], [0.1, 32.6, 1.4], [-1.3, 32.3, 1.9]];
+
+// vulto de uma imagem coberta com lençol (base na origem), para o depósito e para o capítulo 9
+export function sheetFigure(k, h) {
+  const sh = gray(0.62);
+  k.prism('int:i:sheet', [0, 0, 0], [0, h * 0.62, 0], 0.42, 0.25, 9, sh, false);
+  k.prism('int:i:sheet', [0, h * 0.62, 0], [0, h * 0.74, 0], 0.25, 0.31, 9, sh, false);
+  k.prism('int:i:sheet', [0, h * 0.74, 0], [0, h * 0.8, 0], 0.31, 0.13, 9, sh, false);
+  k.prism('int:i:sheet', [0, h * 0.8, 0.02], [0, h * 0.95, 0], 0.16, 0.15, 8, sh, false);
+  k.prism('int:i:sheet', [0, h * 0.95, 0], [0, h, 0], 0.15, 0.03, 8, sh, true);
+}
 
 // altura da abóbada ogival (dois arcos) na posição x
 export const vaultY = x => {
@@ -190,10 +204,12 @@ function makeMats() {
   // lamparina do Santíssimo: vidro vermelho aceso e o brilho em volta
   M['int:i:redglass'] = ps1Material({ map: null, lit: false, color: new THREE.Color(1.0, 0.16, 0.1) });
   M['int:i:redglow'] = glowMat(poolTex(), [0.55, 0.06, 0.04]);
+  M['int:i:glassOff'] = ps1Material({ map: null, color: new THREE.Color(0.32, 0.08, 0.06) });
   // olhos da gata (brilham no escuro)
   M['int:i:eyes'] = ps1Material({ map: null, lit: false, color: new THREE.Color(0.75, 1.0, 0.45) });
   // lençol sobre as imagens velhas do depósito
-  M['int:i:sheet'] = ps1Material({ map: finish(paint(16, 16, (x, y) => mul([214, 208, 196], 0.85 + marble(x * 4, y * 4)[0] / 1200))) });
+  // (um brilho pálido bem fraco: no escuro, os vultos claros aparecem)
+  M['int:i:sheet'] = ps1Material({ map: finish(paint(16, 16, (x, y) => mul([214, 208, 196], 0.85 + marble(x * 4, y * 4)[0] / 1200))), emissive: 0x2a2a2e });
 }
 
 // ---------------------------------------------------------------------------
@@ -209,6 +225,7 @@ export function build(ctx, B, o) {
   const anim = [];
   const pt = (x, z, h = 0, y = 0) => ({ x: ox + x, y: o.y + y, z: oz + z, h });
   const plaster = { mat: 'plChurch', col: CREAM, band: 1.3, bandMat: 'woodDark', us: 2 };
+  const sheets = [], sheetCols = [];
   const plasterP = { mat: 'plChurch', col: CREAM, band: PRES_Y + 1.3, bandMat: 'woodDark', us: 2 };
   const brick = { mat: 'brickOld', col: gray(0.62), us: 1.6 };
 
@@ -707,15 +724,20 @@ export function build(ctx, B, o) {
     objects.add(f); silverFlames.push(f);
     (anim.flames ||= []).push({ obj: f, light: 'altar', ph: x * 5 });
   }
-  // lamparina do Santíssimo (vidro vermelho pendurado, sempre acesa)
+  // lamparina do Santíssimo (vidro vermelho pendurado; o vidro aceso e o brilho no chão
+  // são uma peça à parte, que apaga quando a igreja fica no escuro)
   {
     const x = -1.7, z = 34.2, y = 3.0;
     K.beam('iron', [x, APSE_H + 2.5, z], [x, y + 0.35, z], 0.015, 0.015, gray(0.25));
     K.prism('bronze', [x, y + 0.35, z], [x, y + 0.2, z], 0.06, 0.14, 8, [0.9, 0.75, 0.45], false);
-    K.prism('int:i:redglass', [x, y + 0.2, z], [x, y - 0.05, z], 0.12, 0.08, 8, null, true);
     K.prism('bronze', [x, y - 0.05, z], [x, y - 0.18, z], 0.08, 0.02, 8, [0.9, 0.75, 0.45], true);
-    K.floor('int:i:redglow', x - 1.6, z - 1.6, x + 1.6, z + 1.6, PRES_Y + 0.02, 99, null, 0);
+    K.prism('int:i:glassOff', [x, y + 0.2, z], [x, y - 0.05, z], 0.118, 0.078, 8, gray(0.35), true);
   }
+  const lamparina = part(ctx, k => {
+    k.prism('int:i:redglass', [0, 0.2, 0], [0, -0.05, 0], 0.122, 0.082, 8, null, true);
+    k.floor('int:i:redglow', -1.6, -1.6, 1.6, 1.6, PRES_Y - 3.0 + 0.02, 99, null, 0);
+  }, ox - 1.7, o.y + 3.0, oz + 34.2);
+  objects.add(lamparina);
 
   // ---------------- altares laterais e velas votivas ----------------
   for (const s of [-1, 1]) {
@@ -783,15 +805,11 @@ export function build(ctx, B, o) {
   // ---------------- depósito ----------------
   {
     const y = PRES_Y, cx = (HW + VW) / 2;
-    // imagens velhas cobertas com lençol
-    for (const [x, z, h] of [[cx + 1.2, 32.4, 1.7], [cx + 0.1, 32.6, 1.4], [cx - 1.3, 32.3, 1.9]]) {
-      const sh = gray(0.62);
-      K.prism('int:i:sheet', [x, y, z], [x, y + h * 0.62, z], 0.42, 0.25, 9, sh, false);
-      K.prism('int:i:sheet', [x, y + h * 0.62, z], [x, y + h * 0.74, z], 0.25, 0.31, 9, sh, false);
-      K.prism('int:i:sheet', [x, y + h * 0.74, z], [x, y + h * 0.8, z], 0.31, 0.13, 9, sh, false);
-      K.prism('int:i:sheet', [x, y + h * 0.8, z + 0.02], [x, y + h * 0.95, z], 0.16, 0.15, 8, sh, false);
-      K.prism('int:i:sheet', [x, y + h * 0.95, z], [x, y + h, z], 0.15, 0.03, 8, sh, true);
-      K.round(x, z, 0.4, y, y + h);
+    // imagens velhas cobertas com lençol (peças à parte: no capítulo 9 elas saem andando)
+    for (const [x, z, h] of SHEETS) {
+      const g = part(ctx, k => sheetFigure(k, h), ox + cx + x, o.y + y, oz + z);
+      objects.add(g); sheets.push(g);
+      sheetCols.push(K.round(cx + x, z, 0.4, y, y + h));
     }
     // bancos quebrados empilhados e caixas
     for (let i = 0; i < 3; i++) K.box('woodDark', cx + 0.45, y + i * 0.42, 30.0, 3.0, 0.08, 0.4, 0.05 * i, { col: gray(0.35) });
@@ -837,6 +855,12 @@ export function build(ctx, B, o) {
     fotoAltar: pt(-(HW + VW) / 2 + 0.55, PRES_Z - 0.4, Math.PI, 1.01),
     sacristiaArmario: pt(-(HW + VW) / 2 + 1.2, NAVE_Z - 0.5, Math.PI, PRES_Y + 2.42),
     deposito: pt((HW + VW) / 2, 30.5, Math.PI, PRES_Y),
+    // diante do confessionário (parede da direita), virado para a nave
+    confessionario: pt(-HW + 1.55, 12.4, Math.PI / 2),
+    // cantos do presbitério, atrás da mesa de comunhão; lamparina
+    presbR: pt(-2.7, 28.0, 0, PRES_Y), presbL: pt(2.7, 28.0, 0, PRES_Y), lamparina: pt(-1.7, 34.2, 0, PRES_Y),
+    // a escada da torre no coro e o pé da escada do coro
+    coroTorre: pt(1.75, 4.8, Math.PI, CORO_Y), escadaCoro: pt(7.75, 13.0, Math.PI, 0),
     ambush1: pt(-2.5, 12, 0), ambush2: pt(3.0, 20, Math.PI), ambush3: pt(0, 25, Math.PI),
   };
 
@@ -867,21 +891,31 @@ export function build(ctx, B, o) {
     // de dia (a tarde do capítulo 1 e o amanhecer) entra a luz dourada dos vitrais
     atmoFor(outside) { def.day = outside === 'tarde' || outside === 'amanhecer' || outside === 'anoitecer'; return def.day ? 'igrejaDia' : 'igreja'; },
     // peças que a história mexe
-    silver, silverFlames, lamp, mimi,
-    hide(name, on = false) { const o2 = def[name]; if (o2) o2.visible = on; if (name === 'silver') for (const f of silverFlames) f.visible = on; },
+    silver, silverFlames, lamp, mimi, lamparina, sheets,
+    // de local (planta da igreja) para o mundo
+    local: (x, z, y = 0) => ({ x: ox + x, y: o.y + y, z: oz + z }),
+    // dark: velas, lustres e lamparina apagados (sobra o luar das janelas da torre e do depósito)
+    dark: false,
+    lamparinaLit: false,   // no escuro, a lamparina reacesa (capítulo 9)
+    // imagens do depósito fora do lugar (o capítulo 9 usa as dele)
+    sheetsAway(on) { for (const g of sheets) g.visible = !on; for (const c of sheetCols) { if (on) { c.y0s = c.y0; c.y1s = c.y1; c.y0 = c.y1 = -1e9; } else if (c.y0s !== undefined) { c.y0 = c.y0s; c.y1 = c.y1s; } } },
+    hide(name, on = false) { const o2 = def[name]; if (o2) o2.visible = on; if (name === 'silver') for (const f of silverFlames) f.userData.off = !on; },
     ring() { bellState.t = 0; bellState.amp = Math.max(bellState.amp, 0.45); },
     update(dt, t, active) {
       if (!active) return;
       for (const f of anim) f(dt, t);
-      const k = def.day ? 1.0 : 0.32;
+      const k = def.day ? 1.0 : def.dark ? 0.18 : 0.32;
       vitralU.setRGB(k, k * 0.95, k * (def.day ? 0.85 : 1.15));
-      rays.visible = def.day;
+      rays.visible = def.day && !def.dark;
+      def.lights = def.dark ? lights.filter(l => DARK_LIGHTS.has(l.name)) : lights;
+      lamparina.visible = !def.dark || def.lamparinaLit;
     },
   };
   anim.push((dt, t) => {
     for (const f of flames) {
       const l = f.light ? L[f.light] : null, kk = l ? lightK(l, t) : 1;
       const s = (0.85 + 0.15 * Math.sin(t * 9 + f.ph) + 0.08 * Math.sin(t * 23 + f.ph * 2)) * (0.5 + 0.5 * kk);
+      f.obj.visible = !def.dark && !f.obj.userData.off;
       if (f.obj.parent?.visible !== false) f.obj.scale.set(s, s * (0.9 + 0.2 * Math.sin(t * 13 + f.ph)), s);
     }
   });

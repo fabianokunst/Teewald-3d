@@ -10,6 +10,7 @@ import { makeCanvas, canvasTex } from '../engine/textures.js';
 import { orelhao } from '../world/props.js';
 import { TYPES } from './campaign.js';
 import { places } from './chapters/common.js';
+import { chapterNo } from './chapters/index.js';
 import { GunAudio } from './gunAudio.js';
 import { Presence } from './presence.js';
 import { GhostBand } from './ghostBand.js';
@@ -31,7 +32,7 @@ function load() {
 }
 
 // lutas perto da igreja: nessas etapas a porta fica fechada
-const CHURCH_BLOCK = { 2: ['defesa'], 8: ['torre', 'rainha'] };
+const CHURCH_BLOCK = { caes: ['defesa'], asas: ['torre', 'rainha'] };
 // orelhões novos (além do da praça): perto do ponto real de telefone, dos Correios, do hospital e da escola
 const PHONE_SPOTS = [[-138, -103], [-86, 13], [223, 59], [119, -28]];
 const RING_FIRST = [40, 90], RING_EVERY = [150, 240], RING_LEN = 32;
@@ -313,7 +314,7 @@ export class Extras {
     if (cb.inFight || (cb.boss && !cb.boss.dead) || C.S?.cut || C.S?.narr) return false;
     if (C.index === 1) return !['fight', 'escaped'].includes(this.mission.step);
     const st = C.S?.def.steps[C.S.i]?.id;
-    return !(CHURCH_BLOCK[C.index] || []).includes(st);
+    return !(CHURCH_BLOCK[C.S?.def.key] || []).includes(st);
   }
 
   _points() {
@@ -380,6 +381,13 @@ export class Extras {
     if (n === 1) this.note(this.input.lastDevice === 'pad' ? 'RELEIA NA PAUSA → ARQUIVOS' : this.input.lastDevice === 'touch' ? 'RELEIA EM PAUSA → ARQUIVOS' : 'RELEIA COM A TECLA J');
   }
 
+  // documento achado pela história (o capítulo mostra o texto do jeito dele)
+  markDoc(id) {
+    const D = this.docs.find(q => q.d.id === id);
+    if (D) D.grp.visible = false;
+    if (!this.state.docs.includes(id)) { this.state.docs.push(id); this.save(); this.note(`ARQUIVO GUARDADO ${this.state.docs.length}/${DOCS.length}`); }
+  }
+
   _takeCollar() {
     this.state.quests.boris = 1; this.save();
     this.collar.grp.visible = false;
@@ -412,8 +420,19 @@ export class Extras {
   }
 
   // ---------- orelhões ----------
+  // capítulo que usa o orelhão na história: toca até o capítulo mandar parar (o ATENDER é do capítulo)
+  forceRing(phone, on = true) { phone.forced = on; phone.burstT = 0; }
+
   _phones(dt) {
     const C = this.campaign, n = C.index, P = this.player.pos, cb = this.combat;
+    for (const p of this.phones) {
+      if (!p.forced || this.ctx.indoor) continue;
+      p.burstT -= dt;
+      const d = Math.hypot(P.x - p.x, P.z - p.z);
+      if (p.burstT <= 0) { p.burstT = 3.4; ringBurst(this.audio, clamp(1 - d / 80, 0, 1) ** 1.6 * 0.9); }
+      this.atmo.light(p.x, p.y + 2.4, p.z, [0.8, 0.62, 0.36].map(c => c * (Math.sin(performance.now() / 55) > 0 ? 1 : 0.4)), 4, 1);
+    }
+    if (C.S?.def.phones) return;   // os orelhões são do capítulo: nada de toque solto
     const pc = this.perChapter;
     if (pc.ringT === undefined) pc.ringT = RING_FIRST[0] + Math.random() * (RING_FIRST[1] - RING_FIRST[0]);
     const quiet = !this.ctx.indoor && !cb.inFight && !(cb.boss && !cb.boss.dead) && !C.S?.cut && !C.S?.narr && cb.alive() === 0;
@@ -444,11 +463,11 @@ export class Extras {
   }
 
   _answer() {
-    const R = this.ring, n = this.campaign.index;
+    const R = this.ring;
     if (!R) return;
     R.answered = true;
     this.audio.tone(140, 0.08, 'square', 0.05);
-    const call = !this.perChapter.heard && CALLS[n] ? CALLS[n] : CALL_SILENT;
+    const key = this.campaign.S?.def.key, call = !this.perChapter.heard && CALLS[key] ? CALLS[key] : CALL_SILENT;
     this.perChapter.heard = true;
     this.dialogue.start('NO TELEFONE: ' + call.who, call.lines, call.voice);
     this.modal = 'talk';
@@ -460,7 +479,7 @@ export class Extras {
     const C = this.campaign;
     // capítulo novo (ou recomeçado): zera o que é de cada capítulo
     const key = C.index + ':' + (C.S ? C.S.def.n : 'm');
-    if (key !== this.chapter || (C.S && C.S !== this._S)) { this.chapter = key; this._S = C.S; this.perChapter = {}; this.ring = null; }
+    if (key !== this.chapter || (C.S && C.S !== this._S)) { this.chapter = key; this._S = C.S; this.perChapter = {}; this.ring = null; for (const p of this.phones) p.forced = false; }
     for (const N of this.notes) N.t += dt;
     this.notes = this.notes.filter(N => N.t < 4);
     // tela título e créditos: nada de bandinha nem de bicho na neblina
@@ -472,8 +491,10 @@ export class Extras {
     if (ch) {
       ch.hide('lamp', !this.inventory.has('lantern'));
       ch.hide('mimi', this.state.quests.mimi === 0);
-      let silver = C.index < 6;
-      if (C.index === 6 && C.S) { const i = C.S.def.steps.findIndex(s => s.id === 'prata'); silver = C.S.i <= i && !this.inventory.has('silverware'); }
+      // os castiçais saem do altar no capítulo da lua cheia (a prata vira bala)
+      const lua = chapterNo('lua');
+      let silver = C.index < lua;
+      if (C.index === lua && C.S) { const i = C.S.def.steps.findIndex(s => s.id === 'prata'); silver = C.S.i <= i && !this.inventory.has('silverware'); }
       ch.hide('silver', silver);
     }
     // documentos brilhando

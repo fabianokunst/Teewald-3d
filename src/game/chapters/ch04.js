@@ -11,7 +11,7 @@ import { SFX } from '../creatures/sfx.js';
 const MARLENE = 'MARLENE';
 
 export default {
-  n: 4, title: 'Luzes no Céu', sub: 'Igual Varginha, em 96. Só que aqui.',
+  n: 4, key: 'ets', title: 'Luzes no Céu', sub: 'Igual Varginha, em 96. Só que aqui.',
   weather: 'tempestade',
   deathText: 'OS VISITANTES TE LEVARAM',
   start(G) { const f = places(G).factoryDoor; return { x: f.x + Math.sin(f.h + Math.PI) * 4, z: f.z + Math.cos(f.h + Math.PI) * 4, h: f.h + Math.PI }; },

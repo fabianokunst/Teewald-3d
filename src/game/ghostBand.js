@@ -161,9 +161,9 @@ export class GhostBand {
   silence() { this.playing = false; this.waltz.stop(false); this.vis = 0; if (this.group) this.group.visible = false; }
 
   get allowed() {
-    const C = this.campaign, n = C.index;
-    // no capítulo 5 a Fera é atraída para o pavilhão: a bandinha fica quieta
-    return this.ok && n >= 2 && n !== 5 && !!C.S && !C.S.done && !this.ctx.indoor && this.atmo.isNight;
+    const C = this.campaign;
+    // no capítulo da Fera ela é atraída para o pavilhão: a bandinha fica quieta
+    return this.ok && C.index >= 2 && C.S?.def.key !== 'fera' && !!C.S && !C.S.done && !this.ctx.indoor && this.atmo.isNight;
   }
 
   update(dt) {

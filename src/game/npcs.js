@@ -18,6 +18,8 @@ import { drawText, textSprite, panel, FONT_UI } from '../ui/overlay.js';
 const TAU = Math.PI * 2;
 const TALK_R = 2.4;
 const SIM_R = 140;          // além disso o morador fica parado (ninguém vê)
+// murmúrios de quem está em transe (capítulo 6)
+const TRANCE_BARKS = ['...vem...', '...tá chamando...', '...ja, ich komm...', '...o mato...'];
 const UP = new THREE.Vector3(0, 1, 0);
 const wrapA = a => { while (a > Math.PI) a -= TAU; while (a < -Math.PI) a += TAU; return a; };
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -285,7 +287,7 @@ class NPC {
   }
 
   scare(sys) {
-    if (this.talking) return;
+    if (this.talking || this.trance) return;
     this.flinch = 0.8 + Math.random() * 0.4;
     this.fear = this.mobile ? 5 + Math.random() * 2 : 4;
     this.pause = 0; this.wait = 0;
@@ -372,7 +374,7 @@ class NPC {
       let want = null, rate = 4;
       if (this.talking || this.handsT > 0 || this.afterTalk > 0 || (this.fear > 0 && !this.mobile)) want = toPlayer;
       // os que encaram viram o corpo devagar, acompanhando quem passa
-      else if (this.def.stare && this.dist < 9 && sys.mode !== 'title' && this.fear <= 0 && !this.returnTo) { want = toPlayer; rate = 1.1; }
+      else if (this.def.stare && !this.trance && this.dist < 9 && sys.mode !== 'title' && this.fear <= 0 && !this.returnTo) { want = toPlayer; rate = 1.1; }
       else if (this.mode === 'stand' && !this.returnTo && this.home !== undefined) { want = this.home; rate = 1.5; }
       if (this.mode === 'sit') want = this.home;
       if (want !== null) this.heading += wrapA(want - this.heading) * Math.min(1, dt * rate);
@@ -380,7 +382,10 @@ class NPC {
 
     // ---------- falas soltas ----------
     if (play && !this.talking) {
-      if (this.dist < 3.5 && !this.greeted && this.fear <= 0 && sys.barkCool <= 0) {
+      // em transe (atendeu o telefone da bruxa): não cumprimenta, só murmura
+      if (this.trance) {
+        if (this.dist < 10 && (this.barkT -= dt) <= 0 && !this.bark) { this.say(pick(TRANCE_BARKS), sys, 2.8); this.barkT = 7 + Math.random() * 6; }
+      } else if (this.dist < 3.5 && !this.greeted && this.fear <= 0 && sys.barkCool <= 0) {
         this.greeted = true; this.say(this.def.hi, sys, 2.4);
       } else if (this.dist > 14) this.greeted = false;
       if (this.dist < 10) {
@@ -622,10 +627,10 @@ export class NPCs {
 
   // campanha: esconde todos (noite) menos os da cena; stage põe um morador num lugar com falas próprias
   hideAll(except = []) {
-    for (const n of this.list) { n.hidden = !except.includes(n.id); if (n.hidden) { n.storyTalks = null; n.onTalkEnd = null; } }
+    for (const n of this.list) { n.hidden = !except.includes(n.id); n.trance = false; if (n.hidden) { n.storyTalks = null; n.onTalkEnd = null; } }
   }
 
-  showAll() { for (const n of this.list) { n.hidden = false; n.storyTalks = null; n.onTalkEnd = null; } }
+  showAll() { for (const n of this.list) { n.hidden = false; n.trance = false; n.storyTalks = null; n.onTalkEnd = null; } }
 
   stage(id, o = {}) {
     const n = this.byId[id];

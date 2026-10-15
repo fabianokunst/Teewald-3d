@@ -10,7 +10,7 @@ import { SFX } from '../creatures/sfx.js';
 const ROMEU = 'SEU ROMEU';
 
 export default {
-  n: 5, title: 'A Fera da Madrugada', sub: 'Urra feito boi e anda apoiada nas mãos.',
+  n: 5, key: 'fera', title: 'A Fera da Madrugada', sub: 'Urra feito boi e anda apoiada nas mãos.',
   weather: 'madrugada',
   deathText: 'A FERA TE ESMAGOU',
   start(G) {

@@ -18,7 +18,7 @@ export function ipt(G, name, key, dx = 0, dz = 0) {
 }
 
 export default {
-  n: 3, title: 'A Moça da Fábrica', sub: 'No relógio de ponto, a saída nunca foi batida.',
+  n: 3, key: 'fabrica', title: 'A Moça da Fábrica', sub: 'No relógio de ponto, a saída nunca foi batida.',
   weather: 'chuva',
   deathText: 'A FÁBRICA TE PRENDEU',
   start(G) { const y = places(G).churchYard; return { x: y.x - 3, z: y.z + 2, h: y.h }; },

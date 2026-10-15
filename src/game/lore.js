@@ -267,17 +267,18 @@ export const LEGENDS = [
   },
 ];
 
-// ligações dos orelhões (uma por capítulo; o capítulo 1 é de tarde, os orelhões ficam quietos)
+// ligações dos orelhões, pela chave do capítulo (no capítulo 1 é de tarde e os orelhões
+// ficam quietos; nos capítulos em que o telefone é a história, a ligação vem do capítulo)
 export const CALLS = {
-  2: { who: '???', voice: 95, lines: ['...', 'Kommst du mich besuchen, Bub?', 'Os meus cachorrinhos estão com fome. Tão com tanta fome...', '(uma risada baixa, e a linha cai)'] },
-  3: { who: '???', voice: 330, lines: ['(alguém chorando, longe)', '...o relógio... bate o ponto pra mim... eu não alcanço...', 'Tá tão escuro aqui dentro. Ele trancou a porta.'] },
-  4: { who: '???', voice: 120, lines: ['(chiado, e números ditos devagar)', 'Um. Nove. Sete. Oito.', 'A pedra ainda canta embaixo do morro. Eles vieram buscar.'] },
-  5: { who: 'SEU ROMEU', voice: 150, lines: ['Alô? É da Prefeitura? Alô!', 'Tem uma coisa no meu potreiro. Alta. Tá me olhando da neblina.', 'Ela tá vindo pra... (a ligação corta. É a voz do Seu Romeu, mas o Seu Romeu está em casa.)'] },
-  6: { who: '???', voice: 280, lines: ['Rudi? Rudi, é a mãe!', 'Filho, volta pra casa antes da lua subir. Por favor, filho.', 'Rudi, eu tô ouvindo tu respirar...'] },
-  7: { who: '???', voice: 105, lines: ['(uma voz velha, com sotaque alemão carregado)', 'Das Kreuz... a cruz... guardem a cruz embaixo dos fundadores.', 'Eu fiquei em casa. Eu fiquei em casa e deixei enterrarem ela viva.'] },
-  8: { who: '???', voice: 600, lines: ['(guinchos agudos, asas batendo dentro do fone)', '(e, no meio do barulho, uma mulher cantarolando uma canção de ninar em alemão)'] },
-  9: { who: '???', voice: 70, lines: ['(uma respiração molhada, bem perto do fone)', '(um rosnado baixo)', '(e o som de alguma coisa pulando para longe, no cascalho)'] },
-  10: { who: 'OTÍLIA', voice: 90, lines: ['Tu me acordou, Bub.', 'Agora vem me pôr pra dormir de novo. Se tiver coragem.', 'Eu tô te esperando no mato. Onde vocês me deixaram.'] },
+  caes: { who: '???', voice: 95, lines: ['...', 'Kommst du mich besuchen, Bub?', 'Os meus cachorrinhos estão com fome. Tão com tanta fome...', '(uma risada baixa, e a linha cai)'] },
+  fabrica: { who: '???', voice: 330, lines: ['(alguém chorando, longe)', '...o relógio... bate o ponto pra mim... eu não alcanço...', 'Tá tão escuro aqui dentro. Ele trancou a porta.'] },
+  ets: { who: '???', voice: 120, lines: ['(chiado, e números ditos devagar)', 'Um. Nove. Sete. Oito.', 'A pedra ainda canta embaixo do morro. Eles vieram buscar.'] },
+  fera: { who: 'SEU ROMEU', voice: 150, lines: ['Alô? É da Prefeitura? Alô!', 'Tem uma coisa no meu potreiro. Alta. Tá me olhando da neblina.', 'Ela tá vindo pra... (a ligação corta. É a voz do Seu Romeu, mas o Seu Romeu está em casa.)'] },
+  lua: { who: '???', voice: 280, lines: ['Rudi? Rudi, é a mãe!', 'Filho, volta pra casa antes da lua subir. Por favor, filho.', 'Rudi, eu tô ouvindo tu respirar...'] },
+  finados: { who: '???', voice: 105, lines: ['(uma voz velha, com sotaque alemão carregado)', 'Das Kreuz... a cruz... guardem a cruz embaixo dos fundadores.', 'Eu fiquei em casa. Eu fiquei em casa e deixei enterrarem ela viva.'] },
+  asas: { who: '???', voice: 600, lines: ['(guinchos agudos, asas batendo dentro do fone)', '(e, no meio do barulho, uma mulher cantarolando uma canção de ninar em alemão)'] },
+  covil: { who: '???', voice: 70, lines: ['(uma respiração molhada, bem perto do fone)', '(um rosnado baixo)', '(e o som de alguma coisa pulando para longe, no cascalho)'] },
+  bruxa: { who: 'OTÍLIA', voice: 90, lines: ['Tu me acordou, Bub.', 'Agora vem me pôr pra dormir de novo. Se tiver coragem.', 'Eu tô te esperando no mato. Onde vocês me deixaram.'] },
 };
 // ligação de quando o orelhão toca de novo no mesmo capítulo: só respiração
 export const CALL_SILENT = { who: '???', voice: 80, lines: ['...', '(ninguém fala. Só uma respiração, do outro lado.)', '(e o fone fica gelado na tua mão)'] };

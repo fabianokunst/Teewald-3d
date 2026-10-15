@@ -2,9 +2,10 @@
 
 Jogo de terror em terceira pessoa com visual de PlayStation 1, ambientado numa
 versão de Santa Maria do Herval (RS) no outono: neblina, céu encoberto e uma
-cidade com medo do que anda no mato. São dez capítulos: o chupacabras, os cães de
-fogo, a moça da fábrica, os ETs de Varginha, a Fera da madrugada, o lobisomem, o
-cemitério em Finados, os morcegos-vampiro e a bruxa Otília, com luta corpo a corpo,
+cidade com medo do que anda no mato. São doze capítulos: o chupacabras, os cães de
+fogo, a moça da fábrica, os ETs de Varginha, a Fera da madrugada, os telefones que
+chamam para o mato, o lobisomem, o cemitério em Finados, a mulher da fotografia, os
+morcegos-vampiro e a bruxa Otília, com luta corpo a corpo,
 armas especiais, noite, chuva, tempestade, neblina e lua cheia. Roda no navegador
 (Three.js + Vite).
 
@@ -25,7 +26,7 @@ precisa entrar no chão do jogador (`ctx.floors`, `ctx.walkways` ou uma caixa
 caminhável), senão as pernas somem dentro dele.
 
 `npm run teste` testa a campanha inteira sozinho: compila o jogo, abre num Chrome
-sem janela e um robô passa por todas as etapas dos dez capítulos até os créditos
+sem janela e um robô passa por todas as etapas dos doze capítulos até os créditos
 (pula falas e cenas, derruba as criaturas, usa os pontos da história). Em cada
 etapa ele salva e volta pelo CONTINUAR, e uma vez por capítulo deixa o jogador cair,
 conferindo se o jogo volta para a mesma etapa. No fim mostra onde travou e os erros
@@ -101,7 +102,7 @@ arrastar gira o item.
 
 ## Campanha: a noite que não termina
 
-O jogo tem dez capítulos. O primeiro é a caçada ao chupacabras numa tarde de
+O jogo tem doze capítulos. O primeiro é a caçada ao chupacabras numa tarde de
 neblina. Depois dele, o sangue do bicho ferido escorre sobre um túmulo esquecido
 no mato: o da **Bruxa Otília** (Otília Kranz, a curandeira que os colonos enterraram
 viva em 1878 com uma cruz de ferro em cima). Ela acorda, e **o sol não nasce mais**
@@ -115,11 +116,13 @@ são dela ou vêm atrás dela.
 | 3 | A Moça da Fábrica | chuva | dentro da fábrica de calçados: achar a medalhinha, o sapato de noiva e o cartão-ponto da Lúcia, enfrentar o capataz e bater o ponto de saída que ela nunca bateu | lampião bento (sacristia da igreja) |
 | 4 | Luzes no Céu | tempestade | círculo queimado no campo, disco voador, ETs de Varginha; um raio derruba a nave no mato | pistola de raios (na nave caída) |
 | 5 | A Fera da Madrugada | neblina fechada | o rastro do bicho enorme até a Prefeitura e a luta entre as colunas do pavilhão da Kartoffelfest (batendo nelas, ela fica tonta) | dinamite (almoxarifado da Prefeitura) |
-| 6 | Lua Cheia | lua cheia, céu limpo | o sétimo filho dos Hoffmann; revólver do museu, prata dos castiçais da igreja fundida na forja do Seu Arno; a caçada ao lobisomem | revólver .38 com balas de prata |
-| 7 | Finados | garoa e neblina | acender as velas dos quatro fundadores com o cemitério cheio de fantasmas, descer à cripta e trazer a cruz de ferro | cruz de ferro (e a pá do coveiro) |
-| 8 | Asas da Noite | noite de vento | a bruxa aparece no telhado da igreja; queimar os três ninhos de morcegos-vampiro gigantes e derrubar a rainha deles na torre | — |
-| 9 | O Covil | chuva | rifle de dardos na agropecuária, o rastro de sangue até a gruta, cansar o chupacabras e capturá-lo vivo; quebrar os cristais da pedra do céu | rifle de dardos (só derruba bicho cansado) |
-| 10 | A Bruxa | lua de sangue | a última luta no túmulo dela: invocações, círculos de fogo, rituais; de joelhos e fraca, a cruz sela a bruxa. O amanhecer e os créditos | todas |
+| 6 | A Linha Cruzada | noite | todos os telefones da cidade tocam juntos; quem atende sai andando para o mato. Atender de novo os orelhões que chamam três sonâmbulos para acordá-los (as almas rondam cada um); no livro de atas de 1879, o acordo do sino às oito; tocar o sino da torre e aguentar as almas que sobem | — |
+| 7 | Lua Cheia | lua cheia, céu limpo | o sétimo filho dos Hoffmann; revólver do museu, prata dos castiçais da igreja fundida na forja do Seu Arno; a caçada ao lobisomem | revólver .38 com balas de prata |
+| 8 | Finados | garoa e neblina | acender as velas dos quatro fundadores com o cemitério cheio de fantasmas, descer à cripta e trazer a cruz de ferro | cruz de ferro (e a pá do coveiro) |
+| 9 | A Mulher da Fotografia | chuva | o padre liga do orelhão: a mulher de preto da foto de 1910 saiu da foto. Na igreja apagada, as imagens cobertas andam quando ninguém olha; acender os castiçais e a lamparina, subir à torre e afastar o vulto com o lampião (ela foge para o telhado) | — |
+| 10 | Asas da Noite | noite de vento | a bruxa aparece no telhado da igreja; queimar os três ninhos de morcegos-vampiro gigantes e derrubar a rainha deles na torre | — |
+| 11 | O Covil | chuva | rifle de dardos na agropecuária, o rastro de sangue até a gruta, cansar o chupacabras e capturá-lo vivo; quebrar os cristais da pedra do céu | rifle de dardos (só derruba bicho cansado) |
+| 12 | A Bruxa | lua de sangue | a última luta no túmulo dela: invocações, círculos de fogo, rituais; de joelhos e fraca, a cruz sela a bruxa. O amanhecer e os créditos | todas |
 
 Entre os objetivos, de noite, criaturas soltas aparecem pela cidade (cães de fogo,
 morcegos, fantasmas, ETs, conforme o capítulo). Derrotadas, às vezes largam munição,
@@ -138,10 +141,13 @@ um ícone de disquete com PROGRESSO SALVO aparece no canto.
 
 - **CONTINUAR** volta exatamente para onde parou. Lutas com chefe recomeçam pela
   chegada à arena.
-- **CAPÍTULOS** mostra os dez: os liberados com a melhor nota (S, A, B, C) e os outros
+- **CAPÍTULOS** mostra os doze: os liberados com a melhor nota (S, A, B, C) e os outros
   bloqueados, mais o tempo de jogo, as criaturas derrotadas e as quedas somadas.
   Dali dá para **apagar o progresso** (pede confirmação).
 - Sair para o menu pela pausa não perde nada.
+- Saves de quando o jogo tinha dez capítulos são convertidos sozinhos para a
+  numeração nova (os capítulos 6 e 9 entraram no meio). O código que depende da
+  história usa a chave do capítulo (`key`, em `src/game/chapters/index.js`), não o número.
 
 Para testes: `?chapter=5` na URL começa direto num capítulo.
 
@@ -208,8 +214,8 @@ Valem em todos os capítulos (`src/game/extras.js`; os textos estão em `src/gam
   lamparina vermelha, altares laterais com velas votivas, sacristia e um depósito
   com imagens cobertas. Subindo pela escada do coro chega-se à torre, onde dá para
   TOCAR O SINO. A água benta cura um pouco, uma vez por capítulo. Nas lutas ao lado
-  da igreja (a defesa do capítulo 2 e a rainha dos morcegos no 8) a porta fica
-  fechada. No capítulo 3 o lampião bento está na mesa da sacristia. No 6 o padre
+  da igreja (a defesa do capítulo 2 e a rainha dos morcegos no 10) a porta fica
+  fechada. No capítulo 3 o lampião bento está na mesa da sacristia. No 7 o padre
   entrega os castiçais de prata no altar, e depois disso eles somem de lá.
 - **Arquivos**: 18 documentos espalhados pela cidade e dentro da igreja: recortes
   da Folha de Teewald, páginas do diário do Pastor Wendt, cartas, cartazes e fotos.
@@ -222,7 +228,7 @@ Valem em todos os capítulos (`src/game/extras.js`; os textos estão em `src/gam
   por capítulo). ATENDER traz uma voz diferente em cada capítulo. Além do orelhão
   da praça, há orelhões perto do ponto de telefone real, dos Correios, do hospital
   e da escola.
-- **A presença** (`src/game/presence.js`): do capítulo 2 ao 8, de vez em quando o
+- **A presença** (`src/game/presence.js`): do capítulo 2 ao 10, de vez em quando o
   chupacabras aparece na beira da neblina comendo uma ovelha. Quando o jogador chega
   perto, mira nele ou fica olhando muito tempo, ele guincha e foge aos pulos,
   deixando sangue.

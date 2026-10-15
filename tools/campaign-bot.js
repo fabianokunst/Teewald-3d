@@ -195,12 +195,15 @@
     // 5. itens da história no chão (os que fazem algo ao pegar)
     const pk = T.combat.pickups.find(p => !p.taken && p.o.onPick);
     if (pk) { goNear(pk.x, pk.z, 0.7, pk.y); B.pendingPick = pk; return; }
-    // 6. marca do objetivo (numa porta de saída: sai)
+    // 6. destino final da etapa (quando a marca vai por partes, como a subida da torre)
+    const goal = S.def.steps[S.i]?.goal?.(C);
+    if (goal && dist(goal[0], goal[2]) > 1.5) { goNear(goal[0], goal[2], 1.0, goal[1] - 1); return; }
+    // 7. marca do objetivo (numa porta de saída: sai)
     const m = C.marker, ind = T.ctx.indoor;
     const exitAt = ind && m ? (ind.exits || []).find(e => Math.hypot(e.x - m.x, e.z - m.z) < 3) : null;
     if (exitAt) { goNear(exitAt.x, exitAt.z, 0.6); C._exitInterior(exitAt); return; }
     if (m && dist(m.x, m.z) > 2) { goNear(m.x, m.z, 1.2, ind ? m.y - 1.5 : null); return; }
-    // 7. dentro de um interior sem nada para fazer há tempo: sai
+    // 8. dentro de um interior sem nada para fazer há tempo: sai
     if (ind && B.keyT > 25) {
       const ex = ind.exits?.[0];
       if (ex) { goNear(ex.x, ex.z, 0.6); C._exitInterior(ex); B.keyT = 5; }

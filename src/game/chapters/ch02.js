@@ -8,7 +8,7 @@ const PADRE = 'PADRE BERNARDO', V = 150;
 const DEFENSE = 75;
 
 export default {
-  n: 2, title: 'Os Cães de Fogo', sub: 'O sino tocou sozinho. Ninguém subiu na torre.',
+  n: 2, key: 'caes', title: 'Os Cães de Fogo', sub: 'O sino tocou sozinho. Ninguém subiu na torre.',
   weather: 'anoitecer',
   deathText: 'OS CÃES TE PEGARAM',
   start(G) {

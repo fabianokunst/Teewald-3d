@@ -1,6 +1,7 @@
 import { drawText, panel, FONT_TITLE, FONT_UI } from './overlay.js';
 import { saveSettings } from '../config.js';
 import { DIFFICULTY_NAMES } from '../game/difficulty.js';
+import { LAST_CHAPTER } from '../game/chapters/index.js';
 
 // Tela título, menu principal, opções, créditos e pausa
 const ps1Only = s => s.visual === 'ps1';
@@ -91,12 +92,12 @@ export class Menu {
       list.push({ label: 'OPÇÕES', act: 'options' }, { label: 'CRÉDITOS', act: 'credits' });
       return list;
     }
-    // os dez capítulos: liberados com a melhor nota, os outros bloqueados
+    // os capítulos: liberados com a melhor nota, os outros bloqueados
     if (this.screen === 'chapters') {
-      const n = Math.min(10, this.saved.unlocked || 1), t = this.chapterTitles || [];
+      const n = Math.min(LAST_CHAPTER, this.saved.unlocked || 1), t = this.chapterTitles || [];
       const list = [];
       const rk = this.saved.ranks || {};
-      for (let i = 1; i <= 10; i++) {
+      for (let i = 1; i <= LAST_CHAPTER; i++) {
         if (i <= n) list.push({ label: i + '. ' + (t[i] || 'Capítulo ' + i).toUpperCase() + (rk[i] ? '  [' + rk[i] + ']' : ''), act: 'chapter:' + i });
         else list.push({ label: i + '. ???   BLOQUEADO', act: 'locked', locked: true });
       }

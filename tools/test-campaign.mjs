@@ -1,6 +1,6 @@
 // Teste da campanha inteira num Chrome sem janela.
 // Compila o jogo, serve a cópia compilada, abre no capítulo pedido e deixa o robô
-// (tools/campaign-bot.js) passar pelas etapas até o fim do capítulo 10. Mostra cada
+// (tools/campaign-bot.js) passar pelas etapas até o fim do último capítulo. Mostra cada
 // etapa, os testes de CONTINUAR e de queda, os erros do console e onde o jogo travou.
 //
 // uso: npm run teste            (do capítulo 1 até o fim)
@@ -16,8 +16,9 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2).filter(a => !a.startsWith('--'));
 const flags = new Set(process.argv.slice(2).filter(a => a.startsWith('--')));
-const first = Math.max(1, Math.min(10, +(args[0] || 1)));
-const last = Math.max(first, Math.min(10, +(args[1] || 10)));
+const CHAPTERS = 12;
+const first = Math.max(1, Math.min(CHAPTERS, +(args[0] || 1)));
+const last = Math.max(first, Math.min(CHAPTERS, +(args[1] || CHAPTERS)));
 const outDir = path.join(root, 'node_modules', '.teewald-teste');
 const STEP = 0.5;                 // segundos de jogo por passo do robô
 const STUCK = 240;                // segundos de jogo na mesma etapa = travou
@@ -69,7 +70,7 @@ while (simT < LIMIT) {
     else if (e.kind === 'erro') { problems.push(e.msg); say('  ✖', e.msg); }
     else say(`        · ${e.kind}: ${e.msg}`);
   }
-  if (r.key === 'fim' || (r.chapter > last) || (last < 10 && r.key === `${last}:concluído`)) { finished = true; break; }
+  if (r.key === 'fim' || (r.chapter > last) || (last < CHAPTERS && r.key === `${last}:concluído`)) { finished = true; break; }
   if (r.key !== lastKey) { lastKey = r.key; keyT = 0; }
   else if ((keyT += STEP) > STUCK) {
     const st = await page.evaluate(() => window.__bot.status());

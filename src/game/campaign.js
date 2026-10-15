@@ -18,10 +18,10 @@ import { build as buildChurch } from '../world/interiors/igreja.js';
 import { SFX } from './creatures/sfx.js';
 import { GunAudio } from './gunAudio.js';
 import { ITEMS } from './items.js';
-import { CHAPTERS } from './chapters/index.js';
+import { CHAPTERS, LAST_CHAPTER, OLD_TO_NEW } from './chapters/index.js';
 import { difficulty } from './difficulty.js';
 
-// Campanha: os dez capítulos de Teewald. O capítulo 1 (o chupacabras na tarde de
+// Campanha: os doze capítulos de Teewald. O capítulo 1 (o chupacabras na tarde de
 // neblina) é a missão original (game/mission.js); do 2 em diante, a noite que não
 // acaba, com um capítulo por lenda (game/chapters/*.js).
 // Daqui saem: objetivo e marca na tela, pontos de interação (ler, pegar, entrar),
@@ -36,7 +36,19 @@ import { difficulty } from './difficulty.js';
 //   totals — criaturas derrotadas, quedas e tempo de jogo somados
 const SAVE_KEY = 'teewald.save.v1';
 export function loadSave() {
-  try { const s = localStorage.getItem(SAVE_KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; }
+  try { const s = localStorage.getItem(SAVE_KEY); return s ? migrate(JSON.parse(s)) : null; } catch (e) { return null; }
+}
+// save de quando eram dez capítulos (sem version): renumera capítulo, liberados, notas e etapa
+function migrate(sv) {
+  if (!sv || sv.version >= 2) return sv;
+  const m = n => OLD_TO_NEW[n] || n;
+  if (sv.chapter) sv.chapter = m(sv.chapter);
+  if (sv.unlocked) sv.unlocked = m(sv.unlocked);
+  if (sv.run?.chapter) sv.run.chapter = m(sv.run.chapter);
+  if (sv.ranks) { const r = {}; for (const [k, v] of Object.entries(sv.ranks)) r[m(+k)] = v; sv.ranks = r; }
+  sv.version = 2;
+  writeSave(sv);
+  return sv;
 }
 export function writeSave(o) {
   try { o.updated = Date.now(); localStorage.setItem(SAVE_KEY, JSON.stringify(o)); return true; } catch (e) { return false; }
@@ -44,7 +56,7 @@ export function writeSave(o) {
 export function eraseSave() {
   try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* sem armazenamento */ }
 }
-const freshSave = () => ({ chapter: 1, unlocked: 1, ranks: {}, totals: { kills: 0, deaths: 0, time: 0 }, run: null });
+const freshSave = () => ({ version: 2, chapter: 1, unlocked: 1, ranks: {}, totals: { kills: 0, deaths: 0, time: 0 }, run: null });
 
 // tipos de criatura (os arquivos são carregados no começo; faltando um, vira cão de fogo)
 export const TYPES = { dog: FireDog, chupa: ChupaCapture };
@@ -74,8 +86,10 @@ const LOADOUT = [
   { pistol: 1, ammo9: 30, shotgun: 1, shells: 10, lantern: 1, oil: 1, cuca: 1 },
   { pistol: 1, ammo9: 30, shotgun: 1, shells: 10, lantern: 1, oil: 1, raygun: 1, cuca: 1 },
   { pistol: 1, ammo9: 30, shotgun: 1, shells: 10, lantern: 1, oil: 1, raygun: 1, dynamite: 2, cuca: 1 },
+  { pistol: 1, ammo9: 30, shotgun: 1, shells: 10, lantern: 1, oil: 2, raygun: 1, dynamite: 1, cuca: 1 },
   { pistol: 1, ammo9: 30, shotgun: 1, shells: 10, lantern: 1, oil: 2, raygun: 1, revolver: 1, silver: 6, cuca: 1 },
   { pistol: 1, ammo9: 30, shotgun: 1, shells: 12, lantern: 1, oil: 1, raygun: 1, revolver: 1, silver: 6, dynamite: 2, cross: 1, cha: 1 },
+  { pistol: 1, ammo9: 30, shotgun: 1, shells: 12, lantern: 1, oil: 2, raygun: 1, revolver: 1, silver: 6, dynamite: 2, cross: 1, cha: 1 },
   { pistol: 1, ammo9: 30, shotgun: 1, shells: 12, lantern: 1, oil: 1, raygun: 1, revolver: 1, silver: 6, dynamite: 2, cross: 1, cha: 1 },
   { pistol: 1, ammo9: 36, shotgun: 1, shells: 14, lantern: 1, oil: 2, raygun: 1, revolver: 1, silver: 12, dynamite: 3, dartgun: 1, darts: 2, cross: 1, cha: 2 },
 ];
@@ -94,7 +108,7 @@ export class Campaign {
     this.dialogue = new Dialogue(this.audio);
     this.deps = { ctx: this.ctx, scene: this.scene, effects: this.effects, audio: this.audio, player: this.player, atmo: this.atmo };
     this.index = 1;            // capítulo atual (1 = missão original)
-    this.S = null;             // estado do capítulo 2..10
+    this.S = null;             // estado do capítulo 2 em diante
     this.chip = null; this.touchHit = false;
     this._v = v3();
     this.save = { ...freshSave(), ...(loadSave() || {}) };
@@ -143,7 +157,7 @@ export class Campaign {
   }
 
   // ---------- começo de capítulo ----------
-  // n = 1..10; opts.fromSave retoma o progresso salvo (inventário, vida e a etapa onde parou)
+  // n = 1..LAST_CHAPTER; opts.fromSave retoma o progresso salvo (inventário, vida e a etapa onde parou)
   startChapter(n, opts = {}) {
     const run = opts.fromSave && this.save.run && this.save.run.chapter === n ? this.save.run : null;
     // seguindo direto de um capítulo para o outro, o inventário vai junto
@@ -283,7 +297,7 @@ export class Campaign {
       if (!S) return false;
       if (S.done) {
         // capítulo terminado: o próximo começa do início
-        if (S.n < 10) { sv.chapter = S.n + 1; sv.unlocked = Math.max(sv.unlocked || 1, S.n + 1); }
+        if (S.n < LAST_CHAPTER) { sv.chapter = S.n + 1; sv.unlocked = Math.max(sv.unlocked || 1, S.n + 1); }
         sv.run = null;
       } else {
         const st = S.def.steps[Math.max(0, S.i)];
@@ -545,7 +559,8 @@ export class Campaign {
 
   // entra num interior com passagem em preto
   enter(name, point = null, then = null) {
-    this.fadeTo(() => { this.interiors.enter(name, point); this.S?.def.onEnter?.(this, name); then?.(); }, 1.8);
+    // as criaturas soltas lá fora ficam lá fora (entrando, os limites do interior puxariam elas para dentro)
+    this.fadeTo(() => { this.combat.clearEnemies(e => e.ambient); this.interiors.enter(name, point); this.S?.def.onEnter?.(this, name); then?.(); }, 1.8);
   }
   leave(to = null, preset = null, then = null) {
     this.fadeTo(() => { this.interiors.exit(to, preset || this.S?.def.weather); then?.(); }, 1.8);
@@ -565,7 +580,7 @@ export class Campaign {
     const st = S.stats, rank = st.deaths === 0 && st.kills >= 12 ? 'S' : st.deaths === 0 ? 'A' : st.deaths <= 2 ? 'B' : 'C';
     const order = 'SABC', ranks = this.save.ranks ||= {};
     if (!ranks[S.n] || order.indexOf(rank) < order.indexOf(ranks[S.n])) ranks[S.n] = rank;
-    if (S.n < 10) this.save.unlocked = Math.max(this.save.unlocked || 1, S.n + 1);
+    if (S.n < LAST_CHAPTER) this.save.unlocked = Math.max(this.save.unlocked || 1, S.n + 1);
     else this.save.finished = true;
     writeSave(this.save);
     this.autosave('fim', true);
@@ -755,7 +770,7 @@ export class Campaign {
   _nextChapter() {
     const S = this.S;
     if (!S) return;
-    if (S.n >= 10) { this.fadeTo(() => this.onEnding?.(), 0.5); return; }
+    if (S.n >= LAST_CHAPTER) { this.fadeTo(() => this.onEnding?.(), 0.5); return; }
     this.fadeTo(() => { this.startChapter(S.n + 1, { carry: true }); }, 0.6);
   }
 
@@ -924,7 +939,7 @@ export class Campaign {
       drawText(g, def.title, W / 2, y - 4 * k, 26 * k, { align: 'center', font: FONT_TITLE, alpha: a, color: '#efe2c4', shadow: '#2a0806' });
       const rank = st.deaths === 0 && st.kills >= 12 ? 'S' : st.deaths === 0 ? 'A' : st.deaths <= 2 ? 'B' : 'C';
       drawText(g, `CRIATURAS ${st.kills}   QUEDAS ${st.deaths}   TEMPO ${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}   AVALIAÇÃO ${rank}`, W / 2, y + 34 * k, 10 * k, { align: 'center', alpha: a, color: '#d8c8a8' });
-      if (S.n >= 10) drawText(g, 'FIM', W / 2, y + 46 * k, 10 * k, { align: 'center', alpha: a, color: '#c86848' });
+      if (S.n >= LAST_CHAPTER) drawText(g, 'FIM', W / 2, y + 46 * k, 10 * k, { align: 'center', alpha: a, color: '#c86848' });
     }
   }
 

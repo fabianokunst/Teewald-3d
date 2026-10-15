@@ -24,10 +24,10 @@ export class Presence {
     this._v = new THREE.Vector3();
   }
 
-  // capítulos em que ele ronda a cidade (no 9 ele é capturado; no 10 está amarrado)
+  // capítulos em que ele ronda a cidade (no covil ele é capturado; na última noite está amarrado)
   get allowed() {
-    const C = this.campaign, n = C.index;
-    return n >= 2 && n <= 8 && !!C.S && !C.S.done;
+    const C = this.campaign, k = C.S?.def.key;
+    return C.index >= 2 && !!C.S && !C.S.done && k !== 'covil' && k !== 'bruxa';
   }
 
   reset() {
