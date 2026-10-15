@@ -548,6 +548,8 @@ function exposeDebug() {
       if (fogFar) { G.uFogFar.value = fogFar; G.uFogNear.value = fogFar * 0.5; }
     },
     setYawPitch: (yaw, pitch, dist) => { tpc.yaw = yaw; tpc.pitch = pitch; if (dist) tpc.dist = dist; tpc.snap(player); tpc.yaw = yaw; tpc.pitch = pitch; tpc._place(1); },
+    // baixa o protagonista como .glb (engine/exporter.js só é carregado aqui)
+    exportar: async () => (await import('./engine/exporter.js')).exportHero(),
   };
 }
 

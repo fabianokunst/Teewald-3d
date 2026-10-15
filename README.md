@@ -379,6 +379,23 @@ feitos em código. O cenário fica em `src/world/chupaSites.js` e a missão em
     novo (no celular o mapa de sombra é menor). Pela URL: `?light=classic` ou
     `?light=advanced`.
 
+## Exportar modelos
+
+O protagonista sai como arquivo `.glb` (glTF binário), que abre no Blender
+(Arquivo → Importar → glTF 2.0) com textura e esqueleto:
+
+- `npm run exportar` grava `exportados/teewald-protagonista.glb` (a pasta fica fora
+  do repositório);
+- com o jogo aberto, `__teewald.exportar()` no console do navegador baixa o mesmo arquivo.
+
+O modelo vem na pose de repouso, em metros (1,73 m, pés em y = 0, olhando para +z),
+com a textura do 3D limpo (256 px) e 18 ossos nomeados com `.L`/`.R` (`ombro.L`,
+`joelho.R`...). A sombra de oclusão vai na cor dos vértices; se ela não aparecer no
+Blender, ligue um nó *Color Attribute* multiplicando a *Base Color*. **Limite:** a
+animação do jogo é procedural (IK em código), então o arquivo leva o esqueleto mas
+nenhum clipe de animação. O código fica em `src/engine/exporter.js`, carregado só
+quando chamado.
+
 ## Estrutura
 
 ```
@@ -389,7 +406,7 @@ src/game     personagem, controle do jogador, câmera, itens, armas, mira assist
              moradores, missão 1, campanha (campaign.js) e capítulos (chapters/)
 src/game/creatures  chupacabras na gruta, cão de fogo, morcegos, fantasmas, ETs e disco, Fera, lobisomem, bruxa
 src/ui       menu, HUD, inventário, diálogo e textos
-tools/       build-mapdata.mjs (regera os dados do mapa), capturas de teste
+tools/       build-mapdata.mjs (regera os dados do mapa), exportar.mjs (modelos .glb), capturas de teste
 texture/     texturas do projeto (servidas como pasta pública)
 ```
 

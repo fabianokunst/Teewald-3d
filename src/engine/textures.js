@@ -73,6 +73,17 @@ export function setTextureQuality(q) {
   for (const t of ALL) { t.dispose(); applyFilter(t); t.needsUpdate = true; }
 }
 
+// gera texturas numa qualidade sem mexer nas do jogo (exportação de modelos, engine/exporter.js)
+export function withTextureQuality(q, fn) {
+  const old = QUALITY, before = new Set(ALL);
+  QUALITY = q;
+  try { return fn(); } finally {
+    QUALITY = old;
+    // as novas ficam fora da lista do jogo: trocar a qualidade nas opções não as refaz
+    for (const t of ALL) if (!before.has(t)) ALL.delete(t);
+  }
+}
+
 // reduz uma imagem (ou recorte) para w x h com média de área
 export function shrink(img, w, h, crop) {
   const [sx, sy, sw, sh] = crop || [0, 0, img.width, img.height];
