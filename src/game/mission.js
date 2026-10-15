@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Dialogue } from '../ui/dialogue.js';
+import { Paper } from '../ui/paper.js';
 import { drawText, textSprite, panel, FONT_UI, FONT_TITLE } from '../ui/overlay.js';
 import { Chupacabra, ChupaAudio, CHUPA_HP, makeSheep } from './chupacabra.js';
 import { PISTOL_MAG } from './items.js';
@@ -18,13 +19,22 @@ const OBJ = {
   escaped: 'O chupacabras fugiu ferido...',
 };
 
-const TEXTS = {
-  board: ['CARTAZ', [
-    'PROCURA-SE: CHUPACABRAS!',
+// o cartaz da praça, como está no mural (o desenho é o mesmo da textura, missionArt.js)
+const BOARD = {
+  kind: 'CARTAZ NA PRAÇA', title: 'Procura-se: chupacabras', paper: 'white',
+  pages: [[
+    { t: 'PROCURA-SE', s: 'poster', align: 'center', color: '#8a1612' },
+    { img: 'chupa', w: 0.2, h: 0.42 },
+    { t: 'CHUPACABRAS', s: 'head', align: 'center' },
     'Nas últimas noites, galinhas, patos e até ovelhas apareceram mortos em Teewald. Todos com dois furos no pescoço e sem uma gota de sangue.',
+  ], [
     'Último ataque: um galinheiro perto da Igreja Matriz, na beira da mata.',
-    'Não ande sozinho perto do mato. Quem souber de alguma coisa, procure a Prefeitura. Paga-se recompensa.',
-  ], 150],
+    'Não ande sozinho perto do mato. Quem souber de alguma coisa, procure a Prefeitura.',
+    { t: 'PAGA-SE RECOMPENSA', s: 'head', align: 'center', color: '#8a1612' },
+  ]],
+};
+
+const TEXTS = {
   coop: ['GALINHEIRO', [
     'A tela do cercado foi arrancada de fora para dentro.',
     'Cinco galinhas mortas. Cada uma com dois furinhos no pescoço... e nem uma gota de sangue.',
@@ -49,6 +59,7 @@ export class Mission {
     Object.assign(this, o);   // inclui combat (vida do jogador, golpes)
     this.site = this.ctx.chupa;
     this.dialogue = new Dialogue(this.audio);
+    this.paper = new Paper();
     this.creature = new Chupacabra({ ctx: this.ctx, scene: this.scene, effects: this.effects, audio: this.audio, player: this.player });
     this.creature.onHit = () => { this.stats.hits++; };
     this.combat.spawn(this.creature);
@@ -139,9 +150,9 @@ export class Mission {
   }
 
   startRead(id = this.focus?.id) {
-    const [name, lines, voice] = TEXTS[id];
     this.reading = id;
-    this.dialogue.start(name, lines, voice);
+    if (id === 'board') this.paper.open(BOARD);
+    else { const [name, lines, voice] = TEXTS[id]; this.dialogue.start(name, lines, voice); }
     this.player.aimYaw = null; this.tpc.aimWant = false;
     if (id !== 'end') this.audio.menuOk();
   }
@@ -151,7 +162,7 @@ export class Mission {
     const id = this.reading, P = this.player;
     const it = this._points().find(p => p.id === id);
     if (it) P.heading += wrapA(Math.atan2(it.p[0] - P.pos.x, it.p[2] - P.pos.z) - P.heading) * Math.min(1, dt * 6);
-    if (this.dialogue.update(dt, input) !== 'close') return null;
+    if ((id === 'board' ? this.paper.update(dt, input) : this.dialogue.update(dt, input)) !== 'close') return null;
     this.reading = null;
     if (id === 'board' && this.step === 'poster') this.setStep('coop');
     else if (id === 'coop' && (this.step === 'poster' || this.step === 'coop')) this.setStep('trail');
@@ -461,7 +472,7 @@ export class Mission {
     }
   }
 
-  drawRead(g, W, H, device) { this.dialogue.draw(g, W, H, device); }
+  drawRead(g, W, H, device) { if (this.reading === 'board') this.paper.draw(g, W, H, device); else this.dialogue.draw(g, W, H, device); }
 
   // nome do bicho na tarja de baixo durante o encontro
   drawCutscene(g, W, H) {

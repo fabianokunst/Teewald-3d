@@ -94,26 +94,55 @@ export class Paper {
       const pg = Array.isArray(src) ? { blocks: src } : src;
       const paper = pg.paper || this.doc.paper || 'old', pal = PAPER[paper] || PAPER.old;
       const meta = { paper, marks: pg.marks || (pg.paper ? [] : this.doc.marks || []), label: pg.label || null };
-      const gap = (pal.row || 6.5) * k, items = [];
-      pg.blocks.forEach((b, i) => { if (i) items.push({ kind: 'gap', h: gap }); items.push(...this._items(b, k, cw, ch, pal)); });
-      let cur = [], used = 0;
-      for (const it of items) {
-        if (it.kind === 'gap' && !cur.length) continue;
+      // no caderno o parágrafo novo só começa na linha de baixo
+      const gap = (pal.row ? 0 : 6.5) * k;
+      let cur = [], used = 0, float = null, prev = null;
+      const flush = () => { this.pages.push({ ...meta, items: cur }); cur = []; used = 0; float = null; };
+      const place = it => {
+        if (it.kind === 'gap' && !cur.length) return;
         if (cur.length && used + it.h > ch) {
           while (cur.length && cur[cur.length - 1].kind === 'gap') cur.pop();
-          this.pages.push({ ...meta, items: cur }); cur = []; used = 0;
-          if (it.kind === 'gap') continue;
+          flush();
+          if (it.kind === 'gap') return;
         }
         cur.push(it); used += it.h;
+      };
+      // o que sobra da imagem ao lado do texto vira espaço
+      const endFloat = () => { if (float && used < float.until) place({ kind: 'gap', h: float.until - used }); float = null; };
+      for (const b0 of pg.blocks) {
+        const b = typeof b0 === 'string' ? { t: b0 } : b0;
+        if (prev && gap && !(prev.entry && b.entry)) place({ kind: 'gap', h: gap });
+        prev = b;
+        // imagem flutuante: o texto seguinte corre do lado dela
+        if (b.img && b.float) {
+          endFloat();
+          const it = this._items(b, k, cw, ch, pal)[0];
+          if (!it) continue;
+          if (cur.length && used + it.ih > ch) flush();
+          it.float = b.float; it.h = 0;
+          place(it);
+          float = { until: used + it.ih + 4 * k, w: it.w + 8 * k, side: b.float };
+          prev = null;
+          continue;
+        }
+        if (float && (b.t == null || used >= float.until)) endFloat();
+        const side = float ? float.w : 0;
+        for (const it of this._items(b, k, cw - side, ch, pal)) {
+          if (float && it.kind === 'text') { it.narrow = side; if (float.side === 'left') it.indent = side; }
+          place(it);
+        }
       }
-      this.pages.push({ ...meta, items: cur });
+      endFloat();
+      flush();
     }
     this.page = Math.min(this.page, this.pages.length - 1);
   }
 
   _items(b, k, cw, ch, pal) {
     if (typeof b === 'string') b = { t: b };
-    const seed = hash((b.t || b.note || b.sign || b.img || '').length * 1.37 + (b.t || '').charCodeAt(0));
+    const key = b.t || b.note || b.sign || b.img || (b.entry || []).join('') || b.label || '';
+    const seed = hash(key.length * 1.37 + (key.charCodeAt(0) || 0) + (key.charCodeAt(key.length - 1) || 0) * 0.01);
+    if (b.space) return [{ kind: 'gap', h: b.space * k }];
     if (b.t != null) {
       const st = STYLE[b.s] || STYLE.print, sz = b.size || st.size, size = sz * k;
       const lh = (pal.row && st.font === FONT_HAND ? pal.row : st.lh * sz / st.size) * k;
@@ -125,14 +154,18 @@ export class Paper {
     if (b.img) {
       const art = docArt(b.img);
       if (!art) return [];
+      // ampliação em passos de meio pixel quando grande (os pixels ficam regulares)
       let s = Math.min(cw * (b.w || 1) / art.width, ch * (b.h || 1) / art.height);
-      if (s >= 2) s = Math.floor(s);
+      if (s >= 2) s = Math.floor(s * 2) / 2;
       return [{ kind: 'img', art, w: art.width * s, ih: art.height * s, h: art.height * s + 4 * k, align: b.align, corners: b.corners }];
     }
     if (b.stamp) {
-      const lines = b.stamp.split('\n'), size = 10 * k, w = Math.max(...lines.map(l => measure(l, size))) + 12 * k, bh = lines.length * 10 * k + 7 * k;
-      const r = Math.max(w, bh) / 2 + 2 * k;
-      return [{ kind: 'stamp', lines, size, w, bh, r, round: b.round, color: b.color || '#7a2a8a', rot: b.rot ?? -0.12, align: b.align || 'right', h: (b.round ? r * 2 : bh) + 4 * k }];
+      const lines = b.stamp.split('\n'), size = (b.size || (lines.length > 1 ? 9 : 14)) * k, lh = size * 1.05;
+      const w = Math.max(...lines.map(l => measure(l, size))) + 12 * k, bh = lines.length * lh + 7 * k;
+      const r = w / 2 + 1 * k;
+      // float: carimbado por cima do que vem antes (não ocupa linha)
+      const h = b.float ? 0 : (b.round ? r * 2 : bh) + 4 * k;
+      return [{ kind: 'stamp', lines, size, lh, w, bh, r, round: b.round, float: b.float, color: b.color || '#7a2a8a', rot: b.rot ?? -0.12, align: b.align || 'right', h }];
     }
     if (b.sign) {
       const st = STYLE[b.s] || STYLE.ink;
@@ -213,7 +246,7 @@ export class Paper {
     // pauta de caderno: linhas azuis e a margem vermelha
     if (pal.lines) {
       g.fillStyle = pal.lines;
-      for (let y = b.y + 46 * k + 12 * k; y < b.y + b.h - 6 * k; y += pal.row * k) g.fillRect(b.x, R(y), b.w, Math.max(1, R(0.7 * k)));
+      for (let y = b.y + 46 * k + 14 * k; y < b.y + b.h - 6 * k; y += pal.row * k) g.fillRect(b.x, R(y), b.w, Math.max(1, R(0.7 * k)));
       g.fillStyle = pal.margin; g.fillRect(R(b.x + 9 * k), b.y, Math.max(1, R(0.8 * k)), b.h);
     }
     for (const m of marks) {
@@ -251,7 +284,7 @@ export class Paper {
     const R = Math.round;
     if (it.kind === 'text') return this._text(g, it, x0, y, cw, k, a);
     if (it.kind === 'img') {
-      const x = it.align === 'left' ? x0 : it.align === 'right' ? x0 + cw - it.w : x0 + (cw - it.w) / 2, iy = y + 2 * k;
+      const side = it.float || it.align, x = side === 'left' ? x0 : side === 'right' ? x0 + cw - it.w : x0 + (cw - it.w) / 2, iy = y + 2 * k;
       g.globalAlpha = a; g.imageSmoothingEnabled = false;
       g.drawImage(it.art, R(x), R(iy), R(it.w), R(it.ih));
       if (it.corners) {
@@ -265,7 +298,8 @@ export class Paper {
       return;
     }
     if (it.kind === 'stamp') {
-      const cx = it.align === 'left' ? x0 + it.w / 2 + 6 * k : it.align === 'center' ? x0 + cw / 2 : x0 + cw - (it.round ? it.r : it.w / 2) - 8 * k, cy = y + it.h / 2;
+      const cx = it.align === 'left' ? x0 + it.w / 2 + 6 * k : it.align === 'center' ? x0 + cw / 2 : x0 + cw - (it.round ? it.r : it.w / 2) - 8 * k;
+      const cy = it.float ? y - (it.round ? it.r : it.bh / 2) * 0.7 : y + it.h / 2;
       g.save(); g.translate(R(cx), R(cy)); g.rotate(it.rot);
       g.globalAlpha = a * 0.82; g.strokeStyle = it.color; g.lineWidth = Math.max(1, R(1.4 * k));
       if (it.round) {
@@ -275,7 +309,7 @@ export class Paper {
         g.strokeRect(-it.w / 2, -it.bh / 2, it.w, it.bh);
         g.lineWidth = Math.max(1, R(0.7 * k)); g.strokeRect(-it.w / 2 + 2 * k, -it.bh / 2 + 2 * k, it.w - 4 * k, it.bh - 4 * k);
       }
-      it.lines.forEach((l, i) => drawText(g, l, 0, -it.lines.length * 5 * k + i * 10 * k - 1.5 * k, it.size, { align: 'center', color: it.color, shadow: null, alpha: a * 0.85 }));
+      it.lines.forEach((l, i) => drawText(g, l, 0, -it.lines.length * it.lh / 2 + i * it.lh - 1.5 * k, it.size, { align: 'center', color: it.color, shadow: null, alpha: a * 0.85 }));
       // falhas da tinta
       g.globalAlpha = a; g.fillStyle = pal.bg;
       const hw = it.round ? it.r : it.w / 2, hh = it.round ? it.r : it.bh / 2;
@@ -330,6 +364,7 @@ export class Paper {
 
   _text(g, it, x0, y, cw, k, a) {
     const { st, size, font, color } = it, R = Math.round;
+    x0 += it.indent || 0; cw -= it.narrow || 0;
     const w = measure(it.text, size, font);
     const x = it.align === 'center' ? x0 + (cw - w) / 2 : it.align === 'right' ? x0 + cw - w - 4 * k : x0;
     const o = { font, color, shadow: null, alpha: a };

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Dialogue } from '../ui/dialogue.js';
+import { Paper } from '../ui/paper.js';
 import { drawText, textSprite, panel, FONT_UI, FONT_TITLE } from '../ui/overlay.js';
 import { MeshBuilder } from '../engine/builder.js';
 import { M } from '../engine/materials.js';
@@ -388,6 +389,14 @@ export class Campaign {
   // tela preta com texto (entre capítulos, cartas, diários)
   narrate(lines, then = null, o = {}) {
     this.S.narr = { lines, i: 0, t: 0, chars: 0, then, title: o.title || null };
+    this.pendingCut = true;
+  }
+
+  // papel na tela (ata, diário, álbum): mostra o documento desenhado; segue ao fechar
+  showPaper(doc, then = null) {
+    this.paper ||= new Paper();
+    this.paper.open(doc);
+    this.S.narr = { paper: this.paper, lines: [''], i: 0, t: 0, chars: 0, then, title: null };
     this.pendingCut = true;
   }
 
@@ -787,6 +796,14 @@ export class Campaign {
 
   _cutscene(dt) {
     const S = this.S;
+    if (S.narr?.paper) {
+      const N = S.narr;
+      this.R.bars = 0;
+      if (N.paper.update(dt, this.input) !== 'close' && !this.input.pause()) return null;
+      N.paper.close();
+      S.narr = null; N.then?.(this);
+      return S.cut || this.pendingCut ? (this.pendingCut = false, null) : 'play';
+    }
     if (S.narr) {
       const N = S.narr;
       N.t += dt;
@@ -948,6 +965,7 @@ export class Campaign {
     if (this.index === 1) return this.mission.drawCutscene(g, W, H);
     const S = this.S;
     if (!S) return;
+    if (S.narr?.paper) { S.narr.paper.draw(g, W, H, this.input.lastDevice); return; }
     if (S.narr) {
       const N = S.narr, k = H / 240;
       g.fillStyle = '#000'; g.fillRect(0, 0, W, H);

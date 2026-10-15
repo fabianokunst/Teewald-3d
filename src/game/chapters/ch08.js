@@ -3,6 +3,7 @@ import { places, grave, candle, frame } from './common.js';
 import { pointInPoly } from '../../world/geo.js';
 import { ipt } from './ch03.js';
 import { SFX } from '../creatures/sfx.js';
+import { DOCS } from '../lore.js';
 
 // Capítulo 8 — Finados. Garoa e neblina. O diário do Pastor Wendt diz que a cruz de
 // ferro que selava a bruxa foi guardada na cripta dos fundadores, embaixo do cemitério.
@@ -178,12 +179,10 @@ export default {
     {
       id: 'diario', obj: null,
       enter(G) {
-        G.after(0.6, () => G.narrate([
-          'Diário do Pastor Johann Wendt, novembro de 1878.',
-          '"A Otília não morre por ferro nem por fogo. Só a cruz, posta sobre o peito dela quando estiver fraca, devolve ela para a terra."',
-          '"O bicho dela, o Blutsauger, é o coração do feitiço. Enquanto ele estiver solto, ela não cansa."',
-          '"Que Deus nos perdoe o que fizemos com ela. E o que ela fez conosco."',
-        ], () => G.complete(), { title: 'O DIÁRIO' }));
+        G.after(0.6, () => {
+          G.extras.markDoc('wendt3');
+          G.showPaper(DOCS.find(d => d.id === 'wendt3'), () => G.complete());
+        });
       },
     },
   ],

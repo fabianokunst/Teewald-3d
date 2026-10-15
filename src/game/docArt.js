@@ -93,7 +93,8 @@ class Pix extends Plot {
 const shade = (c, f) => [c[0] * f, c[1] * f, c[2] * f, c[3]];
 
 // ---------- revelação ----------
-const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map(v => (v + 0.5) / 16);
+// retícula de jornal: pontos que crescem do centro (no dobro da resolução do filme)
+const DOTS = [12, 5, 6, 13, 4, 0, 1, 7, 11, 3, 2, 8, 15, 10, 9, 14].map(v => (v + 0.5) / 16);
 const SEPIA = v => [34 + 200 * v, 22 + 192 * Math.pow(v, 1.05), 14 + 164 * Math.pow(v, 1.15)];
 const GRAY = v => [22 + 210 * v, 22 + 206 * v, 20 + 198 * v];
 // cor desbotada dos anos 80: sombra arroxeada, luz alaranjada
@@ -103,6 +104,7 @@ const NEWS = v => (v ? [212, 207, 194] : [38, 36, 34]);
 
 // o: { grain, vignette, halftone, lift (tira o preto puro), scratches, seed }
 function develop(F, pal, o = {}) {
+  if (o.halftone) return halftone(F, pal, o);
   const c = canvas(F.w, F.h), g = c.getContext('2d'), img = g.createImageData(F.w, F.h), R = rnd(o.seed || 7);
   for (let y = 0; y < F.h; y++) for (let x = 0; x < F.w; x++) {
     const i = y * F.w + x;
@@ -111,7 +113,6 @@ function develop(F, pal, o = {}) {
     if (o.vignette) { const dx = x / (F.w - 1) * 2 - 1, dy = y / (F.h - 1) * 2 - 1; v -= o.vignette * Math.max(0, (dx * dx + dy * dy) * 0.5 - 0.18); }
     v = clamp01(v);
     if (o.lift) v = o.lift + v * (1 - o.lift);
-    if (o.halftone) v = v > BAYER[(y & 3) * 4 + (x & 3)] ? 1 : 0;
     const p = pal(v);
     img.data[i * 4] = p[0]; img.data[i * 4 + 1] = p[1]; img.data[i * 4 + 2] = p[2]; img.data[i * 4 + 3] = 255;
   }
@@ -122,6 +123,20 @@ function develop(F, pal, o = {}) {
     for (let i = 0; i < o.scratches; i++) { const x = Math.floor(R() * F.w), y = Math.floor(R() * F.h * 0.6); g.fillRect(x, y, 1, 6 + Math.floor(R() * F.h * 0.4)); }
     for (let i = 0; i < o.scratches * 3; i++) g.fillRect(Math.floor(R() * F.w), Math.floor(R() * F.h), 1, 1);
   }
+  return c;
+}
+
+function halftone(F, pal, o) {
+  const W = F.w * 2, H = F.h * 2, c = canvas(W, H), g = c.getContext('2d'), img = g.createImageData(W, H), R = rnd(o.seed || 7);
+  const at = (x, y) => F.d[Math.min(F.h - 1, Math.max(0, y)) * F.w + Math.min(F.w - 1, Math.max(0, x))];
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const fx = x / 2 - 0.25, fy = y / 2 - 0.25, x0 = Math.floor(fx), y0 = Math.floor(fy), tx = fx - x0, ty = fy - y0;
+    let v = (at(x0, y0) * (1 - tx) + at(x0 + 1, y0) * tx) * (1 - ty) + (at(x0, y0 + 1) * (1 - tx) + at(x0 + 1, y0 + 1) * tx) * ty;
+    v = clamp01(v + (R() - 0.5) * 0.06);
+    const p = pal(v > DOTS[(y & 3) * 4 + (x & 3)] ? 1 : 0), i = (y * W + x) * 4;
+    img.data[i] = p[0]; img.data[i + 1] = p[1]; img.data[i + 2] = p[2]; img.data[i + 3] = 255;
+  }
+  g.putImageData(img, 0, 0);
   return c;
 }
 
@@ -369,7 +384,7 @@ function albumNoite() {
   const F = new Film(136, 88, 0.04), R = rnd(66);
   const vx = 50, vy = 36;
   F.rect(vx - 3, vy - 9, 6, 9, 0.12);
-  F.poly([[vx - 3, vy], [vx + 3, vy], [76, 88], [20, 88]], (x, y) => 0.08 + (y - vy) / 52 * 0.24);
+  F.poly([[vx - 3, vy], [vx + 3, vy], [76, 88], [20, 88]], (x, y) => 0.05 + (y - vy) / 52 * 0.12);
   for (let i = 0; i < 9; i++) {
     const t = Math.pow(i / 8, 1.6), y = vy + 2 + t * 50, lit = 0.08 + t * 0.42, th = 1 + t * 3;
     const el = vx - 3 - (vx - 3 - 20) * (y - vy) / 52, er = vx + 3 + (76 - vx - 3) * (y - vy) / 52;
@@ -378,13 +393,13 @@ function albumNoite() {
   }
   for (const t of [0.25, 0.55, 0.9]) { F.rect(vx - 10 - t * 50, vy - 30 * t - 6, 1 + t * 4, 90, 0.08 + t * 0.12); F.rect(vx + 9 + t * 50, vy - 30 * t - 6, 1 + t * 4, 90, 0.08 + t * 0.12); }
   // o rosto, colado na lente, estourado pelo flash e fora de foco
-  F.ell(94, 50, 31, 44, 0.02);
-  F.ell(94, 50, 20, 27, (x, y) => 0.98 - (Math.abs(x - 94) / 20) ** 2 * 0.2 - (Math.abs(y - 50) / 27) ** 2 * 0.15);
-  F.ell(86, 44, 4.5, 3.2, 0.02); F.ell(102, 44, 4.5, 3.2, 0.02);
-  F.line(94, 46, 93, 54, 0.78); F.px(92, 55, 0.4); F.px(95, 55, 0.4);
-  F.ell(94, 63, 4, 1.4, 0.16);
-  F.poly([[56, 88], [72, 78], [116, 78], [132, 88]], 0.02);
-  F.blur(58, 4, 132, 88, 2);
+  const fx = 102, fy = 54;
+  F.ell(fx, fy, 38, 52, 0.02);
+  F.ell(fx, fy, 26, 34, (x, y) => 0.98 - (Math.abs(x - fx) / 26) ** 2 * 0.22 - (Math.abs(y - fy) / 34) ** 2 * 0.16);
+  F.ell(fx - 10, fy - 7, 5.5, 4, 0.02); F.ell(fx + 10, fy - 7, 5.5, 4, 0.02);
+  F.line(fx, fy - 4, fx - 1, fy + 6, 0.8); F.px(fx - 2, fy + 7, 0.45); F.px(fx + 2, fy + 7, 0.45);
+  F.ell(fx, fy + 17, 5, 1.6, 0.14);
+  F.blur(64, 0, 135, 87, 2);
   return framed(develop(F, GRAY, { grain: 0.14, vignette: 0.7, seed: 16 }), 4, { col: [236, 234, 226], seed: 10 });
 }
 
@@ -411,19 +426,21 @@ function newsOvelhas() {
 
 function newsFabrica() {
   const F = new Film(96, 56), R = rnd(83);
-  F.grad(0, 30, 0.46, 0.64);
-  for (let i = 0; i < 6; i++) F.ell(44 + i * 4 + R() * 4, 22 - i * 5, 7 + i * 2, 4 + i, (x, y, o) => Math.min(o, 0.3 + R() * 0.1));
-  F.rect(0, 46, 96, 10, () => 0.6 + R() * 0.1);
-  F.rect(10, 26, 76, 22, (x, y) => (y % 3 === 0 ? 0.32 : 0.42 + R() * 0.06));
+  F.grad(0, 30, 0.86, 0.92);
+  // fumaça subindo do telhado que caiu
+  for (let i = 0; i < 6; i++) F.ell(46 + i * 4 + R() * 3, 20 - i * 4, 6 + i * 2, 4 + i, (x, y, o) => Math.min(o, 0.5 + i * 0.05 + R() * 0.06));
+  F.rect(0, 46, 96, 10, () => 0.78 + R() * 0.1);
+  // pavilhão de tijolo, telhado em dente de serra
+  F.rect(8, 26, 80, 21, (x, y) => (y % 3 === 0 ? 0.48 : 0.6 + R() * 0.05));
   for (let i = 0; i < 6; i++) {
-    const x = 10 + i * 12.6;
-    if (i === 2 || i === 3) { F.poly([[x, 26], [x + 4, 23], [x + 7, 26]], 0.08); continue; }
-    F.poly([[x, 26], [x + 12.6, 26], [x + 12.6, 18]], 0.34);
+    const x = 8 + i * 13.3;
+    if (i === 2 || i === 3) { F.poly([[x, 26], [x + 5, 22], [x + 9, 26]], 0.1); F.line(x + 2, 26, x + 9, 19, 0.1); continue; }
+    F.poly([[x, 26], [x + 13.3, 26], [x + 13.3, 17]], 0.42);
   }
-  F.rect(10, 26, 76, 3, (x, y) => (x > 34 && x < 62 ? 0.06 : 0.2));
-  for (let i = 0; i < 6; i++) { F.rect(14 + i * 11, 32, 6, 7, 0.05); F.rect(14 + i * 11, 27, 6, 5, (x, y, o) => o * 0.5); }
-  F.rect(66, 36, 10, 12, 0.04);
-  for (const x of [20, 26, 84]) folk(F, x, 42, 'man', 1.6, R);
+  F.rect(8, 26, 80, 3, (x, y) => (x > 32 && x < 62 ? 0.08 : 0.3));
+  for (let i = 0; i < 7; i++) { F.rect(11 + i * 11, 32, 6, 7, 0.06); F.rect(11 + i * 11, 28, 6, 4, (x, y, o) => o * 0.45); }
+  F.rect(70, 37, 9, 10, 0.05);
+  for (const x of [18, 24, 86]) folk(F, x, 41, 'man', 1.7, R);
   return develop(F, NEWS, { halftone: true, seed: 84 });
 }
 

@@ -1,168 +1,254 @@
 // Textos dos extras: documentos espalhados pela cidade, fichas das lendas e as
 // ligações dos orelhões. Tudo inventado (obra de ficção); os lugares são os do jogo.
 //
-// DOCS: { id, title, kind (cabeçalho do papel), at (onde fica, ver extras.js), pages: [[linhas]] }
+// DOCS: { id, title, kind (cabeçalho do papel), paper, marks, pages } — o formato dos
+//   blocos (letra à mão, carimbo, rasura, foto, desenho) está em ui/paper.js. O papel
+//   mostra o que o documento tem: nada de "embaixo, alguém escreveu..."; o que alguém
+//   escreveu aparece escrito, a foto aparece como foto (desenhos em game/docArt.js).
+//   story: true = achado pela história (o capítulo mostra), não fica jogado na cidade.
 // LEGENDS: { id, name, sub, types (tipos de criatura da campanha, game/campaign.js TYPES), text: [linhas] }
 // CALLS: ligações por capítulo: { who, voice, lines }
 
 export const DOCS = [
   {
-    id: 'jornal1', kind: 'RECORTE DE JORNAL', title: 'Folha de Teewald, 3 de outubro',
+    id: 'jornal1', kind: 'RECORTE DE JORNAL', title: 'Folha de Teewald, 3 de outubro', paper: 'news',
     pages: [[
-      'OVELHAS MORTAS NA LINHA SCHMITT',
+      { t: 'Folha de Teewald', s: 'mast', align: 'center' },
+      { t: 'SÁBADO, 3 DE OUTUBRO  ·  O JORNAL DO HERVAL', s: 'small', align: 'center' },
+      { rule: true },
+      { t: 'OVELHAS MORTAS NA LINHA SCHMITT', s: 'head' },
+      { img: 'newsOvelhas', w: 0.6, h: 0.5 },
+      { t: 'O potreiro dos Schmitt na manhã de domingo. (Foto: Marlene K.)', s: 'small', align: 'center' },
+    ], [
       'Produtores do interior encontraram sete ovelhas mortas na madrugada de domingo. Os animais não tinham ferimentos grandes, só dois furos no pescoço, e estavam secos, sem sangue.',
       'A inspetoria veterinária fala em "ataque de cães". Os moradores não acreditam: cachorro come, e nenhuma ovelha foi comida.',
       'A Brigada pede que ninguém saia armado pelo mato à noite.',
     ]],
   },
   {
-    id: 'cartaz_mimi', kind: 'CARTAZ NUM POSTE', title: 'Procura-se gata cinza',
+    id: 'cartaz_mimi', kind: 'CARTAZ NUM POSTE', title: 'Procura-se gata cinza', paper: 'white',
     pages: [[
-      'PROCURA-SE',
+      { t: 'PROCURA-SE', s: 'poster', align: 'center', color: '#8a1612' },
+      { img: 'fotoMimi', w: 0.34, h: 0.42 },
       'Gata cinza, olhos verdes, atende por MIMI. Muito mansa. Sumiu segunda-feira de noite.',
       'Quem encontrar, por favor levar na casa da Dona Hilda, no calçadão. Dou recompensa.',
-      'Embaixo, alguém escreveu a lápis: "procura na igreja. os gatos sobem lá quando têm medo".',
+      { t: 'procura na igreja. os gatos sobem lá quando têm medo', s: 'pencil' },
     ]],
   },
   {
-    id: 'cartaz_boris', kind: 'CARTAZ NA PONTE', title: 'Perdeu-se cachorro preto',
+    id: 'cartaz_boris', kind: 'CARTAZ NA PONTE', title: 'Perdeu-se cachorro preto', paper: 'white', marks: ['torn', 'stain'],
     pages: [[
-      'PERDEU-SE CACHORRO PRETO',
+      { t: 'PERDEU-SE CACHORRO PRETO', s: 'head', align: 'center', color: '#1a1410' },
+      { img: 'fotoBoris', w: 0.34, h: 0.42 },
       'Grande, coleira vermelha, nome BÓRIS. Arrebentou a corrente na noite de domingo.',
       'Recompensa. Falar com o Lucas, última casa antes da ponte.',
-      'A folha está rasgada no canto e manchada de alguma coisa escura.',
     ]],
   },
   {
-    id: 'oficio', kind: 'OFÍCIO DA PREFEITURA', title: 'Comunicado nº 41',
+    id: 'oficio', kind: 'OFÍCIO DA PREFEITURA', title: 'Comunicado nº 41', paper: 'white',
     pages: [[
-      'PREFEITURA MUNICIPAL',
-      'Comunicamos à população que a Kartoffelfest deste ano fica CANCELADA, em razão dos acontecimentos das últimas semanas.',
-      'O pavilhão permanece montado na Rua Beno Closs até segunda ordem. Pede-se que ninguém entre na área depois do anoitecer.',
-      'Os vigias municipais estão autorizados a fechar o comércio às dezoito horas.',
+      { t: 'PREFEITURA MUNICIPAL DE TEEWALD', s: 'type', align: 'center' },
+      { t: 'Gabinete do Prefeito', s: 'type', align: 'center' },
+      { rule: true },
+      { t: 'COMUNICADO Nº 41', s: 'type' },
+      { t: 'Comunicamos à população que a Kartoffelfest deste ano fica CANCELADA, em razão dos acontecimentos das últimas semanas.', s: 'type' },
+      { t: 'O pavilhão permanece montado na Rua Beno Closs até segunda ordem. Pede-se que ninguém entre na área depois do anoitecer.', s: 'type' },
+      { t: 'Os vigias municipais estão autorizados a fechar o comércio às dezoito horas.', s: 'type' },
+      { scribble: true, label: 'Prefeito Municipal' },
+      { stamp: 'PREFEITURA MUNICIPAL\nTEEWALD - RS', round: true, color: '#2a4a8a', align: 'left', rot: 0.2 },
     ]],
   },
   {
-    id: 'programa', kind: 'PROGRAMA DA FESTA', title: 'Kartoffelfest, programação',
+    id: 'programa', kind: 'PROGRAMA DA FESTA', title: 'Kartoffelfest, programação', paper: 'yellow',
     pages: [[
+      { t: 'KARTOFFELFEST', s: 'poster', align: 'center' },
+      { img: 'batata', w: 0.16, h: 0.26 },
       'SEXTA: abertura com a Bandinha Herval-Klänge. Escolha da Rainha da Batata.',
       'SÁBADO: almoço de batata recheada, concurso de descascar batata, baile.',
       'DOMINGO: missa campal e encerramento.',
-      'Atrás, a lápis, com outra letra: "a bandinha toca mesmo sem ninguém. eu ouvi ontem. a valsa do ano em que a Elsa morreu."',
-    ]],
+    ], { label: 'VERSO', blocks: [
+      { t: 'a bandinha toca mesmo sem ninguém. eu ouvi ontem. a valsa do ano em que a Elsa morreu.', s: 'pencil' },
+    ] }],
   },
   {
     id: 'foto1910', kind: 'FOTOGRAFIA ANTIGA', title: 'Inauguração da Igreja Matriz, 1910',
-    pages: [[
-      'Uma foto marrom, dobrada em quatro. A igreja nova, ainda sem reboco na torre, e o povo todo na escadaria: os homens de chapéu, as mulheres de lenço, as crianças na frente.',
-      'No canto esquerdo, longe de todos, uma mulher de preto olha direto para a câmera.',
-      'Atrás, a tinta: "Einweihung der Kirche, 1910". E embaixo, em letra mais nova: "Ninguém sabe quem é a mulher. Ela não estava lá."',
-    ]],
+    pages: [{ paper: 'album', blocks: [
+      { img: 'foto1910', h: 1 },
+    ] }, { paper: 'card', label: 'VERSO', blocks: [
+      { t: 'Einweihung der Kirche, 1910', s: 'ink', size: 18 },
+      { t: 'Ninguém sabe quem é a mulher. Ela não estava lá.', s: 'hand' },
+    ] }],
   },
   {
     id: 'wendt1', kind: 'PÁGINA SOLTA', title: 'Diário do Pastor Wendt, março de 1878',
     pages: [[
-      '12 de março. Mais duas vacas do Kranz amanheceram secas. O povo fala da Otília, a viúva que cura com ervas no fim da picada.',
-      'Fui até a casa dela. Ofereceu chá. Tinha um bicho no canto, embaixo de um pano, que respirava alto. Ela disse que era um cachorro doente.',
-      'Cachorro não tem aqueles olhos. Rezei o caminho inteiro de volta.',
+      { t: '12 de março.', s: 'ink' },
+      { t: 'Mais duas vacas do Kranz amanheceram secas. O povo fala da Otília, a viúva que cura com ervas no fim da picada.', s: 'ink' },
+      { t: 'Fui até a casa dela. Ofereceu chá. Tinha um bicho no canto, embaixo de um pano, que respirava alto. Ela disse que era um cachorro doente.', s: 'ink' },
+      { img: 'olhos', w: 0.36, h: 0.3 },
+      { t: 'Cachorro não tem aqueles olhos. Rezei o caminho inteiro de volta.', s: 'ink' },
     ]],
   },
   {
-    id: 'wendt2', kind: 'PÁGINA SOLTA', title: 'Diário do Pastor Wendt, abril de 1878',
+    id: 'wendt2', kind: 'PÁGINA SOLTA', title: 'Diário do Pastor Wendt, abril de 1878', marks: ['blot'],
     pages: [[
-      '3 de abril. Os homens decidiram sem mim. Levaram a Otília para o mato, cavaram a cova e puseram ela dentro, viva, gritando em hunsrik que voltaria.',
-      'O ferreiro Hoffmann fez a cruz de ferro. Pregaram a cruz em cima da pedra.',
-      'O bicho dela fugiu para o morro. Ninguém teve coragem de ir atrás.',
-      'Deus me perdoe por ter ficado em casa.',
+      { t: '3 de abril.', s: 'ink' },
+      { t: 'Os homens decidiram sem mim. Levaram a Otília para o mato, cavaram a cova e puseram ela dentro, viva, gritando em hunsrik que voltaria.', s: 'ink' },
+      { t: 'O ferreiro Hoffmann fez a cruz de ferro. Pregaram a cruz em cima da pedra.', s: 'ink' },
+      { t: 'O bicho dela fugiu para o morro. Ninguém teve coragem de ir atrás.', s: 'ink' },
+      { t: 'Deus me perdoe por ter ficado em casa.', s: 'ink' },
     ]],
   },
   {
     id: 'ata1879', kind: 'ATA DA COMUNIDADE', title: 'Livro de atas, 1879',
     pages: [[
-      'Aos dez dias de janeiro de mil oitocentos e setenta e nove, reunida a comunidade na capela, ficou decidido:',
-      'Primeiro: que ninguém mexa na pedra do mato nem na cruz que está sobre ela.',
-      'Segundo: que o nome daquela mulher não seja escrito em livro nenhum desta comunidade.',
-      'Terceiro: que o sino seja tocado toda noite às vinte horas, para que ela saiba que estamos acordados.',
-      'A última frase está riscada. Ninguém mais tocou o sino às oito.',
+      { t: 'Aos dez dias de janeiro de mil oitocentos e setenta e nove, reunida a comunidade na capela, ficou decidido:', s: 'ink' },
+      { t: 'Primeiro: que ninguém mexa na pedra do mato nem na cruz que está sobre ela.', s: 'ink' },
+      { t: 'Segundo: que o nome daquela mulher não seja escrito em livro nenhum desta comunidade.', s: 'ink' },
+      { t: 'Terceiro: que o sino seja tocado toda noite às vinte horas, para que ela saiba que estamos acordados.', s: 'ink', strike: true },
+      { t: 'sem efeito. agora temos luz elétrica. 1932', s: 'pencil', align: 'right' },
+    ], [
+      { t: 'E por estarem todos de acordo, assinam:', s: 'ink' },
+      { sign: 'Johann Wendt, Pastor' },
+      { sign: 'Heinrich Klein', align: 'left' },
+      { sign: 'Peter Schmitt' },
+      { sign: 'Wilhelm Hoffmann', align: 'left' },
     ]],
   },
   {
-    id: 'jornal1983', kind: 'RECORTE DE JORNAL', title: 'Folha de Teewald, novembro de 1983',
+    id: 'jornal1983', kind: 'RECORTE DE JORNAL', title: 'Folha de Teewald, novembro de 1983', paper: 'news', marks: ['fold3'],
     pages: [[
-      'TRAGÉDIA NA FÁBRICA DE CALÇADOS',
+      { t: 'Folha de Teewald', s: 'mast', align: 'center' },
+      { t: 'SEXTA-FEIRA, 18 DE NOVEMBRO DE 1983', s: 'small', align: 'center' },
+      { rule: true },
+      { t: 'TRAGÉDIA NA FÁBRICA DE CALÇADOS', s: 'head' },
+      { img: 'newsFabrica', w: 0.6, h: 0.5 },
+      { t: 'O que sobrou do depósito de cola na manhã de sexta.', s: 'small', align: 'center' },
+    ], [
       'Quatro operárias morreram no incêndio que destruiu o depósito de cola da indústria na noite de quinta-feira. As portas estavam trancadas por fora.',
       'Entre as vítimas, Lúcia Weber, 19 anos, que casaria em dezembro. O capataz Kurt B. também morreu, tentando abrir o cadeado.',
       'O relógio de ponto parou às 23h47.',
     ]],
   },
   {
-    id: 'boletim1978', kind: 'BOLETIM DE OCORRÊNCIA', title: 'Delegacia de Teewald, 1978',
+    id: 'boletim1978', kind: 'BOLETIM DE OCORRÊNCIA', title: 'Delegacia de Teewald, 1978', paper: 'white',
     pages: [[
-      'Comunicante: Alfons R., agricultor. Relata que na noite de 14 para 15 de maio viu uma "estrela" cair no morro atrás da gruta, com estrondo, e que a terra ficou quente por três dias.',
-      'Diligência ao local: pedra verde do tamanho de um carro, partida, que zumbia. Os cachorros da patrulha se recusaram a chegar perto.',
-      'Observação do delegado Kunz: arquivar. Não comentar com a imprensa.',
+      { t: 'DELEGACIA DE POLÍCIA DE TEEWALD', s: 'type', align: 'center' },
+      { t: 'BOLETIM DE OCORRÊNCIA Nº 112/78', s: 'type', align: 'center' },
+      { rule: true },
+      { t: 'COMUNICANTE: Alfons R., agricultor.', s: 'type' },
+      { t: 'FATO: Relata que na noite de 14 para 15 de maio viu uma "estrela" cair no morro atrás da gruta, com estrondo, e que a terra ficou quente por três dias.', s: 'type' },
+      { t: 'DILIGÊNCIA AO LOCAL: pedra verde do tamanho de um carro, partida, que zumbia. Os cachorros da patrulha se recusaram a chegar perto.', s: 'type' },
+    ], [
+      { t: 'OBSERVAÇÃO DO DELEGADO:', s: 'type' },
+      { t: 'Arquivar. Não comentar com a imprensa.', s: 'hand' },
+      { sign: 'Kunz', s: 'hand' },
+      { stamp: 'ARQUIVADO', color: '#a8261e', align: 'center', rot: -0.16 },
     ]],
   },
   {
-    id: 'carta_rudi', kind: 'CARTA NÃO ENTREGUE', title: 'Carta para Rudi Hoffmann',
+    id: 'carta_rudi', kind: 'CARTA NÃO ENTREGUE', title: 'Carta para Rudi Hoffmann', paper: 'lined', marks: ['fold3'],
     pages: [[
-      'Meu filho, a mãe escreve porque tu não atende o telefone.',
-      'Tu sabe o que os velhos diziam do sétimo guri. O teu irmão Paulo nunca foi teu padrinho, foi o tio Arnaldo, e eu sempre tive medo disso.',
-      'Em noite de lua cheia, fica em casa. Tranca a porta e me liga. Por favor.',
-      'O carimbo dos Correios é de três semanas atrás. A carta nunca saiu da agência.',
+      { t: 'Meu filho,', s: 'hand' },
+      { t: 'a mãe escreve porque tu não atende o telefone.', s: 'hand' },
+      { t: 'Tu sabe o que os velhos diziam do sétimo guri. O teu irmão Paulo nunca foi teu padrinho, foi o tio Arnaldo, e eu sempre tive medo disso.', s: 'hand' },
+      { t: 'Em noite de lua cheia, fica em casa. Tranca a porta e me liga. Por favor.', s: 'hand' },
+      { sign: 'Tua mãe', s: 'hand' },
+    ], { paper: 'envelope', label: 'ENVELOPE', marks: ['selo'], blocks: [
+      { stamp: 'CORREIOS\nTEEWALD-RS\n24 SET', round: true, color: '#2a2a3a', align: 'left', rot: -0.25 },
+      { t: 'Sr. Rudi Hoffmann', s: 'hand', size: 17 },
+      { t: 'Linha Hoffmann, s/nº  ·  Teewald - RS', s: 'hand' },
+      { note: 'Rudi, essa é tua. Tá na tua caixinha aqui na agência faz três semanas. Leva pra casa!  Nelci', s: 'pencil', bg: '#e8d870' },
+    ] }],
+  },
+  {
+    id: 'redacao', kind: 'REDAÇÃO DA ESCOLA', title: '"O que eu vi da minha janela"', paper: 'lined',
+    pages: [[
+      { t: 'Joãozinho    4ª série', s: 'child' },
+      { t: 'O que eu vi da minha janela', s: 'child', align: 'center' },
+      { t: 'Eu vi um bixo no pátio da visinha. Ele anda pulando que nen canguru e tem espinho nas costa. Ele bebeu a galinha.', s: 'child', words: ['bixo', 'visinha', 'nen', 'costa'] },
+      { t: 'Depois ele olhou pra minha janela e eu me escondi em baixo da coberta. A mãe disse que era sonho.', s: 'child', words: ['em', 'baixo'] },
+      { t: 'Não era sonho porque de manhã tinha pegada no barro.', s: 'child' },
+    ], [
+      { img: 'pegada', w: 0.18, h: 0.3, align: 'left' },
+      { t: 'Muito criativo! Cuidado com a ortografia: bicho, vizinha, nem, embaixo.', s: 'red' },
+      { t: 'Nota: 7,5', s: 'red', align: 'right', size: 18 },
     ]],
   },
   {
-    id: 'redacao', kind: 'REDAÇÃO DA ESCOLA', title: '"O que eu vi da minha janela"',
+    id: 'nota_agro', kind: 'NOTA DE BALCÃO', title: 'Agropecuária, pedido especial', paper: 'white',
     pages: [[
-      'Joãozinho, 4ª série.',
-      'Eu vi um bicho no pátio da vizinha. Ele anda pulando que nem canguru e tem espinho nas costas. Ele bebeu a galinha.',
-      'Depois ele olhou para a minha janela e eu me escondi embaixo da coberta. A mãe disse que era sonho.',
-      'Não era sonho porque de manhã tinha pegada no barro.',
-      'A professora escreveu em vermelho: "Muito criativo. Cuidado com a ortografia."',
+      { t: 'AGROPECUÁRIA  ·  NOTA DE PEDIDO Nº 0347', s: 'type' },
+      { rule: true },
+      { t: '1 un.   Rifle de dardos (veterinária)', s: 'hand' },
+      { t: '12 un.  Dardos c/ sedativo p/ bovino', s: 'hand' },
+      { t: 'Cliente: ____________     Pagamento: fiado', s: 'hand' },
+      { rule: true },
+      { t: 'Obs.: o homem queria pra pegar bicho do mato. Avisei que o sedativo só derruba animal cansado. Ele riu e disse que o bicho cansa, sim. Que já viu ele cansar.', s: 'pencil' },
     ]],
   },
   {
-    id: 'nota_agro', kind: 'NOTA DE BALCÃO', title: 'Agropecuária, pedido especial',
+    id: 'caderno_romeu', kind: 'CADERNO DE CAMPO', title: 'Seu Romeu, contagem do potreiro', paper: 'lined',
     pages: [[
-      'Rifle de dardos (veterinária), 1 unid.',
-      'Dardos com sedativo para bovino, 12 unid.',
-      'Cliente: ____. Pagamento: fiado.',
-      'Obs. do balconista: "o homem queria para pegar bicho do mato. Avisei que o sedativo só derruba animal cansado. Ele riu e disse que o bicho cansa, sim. Que já viu ele cansar."',
-    ]],
-  },
-  {
-    id: 'caderno_romeu', kind: 'CADERNO DE CAMPO', title: 'Seu Romeu, contagem do potreiro',
-    pages: [[
-      'Segunda: 31 cabeças. Terça: 31. Quarta: 30, a mocha sumiu.',
-      'Quinta: 28. Cerca arrombada de dentro para fora. Pegadas do tamanho de um prato.',
-      'Sexta: não fui contar.',
-      'Sábado: 24. Alguma coisa ficou me olhando da neblina enquanto eu consertava a cerca. Era alta como um cavalo de pé.',
+      { t: 'Segunda: 31 cabeças. Terça: 31. Quarta: 30, a mocha sumiu.', s: 'pencil' },
+      { t: 'Quinta: 28. Cerca arrombada de dentro para fora. Pegadas do tamanho de um prato.', s: 'pencil' },
+      { t: 'Sexta: não fui contar.', s: 'pencil' },
+      { t: 'Sábado: 24. Alguma coisa ficou me olhando da neblina enquanto eu consertava a cerca. Era alta como um cavalo de pé.', s: 'shaky' },
     ]],
   },
   {
     id: 'receita', kind: 'PAPEL AMARELADO', title: 'Receita de benzedura',
     pages: [[
-      'Para quebranto e cobreiro: arruda, alecrim, três folhas de guiné. Benzer com a mão esquerda.',
-      'Para quem fez mal à gente: o nome da pessoa escrito em papel, enterrado embaixo da porteira, com sangue de bicho que não tem nome.',
-      'A letra é miúda e caprichada. No pé da folha, a assinatura: O. K., 1877.',
+      { img: 'ervas', w: 0.42, h: 0.26 },
+      { t: 'Para quebranto e cobreiro: arruda, alecrim, três folhas de guiné. Benzer com a mão esquerda.', s: 'ink', size: 14 },
+      { t: 'Para quem fez mal à gente: o nome da pessoa escrito em papel, enterrado embaixo da porteira, com sangue de bicho que não tem nome.', s: 'ink', size: 14 },
+      { sign: 'O. K.  1877' },
     ]],
   },
   {
-    id: 'lista', kind: 'LISTA TELEFÔNICA', title: 'Página arrancada da lista',
+    id: 'lista', kind: 'LISTA TELEFÔNICA', title: 'Página arrancada da lista', paper: 'white', marks: ['torn'],
     pages: [[
-      'Uma página da lista telefônica de Teewald, letras H a K.',
-      'Os nomes HOFFMANN, KLEIN e KRANZ estão circulados de vermelho. Ao lado de KRANZ, alguém escreveu "não tem telefone. nunca teve."',
-      'Embaixo, em letra trêmula: "mas ela liga mesmo assim".',
+      { t: 'TEEWALD - RS   ·   H a K', s: 'small' },
+      { entry: ['HAAS Edmundo', 'R. 12 de Maio, 210', '566-1087'] },
+      { entry: ['HECK Lourenço', 'Linha Schmitt', '566-1312'] },
+      { entry: ['HOFFMANN Arnaldo', 'Linha Hoffmann', '566-1142'], ring: true },
+      { entry: ['HOFFMANN Rudi', 'Linha Hoffmann', '566-1203'], ring: true },
+      { entry: ['JUNG Alvino', 'Av. Beno Closs, 45', '566-1260'] },
+      { entry: ['KLEIN Ferragem', 'Pça. 10 de Abril', '566-1001'], ring: true },
+      { entry: ['KLEIN Hilário', 'R. da Matriz, 30', '566-1018'], ring: true },
+      { entry: ['KRANZ Otília', 'Fim da Picada', '1878'], ring: true },
+      { t: 'não tem telefone. nunca teve.', s: 'pencil', align: 'right' },
+      { t: 'mas ela liga mesmo assim', s: 'shaky' },
     ]],
   },
   {
-    id: 'desenho', kind: 'DESENHO DE CRIANÇA', title: 'Desenho a giz de cera',
+    id: 'desenho', kind: 'DESENHO DE CRIANÇA', title: 'Desenho a giz de cera', paper: 'white',
     pages: [[
-      'Um galinheiro, uma igreja com uma cruz grande e, no meio do mato, um bicho preto com olhos vermelhos e espinhos nas costas.',
-      'Do lado do bicho, uma mulher bem comprida, de vestido preto, segurando ele pela mão.',
-      'Escrito em cima, com letra de criança: "A MOÇA DO MATO E O CACHORRO DELA".',
+      { t: 'A MOÇA DO MATO E O CACHORRO DELA', s: 'child', align: 'center', color: '#2a2a8a' },
+      { img: 'desenho', h: 0.86 },
     ]],
+  },
+  {
+    id: 'wendt3', kind: 'DIÁRIO NA CRIPTA', title: 'Diário do Pastor Wendt, novembro de 1878', story: true,
+    pages: [[
+      { t: 'den 20. November 1878', s: 'ink' },
+      { t: 'A Otília não morre por ferro nem por fogo. Só a cruz, posta sobre o peito dela quando estiver fraca, devolve ela para a terra.', s: 'ink' },
+      { img: 'cruz', w: 0.14, h: 0.3 },
+      { t: 'O bicho dela, o Blutsauger, é o coração do feitiço. Enquanto ele estiver solto, ela não cansa.', s: 'ink' },
+    ], [
+      { t: 'Que Deus nos perdoe o que fizemos com ela. E o que ela fez conosco.', s: 'ink' },
+      { sign: 'J. Wendt' },
+    ]],
+  },
+  {
+    id: 'album', kind: 'ÁLBUM DA PARÓQUIA', title: 'Fotos da Igreja Matriz', paper: 'album', story: true,
+    pages: [
+      [{ img: 'album1910', h: 0.84, corners: true }, { t: 'Inauguração, 1910', s: 'chalk', align: 'center' }],
+      [{ img: 'album1935', h: 0.84, corners: true }, { t: 'Corpus Christi, 1935', s: 'chalk', align: 'center' }],
+      [{ img: 'album1957', h: 0.84, corners: true }, { t: 'Casamento Hoffmann, 1957', s: 'chalk', align: 'center' }],
+      [{ img: 'album1983', h: 0.84, corners: true }, { t: 'Lúcia Weber, 1983', s: 'chalk', align: 'center' }],
+      [{ img: 'albumNoite', h: 0.84, corners: true }],
+    ],
   },
 ];
 

@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { places } from './common.js';
 import { ipt } from './ch03.js';
 import { SFX } from '../creatures/sfx.js';
+import { DOCS } from '../lore.js';
 import { part, UV1 } from '../../world/interiors/factory.js';
 import { sheetFigure } from '../../world/interiors/igreja.js';
 
@@ -138,18 +139,13 @@ export default {
       enter(G) {
         const p = ipt(G, 'igreja', 'lampiao');
         G.use('album', [p.x, p.y + 0.4, p.z], 1.9, 'VER O ÁLBUM', () => {
-          G.narrate([
-            '1910. A inauguração. A mulher de preto no canto esquerdo da escadaria, longe de todos.',
-            '1935. A procissão de Corpus Christi. Ela está atrás do andor, no meio do povo.',
-            '1957. O casamento dos Hoffmann. Ela está entre os padrinhos, olhando para a câmera.',
-            '1983. O enterro da Lúcia Weber. Ela está do lado do caixão, com a mão em cima da tampa.',
-            'A última foto do álbum não tem data. É a nave desta igreja, de noite, tirada lá do altar. Ela está bem na frente da câmera.',
-          ], () => {
+          G.extras.markDoc('album');
+          G.showPaper(DOCS.find(d => d.id === 'album'), () => {
             G.sting();
             G.combat.shake = 0.3;
             G.after(0.6, () => SFX.whisper(G.audio, 2));
             G.next();
-          }, { title: 'O ÁLBUM DA PARÓQUIA' });
+          });
         });
       },
     },

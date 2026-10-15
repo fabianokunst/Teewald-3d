@@ -144,12 +144,12 @@ export default {
           if (G.S.def.steps[G.S.i]?.id !== 'padre') return;
           const ata = DOCS.find(d2 => d2.id === 'ata1879');
           G.extras.markDoc('ata1879');
-          G.narrate(ata.pages[0], () => G.talk([[PADRE, [
+          G.showPaper(ata, () => G.talk([[PADRE, [
             'Eles tocavam o sino às oito, toda noite. Pra ela saber que a cidade estava acordada.',
             'Pararam quando chegou a luz elétrica. Ninguém lembrava mais por quê.',
             'Ela está chamando a cidade pra dormir no mato. Sobe na torre e toca o sino. Toca até a cidade inteira acordar.',
             'A escada da torre sai do coro. Leva querosene: lá em cima não tem luz.',
-          ], 150]], () => G.next()), { title: 'LIVRO DE ATAS, 1879' });
+          ], 150]], () => G.next()));
         } });
       },
     },

@@ -69,7 +69,7 @@
   // pula falas, narração e cenas
   const skip = () => {
     const st = T.state;
-    if (st === 'read') { (C.index === 1 ? T.mission.dialogue : C.dialogue).open = false; return true; }
+    if (st === 'read') { (C.index === 1 ? T.mission.dialogue : C.dialogue).open = false; if (C.index === 1) T.mission.paper?.close(); return true; }
     if (st === 'talk') { T.npcs.dialogue.open = false; return true; }
     if (st === 'cutscene') {
       if (C.index === 1) { if (T.mission.cut) T.mission.cut.t = 99; return true; }
