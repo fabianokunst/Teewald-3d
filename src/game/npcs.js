@@ -435,7 +435,7 @@ export class NPC {
     if (this.busy || this.shaken > 0) { /* parado */ }
     else if (this.fear > 0 && this.mobile && this.flinch <= 0) {
       tx = this.pos.x + Math.sin(this.fleeAng) * 6; tz = this.pos.z + Math.cos(this.fleeAng) * 6; speed = 4.3;
-    } else if (this.wary > 0 && gunOut && this.dist < 2.2 && this.mobile && this.mode !== 'follow') {
+    } else if (this.wary > 0 && gunOut && this.dist < 2.2 && this.mobile && this.mode !== 'follow' && !this.storyTalks) {
       // desconfiado, com a arma chegando perto: recua de frente para o jogador
       const l = this.dist || 1;
       tx = this.pos.x - dx / l * 2; tz = this.pos.z - dz / l * 2; speed = 0.9; this.backing = true;
@@ -832,6 +832,7 @@ export class NPC {
 
   // clique da câmera da repórter: clarão e o estalo do obturador (de perto)
   _flash(sys) {
+    if (this.dist > 60) return;
     const v = sys._v2;
     this.ch.head.localToWorld(v.set(0, 0.12, 0.26));
     sys.effects?.spawn({ p: v, life: 0.09, s0: 0.34, s1: 0.06, color: [1, 1, 0.94] });

@@ -95,12 +95,12 @@ export const ACTS = {
   } },
   // mãos em concha na boca, chamando (o bicho, o cachorro, a gata)
   call: { hands: 2, walk: true, dur: [1.6, 2.4], fn(a) {
-    for (const A of [a.R, a.L]) { const s = A.side; armIK(A, s * 0.07, 0.6, 0.2, s, -0.6, 0.1, a.w, 0.4); }
+    for (const A of [a.R, a.L]) { const s = A.side; armIK(A, s * 0.1, 0.47, 0.2, s, -1, -0.1, a.w, -0.3); }
     a.ch.head.rotation.x -= 0.15 * a.w; a.ch.spine.rotation.x -= 0.05 * a.w;
   } },
   // uma mão do lado da boca
   call1: { hands: 1, walk: true, sit: true, dur: [1.4, 2], fn(a) {
-    armIK(a.free, a.s * 0.09, 0.6, 0.19, a.s, -0.7, 0, a.w, 0.4);
+    armIK(a.free, a.s * 0.1, 0.47, 0.19, a.s, -1, -0.1, a.w, -0.3);
     a.ch.head.rotation.x -= 0.1 * a.w;
   } },
   // coça a nuca
@@ -114,7 +114,7 @@ export const ACTS = {
     a.ch.head.rotation.x += 0.45 * a.w; a.ch.head.rotation.y += a.s * 0.3 * a.w;
   } },
   // sinal da cruz (os religiosos, depois de um susto ou quando o sino toca)
-  sign: { hands: 1, sit: true, dur: [2.4, 2.8], fn(a) {
+  sign: { hands: 1, walk: true, sit: true, dur: [2.4, 2.8], fn(a) {
     const u = clamp(a.t / a.dur, 0, 1), p = keys(CROSS, u, _k), s = a.s;
     armIK(a.free, p[0] * -s, p[1], p[2], s, -0.6, 0.2, a.w, 0.5);
     a.ch.head.rotation.x += 0.18 * a.w;
