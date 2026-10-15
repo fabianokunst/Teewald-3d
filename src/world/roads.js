@@ -123,22 +123,42 @@ export function buildRoads(B, ctx) {
     // calçadas com meio-fio; r.walk guarda quais trechos foram desenhados (lado L, lado R)
     if (r.sidewalk) {
       r.walk = [new Uint8Array(n - 1), new Uint8Array(n - 1)];
+      const top = (q) => V(q, CURB);
+      // pé das faces de fora e das pontas: um pouco abaixo do terreno (ou da rua, se o
+      // terreno ali for mais alto), no máximo 0,9 m abaixo da pista (na ponte o terreno
+      // é o leito do rio; a mureta cobre até aí)
+      const foot = (q) => {
+        const y = H(q[0], q[1]);
+        return [q[0], Math.max(Math.min(y, terrain.heightAt(q[0], q[1])) - 0.15, y + r.off - 0.9), q[1]];
+      };
       for (const side of [1, -1]) {
+        const off = (k, w) => (side > 0 ? L(k, w) : R(k, w));
+        const walk = r.walk[side > 0 ? 0 : 1];
+        // corta onde invade outra rua (antes de desenhar: as pontas dependem do vizinho)
         for (let i = 0; i < n - 1; i++) {
-          const off = (k, w) => (side > 0 ? L(k, w) : R(k, w));
-          const i0a = off(i, r.hw), i1a = off(i + 1, r.hw), o0 = off(i, r.hw + 2), o1 = off(i + 1, r.hw + 2);
-          // corta onde invade outra rua
+          const i1a = off(i + 1, r.hw), o0 = off(i, r.hw + 2), o1 = off(i + 1, r.hw + 2);
           const mid = [(o0[0] + i1a[0]) / 2, (o0[1] + i1a[1]) / 2];
           const other = roads.index.clearance(mid[0], mid[1], d => d !== r && d.rank >= 1);
           const otherIn = roads.index.clearance(o1[0], o1[1], d => d !== r && d.rank >= 1);
-          if (other.d < 0.6 || otherIn.d < 0.3) continue;
-          r.walk[side > 0 ? 0 : 1][i] = 1;
-          const top = (q) => V(q, CURB);
+          if (other.d >= 0.6 && otherIn.d >= 0.3) walk[i] = 1;
+        }
+        for (let i = 0; i < n - 1; i++) {
+          if (!walk[i]) continue;
+          const i0a = off(i, r.hw), i1a = off(i + 1, r.hw), o0 = off(i, r.hw + 2), o1 = off(i + 1, r.hw + 2);
           const [A, Bq, C, D] = side > 0 ? [i0a, i1a, o1, o0] : [i1a, i0a, o0, o1];
           B.quad('pavers', top(A), top(Bq), top(C), top(D), [UV2(A), UV2(Bq), UV2(C), UV2(D)]);
           // face do meio-fio (virada para a rua)
           const [p0, p1] = side > 0 ? [i1a, i0a] : [i0a, i1a];
           B.quad('concreteW', V(p1, 0), V(p0, 0), V(p0, CURB), V(p1, CURB), [[0, 0], [1, 0], [1, 0.1], [0, 0.1]]);
+          // face de fora (lado oposto da rua): sem ela a laje ficava aberta e via-se
+          // por baixo da calçada até a rua
+          const out = [o0[0] - i0a[0], 0, o0[1] - i0a[1]];
+          quadOut(B, 'concreteW', foot(o0), foot(o1), top(o1), top(o0), out, [[0, 0], [1, 0], [1, 0.1], [0, 0.1]]);
+          // pontas do trecho (fim da rua ou corte num cruzamento)
+          const cap = (k, a, b, dir) => quadOut(B, 'concreteW', foot(a), foot(b), top(b), top(a),
+            [tan[k][0] * dir, 0, tan[k][1] * dir], [[0, 0], [1, 0], [1, 0.1], [0, 0.1]]);
+          if (i === 0 || !walk[i - 1]) cap(i, i0a, o0, -1);
+          if (i === n - 2 || !walk[i + 1]) cap(i + 1, i1a, o1, 1);
         }
       }
     }
