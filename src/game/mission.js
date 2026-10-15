@@ -104,6 +104,8 @@ export class Mission {
 
   setStep(s, ding = true) {
     this.step = s; this.stepT = 0;
+    // seguindo as pegadas, o sol vai baixando: a tarde tranquila vira o entardecer (retomando, na hora)
+    if (s !== 'poster' && s !== 'coop' && this.atmo?.name === 'ensolarado') this.atmo.set('tarde', ding ? 75 : 0);
     if (ding) { this.audio.tone(660, 0.12, 'triangle', 0.06); setTimeout(() => this.audio.tone(990, 0.22, 'triangle', 0.05), 110); }
   }
 

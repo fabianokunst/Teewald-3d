@@ -4,7 +4,7 @@ import { canvasTex, makeCanvas, SKY } from '../engine/textures.js';
 import { M } from '../engine/materials.js';
 import { FOG_FAR } from './sky.js';
 
-// Hora do dia e clima de Teewald: tarde encoberta, anoitecer, noite, lua cheia,
+// Hora do dia e clima de Teewald: tarde de sol (a abertura), tarde encoberta, anoitecer, noite, lua cheia,
 // madrugada de neblina, chuva, tempestade com raios, lua de sangue, amanhecer e
 // interiores escuros. Cada estado mexe na luz do sol/lua, no ambiente, na neblina,
 // no céu, nos postes, na chuva e nos sons; a troca é suave.
@@ -21,12 +21,22 @@ const BASE = {
   shadow: 0, fogSun: SKY.horizon, fogSunK: 0, sunWrap: 0, sat: 0.6,
   zenith: C(0.27, 0.29, 0.32), glow: C(0, 0, 0), disc: C(0, 0, 0), cloudC: C(0.38, 0.39, 0.41), cloudLit: C(0, 0, 0),
   cover: 0.85, opaque: 1, milky: 0,
+  // clear: ar limpo (0 = só a neblina da distância de visão, 1 = até os morros da borda do mapa);
+  // calm: dia tranquilo (sem uivos ao longe)
+  clear: 0, calm: 0,
 };
+// visibilidade de um dia limpo (o relevo vai até 1,6 km; a borda dele some na neblina)
+const CLEAR_FAR = 1600;
 // direção da lua no céu (as noites claras usam ela como luz principal)
 const MOON = [0.5, 0.45, -0.7];
 
 export const PRESETS = {
-  // fim de tarde encoberto (o jogo começa assim)
+  // tarde de sol, tranquila: céu azul e os morros em volta da cidade (a abertura do jogo)
+  ensolarado: {
+    sun: [-0.72, 0.58, -0.38], sunC: C(0.78, 0.74, 0.66), sky: C(0.5, 0.54, 0.62), gnd: C(0.31, 0.29, 0.26),
+    fog: C(0.64, 0.7, 0.78), skyTint: C(1.15, 1.25, 1.45), sunGlow: 1.3, wind: 0.12, clear: 1, calm: 1,
+  },
+  // fim de tarde encoberto (o capítulo 1, quando o bicho aparece)
   tarde: {},
   // sol baixo alaranjado atrás das nuvens
   anoitecer: {
@@ -103,13 +113,21 @@ for (const k in PRESETS) PRESETS[k] = { ...BASE, ...PRESETS[k] };
 
 // Luz avançada: as mesmas horas, com sol de verdade, sombras e céu calculado
 const ADV = {
+  // sol alto e quente, céu azul com nuvens soltas; o ar limpo deixa ver os morros (azulados ao longe)
+  ensolarado: {
+    sunC: C(1.0, 0.93, 0.8), sky: C(0.36, 0.42, 0.53), gnd: C(0.25, 0.22, 0.19),
+    fog: C(0.66, 0.74, 0.86), fogSun: C(0.96, 0.9, 0.78), fogSunK: 0.5,
+    zenith: C(0.27, 0.46, 0.77), glow: C(0.45, 0.38, 0.26), disc: C(2.0, 1.9, 1.6),
+    cloudC: C(0.86, 0.88, 0.92), cloudLit: C(0.34, 0.3, 0.24), cover: 0.42, opaque: 1,
+    shadow: 0.85, sunWrap: 0.2, sat: 0.8,
+  },
   // entardecer: sol baixo e avermelhado no oeste, sombras compridas, céu em brasa do lado do sol
   tarde: {
     sun: [-0.86, 0.24, -0.45], sunC: C(1.0, 0.56, 0.32), sky: C(0.3, 0.31, 0.4), gnd: C(0.21, 0.17, 0.15),
     fog: C(0.47, 0.42, 0.44), fogSun: C(0.98, 0.6, 0.36), fogSunK: 0.9, fogK: 1.05,
     zenith: C(0.2, 0.23, 0.36), glow: C(0.85, 0.42, 0.18), disc: C(1.6, 0.85, 0.45),
     cloudC: C(0.3, 0.27, 0.33), cloudLit: C(0.95, 0.45, 0.2), cover: 0.85, opaque: 1,
-    shadow: 0.85, sunWrap: 0.55, sat: 0.8,
+    shadow: 0.85, sunWrap: 0.55, sat: 0.8, clear: 1,
   },
   // crepúsculo: o sol encostando no morro, vermelho; as primeiras estrelas e os postes acendendo
   anoitecer: {
@@ -117,7 +135,7 @@ const ADV = {
     fog: C(0.27, 0.21, 0.26), fogSun: C(0.88, 0.36, 0.18), fogSunK: 1, fogK: 0.9,
     zenith: C(0.07, 0.08, 0.18), glow: C(0.75, 0.25, 0.1), disc: C(1.4, 0.5, 0.22),
     cloudC: C(0.15, 0.12, 0.16), cloudLit: C(0.9, 0.3, 0.12), cover: 0.8, opaque: 0.55, stars: 0.35,
-    shadow: 0.7, sunWrap: 0.7, sat: 0.82,
+    shadow: 0.7, sunWrap: 0.7, sat: 0.82, clear: 1,
   },
   // noite clara: lua, estrelas, Via Láctea; luar azulado com sombra suave
   noite: {
@@ -162,7 +180,7 @@ const ADV = {
     fog: C(0.66, 0.56, 0.54), fogSun: C(1.0, 0.75, 0.52), fogSunK: 0.9,
     zenith: C(0.3, 0.38, 0.56), glow: C(0.9, 0.55, 0.3), disc: C(1.6, 1.0, 0.6),
     cloudC: C(0.5, 0.42, 0.48), cloudLit: C(1.0, 0.62, 0.42), cover: 0.7, opaque: 1,
-    shadow: 0.85, sunWrap: 0.5, sat: 0.85,
+    shadow: 0.85, sunWrap: 0.5, sat: 0.85, clear: 1,
   },
   interior: { zenith: C(0, 0, 0), cloudC: C(0, 0, 0), opaque: 1 },
   igreja: { zenith: C(0, 0, 0), cloudC: C(0, 0, 0), opaque: 1 },
@@ -300,7 +318,9 @@ export class Atmosphere {
     G.uSunColor.value.setRGB(c.sunC[0] + fl * 0.5, c.sunC[1] + fl * 0.55, c.sunC[2] + fl * 0.7);
     G.uAmbSky.value.setRGB(c.sky[0] + fl * 0.45, c.sky[1] + fl * 0.5, c.sky[2] + fl * 0.6);
     G.uAmbGround.value.setRGB(c.gnd[0] + fl * 0.15, c.gnd[1] + fl * 0.16, c.gnd[2] + fl * 0.2);
-    const far = (FOG_FAR[this.drawDistance] ?? 160) * c.fogK * (1 + flash * 0.6);
+    let far = (FOG_FAR[this.drawDistance] ?? 160) * c.fogK * (1 + flash * 0.6);
+    // ar limpo: a neblina vai para longe e os morros aparecem (nublado e chuva continuam fechados)
+    if (c.clear > 0 && c.indoor < 0.5 && far < CLEAR_FAR) far *= Math.pow(CLEAR_FAR / far, c.clear);
     G.uFogFar.value = Math.max(18, far);
     G.uFogNear.value = G.uFogFar.value * (c.indoor > 0.5 ? 0.15 : 0.04);
     G.uFogColor.value.setRGB(c.fog[0] + flash * 0.25, c.fog[1] + flash * 0.27, c.fog[2] + flash * 0.33);
@@ -349,7 +369,7 @@ export class Atmosphere {
       this.halos.material.uniforms.uK.value = k;
       this.halos.visible = k > 0.01;
     }
-    this.audio?.setWeather?.({ rain: c.rain, storm: c.storm, night: c.night, crickets: c.crickets, wind: c.wind, indoor: c.indoor });
+    this.audio?.setWeather?.({ rain: c.rain, storm: c.storm, night: c.night, crickets: c.crickets, wind: c.wind, indoor: c.indoor, calm: c.calm });
   }
 
   // player: posição/direção da lanterna (o jogador), camera: para a chuva e os postes

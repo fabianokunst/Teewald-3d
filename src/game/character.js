@@ -444,9 +444,10 @@ const _hj = new THREE.Vector3(), _d = new THREE.Vector3(), _pn = new THREE.Vecto
 const _X = new THREE.Vector3(), _Y = new THREE.Vector3(), _Z = new THREE.Vector3(), _tg = new THREE.Vector3(), _pole = new THREE.Vector3();
 const _q = new THREE.Quaternion(), _q2 = new THREE.Quaternion(), _m4 = new THREE.Matrix4(), _eu = new THREE.Euler(0, 0, 0, 'YXZ');
 
-// passada para a velocidade v (m/s); act dá o ritmo (girar no lugar também dá passos); r = corrida
-function gaitParams(v, act, r, g) {
-  const f = a => lerp(0.62 + 0.47 * a, 1.2 + 0.125 * a, r);   // ciclos por segundo (andando a 1,75 m/s: 1,4)
+// passada para a velocidade v (m/s); act dá o ritmo (girar no lugar também dá passos); r = corrida;
+// cad > 1: passos mais curtos e mais rápidos na mesma velocidade (velhos, crianças)
+function gaitParams(v, act, r, g, cad = 1) {
+  const f = a => lerp(0.62 + 0.47 * a, 1.2 + 0.125 * a, r) * cad;   // ciclos por segundo (andando a 1,75 m/s: 1,4)
   g.f = f(act);
   const S = v / f(v);                                         // passada (um ciclo) em metros
   g.duty = lerp(0.6, clamp(0.42 - 0.014 * v, 0.3, 0.38), r);   // parte do ciclo com o pé no chão
@@ -558,6 +559,7 @@ export class Character {
     this.turn = 0; this.yaw0 = null; this.acc = 0; this.v0 = 0; this.ex = 0;
     this.drop = 0; this.landY = 0; this.landV = 0; this.vy = 0; this.grounded = true; this.lead = 0;
     this.ws = 0; this.wsGoal = 0; this.wsT = 2 + Math.random() * 3;    // troca do peso entre as pernas (parado)
+    this.cad = 1;                              // ritmo da passada (moradores: velhos e crianças)
     this.look = { y: 0, p: 0, tw: 0, ty: 0, tp: 0, ttw: 0, timer: 1 + Math.random() * 2 };
     this.feet = [{}, {}]; this.from = null; this.fade = 0;
     this.g = {}; this.F = {};
@@ -623,7 +625,7 @@ export class Character {
 
     // fase da passada e som dos passos (quando um pé toca o chão)
     const g = this.g;
-    gaitParams(v, act, r, g);
+    gaitParams(v, act, r, g, this.cad);
     const prev = this.cyc;
     if (grounded) this.cyc = (this.cyc + this.back * g.f * dt * this.move + 1) % 1;
     if (grounded && act > 0.3 && this.swim < 0.3) {

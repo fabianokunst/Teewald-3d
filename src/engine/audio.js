@@ -143,7 +143,7 @@ export class Audio {
     this.windFilter.frequency.setTargetAtTime(320 + Math.sin(t * 0.21) * 120 + W.wind * 200, now, 0.5);
     const rgain = this.ambience && !inside ? Math.max(0, 1 - riverDist / 28) * 0.12 : 0;
     this.riverGain.gain.setTargetAtTime(rgain, now, 0.3);
-    this.droneGain.gain.setTargetAtTime(this.ambience ? 0.07 + Math.sin(t * 0.06) * 0.03 + W.night * 0.03 : 0.035, now, 1.5);
+    this.droneGain.gain.setTargetAtTime(this.ambience ? (0.07 + Math.sin(t * 0.06) * 0.03 + W.night * 0.03) * (1 - (W.calm || 0) * 0.6) : 0.035, now, 1.5);
     this.rainGain.gain.setTargetAtTime(this.ambience ? W.rain * (inside ? 0.06 : 0.13) : 0, now, 0.6);
     const Tn = this.tension || { k: 0, boss: 0 };
     this.tensionGain.gain.setTargetAtTime(this.ambience ? Tn.k * 0.07 : 0, now, Tn.k > 0.1 ? 0.4 : 2.5);
@@ -181,6 +181,8 @@ export class Audio {
     if (W.indoor > 0.5) { if (r < 0.5) this.bell(); return; }
     // de noite: coruja e uivos no lugar dos corvos
     if (W.night > 0.5) { if (r < 0.4) this.owl(); else if (r < 0.85) this.howl(); else this.bell(); return; }
+    // tarde tranquila: só os corvos e o sino da igreja
+    if (W.calm > 0.5) { if (r < 0.65) this.crow(); else this.bell(); return; }
     if (r < 0.5) this.crow(); else if (r < 0.82) this.howl(); else this.bell();
   }
 

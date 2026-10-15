@@ -48,6 +48,8 @@ export class Interiors {
     this.scene.add(group);
     if (def.objects) this.scene.add(def.objects);
     def.name = name; def.group = group;
+    // fica escondido até o jogador entrar (montado a 400 m de altura, apareceria no céu limpo)
+    this._show(def, false);
     this.defs[name] = def;
     (this.ctx.interiorList ||= []).push(def);   // chão dos interiores (world.groundAt)
     return def;
@@ -55,12 +57,19 @@ export class Interiors {
 
   get indoor() { return this.cur; }
 
+  _show(d, on) {
+    d.group.visible = on;
+    if (d.objects) d.objects.visible = on;
+  }
+
   // entra; at = nome de um ponto (def.points) ou a entrada padrão
   enter(name, at = null) {
     const d = this.defs[name];
     if (!d) return;
     const P = this.player;
     if (!this.cur) this.outside = { x: P.pos.x, z: P.pos.z, h: P.heading + Math.PI, preset: this.atmo.name };
+    else this._show(this.cur, false);
+    this._show(d, true);
     this.cur = d;
     this.ctx.indoor = d;
     const b = this.ctx.playBounds;
@@ -77,6 +86,7 @@ export class Interiors {
   // sai; para = { x, z, h } fora (padrão: onde entrou), preset = clima de fora
   exit(to = null, preset = null) {
     if (!this.cur) return;
+    this._show(this.cur, false);
     this.cur = null;
     this.ctx.indoor = null;
     if (this.savedBounds) { Object.assign(this.ctx.playBounds, this.savedBounds); this.savedBounds = null; }

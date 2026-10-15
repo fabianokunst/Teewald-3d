@@ -409,7 +409,7 @@ export class Extras {
     for (let i = 0; i < 3; i++) setTimeout(() => a.bell(), i * 1300);
     this.combat.shake = Math.max(this.combat.shake, 0.15);
     const L = this.ctx.landmarks.church;
-    this.ctx.scare?.(L.x, L.z, 90);
+    this.ctx.scare?.(L.x, L.z, 90, 'bell');
   }
 
   _bless() {

@@ -597,7 +597,9 @@ export function makeSpec(R, style, x, z, rot, w, d, o = {}) {
     s.roof = 'concrete';
     s.win = R.pick(['window2', 'window1', 'window3']);
     const [bg, fg] = R.pick(SIGN_COLORS);
-    s.sign = o.sign ?? signMaterial(o.signText || R.pick(SHOPS), { bg, fg, w: 128, h: 24 });
+    // o texto fica guardado: os moradores procuram a loja deles pelo letreiro
+    if (!o.sign) { s.signText = o.signText || R.pick(SHOPS); s.signStyle = { bg, fg, w: 128, h: 24 }; }
+    s.sign = o.sign ?? signMaterial(s.signText, s.signStyle);
     s.awning = R.chance(0.5) ? R.pick(['awnRed', 'awnBlue', 'awnCream']) : null;
     s.roll = R.chance(0.3);
     s.found = 'concrete';
@@ -751,6 +753,14 @@ export function placeFootprintBuildings(ctx, B) {
     zones.addBuilding({ x: s.x, z: s.z, hx: s.w / 2, hz: s.d / 2, rot: s.rot });
     f.used = true;
     placed.push(s);
+  }
+  // letreiros sem repetir (cidade pequena não tem quatro brechós), começando pela floricultura
+  // do Seu Bruno; só troca o texto, o sorteio do resto da cidade continua o mesmo
+  const shops = placed.filter(s => s.signText).sort((a, b) => Math.hypot(a.x - core[0], a.z - core[1]) - Math.hypot(b.x - core[0], b.z - core[1]));
+  const spare = ['FLORICULTURA', ...SHOPS].filter(t => !shops.some(s => s.signText === t)), seen = new Set();
+  for (const s of shops) {
+    if (seen.has(s.signText) && spare.length) { s.signText = spare.shift(); s.sign = signMaterial(s.signText, s.signStyle); }
+    seen.add(s.signText);
   }
   for (const s of placed) buildHouse(B, ctx, s);
   return placed;

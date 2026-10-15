@@ -214,8 +214,9 @@ function setupStart() {
 
 function setState(s) { state = s; stateT = 0; }
 
-// a tela título acompanha o progresso: depois da primeira noite, ela também é de noite
-const titleWeather = () => ((campaign?.save?.unlocked || 1) > 1 ? 'noite' : 'tarde');
+// a tela título acompanha o progresso: antes de tudo, a cidade numa tarde de sol tranquila;
+// depois da primeira noite, ela também é de noite
+const titleWeather = () => ((campaign?.save?.unlocked || 1) > 1 ? 'noite' : 'ensolarado');
 
 // o: { chapter (1..LAST_CHAPTER), intro (abertura do capítulo 1), fromSave (inventário salvo) }
 function startGame(o = {}) {

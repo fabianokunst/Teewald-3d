@@ -500,7 +500,9 @@ export class Owls {
       this.list.push(o);
     }
     // tiros e explosões espantam as que estão por perto (weapon.js, combat.js)
-    ctx.scare = (x, z, r) => this.scare(x, z, r);
+    // (encadeado: os moradores também escutam, npcs.js)
+    const prev = ctx.scare;
+    ctx.scare = (x, z, r, kind) => { prev?.(x, z, r, kind); this.scare(x, z, r); };
   }
 
   // poleiro livre para a coruja: longe das outras; voando (from), entre 45 e 220 m e,

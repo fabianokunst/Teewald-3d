@@ -17,6 +17,8 @@ import { drawText, textSprite, panel, FONT_UI } from '../ui/overlay.js';
 
 const TAU = Math.PI * 2;
 const TALK_R = 2.4;
+// porte da ficha → largura do corpo
+const PORTE = { magro: 0.92, 'médio': 1, forte: 1.07, gordo: 1.14 };
 const SIM_R = 140;          // além disso o morador fica parado (ninguém vê)
 // murmúrios de quem está em transe (capítulo 6)
 const TRANCE_BARKS = ['...vem...', '...tá chamando...', '...ja, ich komm...', '...o mato...'];
@@ -107,7 +109,7 @@ function makeSpots(ctx) {
       return best;
     },
     phone(x, z) { const p = nearest((ctx.phones || []).map(q => [q.x, q.z, q]), x, z); return p && Math.hypot(p[0] - x, p[1] - z) < 60 ? p[2] : null; },
-    building: re => [...(L.specials || []), ...ctx.buildings].find(b => typeof b.sign === 'string' && re.test(b.sign)),
+    building: re => [...(L.specials || []), ...ctx.buildings].find(b => re.test(typeof b.sign === 'string' ? b.sign : b.signText || '')),
     // na calçada em frente ao prédio, olhando para a rua
     front(b) {
       const q = ctx.roads.index.nearest(b.x, b.z, d => d.rank >= 2);
@@ -178,13 +180,18 @@ function makeSpots(ctx) {
   return S;
 }
 
-class NPC {
+// (exportado para o estúdio de retratos: tools/retratos)
+export class NPC {
   constructor(def, sys) {
     const { M, scene } = sys;
     this.def = def; this.id = def.id;
     this.ch = new Character(M, ps1Material({ map: makeHeroTexture(def.look) }));
-    const s = 0.95 * (def.kid ? 0.62 : def.look.female ? 0.95 : 1), b = def.bulk || 1;
+    // altura e porte da ficha (npcData.js): a malha mede 1,84 m em escala 1 (criança, com a cabeça maior, 1,92 m)
+    const f = def.ficha || {};
+    const s = f.altura ? f.altura / (def.kid ? 1.92 : 1.84) : 0.95 * (def.kid ? 0.62 : def.look.female ? 0.95 : 1);
+    const b = def.bulk || PORTE[f.porte] || 1;
     this.scale = s;
+    this.stoop = f.curvado ? 0.16 : 0;
     this.ch.root.scale.set(s * b, s, s * b);
     if (def.kid) this.ch.head.scale.setScalar(1.3);
     if (def.look.female) for (const a of this.ch.arms) a.sh.position.x *= 0.93;
@@ -398,7 +405,8 @@ class NPC {
     }
 
     // ---------- animação ----------
-    const far = G.uFogFar.value + 12;
+    // no dia limpo a neblina vai a 1,6 km: os moradores continuam aparecendo só até onde já apareciam
+    const far = Math.min(G.uFogFar.value, 230) + 12;
     this._show(this.dist < far);
     if (!this.visible) return;
     this.ch.update(dt, this.speed, true, this.speed > 2.6);
@@ -530,6 +538,11 @@ class NPC {
     const rel = wrapA(toPlayer - this.heading);
     const kl = ease('look', (this.dist < 11 && Math.abs(rel) < 2.0 && sys.mode !== 'title') || this.talking, 2);
     if (kl > 0.01) ch.head.rotation.y = lerp(ch.head.rotation.y, clamp(rel, -1.1, 1.1), kl);
+    // velho curvado: tronco para frente, a cabeça compensa para continuar olhando adiante
+    if (this.stoop) {
+      const s = this.stoop * (this.mode === 'sit' ? 0.6 : 1);
+      ch.spine.rotation.x += s; ch.neck.rotation.x -= s * 0.45; ch.head.rotation.x -= s * 0.4;
+    }
   }
 
   // objetos de mão no mundo: seguem o punho e ficam de pé (exceto a vara)

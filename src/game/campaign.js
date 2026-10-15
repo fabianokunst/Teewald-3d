@@ -192,7 +192,8 @@ export class Campaign {
     if (n === 1) {
       this._ch1Done = false;
       this.npcs.showAll();
-      this.atmo.set('tarde', 0);
+      // tarde de sol; o entardecer chega com as pegadas (mission.setStep)
+      this.atmo.set('ensolarado', 0);
       this.mission.reset();
       // a missão 1 retoma depois do begin() (main.js chama begin sem a abertura)
       this._resume1 = run;

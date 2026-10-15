@@ -889,7 +889,7 @@ export function build(ctx, B, o) {
     objects,
     day: false,
     // de dia (a tarde do capítulo 1 e o amanhecer) entra a luz dourada dos vitrais
-    atmoFor(outside) { def.day = outside === 'tarde' || outside === 'amanhecer' || outside === 'anoitecer'; return def.day ? 'igrejaDia' : 'igreja'; },
+    atmoFor(outside) { def.day = outside === 'ensolarado' || outside === 'tarde' || outside === 'amanhecer' || outside === 'anoitecer'; return def.day ? 'igrejaDia' : 'igreja'; },
     // peças que a história mexe
     silver, silverFlames, lamp, mimi, lamparina, sheets,
     // de local (planta da igreja) para o mundo

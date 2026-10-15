@@ -835,6 +835,42 @@ function paintHead(P, hairAt, rnd, C, L) {
     for (const x of [22, 42]) { p.mul(x, 19, 0.88); p.mul(x, 20, 0.9); }
     for (let y = 26; y < 30; y++) { p.mul(28, y, 0.9); p.mul(36, y, 0.9); }
   }
+  // traços de cada morador (ficha em npcData.js); só pintura, a malha é a mesma
+  if (L.old === 2) {
+    // velhice funda: sulco do nariz até a boca, testa marcada e papada
+    for (let x = 26; x <= 38; x++) if (x % 3) p.mul(x, 12, 0.93);
+    for (let y = 25; y < 32; y++) { p.mul(27, y, 0.92); p.mul(37, y, 0.92); }
+    for (let x = 28; x <= 36; x++) p.mul(x, 35, 0.9);
+  }
+  if (L.brows === 'grossas') for (const cx of [26, 38]) for (let x = cx - 2; x <= cx + 2; x++) p.set(x, 14, scale(C.brow, 1.08));
+  if (L.bags) for (const cx of [26, 38]) for (let x = cx - 2; x <= cx + 2; x++) p.set(x, 21, mix(p.get(x, 21), [118, 82, 96], 0.32));
+  if (L.ruddy) {
+    // queimado de sol / corado: bochechas e ponta do nariz vermelhas
+    for (const x0 of [21, 40]) for (let y = 22; y < 26; y++) for (let x = x0; x < x0 + 4; x++) p.set(x, y, mix(p.get(x, y), [214, 110, 92], 0.28));
+    for (let x = 31; x <= 33; x++) p.set(x, 24, mix(p.get(x, 24), [214, 110, 92], 0.3));
+  }
+  if (L.freckles) {
+    for (let y = 20; y < 27; y++) for (let x = 21; x <= 43; x++) {
+      if (Math.abs(x - 32) > 9 && y > 24) continue;
+      if (rnd() < 0.2) p.set(x, y, mix(p.get(x, y), [150, 86, 52], 0.42));
+    }
+  }
+  if (L.stubble) {
+    // barba por fazer: pontinhos escuros na mandíbula, no queixo e no buço
+    const dark = mix(C.hair[0], C.skin, 0.35);
+    for (let x = 0; x < 64; x++) {
+      const a = Math.abs(headF(x + 0.5) - 0.5);
+      if (a > 0.22) continue;
+      for (let y = a > 0.15 ? 25 : 28; y < 39; y++) {
+        if (y < 31 && y > 28 && Math.abs(x - 32) > 4 && a < 0.15) continue;
+        if (y >= 31 && y <= 32 && Math.abs(x - 32) <= 3) continue;
+        if (rnd() < 0.55) p.set(x, y, mix(p.get(x, y), dark, 0.38));
+      }
+    }
+  }
+  if (L.mole) p.set(L.mole > 0 ? 41 : 23, 27, scale(C.skin, 0.55));
+  if (L.scar === 'cheek') for (let k = 0; k < 5; k++) p.set(41 + (k >> 1), 22 + k, mix(p.get(41 + (k >> 1), 22 + k), [236, 206, 196], 0.55));
+  if (L.scar === 'brow') for (let y = 13; y < 18; y++) p.set(24, y, mix(scale(C.skin, 1.02), [236, 206, 196], 0.5));
   if (L.beard) {
     // barba cheia cobre queixo e mandíbula; bigode logo acima do lábio
     const beardAt = (x, y) => scale(hairAt(x, y + 20), 0.92);
