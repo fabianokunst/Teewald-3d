@@ -1,0 +1,164 @@
+
+> teewald@0.1.0 teste
+> node tools/test-campaign.mjs
+
+   0s compilando...
+   2s abrindo o jogo no capítulo 1 (http://localhost:4317/)
+  12s mundo carregado; o robô começou
+  12s [    1] 1:-
+  12s [    8] 1:poster
+  12s [   10] 1:coop
+  12s [   11] 1:trail
+  12s [   12] 1:fight
+  12s         · retomou: 1:trail
+  12s         · retomou: 1:trail
+  12s [   16] 1:fight
+  12s         · queda: 1:fight
+  12s         · voltou: depois da queda: 1:fight
+  12s [   25] 1:escaped
+  12s [   26] 1:done
+  12s [   30] 2:sino
+  12s         · retomou: 2:sino
+  16s [   37] 2:padre
+  19s [   39] 2:sociedade
+  21s [   40] 2:emboscada
+  22s         · retomou: 2:emboscada
+  23s         · queda: 2:emboscada
+  25s         · voltou: depois da queda: 2:emboscada
+  26s [   46] 2:volta
+  27s [   46] 2:defesa
+  29s         · retomou: 2:defesa
+  43s [  114] 2:fim
+  43s         · retomou: 2:fim
+  44s [  119] 2:concluído
+  44s [  124] 3:katia
+  44s [  126] 3:padre
+  44s [  127] 3:sacristia
+  44s [  128] 3:fantasmas
+  45s         · retomou: 3:fantasmas
+  47s         · queda: 3:fantasmas
+  47s         · voltou: depois da queda: 3:fantasmas
+  47s [  134] 3:ida
+  47s [  135] 3:dentro
+  48s         · retomou: 3:dentro
+  49s [  139] 3:coisas
+  49s         · retomou: 3:coisas
+  52s [  144] 3:capataz
+  54s         · retomou: 3:capataz
+  55s [  152] 3:ponto
+  56s         · retomou: 3:ponto
+  58s [  164] 3:saida
+  58s         · retomou: 3:saida
+  61s [  168] 3:concluído
+  61s [  173] 4:marlene
+  61s         · retomou: 4:marlene
+  61s [  176] 4:campo
+  61s         · retomou: 4:campo
+  63s [  179] 4:ets
+  65s         · retomou: 4:ets
+  65s         · queda: 4:ets
+  66s         · voltou: depois da queda: 4:ets
+  66s [  185] 4:nave
+  67s         · retomou: 4:nave
+  68s [  188] 4:guardas
+  68s [  189] 4:arma
+  68s [  190] 4:lider
+  71s         · retomou: 4:lider
+  74s [  195] 4:fim
+  76s [  195] 4:concluído
+  82s [  198] 5:romeu
+  92s [  200] 5:rastro
+  99s         · retomou: 5:rastro
+ 102s         · queda: 5:rastro
+ 108s         · voltou: depois da queda: 5:rastro
+ 110s [  205] 5:dinamite
+ 113s [  206] 5:pavilhao
+ 114s         · retomou: 5:pavilhao
+ 118s [  208] 5:fera
+ 120s         · retomou: 5:pavilhao
+ 121s [  210] 5:fera
+ 139s [  214] 5:fim
+ 141s [  214] 5:concluído
+ 155s [  218] 6:paula
+ 156s [  220] 6:sonambulos
+ 166s         · retomou: 6:sonambulos
+ 169s         · queda: 6:sonambulos
+ 170s         · voltou: depois da queda: 6:sonambulos
+ 208s [  231] 6:padre
+ 210s         · retomou: 6:padre
+ 216s [  237] 6:sino
+ 222s [  238] 6:badaladas
+ 228s         · retomou: 6:badaladas
+ 251s [  280] 6:fim
+ 256s         · retomou: 6:fim
+ 256s [  284] 6:concluído
+ 259s [  290] 7:edgar
+ 261s [  292] 7:museu
+ 262s [  293] 7:prata
+ 262s         · retomou: 7:prata
+ 262s         · queda: 7:prata
+ 262s         · voltou: depois da queda: 7:prata
+ 262s [  299] 7:forja
+ 270s [  300] 7:lobisomem
+ 284s         · retomou: 7:lobisomem
+ 296s [  306] 7:fim
+ 309s [  307] 7:concluído
+ 312s [  310] 8:padre
+ 313s [  311] 8:otto
+ 320s [  312] 8:velas
+ 331s         · retomou: 8:velas
+ 332s         · queda: 8:velas
+ 334s         · voltou: depois da queda: 8:velas
+ 337s [  320] 8:cripta
+ 337s [  321] 8:dentro
+ 339s         · retomou: 8:dentro
+ 340s [  326] 8:coveiro
+ 345s [  327] 8:sair
+ 351s         · retomou: 8:sair
+ 351s [  331] 8:diario
+ 353s [  332] 8:concluído
+ 360s [  336] 9:telefone
+ 367s         · retomou: 9:telefone
+ 370s [  339] 9:entrar
+ 373s [  340] 9:album
+ 376s [  342] 9:padre
+ 376s [  344] 9:velas
+ 377s         · retomou: 9:velas
+ 377s         · queda: 9:velas
+ 378s         · voltou: depois da queda: 9:velas
+ 378s [  351] 9:torre
+ 378s [  351] 9:mulher
+ 379s         · retomou: 9:torre
+ 379s [  353] 9:mulher
+ 381s [  356] 9:fim
+ 381s [  358] 9:concluído
+ 383s [  363] 10:bruxa
+ 385s         · retomou: 10:bruxa
+ 391s [  367] 10:rainha
+ 396s         · retomou: 10:torre
+ 397s [  369] 10:rainha
+ 405s [  372] 10:fim
+ 405s [  374] 10:concluído
+ 409s [  379] 11:dardos
+ 411s [  380] 11:rastro
+ 412s [  381] 11:gruta
+ 413s [  382] 11:covil
+ 414s [  384] 11:captura
+ 414s [  385] 11:amarrar
+ 415s [  387] 11:cristais
+ 415s [  388] 11:sair
+ 418s [  388] 11:concluído
+ 418s [  394] 12:padre
+ 419s [  396] 12:tumulo
+ 419s         · retomou: 12:tumulo
+ 420s [  398] 12:bruxa
+ 422s         · retomou: 12:tumulo
+ 424s [  401] 12:bruxa
+ 426s [  416] 12:amanhecer
+ 426s         · retomou: 12:amanhecer
+ 426s [  420] 12:concluído
+ 427s [  426] fim
+ 427s 
+ 427s CHEGOU AO FIM · 426 s de jogo simulados
+ 427s travamentos: 0 · problemas: 0
+saida=0
