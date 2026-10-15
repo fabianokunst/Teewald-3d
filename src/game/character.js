@@ -559,6 +559,7 @@ export class Character {
     this.turn = 0; this.yaw0 = null; this.acc = 0; this.v0 = 0; this.ex = 0;
     this.drop = 0; this.landY = 0; this.landV = 0; this.vy = 0; this.grounded = true; this.lead = 0;
     this.ws = 0; this.wsGoal = 0; this.wsT = 2 + Math.random() * 3;    // troca do peso entre as pernas (parado)
+    this.brP = Math.random();                  // fase da respiração (0..1)
     this.cad = 1;                              // ritmo da passada (moradores: velhos e crianças)
     this.look = { y: 0, p: 0, tw: 0, ty: 0, tp: 0, ttw: 0, timer: 1 + Math.random() * 2 };
     this.feet = [{}, {}]; this.from = null; this.fade = 0;
@@ -643,7 +644,10 @@ export class Character {
       this.wsT = 3.5 + Math.random() * 5;
     }
     this.ws += (this.wsGoal * (1 - m) - this.ws) * k(1.3);
-    const br = Math.sin(this.t * TAU / lerp(4.2, 1.6, this.ex)) * (1 + 1.4 * this.ex);   // respiração
+    // respiração: a fase acumula quadro a quadro. Calculada como t / período, mudar o ritmo
+    // (fôlego depois de correr) saltava a fase em proporção ao tempo de jogo e o corpo tremia
+    this.brP = (this.brP + dt / lerp(4.2, 1.6, this.ex)) % 1;
+    const br = Math.sin(this.brP * TAU) * (1 + 1.4 * this.ex);
     // olhar em volta (o protagonista desconfia e às vezes olha por cima do ombro)
     const Lk = this.look;
     Lk.timer -= dt;
