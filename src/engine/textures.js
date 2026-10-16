@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { makeArchTextures } from './archTextures.js';
 import { makeCarTextures } from './carTextures.js';
+import { tr, onLangChange } from '../i18n/index.js';
 
 // Carrega as texturas da pasta "texture" do projeto e reduz para resolução de PS1
 // (64/128 px, filtro nearest, cor de 15 bits).
@@ -31,6 +32,7 @@ let QUALITY = 'ps1';
 let ANISO = 1;
 const ALL = new Set();
 const DEF_TEX = {};
+const TEXT_TEX = new Map();   // textura com texto → função que a pinta (textTexture)
 export function setAnisotropy(n) { ANISO = Math.max(1, Math.min(8, n || 1)); }
 
 function applyFilter(t) {
@@ -70,6 +72,7 @@ export function setTextureQuality(q) {
     t.dispose();
     t.image = c;
   }
+  repaintText();
   for (const t of ALL) { t.dispose(); applyFilter(t); t.needsUpdate = true; }
 }
 
@@ -80,7 +83,7 @@ export function withTextureQuality(q, fn) {
   try { return fn(); } finally {
     QUALITY = old;
     // as novas ficam fora da lista do jogo: trocar a qualidade nas opções não as refaz
-    for (const t of ALL) if (!before.has(t)) ALL.delete(t);
+    for (const t of ALL) if (!before.has(t)) { ALL.delete(t); TEXT_TEX.delete(t); }
   }
 }
 
@@ -412,18 +415,47 @@ function makeSky() {
   return processPixels(c);
 }
 
+// ---------- texto pintado nas texturas (placas, cartazes, murais) ----------
+// O texto continua em português no código e passa por tr() na hora de pintar. Cada textura
+// com texto guarda a função que a pinta: quando o jogador troca o idioma (OPÇÕES → IDIOMA),
+// todas são repintadas na mesma textura, então os materiais, as malhas e o cache de
+// signMaterial (engine/materials.js) continuam valendo, sem refazer o mundo.
+// o: opções de processPixels (alpha, alphaCut...) e repeat (textura repetida).
+export function textTexture(w, h, draw, o = {}) {
+  const paint = () => { const c = makeCanvas(w, h); draw(c.getContext('2d'), w, h); return processPixels(c, o); };
+  const t = canvasTex(paint(), !!o.repeat);
+  TEXT_TEX.set(t, paint);
+  return t;
+}
+
+function repaintText() {
+  for (const [t, paint] of TEXT_TEX) { t.image = paint(); t.needsUpdate = true; }
+}
+onLangChange(repaintText);
+
+// diminui a fonte até o texto caber na largura (a tradução pode ser mais longa).
+// css: tamanho → valor de g.font. Devolve o tamanho usado.
+export function fitFont(g, text, maxW, size, css, min = 6) {
+  g.font = css(size);
+  while (size > min && g.measureText(text).width > maxW) g.font = css(--size);
+  return size;
+}
+
 // placa com texto (gerada)
 export function signTexture(text, o = {}) {
-  const w = o.w || 128, h = o.h || 32;
-  const c = makeCanvas(w, h), g = c.getContext('2d');
-  g.fillStyle = o.bg || '#7a2a1c'; g.fillRect(0, 0, w, h);
-  if (o.border !== false) { g.strokeStyle = o.borderColor || '#e8d8b0'; g.lineWidth = 2; g.strokeRect(2, 2, w - 4, h - 4); }
-  g.fillStyle = o.fg || '#f2e6c8';
-  g.textAlign = 'center'; g.textBaseline = 'middle';
-  let size = o.size || Math.floor(h * 0.55);
-  g.font = `bold ${size}px ${o.font || 'Georgia, serif'}`;
-  while (g.measureText(text).width > w - 8 && size > 6) { size--; g.font = `bold ${size}px ${o.font || 'Georgia, serif'}`; }
-  g.fillText(text, w / 2, h / 2 + 1);
-  if (o.sub) { g.font = `${Math.floor(h * 0.22)}px Georgia, serif`; g.fillText(o.sub, w / 2, h * 0.84); }
-  return canvasTex(processPixels(c), false);
+  const w = o.w || 128, h = o.h || 32, face = o.font || 'Georgia, serif';
+  return textTexture(w, h, g => {
+    g.fillStyle = o.bg || '#7a2a1c'; g.fillRect(0, 0, w, h);
+    if (o.border !== false) { g.strokeStyle = o.borderColor || '#e8d8b0'; g.lineWidth = 2; g.strokeRect(2, 2, w - 4, h - 4); }
+    g.fillStyle = o.fg || '#f2e6c8';
+    g.textAlign = 'center'; g.textBaseline = 'middle';
+    const t = tr(text);
+    fitFont(g, t, w - 8, o.size || Math.floor(h * 0.55), s => `bold ${s}px ${face}`);
+    g.fillText(t, w / 2, h / 2 + 1);
+    if (o.sub) {
+      const sub = tr(o.sub), size = Math.floor(h * 0.22);
+      fitFont(g, sub, w - 8, size, s => `${s}px Georgia, serif`, Math.min(size, 4));
+      g.fillText(sub, w / 2, h * 0.84);
+    }
+  });
 }

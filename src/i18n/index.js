@@ -26,6 +26,10 @@ export const missing = new Set();
 
 export const getLang = () => lang;
 
+// avisados quando o idioma muda (as texturas com texto do mundo 3D se repintam: engine/textures.js)
+const changed = new Set();
+export const onLangChange = fn => changed.add(fn);
+
 // primeira vez: o idioma do navegador (o Chrome dos testes, sem janela, fica em português)
 export function detectLang() {
   if (navigator.webdriver) return 'pt';
@@ -44,6 +48,7 @@ export async function setLang(id) {
   build(d);
   lang = id;
   memo.clear(); missing.clear();
+  for (const fn of changed) fn(id);
 }
 
 const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

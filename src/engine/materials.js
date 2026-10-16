@@ -43,7 +43,9 @@ export function makeMaterials() {
 }
 
 const signCache = new Map();
-// material de placa com texto, criado sob demanda
+// material de placa com texto, criado sob demanda. A chave é o texto em português: a textura
+// traduz na hora de pintar e se repinta quando o idioma muda (textTexture), então o mesmo
+// material serve em qualquer idioma e as malhas já montadas trocam de língua junto.
 export function signMaterial(text, o = {}) {
   const key = text + JSON.stringify(o);
   if (!signCache.has(key)) {

@@ -1,9 +1,10 @@
 import * as THREE from 'three';
 import { M } from '../../engine/materials.js';
 import { ps1Material } from '../../engine/ps1material.js';
-import { makeCanvas } from '../../engine/textures.js';
+import { makeCanvas, textTexture, fitFont } from '../../engine/textures.js';
 import { sampler, paint, finish, mul, tint } from '../../engine/archTextures.js';
 import { FONT_UI } from '../../ui/overlay.js';
+import { tr } from '../../i18n/index.js';
 import { rng } from '../geo.js';
 import { CHURCH, SACRISTY_DOOR_Z } from '../church.js';
 import { makeKit, part, hash, softTex, glowMat, lightK, poolTex, UV1 } from './factory.js';
@@ -165,9 +166,9 @@ function makeMats() {
     ['127', '384', '22', '516'].forEach((n, i) => g.fillText(n, 16, 8 + i * 10.5));
     M['int:i:hymn'] = ps1Material({ map: finish(c), affine: false });
   }
-  // mural de avisos da paróquia
-  {
-    const c = makeCanvas(128, 96), g = c.getContext('2d');
+  // mural de avisos da paróquia: os bilhetes no idioma escolhido (repintados quando ele muda);
+  // a linha traduzida que não couber no bilhete sai com a fonte menor
+  M['int:i:aviso'] = ps1Material({ map: textTexture(128, 96, g => {
     g.fillStyle = '#5a3a22'; g.fillRect(0, 0, 128, 96);
     g.fillStyle = '#b08a5a'; g.fillRect(3, 3, 122, 90);
     for (let i = 0; i < 400; i++) { g.fillStyle = hash(i, 1) < 0.5 ? '#9a7448' : '#c09a6a'; g.fillRect(3 + hash(i, 2) * 120, 3 + hash(i, 3) * 88, 1, 1); }
@@ -176,15 +177,15 @@ function makeMats() {
       g.fillStyle = color; g.fillRect(-w / 2, -h / 2, w, h);
       g.fillStyle = '#b02020'; g.fillRect(-1, -h / 2 + 1, 2, 2);
       g.fillStyle = '#2a2018'; g.textAlign = 'center'; g.textBaseline = 'top';
-      lines.forEach(([t, s], i) => { g.font = `${s}px ${FONT_UI}`; g.fillText(t, 0, -h / 2 + 4 + i * (s + 1)); });
+      let ly = -h / 2 + 4;
+      for (const [t0, s] of lines) { const t = tr(t0); fitFont(g, t, w - 4, s, n => `${n}px ${FONT_UI}`, 5); g.fillText(t, 0, ly); ly += s + 1; }
       g.restore();
     };
     note(6, 6, 56, 40, -0.03, [['MISSA DE FINADOS', 9], ['2 DE NOVEMBRO', 8], ['19 HORAS', 8], ['NO CEMITÉRIO', 8]]);
     note(66, 8, 56, 36, 0.04, [['KARTOFFELFEST', 9], ['CANCELADA', 10], ['A COMISSÃO', 7]], '#f0e2b8');
     note(10, 52, 54, 38, 0.02, [['TERÇO PELAS', 8], ['ALMAS', 9], ['TODA NOITE', 8], ['20 HORAS', 8]]);
     note(68, 50, 52, 40, -0.05, [['NÃO SAIAM', 9], ['DE CASA', 9], ['DEPOIS QUE', 8], ['ESCURECER', 8]], '#e8d8d0');
-    M['int:i:aviso'] = ps1Material({ map: finish(c), affine: false });
-  }
+  }, { repeat: true }), affine: false });
   // retábulo: fundo azul com estrelas e moldura dourada
   M['int:i:retab'] = ps1Material({
     map: finish(paint(32, 64, (x, y) => {

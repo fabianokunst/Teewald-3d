@@ -1,5 +1,6 @@
-import { makeCanvas, canvasTex, processPixels } from '../engine/textures.js';
+import { makeCanvas, canvasTex, processPixels, textTexture, fitFont } from '../engine/textures.js';
 import { FONT_UI } from '../ui/overlay.js';
+import { tr } from '../i18n/index.js';
 
 // Texturas desenhadas pixel a pixel para a missão do chupacabras: pegada de três
 // dedos, mancha de sangue, pele escamosa do bicho, cartaz de PROCURA-SE e
@@ -7,14 +8,18 @@ import { FONT_UI } from '../ui/overlay.js';
 
 const rnd = seed => () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
 
-// texto nítido (alfa binário) desenhado num canvas
+// texto nítido (alfa binário) desenhado num canvas, no idioma escolhido; a fonte diminui
+// se a tradução não couber na largura. O começo do texto fica num pixel inteiro: em meio
+// pixel, letras vizinhas se grudam no corte do alfa
 function crispText(g, text, x, y, size, color, align = 'center') {
   const m = makeCanvas(g.canvas.width, Math.ceil(size * 1.5) + 2), mg = m.getContext('2d');
-  mg.font = `${size}px ${FONT_UI}`;
+  text = tr(text);
+  fitFont(mg, text, m.width - 4, size, s => `${s}px ${FONT_UI}`);
+  const tw = mg.measureText(text).width;
   mg.textBaseline = 'top';
-  mg.textAlign = align;
+  mg.textAlign = 'left';
   mg.fillStyle = color;
-  mg.fillText(text, x, 1);
+  mg.fillText(text, Math.round(align === 'center' ? x - tw / 2 : align === 'right' ? x - tw : x), 1);
   const d = mg.getImageData(0, 0, m.width, m.height);
   for (let i = 3; i < d.data.length; i += 4) d.data[i] = d.data[i] > 110 ? 255 : 0;
   mg.putImageData(d, 0, 0);
@@ -133,29 +138,31 @@ export function chupaSketch(g, ox, oy) {
   g.fillStyle = '#ffd0b0'; r(22, 29, 1, 1); r(27, 29, 1, 1);
 }
 
-// cartaz de PROCURA-SE com o desenho do bicho
+// cartaz de PROCURA-SE com o desenho do bicho (repintado quando o idioma muda)
 export function posterTexture() {
-  const W = 64, H = 96, c = makeCanvas(W, H), g = c.getContext('2d'), R = rnd(31);
-  paper(g, W, H, R);
-  g.fillStyle = '#7a1410'; g.fillRect(3, 3, W - 6, 2); g.fillRect(3, H - 5, W - 6, 2);
-  crispText(g, 'PROCURA-SE', W / 2, 5, 12, '#8a1612');
-  // quadro do retrato
-  g.fillStyle = '#c8bc98'; g.fillRect(8, 20, W - 16, 42);
-  g.fillStyle = '#4a3a28'; g.fillRect(8, 20, W - 16, 1); g.fillRect(8, 61, W - 16, 1); g.fillRect(8, 20, 1, 42); g.fillRect(W - 9, 20, 1, 42);
-  chupaSketch(g, 0, 0);
-  crispText(g, 'CHUPACABRAS', W / 2, 63, 11, '#2a2018');
-  crispText(g, 'RECOMPENSA', W / 2, 74, 11, '#8a1612');
-  g.fillStyle = '#6a5a48';
-  for (let i = 0; i < 3; i++) g.fillRect(10 + (i % 2) * 3, 86 + i * 2, W - 22 - (i % 2) * 8, 1);
-  return canvasTex(processPixels(c, { alpha: true, alphaCut: 10 }), false);
+  return textTexture(64, 96, (g, W, H) => {
+    const R = rnd(31);
+    paper(g, W, H, R);
+    g.fillStyle = '#7a1410'; g.fillRect(3, 3, W - 6, 2); g.fillRect(3, H - 5, W - 6, 2);
+    crispText(g, 'PROCURA-SE', W / 2, 5, 12, '#8a1612');
+    // quadro do retrato
+    g.fillStyle = '#c8bc98'; g.fillRect(8, 20, W - 16, 42);
+    g.fillStyle = '#4a3a28'; g.fillRect(8, 20, W - 16, 1); g.fillRect(8, 61, W - 16, 1); g.fillRect(8, 20, 1, 42); g.fillRect(W - 9, 20, 1, 42);
+    chupaSketch(g, 0, 0);
+    crispText(g, 'CHUPACABRAS', W / 2, 63, 11, '#2a2018');
+    crispText(g, 'RECOMPENSA', W / 2, 74, 11, '#8a1612');
+    g.fillStyle = '#6a5a48';
+    for (let i = 0; i < 3; i++) g.fillRect(10 + (i % 2) * 3, 86 + i * 2, W - 22 - (i % 2) * 8, 1);
+  }, { alpha: true, alphaCut: 10 });
 }
 
-// bilhetes do mural: título curto e rabiscos
+// bilhetes do mural: título curto e rabiscos (repintados quando o idioma muda)
 export function noteTexture(title, color, seed = 5, base) {
-  const W = 32, H = 40, c = makeCanvas(W, H), g = c.getContext('2d'), R = rnd(seed);
-  paper(g, W, H, R, base);
-  crispText(g, title, W / 2, 3, 10, color);
-  g.fillStyle = '#5a5048';
-  for (let i = 0; i < 5; i++) g.fillRect(4, 17 + i * 4, W - 8 - Math.floor(R() * 10), 1);
-  return canvasTex(processPixels(c, { alpha: true, alphaCut: 10 }), false);
+  return textTexture(32, 40, (g, W, H) => {
+    const R = rnd(seed);
+    paper(g, W, H, R, base);
+    crispText(g, title, W / 2, 3, 10, color);
+    g.fillStyle = '#5a5048';
+    for (let i = 0; i < 5; i++) g.fillRect(4, 17 + i * 4, W - 8 - Math.floor(R() * 10), 1);
+  }, { alpha: true, alphaCut: 10 });
 }
