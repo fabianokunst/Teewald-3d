@@ -70,7 +70,7 @@ function wingBone(len, r0, r1, s, col) {
 
 // ---------- sons próprios ----------
 const ok = a => !!(a && a.ctx && a.white);
-const BSFX = {
+export const BSFX = {
   // mordida: estalo seco e um chupão molhado
   bite(a, d = 0) {
     if (!ok(a) || fall(d, 30) <= 0) return;

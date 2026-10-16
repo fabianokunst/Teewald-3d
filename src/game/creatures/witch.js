@@ -42,7 +42,7 @@ function grit(a) {
   return s;
 }
 
-const SND = {
+export const SND = {
   // cântico grave murmurado (o ritual)
   chant(a, d = 0, dur = 3) {
     if (!okA(a) || fall(d, 90) <= 0) return;
