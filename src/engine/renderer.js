@@ -21,10 +21,10 @@ export class Renderer {
     this.ui.style.pointerEvents = 'none';
     this.rt = new THREE.WebGLRenderTarget(320, 240, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, depthBuffer: true, generateMipmaps: false });
     this.postMat = new THREE.ShaderMaterial({
-      uniforms: { tDiffuse: { value: this.rt.texture }, uDither: { value: 1 }, uFade: { value: 0 }, uBars: { value: 0 }, uTime: G.uTime, uSat: G.uSat },
+      uniforms: { tDiffuse: { value: this.rt.texture }, uDither: { value: 1 }, uFade: { value: 0 }, uBars: { value: 0 }, uTime: G.uTime, uSat: G.uSat, uNightLift: G.uNightLift },
       vertexShader: 'varying vec2 vUv; void main(){ vUv = position.xy * 0.5 + 0.5; gl_Position = vec4(position.xy, 0.0, 1.0); }',
       fragmentShader: /* glsl */`
-        uniform sampler2D tDiffuse; uniform float uDither; uniform float uFade; uniform float uBars; uniform float uTime; uniform float uSat;
+        uniform sampler2D tDiffuse; uniform float uDither; uniform float uFade; uniform float uBars; uniform float uTime; uniform float uSat; uniform float uNightLift;
         varying vec2 vUv;
         float bayer2(vec2 a) { a = floor(a); return fract(dot(a, vec2(0.5, a.y * 0.75))); }
         float bayer4(vec2 a) { return bayer2(0.5 * a) * 0.25 + bayer2(a); }
@@ -32,7 +32,9 @@ export class Renderer {
           vec3 c = texture2D(tDiffuse, vUv).rgb;
           float l = dot(c, vec3(0.3, 0.59, 0.11));
           c = mix(vec3(l), c, uSat) * vec3(0.95, 1.0, 0.98);
-          c = (c - 0.5) * 1.1 + 0.48;
+          // de noite: gama mais aberto nas sombras e o contraste sem esmagar os escuros em preto
+          c = pow(max(c, 0.0), vec3(1.0 - 0.18 * uNightLift));
+          c = (c - 0.5) * 1.1 + 0.48 + uNightLift * 0.032;
           vec2 q = vUv - 0.5;
           c *= clamp(1.0 - dot(q, q) * 1.25, 0.0, 1.0);
           float n = fract(sin(dot(floor(gl_FragCoord.xy) + floor(uTime * 24.0) * 7.31, vec2(12.9898, 78.233))) * 43758.5453);

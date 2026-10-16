@@ -338,6 +338,7 @@ export class Atmosphere {
     G.uSunFog.value.setRGB(c.fogSun[0] + flash * 0.25, c.fogSun[1] + flash * 0.27, c.fogSun[2] + flash * 0.33);
     G.uSunWrap.value = adv ? c.sunWrap : 0;
     G.uSat.value = adv ? c.sat : 0.6;
+    G.uNightLift.value = c.night;
     this.shadowStrength = adv && out ? c.shadow * (1 - Math.min(1, c.rain * 2)) * (this.shadowDip ?? 1) : 0;
     const S = this.sky;
     if (S) {

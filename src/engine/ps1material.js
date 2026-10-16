@@ -36,6 +36,8 @@ export const G = {
   uShadowBias: { value: new THREE.Vector2(0.06, 0.0001) },   // afastamento na normal (m), viés de profundidade
   // saturação do passo final (terror = 0.6)
   uSat: { value: 0.6 },
+  // noite no passo final (0..1): levanta as sombras para o cenário escuro não virar preto puro
+  uNightLift: { value: 0 },
 };
 export const NUM_LIGHTS = 8;
 
