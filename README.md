@@ -426,10 +426,25 @@ Pages publica em https://fabianokunst.github.io/Teewald-3d/site/ (com o jogo rod
 que leva a https://fabianokunst.github.io/Teewald-3d/.
 
 - Páginas: `index.html` (início), `historia.html`, `cidade.html`, `personagens.html`,
-  `jogo.html` (combate, estilos visuais, controles, perguntas) e `galeria.html`. O estilo
-  fica em `site/css/site.css` (as cores e as letras do menu do jogo) e o menu do celular, as
-  abas, o filtro da galeria, a foto ampliada e a comparação 3D LIMPO × PS1 RETRÔ em
-  `site/js/site.js`.
+  `jogo.html` (combate, estilos visuais, controles, perguntas), `galeria.html` e `design.html`
+  (o sistema visual: cores, letras, espaços, movimento e componentes, com link no rodapé).
+- **Sistema visual** em `site/css/site.css`, em camadas (`reset`, `tokens`, `base`, `layout`,
+  `componentes`, `movimento`, `utilidades`). Os componentes usam só os tokens de papel
+  (`--cor-fundo`, `--cor-destaque`, `--t-5`, `--e-6`, `--ease-sai`...), tirados do menu do jogo:
+  a noite, o osso, o lampião, o latão, o sangue e o luar; Grenze Gotisch nos títulos, VT323 nos
+  menus e rótulos, Spectral no texto, Special Elite nos documentos e Caveat nos bilhetes.
+- **Movimento** (`site/js/site.js`): a capa entra em sequência (tela preta, a foto surge, as letras
+  do logo acendem como lâmpada falhando, o texto é digitado como os diálogos do jogo), com
+  relâmpagos de vez em quando e olhos vermelhos no escuro que fogem do mouse. As faixas das
+  páginas internas também entram. Na rolagem: `data-revela` (`=""` sobe, `"esquerda"`,
+  `"direita"`, `"zoom"`, `"imagem"` em cortina, `"papel"` caindo como papel pregado),
+  `data-revela-filhos` (um a um), `data-paralaxe="0.3"` nas fotos de fundo, `data-conta` nos
+  números, barra de progresso no alto e o topo que some ao descer. A chamada do fim de cada
+  página tem uma lanterna que segue o mouse. Com "menos movimento" no sistema, nada anima; sem
+  JavaScript, tudo aparece parado.
+- **Partes repetidas**: a cabeça (`<head>`), o topo e o rodapé das páginas vêm de `tools/site/`
+  e entram entre os marcadores `<!-- cabeca:... -->`, `<!-- topo:... -->` e `<!-- rodape:... -->`
+  com `npm run site` (`tools/site.mjs`, onde ficam o título, a descrição e a imagem de cada página).
 - **Sem spoiler**: o site só conta o que o jogador ouve e lê logo que chega na cidade.
   Nada dos capítulos depois do primeiro, das criaturas (as fichas delas aparecem trancadas),
   da bruxa ou das armas especiais.
@@ -455,7 +470,7 @@ src/game     personagem, controle do jogador, câmera, itens, armas, mira assist
 src/game/creatures  chupacabras na gruta, cão de fogo, morcegos, fantasmas, ETs e disco, Fera, lobisomem, bruxa
 src/ui       menu, HUD, inventário, diálogo e textos
 tools/       build-mapdata.mjs (regera os dados do mapa), exportar.mjs (modelos .glb), capturas de teste,
-             retratos.mjs e capturas-site.mjs (imagens do site)
+             retratos.mjs, capturas-site.mjs e site.mjs (fichas, fotos e partes repetidas do site)
 site/        site promocional do jogo (HTML estático, separado do jogo)
 texture/     texturas do projeto (servidas como pasta pública)
 ```

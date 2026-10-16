@@ -1,14 +1,19 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
+<!-- cabeca:inicio -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Teewald — survival horror com cara de PS1</title>
-  <meta name="description" content="Teewald é um survival horror em terceira pessoa com visual de PlayStation 1, numa cidadezinha de colonos alemães na serra gaúcha. Grátis, no navegador.">
-  <meta name="theme-color" content="#0c0a09">
+  <meta name="description" content="Survival horror em terceira pessoa com visual de PlayStation 1, numa cidadezinha de colonos alemães na serra gaúcha. Grátis, no navegador.">
+  <meta name="theme-color" content="#0b0908">
+  <link rel="canonical" href="https://fabianokunst.github.io/Teewald-3d/site/">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Teewald">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:url" content="https://fabianokunst.github.io/Teewald-3d/site/">
   <meta property="og:title" content="Teewald — alguma coisa anda no mato">
-  <meta property="og:description" content="Survival horror em terceira pessoa com visual de PS1, numa cidade de colonos alemães na serra gaúcha. Grátis, no navegador.">
+  <meta property="og:description" content="Survival horror em terceira pessoa com visual de PlayStation 1, numa cidadezinha de colonos alemães na serra gaúcha. Grátis, no navegador.">
   <meta property="og:image" content="https://fabianokunst.github.io/Teewald-3d/site/img/capturas/capa.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23201510'/%3E%3Cpath d='M8 1 L11 7 H9 V15 H7 V7 H5 Z' fill='%23d8a050'/%3E%3C/svg%3E">
@@ -16,13 +21,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Grenze+Gotisch:wght@600&family=Special+Elite&family=Spectral:ital,wght@0,400;0,600;1,400&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/site.css">
+  <!-- com JavaScript, o que anima começa escondido; se o site.js não rodar em 3 s, tudo aparece -->
+  <script>document.documentElement.classList.add('js');setTimeout(function(){if(!window.__siteOk)document.documentElement.classList.remove('js')},3000)</script>
+<!-- cabeca:fim -->
 </head>
 <body>
+<!-- topo:inicio -->
   <a class="pular" href="#conteudo">Pular para o conteúdo</a>
   <header class="topo">
     <div class="conteiner">
       <a class="marca" href="index.html">Teewald</a>
-      <button class="menu-botao" type="button" aria-expanded="false" aria-controls="menu">☰ Menu</button>
+      <button class="menu-botao" type="button" aria-expanded="false" aria-controls="menu"><i aria-hidden="true"></i> Menu</button>
       <nav class="menu" id="menu" aria-label="Páginas do site">
         <a href="index.html" aria-current="page">Início</a>
         <a href="historia.html">História</a>
@@ -30,47 +39,67 @@
         <a href="personagens.html">Personagens</a>
         <a href="jogo.html">O jogo</a>
         <a href="galeria.html">Galeria</a>
-        <a class="botao botao-jogar-menu" href="https://fabianokunst.github.io/Teewald-3d/">▶ Jogar agora</a>
+        <a class="botao" href="https://fabianokunst.github.io/Teewald-3d/">▶ Jogar agora</a>
       </nav>
       <a class="botao botao-pequeno botao-jogar-topo" href="https://fabianokunst.github.io/Teewald-3d/">▶ Jogar</a>
     </div>
   </header>
+<!-- topo:fim -->
 
   <main id="conteudo">
-    <section class="capa">
-      <div class="capa-fundo"><img src="img/capturas/capa.jpg" alt="" width="1920" height="1080" fetchpriority="high"></div>
+    <section class="capa" data-capa aria-label="Teewald">
+      <div class="capa-fundo" data-paralaxe="0.35"><img src="img/capturas/capa.jpg" alt="" width="1920" height="1080" fetchpriority="high"></div>
+      <div class="capa-raio" aria-hidden="true"></div>
+      <div class="capa-olhos" aria-hidden="true"><i></i><i></i></div>
       <div class="neblina" aria-hidden="true"><span></span><span></span><span></span></div>
-      <div class="conteiner">
-        <span class="rotulo">Vale do Herval · Rio Grande do Sul · outubro</span>
+      <div class="hud" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <div class="capa-cortina" aria-hidden="true"></div>
+      <div class="conteiner capa-conteudo">
+        <p class="rotulo capa-rotulo">Vale do Herval · Rio Grande do Sul · outubro</p>
         <h1 class="capa-logo">Teewald</h1>
         <hr class="regua">
         <p class="capa-frase">Alguma coisa anda no mato.</p>
         <p class="capa-texto">Um survival horror em terceira pessoa com cara de PlayStation 1, numa cidadezinha de colonos alemães na serra gaúcha. A neblina não levanta, a criação aparece seca no potreiro e ninguém sai de casa depois que escurece. Menos você.</p>
-        <div class="capa-acoes">
+        <div class="acoes">
           <a class="botao botao-grande" href="https://fabianokunst.github.io/Teewald-3d/"><span class="seta piscar">▶</span> Jogar agora</a>
-          <a class="botao botao-fantasma" href="historia.html">Conhecer a história</a>
+          <a class="botao botao-contorno" href="historia.html">Conhecer a história</a>
         </div>
-        <p class="capa-nota capa-nota-baixo">Grátis · no navegador · sem instalar nada</p>
+        <p class="nota">Grátis · no navegador · sem instalar nada</p>
       </div>
+      <a class="capa-rolar" href="#premissa"><span>Role</span><i aria-hidden="true"></i></a>
     </section>
 
-    <section class="secao">
+    <div class="manchetes" aria-label="Manchetes da Folha de Teewald">
+      <div class="manchetes-trilho">
+        <span class="jornal">Folha de Teewald</span>
+        <span>Ovelhas mortas na Linha Schmitt</span>
+        <span>Prefeitura: “é graxaim”</span>
+        <span>Kartoffelfest cancelada</span>
+        <span>Comércio fecha às 18 h</span>
+        <span>Procura-se gata cinza, atende por Mimi</span>
+        <span>Perdeu-se cachorro preto de coleira vermelha</span>
+        <span>Ônibus para Novo Hamburgo não passou</span>
+        <span>Brigada pede que ninguém saia armado pelo mato à noite</span>
+      </div>
+    </div>
+
+    <section class="secao" id="premissa">
       <div class="conteiner grade grade-2">
-        <div class="surge">
-          <span class="rotulo">Cartaz na praça</span>
+        <div data-revela>
+          <p class="rotulo">Cartaz na praça</p>
           <h2>Procura-se</h2>
           <hr class="regua">
           <p class="intro">Nas últimas noites, galinhas, patos e até ovelhas apareceram mortos em Teewald. Todos com dois furos no pescoço e sem uma gota de sangue.</p>
           <p>A Prefeitura diz que é graxaim. A inspetoria veterinária fala em cachorro. A repórter que veio de Porto Alegre já contou onze casos em dez dias, e ninguém quer falar com ela.</p>
           <p>Você não é daqui. Chegou numa tarde de neblina, pelo calçadão do Rio Cadeia, e resolveu ficar para descobrir o que anda no mato. A cidade não gosta de perguntas, mas cada morador sabe um pedaço da história.</p>
-          <blockquote class="citacao citacao-espaco">
+          <blockquote class="citacao espaco-acima-grande">
             <p>Quando eu acendi a lanterna, os olhos brilharam vermelho. Aí sumiu no mato, aos pulos.</p>
             <footer>Seu Arno, pescador do calçadão</footer>
           </blockquote>
         </div>
-        <figure class="papel surge" style="--giro: 1.5deg">
+        <figure class="papel" data-revela="papel" style="--giro: 1.5deg">
           <button class="abre-foto" type="button" data-grupo="cartaz" data-legenda="Cartaz no mural da Praça 10 de Abril">
-            <img src="img/documentos/cartaz-chupacabras.png" alt="Cartaz de procura-se com a silhueta de um bicho corcunda de olhos vermelhos" width="1440" height="928" loading="lazy">
+            <img src="img/documentos/cartaz-chupacabras.png" alt="Cartaz de procura-se com a silhueta de um bicho corcunda de olhos vermelhos" width="1440" height="927" loading="lazy">
           </button>
           <figcaption>Pregado no mural da Praça 10 de Abril, ao lado do fim do calçadão.</figcaption>
         </figure>
@@ -79,51 +108,59 @@
 
     <section class="secao">
       <div class="conteiner">
-        <div class="secao-cab centro surge">
-          <span class="rotulo">O que te espera</span>
+        <div class="secao-cab centro" data-revela>
+          <p class="rotulo">O que te espera</p>
           <h2>Terror à moda antiga</h2>
           <hr class="regua">
           <p class="intro">Câmera por cima do ombro, munição contada e uma cidade inteira para atravessar no escuro. Do jeito que os jogos de terror eram nos anos 90, só que no navegador.</p>
         </div>
-        <div class="grade grade-3">
-          <article class="cartao surge">
-            <svg class="icone" viewBox="0 0 16 16" fill="currentColor" fill-rule="evenodd" shape-rendering="crispEdges" aria-hidden="true"><path d="M5 0h1v1H5zM6 1h1v1H6zM10 0h1v1h-1zM9 1h1v1H9zM7 2h2v1H7zM1 3h14v10H1zM3 5h8v6H3zM12 5h2v1h-2zM12 7h2v1h-2zM3 13h2v1H3zM11 13h2v1h-2z"/></svg>
+        <div class="bento" data-revela-filhos>
+          <article class="cartao cartao-imagem largo">
+            <img src="img/capturas/p/estilo-ps1.jpg" alt="" width="960" height="540" loading="lazy">
+            <span class="selo">PS1 RETRÔ · 320×240</span>
             <h3>Cara de PlayStation 1</h3>
-            <p>Polígonos duros, texturas em pixel art e personagens montados como nos primeiros jogos 3D. Jogue no 3D LIMPO ou no PS1 RETRÔ, em 320×240 com dithering de verdade.</p>
+            <p>Polígonos duros, texturas em pixel art e personagens montados como nos primeiros jogos 3D. Jogue no 3D LIMPO ou no PS1 RETRÔ, com dithering e cor de 15 bits de verdade.</p>
           </article>
-          <article class="cartao surge">
-            <svg class="icone" viewBox="0 0 16 16" fill="currentColor" fill-rule="evenodd" shape-rendering="crispEdges" aria-hidden="true"><path d="M7 0h2v3H7zM6 3h4v12H6zM7 5h2v2H7zM2 7h4v1H2zM10 7h4v1h-4zM1 8h5v7H1zM10 8h5v7h-5zM3 10h1v2H3zM12 10h1v2h-1zM7 11h2v4H7z"/></svg>
+          <article class="cartao cartao-imagem">
+            <img src="img/capturas/p/mapa.jpg" alt="" width="960" height="540" loading="lazy">
+            <span class="selo">Mapa real</span>
             <h3>Uma cidade que existe</h3>
-            <p>Ruas, rio, praça e morros vêm de mapas reais. Cerca de 600 construções nos contornos de verdade: casas de enxaimel, comércio, fábricas de calçados e a Igreja Matriz.</p>
+            <p>Ruas, rio, praça e morros de mapas reais, com cerca de 600 construções nos contornos de verdade.</p>
           </article>
-          <article class="cartao surge">
+          <article class="cartao">
             <svg class="icone" viewBox="0 0 16 16" fill="currentColor" fill-rule="evenodd" shape-rendering="crispEdges" aria-hidden="true"><path d="M1 4h13v3H1zM14 4h1v2h-1zM2 7h4v2H2zM2 9h3v4H2zM6 7h3v1H6zM8 8h1v1H8z"/></svg>
             <h3>Survival horror clássico</h3>
             <p>Inventário que pausa o jogo, armas brancas que gastam e quebram, pedra para arremessar e cuca com chá de marcela para remendar a vida.</p>
           </article>
-          <article class="cartao surge">
-            <svg class="icone icone-brasa" viewBox="0 0 16 16" fill="currentColor" fill-rule="evenodd" shape-rendering="crispEdges" aria-hidden="true"><path d="M2 6h3v1H2zM1 7h5v2H1zM11 6h3v1h-3zM10 7h5v2h-5z"/></svg>
+          <article class="cartao">
+            <svg class="icone icone-perigo" viewBox="0 0 16 16" fill="currentColor" fill-rule="evenodd" shape-rendering="crispEdges" aria-hidden="true"><path d="M2 6h3v1H2zM1 7h5v2H1zM11 6h3v1h-3zM10 7h5v2h-5z"/></svg>
             <h3>Lendas do interior</h3>
             <p>Doze capítulos, cada um com uma história que os mais velhos só contam baixinho, perto do fogão. Qual é qual, você descobre lá dentro.</p>
           </article>
-          <article class="cartao surge">
-            <svg class="icone" viewBox="0 0 16 16" fill="currentColor" fill-rule="evenodd" shape-rendering="crispEdges" aria-hidden="true"><path d="M5 2h5v1H5zM4 3h8v1H4zM3 4h11v1H3zM2 5h13v3H2zM4 10h1v2H4zM8 10h1v2H8zM12 10h1v2h-1zM6 13h1v2H6zM10 13h1v2h-1z"/></svg>
+          <article class="cartao cartao-imagem">
+            <img src="img/capturas/p/chuva.jpg" alt="" width="960" height="540" loading="lazy">
             <h3>Neblina, chuva e trovão</h3>
-            <p>Tarde encoberta, noite fechada, garoa e tempestade com o trovão chegando depois do clarão. A lanterna alcança poucos metros, e o som vem de todos os lados.</p>
+            <p>A lanterna alcança poucos metros, e o som vem de todos os lados.</p>
           </article>
-          <article class="cartao surge">
-            <svg class="icone" viewBox="0 0 16 16" fill="currentColor" fill-rule="evenodd" shape-rendering="crispEdges" aria-hidden="true"><path d="M3 5h10v1H3zM2 6h12v5H2zM1 8h2v4H1zM13 8h2v4h-2zM4 8h3v1H4zM5 7h1v3H5zM10 7h1v1h-1zM12 8h1v1h-1zM10 9h1v1h-1z"/></svg>
-            <h3>Joga em qualquer lugar</h3>
-            <p>No PC, no celular ou no tablet, com teclado e mouse, controle ou toque. Em português, inglês, espanhol e alemão. O progresso fica salvo sozinho.</p>
+          <article class="cartao cartao-faixa inteiro">
+            <div>
+              <svg class="icone" viewBox="0 0 16 16" fill="currentColor" fill-rule="evenodd" shape-rendering="crispEdges" aria-hidden="true"><path d="M3 5h10v1H3zM2 6h12v5H2zM1 8h2v4H1zM13 8h2v4h-2zM4 8h3v1H4zM5 7h1v3H5zM10 7h1v1h-1zM12 8h1v1h-1zM10 9h1v1h-1z"/></svg>
+              <h3>Joga em qualquer lugar</h3>
+              <p>No PC, no celular ou no tablet, com teclado e mouse, controle ou toque. O progresso fica salvo sozinho no navegador.</p>
+            </div>
+            <ul class="fichinha" aria-label="Onde e como jogar">
+              <li>PC</li><li>Celular</li><li>Tablet</li><li>Controle</li><li>Toque</li><li>Português</li><li>English</li><li>Español</li><li>Deutsch</li>
+            </ul>
           </article>
         </div>
       </div>
     </section>
 
     <section class="faixa faixa-citacao" aria-label="O mato do chá">
-      <div class="faixa-fundo"><img src="img/capturas/praca-noite.jpg" alt="" width="1920" height="1080" loading="lazy"></div>
+      <div class="faixa-fundo" data-paralaxe="0.3"><img src="img/capturas/praca-noite.jpg" alt="" width="1920" height="1080" loading="lazy"></div>
+      <div class="neblina" aria-hidden="true"><span></span><span></span></div>
       <div class="conteiner">
-        <blockquote class="citacao surge">
+        <blockquote class="citacao citacao-grande" data-revela>
           <p>Herval vem de erva-mate. Teewald, em hunsrik: mato do chá. Bonito, não é? Mas os antigos tinham outro respeito por esse mato. Ninguém entrava nele depois do sol posto.</p>
           <footer>Professor Edgar, que conhece os diários dos colonos</footer>
         </blockquote>
@@ -132,78 +169,82 @@
 
     <section class="secao">
       <div class="conteiner">
-        <div class="secao-cab surge">
-          <span class="rotulo">Galeria</span>
+        <div class="secao-cab" data-revela>
+          <p class="rotulo">Galeria</p>
           <h2>Capturas do jogo</h2>
           <hr class="regua">
         </div>
-        <div class="galeria">
-          <figure class="item largo surge">
+        <div class="galeria" data-revela-filhos>
+          <figure class="item largo">
             <button class="abre-foto" type="button" data-grupo="inicio" data-grande="img/capturas/igreja.jpg" data-legenda="A Igreja Matriz no fim da tarde"><img src="img/capturas/p/igreja.jpg" alt="A Igreja Matriz no fim da tarde, com neblina" width="960" height="540" loading="lazy"></button>
             <figcaption>A Igreja Matriz no fim da tarde</figcaption>
           </figure>
-          <figure class="item surge">
+          <figure class="item">
             <button class="abre-foto" type="button" data-grupo="inicio" data-grande="img/capturas/calcadao.jpg" data-legenda="O calçadão do Rio Cadeia"><img src="img/capturas/p/calcadao.jpg" alt="O calçadão na beira do Rio Cadeia" width="960" height="540" loading="lazy"></button>
             <figcaption>O calçadão do Rio Cadeia</figcaption>
           </figure>
-          <figure class="item surge">
+          <figure class="item">
             <button class="abre-foto" type="button" data-grupo="inicio" data-grande="img/capturas/chuva.jpg" data-legenda="Noite de chuva"><img src="img/capturas/p/chuva.jpg" alt="Rua da cidade numa noite de chuva, o forasteiro de lanterna acesa" width="960" height="540" loading="lazy"></button>
             <figcaption>Noite de chuva</figcaption>
           </figure>
-          <figure class="item largo surge">
+          <figure class="item largo">
             <button class="abre-foto" type="button" data-grupo="inicio" data-grande="img/capturas/kartoffelfest.jpg" data-legenda="A Kartoffelfest que não aconteceu"><img src="img/capturas/p/kartoffelfest.jpg" alt="O pavilhão vazio da Kartoffelfest com as bandeirolas" width="960" height="540" loading="lazy"></button>
             <figcaption>A Kartoffelfest que não aconteceu</figcaption>
           </figure>
-          <figure class="item surge">
+          <figure class="item">
             <button class="abre-foto" type="button" data-grupo="inicio" data-grande="img/capturas/praca-noite.jpg" data-legenda="A praça à noite"><img src="img/capturas/p/praca-noite.jpg" alt="A Praça 10 de Abril à noite, com os lampiões acesos" width="960" height="540" loading="lazy"></button>
             <figcaption>A praça à noite</figcaption>
           </figure>
-          <figure class="item surge">
+          <figure class="item">
             <button class="abre-foto" type="button" data-grupo="inicio" data-grande="img/capturas/lua.jpg" data-legenda="Lua cheia atrás da torre"><img src="img/capturas/p/lua.jpg" alt="A torre da Matriz com a lua cheia atrás" width="960" height="540" loading="lazy"></button>
             <figcaption>Lua cheia atrás da torre</figcaption>
           </figure>
         </div>
-        <p class="depois-galeria"><a class="botao botao-fantasma" href="galeria.html">Ver todas as capturas</a></p>
+        <p class="espaco-acima-grande" data-revela><a class="botao botao-contorno" href="galeria.html">Ver todas as capturas</a></p>
       </div>
     </section>
 
+    <div class="divisor" aria-hidden="true"></div>
+
     <section class="secao">
       <div class="conteiner">
-        <div class="secao-cab surge">
-          <span class="rotulo">Mais de Teewald</span>
+        <div class="secao-cab" data-revela>
+          <p class="rotulo">Mais de Teewald</p>
           <h2>Antes de escurecer</h2>
           <hr class="regua">
         </div>
-        <div class="grade grade-3">
-          <a class="cartao cartao-link surge" href="historia.html">
+        <div class="grade grade-3" data-revela-filhos>
+          <a class="cartao cartao-link" href="historia.html">
             <img src="img/capturas/p/enxaimel.jpg" alt="" width="960" height="540" loading="lazy">
-            <div class="cartao-corpo"><h3>A história</h3><p>Os colonos do Hunsrück, o mato do chá e as últimas semanas na Folha de Teewald.</p></div>
+            <div class="cartao-corpo"><h3>A história</h3><p>Os colonos do Hunsrück, o mato do chá e as últimas semanas na Folha de Teewald.</p><span class="seta-link">Ler ▶</span></div>
           </a>
-          <a class="cartao cartao-link surge" href="cidade.html">
+          <a class="cartao cartao-link" href="cidade.html">
             <img src="img/capturas/p/praca.jpg" alt="" width="960" height="540" loading="lazy">
-            <div class="cartao-corpo"><h3>A cidade</h3><p>Do calçadão ao cemitério: os lugares onde ninguém fica depois das seis.</p></div>
+            <div class="cartao-corpo"><h3>A cidade</h3><p>Do calçadão ao cemitério: os lugares onde ninguém fica depois das seis.</p><span class="seta-link">Andar ▶</span></div>
           </a>
-          <a class="cartao cartao-link surge" href="personagens.html">
+          <a class="cartao cartao-link" href="personagens.html">
             <img src="img/capturas/p/conversa.jpg" alt="" width="960" height="540" loading="lazy">
-            <div class="cartao-corpo"><h3>Personagens</h3><p>Vinte e quatro moradores com medo, e cada um sabe um pedaço da história.</p></div>
+            <div class="cartao-corpo"><h3>Personagens</h3><p>Vinte e quatro moradores com medo, e cada um sabe um pedaço da história.</p><span class="seta-link">Conhecer ▶</span></div>
           </a>
         </div>
       </div>
     </section>
 
     <section class="chamada">
-      <div class="faixa-fundo"><img src="img/capturas/mato.jpg" alt="" width="1920" height="1080" loading="lazy"></div>
-      <div class="neblina" aria-hidden="true"><span></span><span></span></div>
-      <div class="conteiner surge">
+      <div class="chamada-fundo" aria-hidden="true"><img src="img/capturas/pegadas.jpg" alt="" width="1920" height="1080" loading="lazy"></div>
+      <div class="chamada-luz" aria-hidden="true"><img src="img/capturas/pegadas.jpg" alt="" width="1920" height="1080" loading="lazy"></div>
+      <div class="conteiner centro" data-revela>
         <h2>A neblina já baixou</h2>
-        <hr class="regua centro">
+        <hr class="regua">
         <p>O ônibus para Novo Hamburgo não passa desde o meio-dia. Já que você vai ficar, fique de olho no mato.</p>
         <a class="botao botao-grande" href="https://fabianokunst.github.io/Teewald-3d/"><span class="seta piscar">▶</span> Jogar agora</a>
-        <span class="capa-nota">Grátis · PC, celular e controle</span>
+        <span class="nota">Grátis · PC, celular e controle</span>
       </div>
+      <span class="dica" aria-hidden="true">Mexa o mouse: a lanterna vai junto</span>
     </section>
   </main>
 
+<!-- rodape:inicio -->
   <footer class="rodape">
     <div class="conteiner">
       <div>
@@ -220,6 +261,7 @@
           <li><a href="personagens.html">Personagens</a></li>
           <li><a href="jogo.html">O jogo</a></li>
           <li><a href="galeria.html">Galeria</a></li>
+          <li><a href="design.html">Sistema visual</a></li>
         </ul>
       </nav>
       <div>
@@ -238,5 +280,6 @@
     </div>
   </footer>
   <script src="js/site.js" defer></script>
+<!-- rodape:fim -->
 </body>
 </html>

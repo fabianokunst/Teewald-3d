@@ -1,12 +1,17 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
+<!-- cabeca:inicio -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Galeria — Teewald</title>
   <meta name="description" content="Capturas de Teewald tiradas do próprio jogo: a Igreja Matriz, a praça à noite, o calçadão do Rio Cadeia, a Kartoffelfest, chuva, neblina e o visual PS1 RETRÔ.">
-  <meta name="theme-color" content="#0c0a09">
+  <meta name="theme-color" content="#0b0908">
+  <link rel="canonical" href="https://fabianokunst.github.io/Teewald-3d/site/galeria.html">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Teewald">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:url" content="https://fabianokunst.github.io/Teewald-3d/site/galeria.html">
   <meta property="og:title" content="Galeria — Teewald">
   <meta property="og:description" content="Capturas de Teewald tiradas do próprio jogo: a Igreja Matriz, a praça à noite, o calçadão do Rio Cadeia, a Kartoffelfest, chuva, neblina e o visual PS1 RETRÔ.">
   <meta property="og:image" content="https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg">
@@ -16,13 +21,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Grenze+Gotisch:wght@600&family=Special+Elite&family=Spectral:ital,wght@0,400;0,600;1,400&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/site.css">
+  <!-- com JavaScript, o que anima começa escondido; se o site.js não rodar em 3 s, tudo aparece -->
+  <script>document.documentElement.classList.add('js');setTimeout(function(){if(!window.__siteOk)document.documentElement.classList.remove('js')},3000)</script>
+<!-- cabeca:fim -->
 </head>
 <body>
+<!-- topo:inicio -->
   <a class="pular" href="#conteudo">Pular para o conteúdo</a>
   <header class="topo">
     <div class="conteiner">
       <a class="marca" href="index.html">Teewald</a>
-      <button class="menu-botao" type="button" aria-expanded="false" aria-controls="menu">☰ Menu</button>
+      <button class="menu-botao" type="button" aria-expanded="false" aria-controls="menu"><i aria-hidden="true"></i> Menu</button>
       <nav class="menu" id="menu" aria-label="Páginas do site">
         <a href="index.html">Início</a>
         <a href="historia.html">História</a>
@@ -30,18 +39,19 @@
         <a href="personagens.html">Personagens</a>
         <a href="jogo.html">O jogo</a>
         <a href="galeria.html" aria-current="page">Galeria</a>
-        <a class="botao botao-jogar-menu" href="https://fabianokunst.github.io/Teewald-3d/">▶ Jogar agora</a>
+        <a class="botao" href="https://fabianokunst.github.io/Teewald-3d/">▶ Jogar agora</a>
       </nav>
       <a class="botao botao-pequeno botao-jogar-topo" href="https://fabianokunst.github.io/Teewald-3d/">▶ Jogar</a>
     </div>
   </header>
+<!-- topo:fim -->
 
   <main id="conteudo">
-    <section class="faixa faixa-baixa">
-      <div class="faixa-fundo"><img src="img/capturas/lua.jpg" alt="" width="1920" height="1080" fetchpriority="high"></div>
+    <section class="faixa faixa-baixa" data-entra>
+      <div class="faixa-fundo" data-paralaxe="0.3"><img src="img/capturas/lua.jpg" alt="" width="1920" height="1080" fetchpriority="high"></div>
       <div class="neblina" aria-hidden="true"><span></span><span></span></div>
       <div class="conteiner">
-        <span class="rotulo">Galeria</span>
+        <p class="rotulo">Galeria</p>
         <h1>Capturas</h1>
         <hr class="regua">
         <p class="intro">Tudo tirado do próprio jogo, sem retoque. Clique para ampliar.</p>
@@ -50,7 +60,7 @@
 
     <section class="secao secao-galeria">
       <div class="conteiner">
-        <div class="abas" role="tablist" aria-label="Filtrar capturas" data-galeria="galeria">
+        <div class="abas" role="tablist" aria-label="Filtrar capturas" data-galeria="galeria" data-revela>
           <button class="aba" type="button" role="tab" aria-selected="true" data-filtro="todas">Todas</button>
           <button class="aba" type="button" role="tab" aria-selected="false" tabindex="-1" data-filtro="dia">Fim de tarde</button>
           <button class="aba" type="button" role="tab" aria-selected="false" tabindex="-1" data-filtro="noite">Noite</button>
@@ -58,7 +68,7 @@
           <button class="aba" type="button" role="tab" aria-selected="false" tabindex="-1" data-filtro="jogo">Jogando</button>
           <button class="aba" type="button" role="tab" aria-selected="false" tabindex="-1" data-filtro="ps1">PS1 retrô</button>
         </div>
-        <div class="galeria" id="galeria">
+        <div class="galeria" id="galeria" data-revela-filhos>
           <figure class="item largo" data-tags="dia">
             <button class="abre-foto" type="button" data-grupo="galeria" data-grande="img/capturas/capa.jpg" data-legenda="A Igreja Matriz ao anoitecer"><img src="img/capturas/p/capa.jpg" alt="A Igreja Matriz ao anoitecer" width="960" height="540" loading="lazy"></button>
             <figcaption>A Igreja Matriz ao anoitecer</figcaption>
@@ -155,24 +165,25 @@
             <button class="abre-foto" type="button" data-grupo="galeria" data-grande="img/capturas/ps1-igreja-dentro.jpg" data-legenda="PS1 RETRÔ: dentro da Matriz"><img src="img/capturas/p/ps1-igreja-dentro.jpg" alt="PS1 RETRÔ: dentro da Matriz" width="960" height="540" loading="lazy"></button>
             <figcaption>PS1 RETRÔ: dentro da Matriz</figcaption>
           </figure>
-
         </div>
       </div>
     </section>
 
     <section class="chamada">
-      <div class="faixa-fundo"><img src="img/capturas/kartoffelfest.jpg" alt="" width="1920" height="1080" loading="lazy"></div>
-      <div class="neblina" aria-hidden="true"><span></span><span></span></div>
-      <div class="conteiner surge">
+      <div class="chamada-fundo" aria-hidden="true"><img src="img/capturas/kartoffelfest.jpg" alt="" width="1920" height="1080" loading="lazy"></div>
+      <div class="chamada-luz" aria-hidden="true"><img src="img/capturas/kartoffelfest.jpg" alt="" width="1920" height="1080" loading="lazy"></div>
+      <div class="conteiner centro" data-revela>
         <h2>Agora veja de perto</h2>
-        <hr class="regua centro">
+        <hr class="regua">
         <p>As lâmpadas do pavilhão acendem todo fim de tarde, com ou sem festa.</p>
         <a class="botao botao-grande" href="https://fabianokunst.github.io/Teewald-3d/"><span class="seta piscar">▶</span> Jogar agora</a>
-        <span class="capa-nota">Grátis · no navegador</span>
+        <span class="nota">Grátis · no navegador</span>
       </div>
+      <span class="dica" aria-hidden="true">Mexa o mouse: a lanterna vai junto</span>
     </section>
   </main>
 
+<!-- rodape:inicio -->
   <footer class="rodape">
     <div class="conteiner">
       <div>
@@ -189,6 +200,7 @@
           <li><a href="personagens.html">Personagens</a></li>
           <li><a href="jogo.html">O jogo</a></li>
           <li><a href="galeria.html">Galeria</a></li>
+          <li><a href="design.html">Sistema visual</a></li>
         </ul>
       </nav>
       <div>
@@ -207,5 +219,6 @@
     </div>
   </footer>
   <script src="js/site.js" defer></script>
+<!-- rodape:fim -->
 </body>
 </html>

@@ -25,6 +25,8 @@ const FOTOS = [
   { nome: 'titulo', ui: true, titulo: true, espera: 3500 },
   { nome: 'capa', cena: { clima: 'anoitecer', cam: [-108, 14, 62], alvo: [-44, 10, 16], fov: 52 } },
   { nome: 'igreja', cena: { clima: 'tarde', cam: [-104.2, 15, 58.5], alvo: [-42.8, 13, 40.4], fov: 50 } },
+  // a cidade vista do alto: as ruas, o rio e os prédios saem de mapas de verdade
+  { nome: 'mapa', cena: { clima: 'tarde', cam: [-110, 380, 95.01], alvo: [-110, -2, 95], fov: 52 } },
   { nome: 'lua', cena: { clima: 'luaCheia', cam: [-98, 2, 86], alvo: [-60, 14, 40], fov: 62 } },
   { nome: 'calcadao', cena: { clima: 'tarde', cam: [-318, 2.6, 258], alvo: [-333, 1.2, 330], fov: 55 } },
   { nome: 'letreiro', cena: { clima: 'tarde', cam: [-263.5, 1.9, 164.5], alvo: [-273.5, 1.5, 153.5], fov: 58 } },

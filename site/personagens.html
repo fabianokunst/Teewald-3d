@@ -1,12 +1,17 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
+<!-- cabeca:inicio -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Personagens — Teewald</title>
   <meta name="description" content="Os personagens de Teewald: o forasteiro e os 24 moradores com fala, com retrato, altura, roupa e jeito de cada um, tirados dos modelos do jogo.">
-  <meta name="theme-color" content="#0c0a09">
+  <meta name="theme-color" content="#0b0908">
+  <link rel="canonical" href="https://fabianokunst.github.io/Teewald-3d/site/personagens.html">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Teewald">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:url" content="https://fabianokunst.github.io/Teewald-3d/site/personagens.html">
   <meta property="og:title" content="Personagens — Teewald">
   <meta property="og:description" content="Os personagens de Teewald: o forasteiro e os 24 moradores com fala, com retrato, altura, roupa e jeito de cada um, tirados dos modelos do jogo.">
   <meta property="og:image" content="https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg">
@@ -16,13 +21,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Grenze+Gotisch:wght@600&family=Special+Elite&family=Spectral:ital,wght@0,400;0,600;1,400&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/site.css">
+  <!-- com JavaScript, o que anima começa escondido; se o site.js não rodar em 3 s, tudo aparece -->
+  <script>document.documentElement.classList.add('js');setTimeout(function(){if(!window.__siteOk)document.documentElement.classList.remove('js')},3000)</script>
+<!-- cabeca:fim -->
 </head>
 <body>
+<!-- topo:inicio -->
   <a class="pular" href="#conteudo">Pular para o conteúdo</a>
   <header class="topo">
     <div class="conteiner">
       <a class="marca" href="index.html">Teewald</a>
-      <button class="menu-botao" type="button" aria-expanded="false" aria-controls="menu">☰ Menu</button>
+      <button class="menu-botao" type="button" aria-expanded="false" aria-controls="menu"><i aria-hidden="true"></i> Menu</button>
       <nav class="menu" id="menu" aria-label="Páginas do site">
         <a href="index.html">Início</a>
         <a href="historia.html">História</a>
@@ -30,18 +39,19 @@
         <a href="personagens.html" aria-current="page">Personagens</a>
         <a href="jogo.html">O jogo</a>
         <a href="galeria.html">Galeria</a>
-        <a class="botao botao-jogar-menu" href="https://fabianokunst.github.io/Teewald-3d/">▶ Jogar agora</a>
+        <a class="botao" href="https://fabianokunst.github.io/Teewald-3d/">▶ Jogar agora</a>
       </nav>
       <a class="botao botao-pequeno botao-jogar-topo" href="https://fabianokunst.github.io/Teewald-3d/">▶ Jogar</a>
     </div>
   </header>
+<!-- topo:fim -->
 
   <main id="conteudo">
-    <section class="faixa">
-      <div class="faixa-fundo"><img src="img/capturas/letreiro.jpg" alt="" width="1920" height="1080" fetchpriority="high"></div>
+    <section class="faixa" data-entra>
+      <div class="faixa-fundo" data-paralaxe="0.3"><img src="img/capturas/letreiro.jpg" alt="" width="1920" height="1080" fetchpriority="high"></div>
       <div class="neblina" aria-hidden="true"><span></span><span></span></div>
       <div class="conteiner">
-        <span class="rotulo">Personagens</span>
+        <p class="rotulo">Personagens</p>
         <h1>Quem ainda está na rua</h1>
         <hr class="regua">
         <p class="intro">Vinte e quatro moradores com fala, cada um com um pedaço da história. Todos com medo. Os retratos foram tirados dos próprios modelos do jogo, e as figuras de corpo inteiro estão na mesma escala.</p>
@@ -60,12 +70,12 @@
 
     <section class="secao secao-fichas" id="protagonista">
       <div class="conteiner">
-        <div class="secao-cab">
-          <span class="rotulo">Protagonista</span>
+        <div class="secao-cab" data-revela>
+          <p class="rotulo">Protagonista</p>
           <h2>Você</h2>
           <hr class="regua">
         </div>
-
+        <div data-revela-filhos>
           <article class="ficha ficha-heroi" id="heroi">
             <div class="fotos">
               <img class="rosto" src="img/personagens/rostos/heroi.jpg" width="320" height="320" alt="Rosto de O Forasteiro" loading="lazy">
@@ -78,19 +88,20 @@
               <dl class="desc"><dt>Rosto</dt><dd>Loiro, cabelo penteado para trás, olhos fundos, sobrancelhas retas e barba rala.</dd><dt>Corpo</dt><dd>Estatura média e ombros largos.</dd><dt>Roupa</dt><dd>Jaqueta de couro marrom com lapelas, suéter cinza de gola V, camisa escura, calça escura e botas.</dd><dt>Jeito</dt><dd>Sério e calado. Não é da cidade, e todo mundo percebe.</dd></dl>
             </div>
           </article>
+        </div>
       </div>
     </section>
 
     <section class="secao secao-fichas" id="moradores">
       <div class="conteiner">
-        <div class="secao-cab">
-          <span class="rotulo">Moradores</span>
+        <div class="secao-cab" data-revela>
+          <p class="rotulo">Moradores</p>
           <h2>Quem você vai encontrar</h2>
           <hr class="regua">
           <p class="intro">24 moradores com fala, espalhados pela cidade. Altura, porte e postura de cada ficha valem no jogo, e os traços do rosto (rugas, olheiras, sardas, barba por fazer, pinta, cicatriz) estão pintados na textura.</p>
         </div>
-        <h3 class="local-titulo" id="calcadao">Calçadão do Rio Cadeia</h3>
-        <div class="fichas">
+        <h3 class="local-titulo" id="calcadao" data-revela>Calçadão do Rio Cadeia</h3>
+        <div class="fichas" data-revela-filhos>
           <article class="ficha" id="arno">
             <div class="fotos">
               <img class="rosto" src="img/personagens/rostos/arno.jpg" width="320" height="320" alt="Rosto de Seu Arno" loading="lazy">
@@ -188,8 +199,8 @@
             </div>
           </article>
         </div>
-        <h3 class="local-titulo" id="praca">Praça 10 de Abril</h3>
-        <div class="fichas">
+        <h3 class="local-titulo" id="praca" data-revela>Praça 10 de Abril</h3>
+        <div class="fichas" data-revela-filhos>
           <article class="ficha" id="valdir">
             <div class="fotos">
               <img class="rosto" src="img/personagens/rostos/valdir.jpg" width="320" height="320" alt="Rosto de Seu Valdir" loading="lazy">
@@ -287,8 +298,8 @@
             </div>
           </article>
         </div>
-        <h3 class="local-titulo" id="igreja">Igreja Matriz e cemitério</h3>
-        <div class="fichas">
+        <h3 class="local-titulo" id="igreja" data-revela>Igreja Matriz e cemitério</h3>
+        <div class="fichas" data-revela-filhos>
           <article class="ficha" id="bernardo">
             <div class="fotos">
               <img class="rosto" src="img/personagens/rostos/bernardo.jpg" width="320" height="320" alt="Rosto de Padre Bernardo" loading="lazy">
@@ -338,8 +349,8 @@
             </div>
           </article>
         </div>
-        <h3 class="local-titulo" id="kartoffelfest">Kartoffelfest e campo de futebol</h3>
-        <div class="fichas">
+        <h3 class="local-titulo" id="kartoffelfest" data-revela>Kartoffelfest e campo de futebol</h3>
+        <div class="fichas" data-revela-filhos>
           <article class="ficha" id="ivo">
             <div class="fotos">
               <img class="rosto" src="img/personagens/rostos/ivo.jpg" width="320" height="320" alt="Rosto de Seu Ivo" loading="lazy">
@@ -395,41 +406,45 @@
 
     <section class="secao" id="mato">
       <div class="conteiner cartaz-procura">
-        <figure class="papel surge" style="--giro: -2deg">
+        <figure class="papel" data-revela="papel" style="--giro: -2deg">
           <img class="pixelado" src="img/documentos/silhueta.png" alt="Silhueta de um bicho corcunda de olhos vermelhos, do cartaz de procura-se" width="224" height="244" loading="lazy">
           <figcaption>Do cartaz no mural da praça</figcaption>
         </figure>
-        <div class="surge">
-          <span class="rotulo">O que anda no mato</span>
+        <div data-revela>
+          <p class="rotulo">O que anda no mato</p>
           <h2>Procura-se</h2>
           <hr class="regua">
           <p class="intro">Ninguém viu direito. O Seu Arno viu olhos vermelhos na outra margem do rio. O Joãozinho, da 4ª série, jura que o bicho anda pulando que nem canguru e tem espinho nas costas.</p>
           <p>No jogo, cada criatura que você vê de perto ganha uma ficha em LENDAS DO HERVAL. Aqui elas ficam trancadas. E não é uma só.</p>
         </div>
       </div>
-      <div class="conteiner trancadas surge" aria-label="Fichas trancadas">
-        <div class="trancada"><div><b>?</b>Ficha trancada</div></div>
-        <div class="trancada"><div><b>?</b>Ficha trancada</div></div>
-        <div class="trancada"><div><b>?</b>Ficha trancada</div></div>
-        <div class="trancada"><div><b>?</b>Ficha trancada</div></div>
-        <div class="trancada"><div><b>?</b>Ficha trancada</div></div>
-        <div class="trancada"><div><b>?</b>Ficha trancada</div></div>
+      <div class="conteiner">
+        <div class="trancadas" data-revela-filhos aria-label="Fichas trancadas">
+          <div class="trancada"><div><b>?</b>Ficha trancada</div></div>
+          <div class="trancada"><div><b>?</b>Ficha trancada</div></div>
+          <div class="trancada"><div><b>?</b>Ficha trancada</div></div>
+          <div class="trancada"><div><b>?</b>Ficha trancada</div></div>
+          <div class="trancada"><div><b>?</b>Ficha trancada</div></div>
+          <div class="trancada"><div><b>?</b>Ficha trancada</div></div>
+        </div>
       </div>
     </section>
 
     <section class="chamada">
-      <div class="faixa-fundo"><img src="img/capturas/chuva.jpg" alt="" width="1920" height="1080" loading="lazy"></div>
-      <div class="neblina" aria-hidden="true"><span></span><span></span></div>
-      <div class="conteiner surge">
+      <div class="chamada-fundo" aria-hidden="true"><img src="img/capturas/praca-noite.jpg" alt="" width="1920" height="1080" loading="lazy"></div>
+      <div class="chamada-luz" aria-hidden="true"><img src="img/capturas/praca-noite.jpg" alt="" width="1920" height="1080" loading="lazy"></div>
+      <div class="conteiner centro" data-revela>
         <h2>Eles têm medo</h2>
-        <hr class="regua centro">
+        <hr class="regua">
         <p>Você tem uma 9 mm, uma lanterna e a noite inteira pela frente.</p>
         <a class="botao botao-grande" href="https://fabianokunst.github.io/Teewald-3d/"><span class="seta piscar">▶</span> Jogar agora</a>
-        <span class="capa-nota">Grátis · no navegador</span>
+        <span class="nota">Grátis · no navegador</span>
       </div>
+      <span class="dica" aria-hidden="true">Mexa o mouse: a lanterna vai junto</span>
     </section>
   </main>
 
+<!-- rodape:inicio -->
   <footer class="rodape">
     <div class="conteiner">
       <div>
@@ -446,6 +461,7 @@
           <li><a href="personagens.html">Personagens</a></li>
           <li><a href="jogo.html">O jogo</a></li>
           <li><a href="galeria.html">Galeria</a></li>
+          <li><a href="design.html">Sistema visual</a></li>
         </ul>
       </nav>
       <div>
@@ -464,5 +480,6 @@
     </div>
   </footer>
   <script src="js/site.js" defer></script>
+<!-- rodape:fim -->
 </body>
 </html>

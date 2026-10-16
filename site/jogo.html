@@ -1,12 +1,17 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
+<!-- cabeca:inicio -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>O jogo — Teewald</title>
   <meta name="description" content="Como se joga Teewald: combate, inventário, arquivos, estilos visuais 3D LIMPO e PS1 RETRÔ, clima, controles no teclado, no controle e no toque, e perguntas frequentes.">
-  <meta name="theme-color" content="#0c0a09">
+  <meta name="theme-color" content="#0b0908">
+  <link rel="canonical" href="https://fabianokunst.github.io/Teewald-3d/site/jogo.html">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Teewald">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:url" content="https://fabianokunst.github.io/Teewald-3d/site/jogo.html">
   <meta property="og:title" content="O jogo — Teewald">
   <meta property="og:description" content="Como se joga Teewald: combate, inventário, arquivos, estilos visuais 3D LIMPO e PS1 RETRÔ, clima, controles no teclado, no controle e no toque, e perguntas frequentes.">
   <meta property="og:image" content="https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg">
@@ -16,13 +21,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Grenze+Gotisch:wght@600&family=Special+Elite&family=Spectral:ital,wght@0,400;0,600;1,400&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/site.css">
+  <!-- com JavaScript, o que anima começa escondido; se o site.js não rodar em 3 s, tudo aparece -->
+  <script>document.documentElement.classList.add('js');setTimeout(function(){if(!window.__siteOk)document.documentElement.classList.remove('js')},3000)</script>
+<!-- cabeca:fim -->
 </head>
 <body>
+<!-- topo:inicio -->
   <a class="pular" href="#conteudo">Pular para o conteúdo</a>
   <header class="topo">
     <div class="conteiner">
       <a class="marca" href="index.html">Teewald</a>
-      <button class="menu-botao" type="button" aria-expanded="false" aria-controls="menu">☰ Menu</button>
+      <button class="menu-botao" type="button" aria-expanded="false" aria-controls="menu"><i aria-hidden="true"></i> Menu</button>
       <nav class="menu" id="menu" aria-label="Páginas do site">
         <a href="index.html">Início</a>
         <a href="historia.html">História</a>
@@ -30,17 +39,19 @@
         <a href="personagens.html">Personagens</a>
         <a href="jogo.html" aria-current="page">O jogo</a>
         <a href="galeria.html">Galeria</a>
-        <a class="botao botao-jogar-menu" href="https://fabianokunst.github.io/Teewald-3d/">▶ Jogar agora</a>
+        <a class="botao" href="https://fabianokunst.github.io/Teewald-3d/">▶ Jogar agora</a>
       </nav>
       <a class="botao botao-pequeno botao-jogar-topo" href="https://fabianokunst.github.io/Teewald-3d/">▶ Jogar</a>
     </div>
   </header>
+<!-- topo:fim -->
 
   <main id="conteudo">
-    <section class="faixa">
-      <div class="faixa-fundo"><img src="img/capturas/mira.jpg" alt="" width="1920" height="1080" fetchpriority="high"></div>
+    <section class="faixa" data-entra>
+      <div class="faixa-fundo" data-paralaxe="0.3"><img src="img/capturas/mira.jpg" alt="" width="1920" height="1080" fetchpriority="high"></div>
+      <div class="neblina" aria-hidden="true"><span></span><span></span></div>
       <div class="conteiner">
-        <span class="rotulo">O jogo</span>
+        <p class="rotulo">O jogo</p>
         <h1>Como se sobrevive</h1>
         <hr class="regua">
         <p class="intro">Terceira pessoa, câmera por cima do ombro e munição contada. Teewald é um survival horror à moda antiga, que roda direto no navegador.</p>
@@ -49,8 +60,8 @@
 
     <section class="secao">
       <div class="conteiner grade grade-2">
-        <div class="surge">
-          <span class="rotulo">Combate</span>
+        <div data-revela>
+          <p class="rotulo">Combate</p>
           <h2>Com o que tiver à mão</h2>
           <hr class="regua">
           <ul class="lista-marcada">
@@ -63,8 +74,8 @@
           </ul>
           <p class="apagado">Cada capítulo termina com uma nota, de S a C, pelas criaturas derrotadas, pelas quedas e pelo tempo. Três dificuldades: fácil, normal e difícil.</p>
         </div>
-        <figure class="foto foto-moldura surge">
-          <button class="abre-foto" type="button" data-grupo="jogo" data-legenda="Mirando por cima do ombro"><img src="img/capturas/p/mira.jpg" data-grande="img/capturas/mira.jpg" alt="O protagonista mirando a pistola por cima do ombro" width="960" height="540" loading="lazy"></button>
+        <figure class="foto foto-moldura" data-revela="imagem">
+          <button class="abre-foto" type="button" data-grupo="jogo" data-grande="img/capturas/mira.jpg" data-legenda="Mirando por cima do ombro"><span class="quadro"><img data-paralaxe="0.12" src="img/capturas/p/mira.jpg" alt="O protagonista mirando a pistola por cima do ombro" width="960" height="540" loading="lazy"></span></button>
           <figcaption>Mirando, a câmera vai para o ombro</figcaption>
         </figure>
       </div>
@@ -72,12 +83,12 @@
 
     <section class="secao">
       <div class="conteiner grade grade-2">
-        <figure class="foto foto-moldura surge">
-          <button class="abre-foto" type="button" data-grupo="jogo" data-legenda="O inventário, com o item girando em 3D"><img src="img/capturas/p/inventario.jpg" data-grande="img/capturas/inventario.jpg" alt="Tela do inventário com os espaços e um item em 3D" width="960" height="540" loading="lazy"></button>
+        <figure class="foto foto-moldura" data-revela="imagem">
+          <button class="abre-foto" type="button" data-grupo="jogo" data-grande="img/capturas/inventario.jpg" data-legenda="O inventário, com o item girando em 3D"><span class="quadro"><img data-paralaxe="0.12" src="img/capturas/p/inventario.jpg" alt="Tela do inventário com os espaços e um item em 3D" width="960" height="540" loading="lazy"></span></button>
           <figcaption>Inventário de 16 espaços</figcaption>
         </figure>
-        <div class="surge">
-          <span class="rotulo">Inventário e arquivos</span>
+        <div data-revela>
+          <p class="rotulo">Inventário e arquivos</p>
           <h2>Tudo que cabe no bolso</h2>
           <hr class="regua">
           <p>Dezesseis espaços no estilo dos survival horror de PS1, com o item girando em 3D. Equipar, carregar, comer, examinar. A vida volta com <strong>cuca</strong> e <strong>chá de marcela</strong>, e criatura derrotada às vezes larga munição.</p>
@@ -88,39 +99,39 @@
 
     <section class="secao">
       <div class="conteiner">
-        <div class="secao-cab surge">
-          <span class="rotulo">Estilo visual</span>
+        <div class="secao-cab" data-revela>
+          <p class="rotulo">Estilo visual</p>
           <h2>Dois jeitos de ver</h2>
           <hr class="regua">
           <p class="intro">Arraste a divisória. À esquerda, o 3D LIMPO; à direita, o PS1 RETRÔ. Os dois estão em OPÇÕES, junto com a iluminação.</p>
         </div>
-        <div class="comparar surge">
-          <img src="img/capturas/estilo-limpo.jpg" alt="Praça à noite no estilo 3D LIMPO" width="1920" height="1080" loading="lazy">
-          <div class="depois"><img src="img/capturas/estilo-ps1.jpg" alt="A mesma praça no estilo PS1 RETRÔ, em baixa resolução" width="1920" height="1080" loading="lazy"></div>
+        <div class="comparar" data-revela="zoom">
+          <img src="img/capturas/estilo-limpo.jpg" alt="A Matriz ao anoitecer no estilo 3D LIMPO" width="1920" height="1080" loading="lazy">
+          <div class="depois"><img src="img/capturas/estilo-ps1.jpg" alt="A mesma vista no estilo PS1 RETRÔ, em baixa resolução" width="1920" height="1080" loading="lazy"></div>
           <span class="nome nome-antes">3D LIMPO</span>
           <span class="nome nome-depois">PS1 RETRÔ</span>
-          <span class="divisor" aria-hidden="true"></span>
+          <span class="divisoria" aria-hidden="true"></span>
           <input type="range" min="0" max="100" value="50" aria-label="Divisória entre 3D LIMPO e PS1 RETRÔ">
         </div>
-        <div class="grade grade-3 espaco-acima">
-          <div class="cartao surge"><h3>3D limpo</h3><p>Resolução da própria tela, antisserrilhado e texturas suaves. Os polígonos low poly aparecem nítidos.</p></div>
-          <div class="cartao surge"><h3>PS1 retrô</h3><p>320×240 ampliado sem suavização, dithering e cor de 15 bits. Do jeito que a televisão de tubo mostrava.</p></div>
-          <div class="cartao surge"><h3>Iluminação</h3><p>AVANÇADA, com sol baixo no fim da tarde, sombras do sol e do luar e halo nos lampiões. Ou CLÁSSICA, encoberta e sem sombra.</p></div>
+        <div class="grade grade-3 espaco-acima" data-revela-filhos>
+          <div class="cartao"><h3>3D limpo</h3><p>Resolução da própria tela, antisserrilhado e texturas suaves. Os polígonos low poly aparecem nítidos.</p></div>
+          <div class="cartao"><h3>PS1 retrô</h3><p>320×240 ampliado sem suavização, dithering e cor de 15 bits. Do jeito que a televisão de tubo mostrava.</p></div>
+          <div class="cartao"><h3>Iluminação</h3><p>AVANÇADA, com sol baixo no fim da tarde, sombras do sol e do luar e halo nos lampiões. Ou CLÁSSICA, encoberta e sem sombra.</p></div>
         </div>
       </div>
     </section>
 
     <section class="secao">
       <div class="conteiner grade grade-2">
-        <div class="surge">
-          <span class="rotulo">Clima e som</span>
+        <div data-revela>
+          <p class="rotulo">Clima e som</p>
           <h2>O tempo muda</h2>
           <hr class="regua">
           <p>Tarde encoberta, anoitecer, noite fechada, neblina de madrugada, chuva, garoa e tempestade, com o trovão chegando depois do clarão. De noite a lanterna vai na frente, os lampiões da praça acendem e o resto fica no escuro.</p>
           <p>Todo som do jogo é feito em código: vento, rio, chuva no telhado, grilos, corvos, quero-quero, a madeira rangendo dentro de casa e o sino da igreja, mais alto perto da torre e abafado entre paredes. Com fone de ouvido, dá para saber de que lado vem o barulho.</p>
         </div>
-        <figure class="foto foto-moldura surge">
-          <button class="abre-foto" type="button" data-grupo="jogo" data-legenda="Tempestade"><img src="img/capturas/p/tempestade.jpg" data-grande="img/capturas/tempestade.jpg" alt="Clarão de raio sobre a cidade numa noite de tempestade" width="960" height="540" loading="lazy"></button>
+        <figure class="foto foto-moldura" data-revela="imagem">
+          <button class="abre-foto" type="button" data-grupo="jogo" data-grande="img/capturas/tempestade.jpg" data-legenda="Tempestade"><span class="quadro"><img data-paralaxe="0.12" src="img/capturas/p/tempestade.jpg" alt="Clarão de raio sobre a cidade numa noite de tempestade" width="960" height="540" loading="lazy"></span></button>
           <figcaption>Primeiro o clarão, depois o trovão</figcaption>
         </figure>
       </div>
@@ -128,70 +139,72 @@
 
     <section class="secao" id="controles">
       <div class="conteiner">
-        <div class="secao-cab surge">
-          <span class="rotulo">Controles</span>
+        <div class="secao-cab" data-revela>
+          <p class="rotulo">Controles</p>
           <h2>Teclado, controle ou toque</h2>
           <hr class="regua">
         </div>
-        <div class="abas" role="tablist" aria-label="Tipo de controle">
-          <button class="aba" type="button" role="tab" id="aba-teclado" aria-controls="painel-teclado" aria-selected="true">Teclado e mouse</button>
-          <button class="aba" type="button" role="tab" id="aba-controle" aria-controls="painel-controle" aria-selected="false" tabindex="-1">Controle</button>
-          <button class="aba" type="button" role="tab" id="aba-toque" aria-controls="painel-toque" aria-selected="false" tabindex="-1">Toque</button>
+        <div data-revela>
+          <div class="abas" role="tablist" aria-label="Tipo de controle">
+            <button class="aba" type="button" role="tab" id="aba-teclado" aria-controls="painel-teclado" aria-selected="true">Teclado e mouse</button>
+            <button class="aba" type="button" role="tab" id="aba-controle" aria-controls="painel-controle" aria-selected="false" tabindex="-1">Controle</button>
+            <button class="aba" type="button" role="tab" id="aba-toque" aria-controls="painel-toque" aria-selected="false" tabindex="-1">Toque</button>
+          </div>
+          <div class="tabela-rolagem" role="tabpanel" id="painel-teclado" aria-labelledby="aba-teclado">
+            <table class="controles">
+              <tbody>
+                <tr><td>Andar</td><td><span class="tecla">W</span><span class="tecla">A</span><span class="tecla">S</span><span class="tecla">D</span> ou setas</td></tr>
+                <tr><td>Correr</td><td><span class="tecla">Shift</span></td></tr>
+                <tr><td>Pular · esquivar</td><td><span class="tecla">Espaço</span> · <span class="tecla">C</span> ou <span class="tecla">Ctrl</span></td></tr>
+                <tr><td>Câmera</td><td>mouse (clique na tela para prender) · <span class="tecla">Q</span><span class="tecla">E</span> · roda aproxima</td></tr>
+                <tr><td>Conversar, ler, pegar, entrar</td><td><span class="tecla">F</span> ou <span class="tecla">E</span></td></tr>
+                <tr><td>Mirar · atirar</td><td>botão direito (segurar) · botão esquerdo</td></tr>
+                <tr><td>Golpe</td><td><span class="tecla">V</span> · botão esquerdo sem arma de fogo</td></tr>
+                <tr><td>Trocar de arma · recarregar</td><td><span class="tecla">1</span> a <span class="tecla">8</span> · <span class="tecla">R</span></td></tr>
+                <tr><td>Comer, beber (cura)</td><td><span class="tecla">H</span></td></tr>
+                <tr><td>Inventário · arquivos</td><td><span class="tecla">I</span> ou <span class="tecla">Tab</span> · <span class="tecla">J</span></td></tr>
+                <tr><td>Minimapa · pausa</td><td><span class="tecla">M</span> · <span class="tecla">Esc</span> ou <span class="tecla">P</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="tabela-rolagem" role="tabpanel" id="painel-controle" aria-labelledby="aba-controle" hidden>
+            <table class="controles">
+              <tbody>
+                <tr><td>Andar · câmera</td><td>analógico esquerdo · analógico direito (<span class="tecla">R3</span> centraliza)</td></tr>
+                <tr><td>Correr</td><td><span class="tecla">B</span> (segurar) ou <span class="tecla">L3</span></td></tr>
+                <tr><td>Pular · esquivar</td><td><span class="tecla">A</span> · <span class="tecla">B</span> (toque rápido)</td></tr>
+                <tr><td>Conversar, ler, pegar, entrar</td><td><span class="tecla">A</span></td></tr>
+                <tr><td>Mirar · atirar</td><td><span class="tecla">L2</span> ou <span class="tecla">LB</span> · <span class="tecla">R2</span></td></tr>
+                <tr><td>Golpe</td><td><span class="tecla">RB</span></td></tr>
+                <tr><td>Trocar de arma · recarregar</td><td>direcional ◀ ▶ · <span class="tecla">X</span></td></tr>
+                <tr><td>Comer, beber (cura)</td><td>direcional ▲</td></tr>
+                <tr><td>Inventário</td><td><span class="tecla">Y</span></td></tr>
+                <tr><td>Pausa e arquivos · minimapa</td><td><span class="tecla">Start</span> · <span class="tecla">Select</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="tabela-rolagem" role="tabpanel" id="painel-toque" aria-labelledby="aba-toque" hidden>
+            <table class="controles">
+              <tbody>
+                <tr><td>Andar</td><td>arrastar no lado esquerdo da tela</td></tr>
+                <tr><td>Câmera</td><td>arrastar no lado direito (ou no próprio ATIRAR) · toque duplo centraliza · pinça aproxima</td></tr>
+                <tr><td>Correr · pular · esquivar</td><td>botões CORRER, PULAR e ESQUIVA</td></tr>
+                <tr><td>Conversar, ler, pegar, entrar</td><td>o botão aparece em cima do morador ou do objeto</td></tr>
+                <tr><td>Mirar · atirar · golpe</td><td>MIRAR liga e desliga · ATIRAR · GOLPE</td></tr>
+                <tr><td>Arma · recarregar · cura</td><td>ARMA · REC · CURA (aparece quando você está ferido)</td></tr>
+                <tr><td>Inventário · pausa</td><td>INV · ❚❚</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="apagado espaco-acima">No controle e no toque há mira assistida (desligada, normal ou forte) e vibração nos tiros e golpes. No celular os botões da tela somem quando um controle Bluetooth é usado.</p>
         </div>
-        <div class="tabela-rolagem" role="tabpanel" id="painel-teclado" aria-labelledby="aba-teclado">
-          <table class="controles">
-            <tbody>
-              <tr><td>Andar</td><td><span class="tecla">W</span><span class="tecla">A</span><span class="tecla">S</span><span class="tecla">D</span> ou setas</td></tr>
-              <tr><td>Correr</td><td><span class="tecla">Shift</span></td></tr>
-              <tr><td>Pular · esquivar</td><td><span class="tecla">Espaço</span> · <span class="tecla">C</span> ou <span class="tecla">Ctrl</span></td></tr>
-              <tr><td>Câmera</td><td>mouse (clique na tela para prender) · <span class="tecla">Q</span><span class="tecla">E</span> · roda aproxima</td></tr>
-              <tr><td>Conversar, ler, pegar, entrar</td><td><span class="tecla">F</span> ou <span class="tecla">E</span></td></tr>
-              <tr><td>Mirar · atirar</td><td>botão direito (segurar) · botão esquerdo</td></tr>
-              <tr><td>Golpe</td><td><span class="tecla">V</span> · botão esquerdo sem arma de fogo</td></tr>
-              <tr><td>Trocar de arma · recarregar</td><td><span class="tecla">1</span> a <span class="tecla">8</span> · <span class="tecla">R</span></td></tr>
-              <tr><td>Comer, beber (cura)</td><td><span class="tecla">H</span></td></tr>
-              <tr><td>Inventário · arquivos</td><td><span class="tecla">I</span> ou <span class="tecla">Tab</span> · <span class="tecla">J</span></td></tr>
-              <tr><td>Minimapa · pausa</td><td><span class="tecla">M</span> · <span class="tecla">Esc</span> ou <span class="tecla">P</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="tabela-rolagem" role="tabpanel" id="painel-controle" aria-labelledby="aba-controle" hidden>
-          <table class="controles">
-            <tbody>
-              <tr><td>Andar · câmera</td><td>analógico esquerdo · analógico direito (<span class="tecla">R3</span> centraliza)</td></tr>
-              <tr><td>Correr</td><td><span class="tecla">B</span> (segurar) ou <span class="tecla">L3</span></td></tr>
-              <tr><td>Pular · esquivar</td><td><span class="tecla">A</span> · <span class="tecla">B</span> (toque rápido)</td></tr>
-              <tr><td>Conversar, ler, pegar, entrar</td><td><span class="tecla">A</span></td></tr>
-              <tr><td>Mirar · atirar</td><td><span class="tecla">L2</span> ou <span class="tecla">LB</span> · <span class="tecla">R2</span></td></tr>
-              <tr><td>Golpe</td><td><span class="tecla">RB</span></td></tr>
-              <tr><td>Trocar de arma · recarregar</td><td>direcional ◀ ▶ · <span class="tecla">X</span></td></tr>
-              <tr><td>Comer, beber (cura)</td><td>direcional ▲</td></tr>
-              <tr><td>Inventário</td><td><span class="tecla">Y</span></td></tr>
-              <tr><td>Pausa e arquivos · minimapa</td><td><span class="tecla">Start</span> · <span class="tecla">Select</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="tabela-rolagem" role="tabpanel" id="painel-toque" aria-labelledby="aba-toque" hidden>
-          <table class="controles">
-            <tbody>
-              <tr><td>Andar</td><td>arrastar no lado esquerdo da tela</td></tr>
-              <tr><td>Câmera</td><td>arrastar no lado direito (ou no próprio ATIRAR) · toque duplo centraliza · pinça aproxima</td></tr>
-              <tr><td>Correr · pular · esquivar</td><td>botões CORRER, PULAR e ESQUIVA</td></tr>
-              <tr><td>Conversar, ler, pegar, entrar</td><td>o botão aparece em cima do morador ou do objeto</td></tr>
-              <tr><td>Mirar · atirar · golpe</td><td>MIRAR liga e desliga · ATIRAR · GOLPE</td></tr>
-              <tr><td>Arma · recarregar · cura</td><td>ARMA · REC · CURA (aparece quando você está ferido)</td></tr>
-              <tr><td>Inventário · pausa</td><td>INV · ❚❚</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="apagado espaco-acima">No controle e no toque há mira assistida (desligada, normal ou forte) e vibração nos tiros e golpes. No celular os botões da tela somem quando um controle Bluetooth é usado.</p>
       </div>
     </section>
 
     <section class="secao">
       <div class="conteiner grade grade-2">
-        <div class="surge">
-          <span class="rotulo">Onde jogar</span>
+        <div data-revela>
+          <p class="rotulo">Onde jogar</p>
           <h2>Sem instalar nada</h2>
           <hr class="regua">
           <ul class="fichinha" aria-label="Plataformas">
@@ -203,8 +216,8 @@
             <li>Português</li><li>English</li><li>Español</li><li>Deutsch</li>
           </ul>
         </div>
-        <div class="perguntas surge">
-          <span class="rotulo">Perguntas</span>
+        <div class="perguntas" data-revela>
+          <p class="rotulo">Perguntas</p>
           <details>
             <summary>Quanto custa?</summary>
             <p>Nada. É só abrir e jogar.</p>
@@ -234,18 +247,20 @@
     </section>
 
     <section class="chamada">
-      <div class="faixa-fundo"><img src="img/capturas/praca-noite.jpg" alt="" width="1920" height="1080" loading="lazy"></div>
-      <div class="neblina" aria-hidden="true"><span></span><span></span></div>
-      <div class="conteiner surge">
+      <div class="chamada-fundo" aria-hidden="true"><img src="img/capturas/kartoffelfest-portico.jpg" alt="" width="1920" height="1080" loading="lazy"></div>
+      <div class="chamada-luz" aria-hidden="true"><img src="img/capturas/kartoffelfest-portico.jpg" alt="" width="1920" height="1080" loading="lazy"></div>
+      <div class="conteiner centro" data-revela>
         <h2>Pronto para a primeira noite?</h2>
-        <hr class="regua centro">
+        <hr class="regua">
         <p>Pistola no coldre, pente de doze e uma caixa de balas. O resto você acha pelo caminho.</p>
         <a class="botao botao-grande" href="https://fabianokunst.github.io/Teewald-3d/"><span class="seta piscar">▶</span> Jogar agora</a>
-        <span class="capa-nota">Grátis · no navegador</span>
+        <span class="nota">Grátis · no navegador</span>
       </div>
+      <span class="dica" aria-hidden="true">Mexa o mouse: a lanterna vai junto</span>
     </section>
   </main>
 
+<!-- rodape:inicio -->
   <footer class="rodape">
     <div class="conteiner">
       <div>
@@ -262,6 +277,7 @@
           <li><a href="personagens.html">Personagens</a></li>
           <li><a href="jogo.html">O jogo</a></li>
           <li><a href="galeria.html">Galeria</a></li>
+          <li><a href="design.html">Sistema visual</a></li>
         </ul>
       </nav>
       <div>
@@ -280,5 +296,6 @@
     </div>
   </footer>
   <script src="js/site.js" defer></script>
+<!-- rodape:fim -->
 </body>
 </html>

@@ -97,25 +97,26 @@ const locais = [...LOCAIS.map(([id, nome, ids]) => [id, nome, ids.map(by).filter
 const fichas = `
     <section class="secao secao-fichas" id="protagonista">
       <div class="conteiner">
-        <div class="secao-cab">
-          <span class="rotulo">Protagonista</span>
+        <div class="secao-cab" data-revela>
+          <p class="rotulo">Protagonista</p>
           <h2>Você</h2>
           <hr class="regua">
         </div>
-${heroi.map(it => card(it, 'ficha ficha-heroi')).join('\n')}
+        <div data-revela-filhos>${heroi.map(it => card(it, 'ficha ficha-heroi')).join('\n')}
+        </div>
       </div>
     </section>
 
     <section class="secao secao-fichas" id="moradores">
       <div class="conteiner">
-        <div class="secao-cab">
-          <span class="rotulo">Moradores</span>
+        <div class="secao-cab" data-revela>
+          <p class="rotulo">Moradores</p>
           <h2>Quem você vai encontrar</h2>
           <hr class="regua">
           <p class="intro">${moradores.length} moradores com fala, espalhados pela cidade. Altura, porte e postura de cada ficha valem no jogo, e os traços do rosto (rugas, olheiras, sardas, barba por fazer, pinta, cicatriz) estão pintados na textura.</p>
         </div>
-${locais.map(([id, nome, lista]) => `        <h3 class="local-titulo" id="${id}">${esc(nome)}</h3>
-        <div class="fichas">${lista.map(it => card(it)).join('')}
+${locais.map(([id, nome, lista]) => `        <h3 class="local-titulo" id="${id}" data-revela>${esc(nome)}</h3>
+        <div class="fichas" data-revela-filhos>${lista.map(it => card(it)).join('')}
         </div>`).join('\n')}
       </div>
     </section>

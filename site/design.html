@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<!-- cabeca:inicio -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sistema visual — Teewald</title>
+  <meta name="description" content="O sistema visual do site de Teewald: cores, letras, espaços, movimento e componentes.">
+  <meta name="theme-color" content="#0b0908">
+  <link rel="canonical" href="https://fabianokunst.github.io/Teewald-3d/site/design.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Teewald">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:url" content="https://fabianokunst.github.io/Teewald-3d/site/design.html">
+  <meta property="og:title" content="Sistema visual — Teewald">
+  <meta property="og:description" content="O sistema visual do site de Teewald: cores, letras, espaços, movimento e componentes.">
+  <meta property="og:image" content="https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mapa.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23201510'/%3E%3Cpath d='M8 1 L11 7 H9 V15 H7 V7 H5 Z' fill='%23d8a050'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Grenze+Gotisch:wght@600&family=Special+Elite&family=Spectral:ital,wght@0,400;0,600;1,400&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css">
+  <!-- com JavaScript, o que anima começa escondido; se o site.js não rodar em 3 s, tudo aparece -->
+  <script>document.documentElement.classList.add('js');setTimeout(function(){if(!window.__siteOk)document.documentElement.classList.remove('js')},3000)</script>
+<!-- cabeca:fim -->
+</head>
+<body>
+<!-- topo:inicio -->
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  <header class="topo">
+    <div class="conteiner">
+      <a class="marca" href="index.html">Teewald</a>
+      <button class="menu-botao" type="button" aria-expanded="false" aria-controls="menu"><i aria-hidden="true"></i> Menu</button>
+      <nav class="menu" id="menu" aria-label="Páginas do site">
+        <a href="index.html">Início</a>
+        <a href="historia.html">História</a>
+        <a href="cidade.html">A cidade</a>
+        <a href="personagens.html">Personagens</a>
+        <a href="jogo.html">O jogo</a>
+        <a href="galeria.html">Galeria</a>
+        <a class="botao" href="https://fabianokunst.github.io/Teewald-3d/">▶ Jogar agora</a>
+      </nav>
+      <a class="botao botao-pequeno botao-jogar-topo" href="https://fabianokunst.github.io/Teewald-3d/">▶ Jogar</a>
+    </div>
+  </header>
+<!-- topo:fim -->
+
+  <main id="conteudo">
+    <section class="faixa faixa-baixa" data-entra>
+      <div class="faixa-fundo" data-paralaxe="0.3"><img src="img/capturas/mapa.jpg" alt="" width="1920" height="1080" fetchpriority="high"></div>
+      <div class="neblina" aria-hidden="true"><span></span><span></span></div>
+      <div class="conteiner">
+        <p class="rotulo">Sistema visual</p>
+        <h1>Como o site se veste</h1>
+        <hr class="regua">
+        <p class="intro">As cores, as letras, os espaços e o movimento do site de Teewald, tirados do próprio jogo. Tudo mora em <code>css/site.css</code>, em camadas; esta página mostra cada peça funcionando.</p>
+      </div>
+    </section>
+
+    <section class="secao">
+      <div class="conteiner">
+        <div class="secao-cab" data-revela>
+          <p class="rotulo">Princípios</p>
+          <h2>Quatro regras</h2>
+          <hr class="regua">
+        </div>
+        <div class="grade grade-4" data-revela-filhos>
+          <div class="cartao"><h3>O escuro primeiro</h3><p>O fundo é quase preto e quente, como a noite de Teewald. A luz é rara, e por isso chama o olho.</p></div>
+          <div class="cartao"><h3>Luz de lampião</h3><p>O dourado marca o que se pode fazer: botões, links, a página atual. O vermelho é perigo e sangue, e aparece pouco.</p></div>
+          <div class="cartao"><h3>Quina de PS1</h3><p>Sem canto arredondado. Botões chanfrados como as janelas do menu, ícones em pixel e a letra dos menus do jogo.</p></div>
+          <div class="cartao"><h3>Devagar, como neblina</h3><p>O movimento entra com calma e se assenta rápido. Tudo para quando o sistema pede menos movimento.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="secao">
+      <div class="conteiner">
+        <div class="secao-cab" data-revela>
+          <p class="rotulo">Cores</p>
+          <h2>Noite, osso e lampião</h2>
+          <hr class="regua">
+          <p class="intro">Os componentes usam só os papéis (<code>--cor-*</code>). A paleta bruta (<code>--noite-950</code>, <code>--lampiao-400</code>...) fica por trás deles, num lugar só.</p>
+        </div>
+        <div class="amostras" data-revela-filhos>
+          <div class="amostra" style="--c: var(--cor-fundo)"><i></i><b>Fundo</b><code>--cor-fundo</code></div>
+          <div class="amostra" style="--c: var(--cor-fundo-2)"><i></i><b>Fundo 2</b><code>--cor-fundo-2</code></div>
+          <div class="amostra" style="--c: var(--cor-superficie)"><i></i><b>Superfície</b><code>--cor-superficie</code></div>
+          <div class="amostra" style="--c: var(--cor-superficie-2)"><i></i><b>Superfície 2</b><code>--cor-superficie-2</code></div>
+          <div class="amostra" style="--c: var(--cor-borda)"><i></i><b>Borda</b><code>--cor-borda</code></div>
+          <div class="amostra" style="--c: var(--cor-borda-viva)"><i></i><b>Borda viva</b><code>--cor-borda-viva</code></div>
+          <div class="amostra" style="--c: var(--cor-texto-forte)"><i></i><b>Texto forte</b><code>--cor-texto-forte</code></div>
+          <div class="amostra" style="--c: var(--cor-texto)"><i></i><b>Texto</b><code>--cor-texto</code></div>
+          <div class="amostra" style="--c: var(--cor-texto-suave)"><i></i><b>Texto suave</b><code>--cor-texto-suave</code></div>
+          <div class="amostra" style="--c: var(--cor-texto-fraco)"><i></i><b>Texto fraco</b><code>--cor-texto-fraco</code></div>
+          <div class="amostra" style="--c: var(--cor-destaque)"><i></i><b>Lampião</b><code>--cor-destaque</code></div>
+          <div class="amostra" style="--c: var(--cor-destaque-forte)"><i></i><b>Lampião forte</b><code>--cor-destaque-forte</code></div>
+          <div class="amostra" style="--c: var(--cor-metal)"><i></i><b>Latão</b><code>--cor-metal</code></div>
+          <div class="amostra" style="--c: var(--cor-perigo)"><i></i><b>Perigo</b><code>--cor-perigo</code></div>
+          <div class="amostra" style="--c: var(--cor-sangue)"><i></i><b>Sangue</b><code>--cor-sangue</code></div>
+          <div class="amostra" style="--c: var(--cor-frio)"><i></i><b>Luar</b><code>--cor-frio</code></div>
+          <div class="amostra" style="--c: var(--papel-200)"><i></i><b>Papel</b><code>--papel-200</code></div>
+          <div class="amostra" style="--c: var(--bilhete)"><i></i><b>Bilhete</b><code>--bilhete</code></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="secao">
+      <div class="conteiner">
+        <div class="secao-cab" data-revela>
+          <p class="rotulo">Letras</p>
+          <h2>Cinco vozes</h2>
+          <hr class="regua">
+          <p class="intro">Cada letra tem um papel e não pega o dos outros. As de título e de menu são as mesmas do jogo.</p>
+        </div>
+        <div class="grade grade-2" data-revela-filhos>
+          <div class="cartao"><p class="rotulo">Títulos · <code>--fonte-titulo</code></p><p style="font: 600 var(--t-6)/1 var(--fonte-titulo); color: var(--cor-texto-forte)">Grenze Gotisch</p><p>O gótico do logo. Só em títulos grandes.</p></div>
+          <div class="cartao"><p class="rotulo">Menus e rótulos · <code>--fonte-ui</code></p><p style="font: var(--ui-5)/1 var(--fonte-ui); color: var(--cor-destaque)">VT323 ▶</p><p>A letra dos menus do jogo: botões, rótulos, legendas, números.</p></div>
+          <div class="cartao"><p class="rotulo">Texto · <code>--fonte-texto</code></p><p style="font: italic 400 var(--t-5)/1.2 var(--fonte-texto); color: var(--cor-texto-forte)">Spectral</p><p>Para ler: parágrafos, citações e perguntas.</p></div>
+          <div class="cartao"><p class="rotulo">Documentos e bilhetes · <code>--fonte-maquina</code> · <code>--fonte-mao</code></p><p style="font: var(--t-4)/1.2 var(--fonte-maquina); color: var(--cor-texto-forte)">Special Elite</p><p style="font: 600 var(--t-5)/1.1 var(--fonte-mao); color: var(--bilhete)">Caveat, a lápis</p></div>
+        </div>
+        <div class="escala espaco-acima-grande" data-revela>
+          <div><code>--t-8</code><span class="amostra-texto" style="font: 600 var(--t-8)/1 var(--fonte-titulo)">Teewald</span></div>
+          <div><code>--t-7</code><span class="amostra-texto" style="font: 600 var(--t-7)/1.05 var(--fonte-titulo)">Mato do chá</span></div>
+          <div><code>--t-6</code><span class="amostra-texto" style="font: 600 var(--t-6)/1.05 var(--fonte-titulo)">Procura-se</span></div>
+          <div><code>--t-5</code><span class="amostra-texto" style="font: italic var(--t-5)/1.2 var(--fonte-texto)">Alguma coisa anda no mato.</span></div>
+          <div><code>--t-4</code><span class="amostra-texto" style="font: 600 var(--t-4)/1.2 var(--fonte-titulo)">Survival horror clássico</span></div>
+          <div><code>--t-3</code><span class="amostra-texto" style="font-size: var(--t-3)">Começou longe, no interior. Depois foi chegando perto das casas.</span></div>
+          <div><code>--t-2</code><span class="amostra-texto" style="font-size: var(--t-2)">Texto corrido, o tamanho de leitura do site.</span></div>
+          <div><code>--t-1 · --t-0</code><span class="amostra-texto" style="font-size: var(--t-0)">Notas, fichas e letras miúdas do rodapé.</span></div>
+          <div><code>--ui-1 a --ui-5</code><span class="amostra-texto" style="font: var(--ui-3)/1 var(--fonte-ui); letter-spacing: .06em">▶ INÍCIO  HISTÓRIA  PRESSIONE ENTER</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="secao">
+      <div class="conteiner grade grade-2">
+        <div data-revela>
+          <p class="rotulo">Espaço</p>
+          <h2>Passos de 4</h2>
+          <hr class="regua">
+          <p>Margens e intervalos andam numa escala de <code>--e-1</code> (4 px) a <code>--e-10</code> (128 px). As seções respiram com <code>--secao</code> e a margem lateral com <code>--margem</code>, que crescem com a tela.</p>
+        </div>
+        <div class="escala" data-revela>
+          <div><code>--e-2 · 8</code><span class="barra-espaco" style="width: var(--e-2)"></span></div>
+          <div><code>--e-4 · 16</code><span class="barra-espaco" style="width: var(--e-4)"></span></div>
+          <div><code>--e-5 · 24</code><span class="barra-espaco" style="width: var(--e-5)"></span></div>
+          <div><code>--e-6 · 32</code><span class="barra-espaco" style="width: var(--e-6)"></span></div>
+          <div><code>--e-7 · 48</code><span class="barra-espaco" style="width: var(--e-7)"></span></div>
+          <div><code>--e-8 · 64</code><span class="barra-espaco" style="width: var(--e-8)"></span></div>
+          <div><code>--e-9 · 96</code><span class="barra-espaco" style="width: var(--e-9)"></span></div>
+          <div><code>--e-10 · 128</code><span class="barra-espaco" style="width: var(--e-10)"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="secao">
+      <div class="conteiner">
+        <div class="secao-cab" data-revela>
+          <p class="rotulo">Movimento</p>
+          <h2>Como a neblina</h2>
+          <hr class="regua">
+          <p class="intro">Cinco durações (<code>--dur-1</code> 120 ms a <code>--dur-5</code> 1,6 s) e quatro curvas. A mais usada é <code>--ease-sai</code>: começa rápido e assenta devagar.</p>
+        </div>
+        <div class="demo-mov tocando" id="demo-mov" data-revela-filhos>
+          <div style="--e: var(--ease-sai)"><code>--ease-sai</code></div>
+          <div style="--e: var(--ease-meio)"><code>--ease-meio</code></div>
+          <div style="--e: var(--ease-entra)"><code>--ease-entra</code></div>
+          <div style="--e: var(--ease-mola)"><code>--ease-mola</code></div>
+        </div>
+        <p class="espaco-acima"><button class="botao botao-pequeno" type="button" data-tocar="demo-mov">▶ Tocar de novo</button></p>
+        <div class="secao-cab espaco-acima-grande" data-revela>
+          <p class="rotulo">Revelar ao rolar</p>
+          <p>Qualquer bloco ganha <code>data-revela</code> (sobe), <code>="esquerda"</code>, <code>="direita"</code>, <code>="zoom"</code>, <code>="imagem"</code> (cortina de baixo para cima) ou <code>="papel"</code> (cai girando, como papel pregado). Um grupo com <code>data-revela-filhos</code> aparece um a um, de <code>--passo</code> em <code>--passo</code>. Fotos de fundo com <code>data-paralaxe="0.3"</code> andam mais devagar que a página.</p>
+        </div>
+        <div class="grade grade-3">
+          <div class="cartao" data-revela><code>data-revela</code><p>sobe e aparece</p></div>
+          <div class="cartao" data-revela="esquerda"><code>="esquerda"</code><p>entra pela esquerda</p></div>
+          <div class="cartao" data-revela="direita"><code>="direita"</code><p>entra pela direita</p></div>
+          <div class="cartao" data-revela="zoom"><code>="zoom"</code><p>cresce um pouco</p></div>
+          <figure class="foto" data-revela="imagem"><img src="img/capturas/p/kartoffelfest-portico.jpg" alt="O pórtico da Kartoffelfest à noite" width="960" height="540" loading="lazy"><figcaption><code>="imagem"</code></figcaption></figure>
+          <figure class="papel" data-revela="papel" style="--giro: -2deg"><img src="img/documentos/programa.png" alt="Programa da Kartoffelfest" width="1440" height="927" loading="lazy"><figcaption>="papel"</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="secao">
+      <div class="conteiner">
+        <div class="secao-cab" data-revela>
+          <p class="rotulo">Componentes</p>
+          <h2>As peças</h2>
+          <hr class="regua">
+        </div>
+        <div class="pilha" data-revela-filhos>
+          <div class="bloco-demo">
+            <p class="rotulo">Botões · <code>.botao</code> <code>.botao-grande</code> <code>.botao-pequeno</code> <code>.botao-contorno</code></p>
+            <div class="vitrine">
+              <a class="botao botao-grande" href="https://fabianokunst.github.io/Teewald-3d/"><span class="seta piscar">▶</span> Jogar agora</a>
+              <a class="botao" href="historia.html">Botão</a>
+              <a class="botao botao-pequeno" href="galeria.html">Pequeno</a>
+              <a class="botao botao-contorno" href="cidade.html">Contorno</a>
+            </div>
+          </div>
+          <div class="bloco-demo">
+            <p class="rotulo">Selos, fichinhas e teclas · <code>.selo</code> <code>.fichinha</code> <code>.tecla</code></p>
+            <div class="vitrine">
+              <span class="selo">PS1 RETRÔ</span>
+              <span class="selo selo-perigo">Urgente</span>
+              <ul class="fichinha"><li>PC</li><li>Celular</li><li>Controle</li></ul>
+              <span><span class="tecla">W</span><span class="tecla">A</span><span class="tecla">S</span><span class="tecla">D</span> <span class="tecla">Shift</span> <span class="tecla">R2</span></span>
+            </div>
+          </div>
+          <div class="bloco-demo">
+            <p class="rotulo">Cabeçalho de seção · <code>.rotulo</code> <code>h2</code> <code>.regua</code> <code>.intro</code></p>
+            <div class="secao-cab" style="margin-bottom: 0">
+              <p class="rotulo">Rótulo</p>
+              <h2>Título da seção</h2>
+              <hr class="regua">
+              <p class="intro">A introdução fica num tamanho maior, com no máximo umas sessenta letras por linha.</p>
+            </div>
+          </div>
+          <div class="bloco-demo grade grade-2">
+            <blockquote class="citacao">
+              <p>Agora eu só pesco de dia. E tu devia fazer o mesmo.</p>
+              <footer>Citação · <code>.citacao</code></footer>
+            </blockquote>
+            <div class="bilhete" style="--giro: 2deg"><p class="nota-mao">Bilhete a lápis · .bilhete</p></div>
+          </div>
+          <div class="bloco-demo grade grade-3">
+            <article class="cartao"><svg class="icone" viewBox="0 0 16 16" fill="currentColor" fill-rule="evenodd" shape-rendering="crispEdges" aria-hidden="true"><path d="M5 0h1v1H5zM6 1h1v1H6zM10 0h1v1h-1zM9 1h1v1H9zM7 2h2v1H7zM1 3h14v10H1zM3 5h8v6H3zM12 5h2v1h-2zM12 7h2v1h-2zM3 13h2v1H3zM11 13h2v1h-2z"/></svg><h3>Cartão</h3><p><code>.cartao</code>: passe o mouse, a lanterna acende onde ele está.</p></article>
+            <article class="cartao cartao-imagem"><img src="img/capturas/p/lua.jpg" alt="" width="960" height="540" loading="lazy"><span class="selo">Selo</span><h3>Cartão com foto</h3><p><code>.cartao-imagem</code></p></article>
+            <div class="trancada"><div><b>?</b>Ficha trancada<br><code>.trancada</code></div></div>
+          </div>
+          <div class="bloco-demo">
+            <p class="rotulo">Abas · <code>role="tablist"</code></p>
+            <div class="abas" role="tablist" aria-label="Exemplo de abas">
+              <button class="aba" type="button" role="tab" id="d-aba-1" aria-controls="d-painel-1" aria-selected="true">Primeira</button>
+              <button class="aba" type="button" role="tab" id="d-aba-2" aria-controls="d-painel-2" aria-selected="false" tabindex="-1">Segunda</button>
+            </div>
+            <div role="tabpanel" id="d-painel-1" aria-labelledby="d-aba-1"><p class="apagado">Painel da primeira aba. As setas do teclado trocam de aba.</p></div>
+            <div role="tabpanel" id="d-painel-2" aria-labelledby="d-aba-2" hidden><p class="apagado">Painel da segunda aba.</p></div>
+          </div>
+          <div class="bloco-demo">
+            <p class="rotulo">Divisor · <code>.divisor</code></p>
+            <div class="divisor" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<!-- rodape:inicio -->
+  <footer class="rodape">
+    <div class="conteiner">
+      <div>
+        <a class="marca" href="index.html">Teewald</a>
+        <p class="rodape-texto">Survival horror independente com cara de PlayStation 1, feito por Fabiano Kunst.</p>
+        <a class="botao botao-pequeno" href="https://fabianokunst.github.io/Teewald-3d/">▶ Jogar no navegador</a>
+      </div>
+      <nav aria-label="Páginas do site (rodapé)">
+        <h3>O site</h3>
+        <ul>
+          <li><a href="index.html">Início</a></li>
+          <li><a href="historia.html">História</a></li>
+          <li><a href="cidade.html">A cidade</a></li>
+          <li><a href="personagens.html">Personagens</a></li>
+          <li><a href="jogo.html">O jogo</a></li>
+          <li><a href="galeria.html">Galeria</a></li>
+          <li><a href="design.html">Sistema visual</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h3>O jogo</h3>
+        <ul>
+          <li>Grátis, direto no navegador</li>
+          <li>PC, celular e tablet</li>
+          <li>Teclado e mouse, controle ou toque</li>
+          <li>Português, English, Español, Deutsch</li>
+        </ul>
+      </div>
+      <div class="letras">
+        <p><strong>Obra de ficção.</strong> Todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores.</p>
+        <p>Imagens capturadas do próprio jogo. Dados de mapa © colaboradores do OpenStreetMap (ODbL). Contornos de prédios: Microsoft Global ML Building Footprints (ODbL). Relevo: SRTM.</p>
+      </div>
+    </div>
+  </footer>
+  <script src="js/site.js" defer></script>
+<!-- rodape:fim -->
+</body>
+</html>
