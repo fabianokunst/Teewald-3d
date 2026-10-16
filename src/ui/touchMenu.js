@@ -1,4 +1,5 @@
-import { drawText, FONT_TITLE } from './overlay.js';
+import { drawText, textSprite, FONT_TITLE } from './overlay.js';
+import { tr } from '../i18n/index.js';
 import { CREDITS, SITE, statusLine } from './menu.js';
 import { buzz } from '../engine/touch.js';
 
@@ -177,7 +178,7 @@ export class TouchMenu {
     const R = Math.round;
 
     const text = (str, x, y, size, color = C.text, o = {}) =>
-      drawText(g, str, P(x), P(y), Math.max(9, R(P(size))), { color, align: o.align || 'left', font: o.font, alpha: o.alpha, shadow: o.shadow });
+      drawText(g, str, P(x), P(y), Math.max(9, R(P(size))), { color, align: o.align || 'left', font: o.font, alpha: o.alpha, shadow: o.shadow, raw: o.raw });
     const fill = (x, y, w, h, color, a = 1) => { g.globalAlpha = a; g.fillStyle = color; g.fillRect(R(P(x)), R(P(y)), R(P(w)), R(P(h))); g.globalAlpha = 1; };
     const frame = (x, y, w, h, color, a = 1) => {
       g.globalAlpha = a; g.strokeStyle = color; g.lineWidth = lw;
@@ -191,7 +192,10 @@ export class TouchMenu {
       if (!on) fill(x + 1.5 * s, y + 1.5 * s, w - 3 * s, Math.max(s, 2), C.hi, 0.9);
       frame(x, y, w, h, o.danger ? C.danger : on ? C.gold : C.edge, 0.85);
       const size = o.size || h * 0.42;
-      const px = Math.max(9, R(P(size)));
+      let px = Math.max(9, R(P(size)));
+      // o texto traduzido pode ser mais comprido: encolhe para caber no botão
+      const tw = textSprite(label, px).w, room = P(w - 10);
+      if (tw > room) px = Math.max(9, Math.floor(px * room / tw));
       drawText(g, label, P(x + w / 2), P(y + h / 2) - px * 0.62, px,
         { align: 'center', color: on ? C.dark : o.color || C.text, shadow: on ? null : undefined });
     };
@@ -334,16 +338,17 @@ export class TouchMenu {
       const btn = Math.min(rh - 8, 48), valW = Math.max(88, Math.min(150, colW * 0.3));
       const gx = x + colW - (2 * btn + valW + 8);
       // nome da opção (encolhe ou quebra em duas linhas para caber)
-      const label = it.label.replace(/\s*\(TECLA.*\)/, '');
+      // traduzido antes de medir e quebrar; sai a tecla entre parênteses: '(TECLA M)'
+      const label = tr(it.label).replace(/\s*\([^)]*\b[A-Z]\b[^)]*\)$/, '');
       const maxW = gx - x - 10;
       let size = Math.min(rh * 0.38, maxW / (label.length * 0.47));
-      if (size >= 15 || !label.includes(' ')) text(label, x + 8, y + (rh - size * 1.2) / 2, size, C.text);
+      if (size >= 15 || !label.includes(' ')) text(label, x + 8, y + (rh - size * 1.2) / 2, size, C.text, { raw: true });
       else {
         const sp = label.lastIndexOf(' ', Math.ceil(label.length / 2) + 2);
         const a = sp > 0 ? label.slice(0, sp) : label, b = sp > 0 ? label.slice(sp + 1) : '';
         size = Math.min(rh * 0.32, maxW / (Math.max(a.length, b.length) * 0.47));
-        text(a, x + 8, y + rh / 2 - size * 1.15, size, C.text);
-        text(b, x + 8, y + rh / 2 + size * 0.05, size, C.text);
+        text(a, x + 8, y + rh / 2 - size * 1.15, size, C.text, { raw: true });
+        text(b, x + 8, y + rh / 2 + size * 0.05, size, C.text, { raw: true });
       }
       const by = y + (rh - btn) / 2;
       button(`opt:${it.idx}:-1`, gx, by, btn, btn, '◀', { size: btn * 0.5 });
@@ -355,9 +360,9 @@ export class TouchMenu {
         const n = o.values.length - 1, sw = (valW - 8) / n;
         for (let j = 0; j < n; j++) fill(vx + 4 + j * sw + 1, by + btn * 0.3, sw - 2, btn * 0.4, j < val ? C.gold : '#3a2c1e', j < val ? 0.95 : 0.8);
       } else {
-        const t = o.fmt(val).replace(' (PS1)', ' PS1');
+        const t = tr(o.fmt(val)).replace(' (PS1)', ' PS1');
         const ts = Math.min(btn * 0.46, (valW - 6) / (t.length * 0.47));
-        text(t, vx + valW / 2, by + (btn - ts * 1.2) / 2, ts, '#fff2d0', { align: 'center' });
+        text(t, vx + valW / 2, by + (btn - ts * 1.2) / 2, ts, '#fff2d0', { align: 'center', raw: true });
       }
     });
     g.restore();

@@ -1,4 +1,4 @@
-import { drawText, panel, FONT_TITLE, FONT_UI } from './overlay.js';
+import { drawText, textSprite, panel, FONT_TITLE, FONT_UI } from './overlay.js';
 import { saveSettings } from '../config.js';
 import { DIFFICULTY_NAMES } from '../game/difficulty.js';
 import { LAST_CHAPTER } from '../game/chapters/index.js';
@@ -288,9 +288,11 @@ export class Menu {
       const y = y0 + i * step, on = i === this.sel;
       const color = on ? '#f2c879' : '#c8b898';
       if (it.opt) {
-        drawText(g, it.label, W / 2 - 140 * k, y, fs, { color });
         const v = tr(it.opt.fmt(this.settings[it.opt.key])), arrows = on || touch;
         const s = drawText(g, (arrows ? '◀ ' : '') + v + (arrows ? ' ▶' : ''), W / 2 + 140 * k, y, fs, { align: 'right', color: on ? '#fff2d0' : '#a89878', font: FONT_UI, raw: true });
+        // rótulo traduzido comprido: letra menor, para não encostar no valor
+        const room = 272 * k - textSprite('◀ ' + v + ' ▶', Math.round(fs), FONT_UI, undefined, undefined, true, true).w, lw = textSprite(it.label, Math.round(fs), FONT_UI, color).w;
+        drawText(g, it.label, W / 2 - 140 * k, y, lw > room ? fs * room / lw : fs, { color });
         const right = W / 2 + 140 * k;
         this.rects.push([W / 2 - 140 * k, y, 280 * k, step, { lo: right - s.w - 10 * k, mid: right - s.w / 2 }]);
       } else {

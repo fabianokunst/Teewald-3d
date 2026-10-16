@@ -1,4 +1,4 @@
-import { drawText } from '../ui/overlay.js';
+import { drawText, textSprite } from '../ui/overlay.js';
 import { settings } from '../config.js';
 
 // Controles de toque (celular e tablet). No jogo: analógico flutuante à esquerda,
@@ -301,7 +301,10 @@ export class TouchControls {
       g.globalAlpha = 1;
     };
     const label = (text, x, y, size, color, alpha = 0.95) => {
-      const px = Math.max(10, Math.round(P(size)));
+      let px = Math.max(10, Math.round(P(size)));
+      // tradução mais comprida que o português: letra menor, para caber no botão
+      const w0 = textSprite(text, px, undefined, color, null, true, true).w, w1 = textSprite(text, px, undefined, color, null, true).w;
+      if (w1 > w0 * 1.08) px = Math.max(8, Math.floor(px * w0 * 1.08 / w1));
       // texto escuro (botão aceso) vai sem sombra, senão vira um borrão
       drawText(g, text, P(x), P(y) - px * 0.66, px, { align: 'center', color, alpha, shadow: color === '#140c08' ? null : undefined });
     };
