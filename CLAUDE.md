@@ -22,6 +22,16 @@ pedaços que o código encaixa). Sem tradução, aparece o português. O idioma 
   tradução (texto montado no código); `npm run traduzir -- --vistos <arquivo>` põe esse texto nos
   dicionários, na parte `extra`.
 
+## Site (pasta `site/`)
+
+O site promocional do jogo fica em `site/`, separado do jogo (HTML, CSS e JS estáticos; o
+README explica as páginas e os comandos). Regras: **nada de spoiler** (só o que o jogador
+descobre logo que chega na cidade: nenhuma criatura além do cartaz do chupacabras, nada da
+bruxa nem dos capítulos seguintes) e todo texto novo no tom do jogo. As fotos saem de
+`npm run capturas` e as fichas de `personagens.html` de `npm run retratos`; não edite à mão o
+trecho entre `<!-- fichas:inicio -->` e `<!-- fichas:fim -->`. O cabeçalho e o rodapé se
+repetem em todas as páginas: mudou um, mude nos seis arquivos.
+
 ## Sincronização entre computadores (GitHub)
 
 O projeto é editado em dois computadores. A fonte da verdade é a branch `main` de

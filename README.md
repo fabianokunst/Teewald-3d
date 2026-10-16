@@ -417,6 +417,33 @@ animação do jogo é procedural (IK em código), então o arquivo leva o esquel
 nenhum clipe de animação. O código fica em `src/engine/exporter.js`, carregado só
 quando chamado.
 
+## Site do jogo
+
+A pasta `site/` é o site promocional do Teewald, separado do jogo: HTML, CSS e JavaScript
+estáticos, sem nada do código do jogo. No build ela vai inteira para `dist/site/`, e o GitHub
+Pages publica em https://fabianokunst.github.io/Teewald-3d/site/ (com o jogo rodando no
+`npm run dev`, fica em `http://localhost:5173/site/`). Todas as páginas têm o botão JOGAR,
+que leva a https://fabianokunst.github.io/Teewald-3d/.
+
+- Páginas: `index.html` (início), `historia.html`, `cidade.html`, `personagens.html`,
+  `jogo.html` (combate, estilos visuais, controles, perguntas) e `galeria.html`. O estilo
+  fica em `site/css/site.css` (as cores e as letras do menu do jogo) e o menu do celular, as
+  abas, o filtro da galeria, a foto ampliada e a comparação 3D LIMPO × PS1 RETRÔ em
+  `site/js/site.js`.
+- **Sem spoiler**: o site só conta o que o jogador ouve e lê logo que chega na cidade.
+  Nada dos capítulos depois do primeiro, das criaturas (as fichas delas aparecem trancadas),
+  da bruxa ou das armas especiais.
+- `npm run capturas` tira de novo as fotos do jogo usadas no site (`tools/capturas-site.mjs`):
+  abre o jogo num Chrome sem janela, monta cada cena com a câmera livre e grava
+  `site/img/capturas/<nome>.jpg` (1920×1080) e `site/img/capturas/p/<nome>.jpg` (960×540).
+  `npm run capturas -- igreja praca` refaz só essas. Precisa da placa de vídeo
+  (`CHROME_SW=1` usa o SwiftShader, bem mais lento).
+- `npm run retratos` refaz as fichas de `site/personagens.html` (só o trecho entre
+  `<!-- fichas:inicio -->` e `<!-- fichas:fim -->`) e os retratos em `site/img/personagens/`:
+  o protagonista e os moradores. Os personagens da campanha e as criaturas ficam de fora, e
+  `SEM_SPOILER` (em `tools/retratos.mjs`) troca o que a ficha de um morador entrega da história.
+- Os papéis em `site/img/documentos/` são recortes das imagens de `shots/pt/` (`node shots.mjs`).
+
 ## Estrutura
 
 ```
@@ -427,7 +454,9 @@ src/game     personagem, controle do jogador, câmera, itens, armas, mira assist
              moradores, missão 1, campanha (campaign.js) e capítulos (chapters/)
 src/game/creatures  chupacabras na gruta, cão de fogo, morcegos, fantasmas, ETs e disco, Fera, lobisomem, bruxa
 src/ui       menu, HUD, inventário, diálogo e textos
-tools/       build-mapdata.mjs (regera os dados do mapa), exportar.mjs (modelos .glb), capturas de teste
+tools/       build-mapdata.mjs (regera os dados do mapa), exportar.mjs (modelos .glb), capturas de teste,
+             retratos.mjs e capturas-site.mjs (imagens do site)
+site/        site promocional do jogo (HTML estático, separado do jogo)
 texture/     texturas do projeto (servidas como pasta pública)
 ```
 

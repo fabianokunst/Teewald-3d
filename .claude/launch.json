@@ -6,6 +6,12 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["vite", "--port", "5173"],
       "port": 5173
+    },
+    {
+      "name": "teewald-site",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite", "--port", "5180", "--strictPort"],
+      "port": 5180
     }
   ]
 }

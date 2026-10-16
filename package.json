@@ -13,6 +13,7 @@
     "audit": "node tools/audit.mjs",
     "teste": "node tools/test-campaign.mjs",
     "retratos": "node tools/retratos.mjs",
+    "capturas": "node tools/capturas-site.mjs",
     "exportar": "node tools/exportar.mjs",
     "traduzir": "node tools/traduzir.mjs",
     "sons": "node tools/sons.mjs"

@@ -473,7 +473,7 @@ export const GENERIC = {
   bell: ['O sino...', 'Quem tá tocando o sino?', 'Credo... o sino de novo.', 'Mein Gott, o sino!'],
 };
 
-// Fichas dos moradores. Vão para o modelo e para a página personagens/ (npm run retratos):
+// Fichas dos moradores. Vão para o modelo e para a página de personagens do site (npm run retratos):
 // altura (m) e porte (magro · médio · forte · gordo) dão a escala do corpo; curvado inclina
 // o tronco; tracos entram no look e pintam o rosto (heroTexture.js: old 2, brows, bags,
 // ruddy, freckles, stubble, mole, scar). O resto é descrição.
