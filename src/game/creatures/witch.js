@@ -36,7 +36,7 @@ function grit(a) {
     for (let i = 0; i < n; i++) { const x = (i / (n - 1)) * 2 - 1; cv[i] = Math.tanh(x * 7); }
     s = c.createWaveShaper(); s.curve = cv;
     const g = c.createGain(); g.gain.value = 0.22;
-    s.connect(g).connect(a.master);
+    s.connect(g).connect(a.bus?.creatures || a.master);
     GRIT.set(a, s);
   }
   return s;
@@ -49,7 +49,7 @@ export const SND = {
     const c = a.ctx, t = c.currentTime, v = fall(d, 90);
     const bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 3;
     bp.frequency.setValueAtTime(480, t); bp.frequency.linearRampToValueAtTime(820, t + dur * 0.5); bp.frequency.linearRampToValueAtTime(420, t + dur);
-    bp.connect(a.master);
+    bp.connect(a.out ? a.out('creatures') : a.master);
     tone(a, t, dur, { f: 98, f1: 92, vol: 0.12 * v, attack: 0.4, vib: 3, vibF: 5, out: bp });
     tone(a, t, dur, { f: 147, f1: 139, vol: 0.08 * v, attack: 0.5, vib: 4, vibF: 6.5, out: bp });
     noise(a, t, dur, { type: 'bandpass', f: 2400, q: 6, vol: 0.03 * v, attack: 0.7 });
@@ -105,8 +105,8 @@ export const SND = {
   flare(a, d = 0) {
     if (!okA(a) || fall(d, 60) <= 0) return;
     const t = a.ctx.currentTime, v = fall(d, 60);
-    noise(a, t, 0.7, { f: 900, f1: 260, q: 0.8, vol: 0.22 * v, attack: 0.02 });
-    tone(a, t, 0.5, { type: 'sine', f: 90, f1: 45, vol: 0.18 * v });
+    noise(a, t, 0.7, { f: 900, f1: 260, q: 0.8, vol: 0.15 * v, attack: 0.02 });
+    tone(a, t, 0.5, { type: 'sine', f: 90, f1: 45, vol: 0.12 * v });
   },
   // cinzas caindo
   ash(a, d = 0) {

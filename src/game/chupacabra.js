@@ -20,6 +20,9 @@ const LEG = [0.33, 0.33, 0.22];     // coxa, canela, pé (metatarso)
 const GRAV = 16;
 
 // ---------- sons (WebAudio, sem arquivos) ----------
+// barramento das criaturas, puxado para o lado do bicho (a.at)
+const dest = a => a.out ? a.out('creatures') : a.master;
+
 function noise(a, t, dur, { type = 'lowpass', f = 1000, f1 = null, q = 0.8, vol = 0.2, attack = 0.005, out = null } = {}) {
   const c = a.ctx, src = c.createBufferSource();
   src.buffer = a.white;
@@ -31,7 +34,7 @@ function noise(a, t, dur, { type = 'lowpass', f = 1000, f1 = null, q = 0.8, vol 
   g.gain.setValueAtTime(0.0001, t);
   g.gain.exponentialRampToValueAtTime(vol, t + attack);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  src.connect(flt).connect(g).connect(out || a.master);
+  src.connect(flt).connect(g).connect(out || dest(a));
   src.start(t, Math.random() * 1.5, dur + 0.05);
 }
 
@@ -49,7 +52,7 @@ function tone(a, t, dur, { type = 'sawtooth', f = 440, f1 = null, fMid = null, v
   g.gain.setValueAtTime(0.0001, t);
   g.gain.exponentialRampToValueAtTime(vol, t + attack);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  o.connect(g).connect(out || a.master);
+  o.connect(g).connect(out || dest(a));
   o.start(t); o.stop(t + dur + 0.05);
 }
 
@@ -63,7 +66,7 @@ export const ChupaAudio = {
     const c = a.ctx, t = c.currentTime, v = fall(d) * k;
     const bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1700; bp.Q.value = 1.6;
     const g = c.createGain(); g.gain.value = 1;
-    bp.connect(g).connect(a.master);
+    bp.connect(g).connect(dest(a));
     for (const det of [1, 1.013, 0.987]) tone(a, t, 1.05, { f: 620 * det, fMid: 1500 * det, f1: 520 * det, vol: 0.09 * v, attack: 0.04, vib: 90, out: bp });
     noise(a, t, 0.9, { type: 'bandpass', f: 2600, f1: 1400, q: 1.2, vol: 0.12 * v, attack: 0.05 });
     setTimeout(() => { try { bp.disconnect(); g.disconnect(); } catch (e) { /* já desligado */ } }, 1600);
@@ -71,15 +74,15 @@ export const ChupaAudio = {
   growl(a, d = 0) {
     if (!this.ok(a) || fall(d) <= 0) return;
     const t = a.ctx.currentTime, v = fall(d);
-    tone(a, t, 1.1, { f: 62, f1: 48, vol: 0.16 * v, attack: 0.12, vib: 9 });
-    tone(a, t, 1.1, { type: 'square', f: 93, f1: 70, vol: 0.05 * v, attack: 0.15, vib: 14 });
-    noise(a, t, 1.0, { f: 320, q: 2, vol: 0.18 * v, attack: 0.15 });
+    tone(a, t, 1.1, { f: 62, f1: 48, vol: 0.11 * v, attack: 0.12, vib: 9 });
+    tone(a, t, 1.1, { type: 'square', f: 93, f1: 70, vol: 0.04 * v, attack: 0.15, vib: 14 });
+    noise(a, t, 1.0, { f: 320, q: 2, vol: 0.12 * v, attack: 0.15 });
   },
   hiss(a, d = 0) {
     if (!this.ok(a) || fall(d) <= 0) return;
     const t = a.ctx.currentTime, v = fall(d);
-    noise(a, t, 0.7, { type: 'highpass', f: 2400, f1: 3600, vol: 0.2 * v, attack: 0.12 });
-    tone(a, t, 0.6, { f: 140, f1: 110, vol: 0.05 * v, attack: 0.1, vib: 20 });
+    noise(a, t, 0.7, { type: 'highpass', f: 2400, f1: 3600, vol: 0.085 * v, attack: 0.12 });
+    tone(a, t, 0.6, { f: 140, f1: 110, vol: 0.045 * v, attack: 0.1, vib: 20 });
   },
   hurt(a, d = 0) {
     if (!this.ok(a) || fall(d) <= 0) return;
@@ -106,7 +109,7 @@ export const ChupaAudio = {
   claw(a) {
     if (!this.ok(a)) return;
     const t = a.ctx.currentTime;
-    for (let i = 0; i < 3; i++) noise(a, t + i * 0.035, 0.06, { type: 'highpass', f: 3000 + i * 400, vol: 0.14 });
+    for (let i = 0; i < 3; i++) noise(a, t + i * 0.035, 0.06, { type: 'highpass', f: 3000 + i * 400, vol: 0.085, attack: 0.003 });
   },
   // jogador ferido: gemido curto e pancada
   playerHurt(a) {
@@ -440,7 +443,14 @@ export class Chupacabra {
 
   // ---------- IA ----------
   // env: { player, onHitPlayer(dmg, dx, dz), arena: {x, z}, playerAlive, playerVel }
+  // os sons tocados durante o quadro saem do lado do bicho (Audio.at, o pan)
   update(dt, env) {
+    const A = this.audio, prev = A ? A.at : null;
+    if (A) A.at = this.pos;
+    try { this._think(dt, env); } finally { if (A) A.at = prev; }
+  }
+
+  _think(dt, env) {
     if (!this.active) return;
     const P = env.player.pos, ctx = this.ctx, A = this.audio;
     this.st += dt;

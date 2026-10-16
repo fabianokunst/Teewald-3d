@@ -181,14 +181,23 @@ export class Creature {
     const dir = info.dir || v3(0, 0, 1);
     if (info.knock && !this.heavy) this.knock = { x: dir.x * info.knock, z: dir.z * info.knock };
     if (!info.beam) this.bleed(p, dir, dmg);
-    this.onHurt?.(dmg, info);
-    if (this.hp <= 0) this.die(info);
+    this._voiced(() => {
+      this.onHurt?.(dmg, info);
+      if (this.hp <= 0) this.die(info);
+    });
     return true;
+  }
+
+  // os sons tocados aqui dentro saem do lado da criatura (Audio.at, o pan)
+  _voiced(fn) {
+    const A = this.audio, prev = A ? A.at : null;
+    if (A) A.at = this.pos;
+    try { return fn(); } finally { if (A) A.at = prev; }
   }
 
   _noEffect(p, info) {
     for (let i = 0; i < 5; i++) this.effects.spawn({ p: p.clone ? p.clone() : v3(p.x, p.y, p.z), v: v3((Math.random() - 0.5) * 2, Math.random() * 2, (Math.random() - 0.5) * 2), life: 0.3, s0: 0.04, s1: 0, color: this.immuneColor || [0.8, 0.8, 0.8], drag: 2 });
-    this.onImmune?.(info);
+    this._voiced(() => this.onImmune?.(info));
   }
 
   // sangue (ou o que a criatura tiver por dentro)
@@ -227,10 +236,10 @@ export class Creature {
     }
     if (this.dead) {
       this.deadT += dt;
-      this.dying(dt);
+      this._voiced(() => this.dying(dt));
     } else {
       this.stun = Math.max(0, this.stun - dt);
-      this.think(dt, env);
+      this._voiced(() => this.think(dt, env));
       this.pushPlayer(env);
     }
     this.animate(dt, env);

@@ -152,15 +152,7 @@ export class Combat {
     if (kk > 0) this.knock = { x: dx * kk, z: dz * kk };
     this.lastFight = 0;
     // gemido e pancada
-    const a = this.audio;
-    if (a?.ctx) {
-      const c = a.ctx, t = c.currentTime;
-      const osc = c.createOscillator(), g = c.createGain();
-      osc.type = 'triangle'; osc.frequency.setValueAtTime(210, t); osc.frequency.exponentialRampToValueAtTime(110, t + 0.22);
-      g.gain.setValueAtTime(0.12, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.25);
-      osc.connect(g).connect(a.master); osc.start(t); osc.stop(t + 0.3);
-      GunAudio.thump(a, 'punch', 0.8);
-    }
+    this.audio?.hurtSound?.();
     const p = this.player.pos;
     for (let i = 0; i < 8; i++) {
       this.effects.spawn({ p: this._v.set(p.x, p.y + 1.2, p.z), v: this._v2.set(dx * 1.5 + (Math.random() - 0.5) * 2, 0.8 + Math.random() * 1.5, dz * 1.5 + (Math.random() - 0.5) * 2), life: 0.6, s0: 0.04, s1: 0.02, color: [0.55, 0.05, 0.04], grav: 9.8, bounce: 0.1 });

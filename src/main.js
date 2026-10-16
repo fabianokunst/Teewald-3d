@@ -375,6 +375,7 @@ function frame(now) {
 
   // mundo
   const focus = state === 'title' || state === 'ending' ? camera.position : player.pos;
+  audio.listen(focus, camera, ctx.landmarks?.church, ctx.indoor ? (ctx.indoor === interiors.defs.igreja ? 'igreja' : 'casa') : null);
   if (state !== 'title' && state !== 'ending') {
     hud.setPlace(state === 'intro' ? hud.place : ctx.placeName(player.pos.x, player.pos.z), dt);
     if (state === 'play') hud.setStreet(ctx.streetName(player.pos.x, player.pos.z), dt);

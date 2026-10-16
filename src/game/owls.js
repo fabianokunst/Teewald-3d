@@ -273,8 +273,8 @@ function spatial(a, d, pan, range) {
   const f = c.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 1400 + 11000 * v * v;
   const g = c.createGain(); g.gain.value = v * (0.25 + 0.75 * v);
   f.connect(g);
-  if (c.createStereoPanner) { const p = c.createStereoPanner(); p.pan.value = clamp(pan, -1, 1) * 0.8; g.connect(p).connect(a.master); }
-  else g.connect(a.master);
+  if (c.createStereoPanner) { const p = c.createStereoPanner(); p.pan.value = clamp(pan, -1, 1) * 0.8; g.connect(p).connect(a.bus?.omen || a.master); }
+  else g.connect(a.bus?.omen || a.master);
   return f;
 }
 

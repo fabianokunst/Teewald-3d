@@ -75,8 +75,8 @@ export const BSFX = {
   bite(a, d = 0) {
     if (!ok(a) || fall(d, 30) <= 0) return;
     const t = a.ctx.currentTime, v = fall(d, 30);
-    noise(a, t, 0.05, { type: 'highpass', f: 2600, vol: 0.22 * v });
-    noise(a, t + 0.03, 0.18, { type: 'bandpass', f: 750, f1: 380, q: 2, vol: 0.15 * v, attack: 0.02 });
+    noise(a, t, 0.05, { type: 'highpass', f: 2600, vol: 0.13 * v, attack: 0.003 });
+    noise(a, t + 0.03, 0.18, { type: 'bandpass', f: 750, f1: 380, q: 2, vol: 0.11 * v, attack: 0.02 });
   },
   // guincho grave da rainha (o aviso do rasante)
   shriek(a, d = 0, p = 1) {
@@ -98,15 +98,15 @@ export const BSFX = {
   blast(a, d = 0) {
     if (!ok(a) || fall(d, 140) <= 0) return;
     const t = a.ctx.currentTime, v = fall(d, 140);
-    tone(a, t, 0.9, { type: 'sine', f: 95, f1: 32, vol: 0.32 * v });
-    noise(a, t, 0.8, { f: 1600, f1: 160, vol: 0.32 * v });
+    tone(a, t, 0.9, { type: 'sine', f: 95, f1: 32, vol: 0.2 * v, attack: 0.006 });
+    noise(a, t, 0.8, { f: 1600, f1: 160, vol: 0.18 * v });
     tone(a, t, 0.55, { f: 3400, f1: 900, vol: 0.05 * v, vib: 300 });
   },
   // bater de asa pesado (a rainha)
   heavyFlap(a, d = 0) {
     if (!ok(a) || fall(d, 60) <= 0) return;
     const t = a.ctx.currentTime, v = fall(d, 60);
-    noise(a, t, 0.3, { f: 260, f1: 110, q: 0.7, vol: 0.3 * v, attack: 0.05 });
+    noise(a, t, 0.3, { f: 260, f1: 110, q: 0.7, vol: 0.22 * v, attack: 0.05 });
     tone(a, t, 0.26, { type: 'sine', f: 62, f1: 38, vol: 0.1 * v, attack: 0.03 });
   },
   // fôlego curto (a rainha cansada)

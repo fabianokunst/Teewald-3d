@@ -5,6 +5,7 @@
 // uso: npm run sons                  (tabela de todos os sons)
 //      npm run sons -- passo sino    (só os que têm "passo" ou "sino" no nome/grupo)
 //      npm run sons -- --json saida.json   (grava os números para comparar depois)
+//      npm run sons -- --cru         (sem o limitador da saída, o som cru da soma)
 //
 // Colunas (volume do jogo no máximo, sem o volume do menu):
 //   pico   maior amostra (dBFS); 0 = encosta no teto
@@ -22,11 +23,14 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2);
 const jsonAt = argv.indexOf('--json');
 const jsonOut = jsonAt >= 0 ? argv[jsonAt + 1] : null;
+const raw = argv.includes('--cru');
 const filters = argv.filter((a, i) => !a.startsWith('--') && !(jsonAt >= 0 && i === jsonAt + 1)).map(s => s.toLowerCase());
 
 // dano no jogador: o mesmo som que combat.hurt toca
 const HURT = 'a.hurtSound ? a.hurtSound() : (()=>{const c=a.ctx,t=c.currentTime,o=c.createOscillator(),g=c.createGain();o.type="triangle";o.frequency.setValueAtTime(210,t);o.frequency.exponentialRampToValueAtTime(110,t+0.22);g.gain.setValueAtTime(0.12,t);g.gain.exponentialRampToValueAtTime(0.0001,t+0.25);o.connect(g).connect(a.master);o.start(t);o.stop(t+0.3);M.G.GunAudio.thump(a,"punch",0.8);})()';
 const AMB = (w, extra = '') => `a.setAmbience(true); a.setWeather(Object.assign({ rain: 0, storm: 0, night: 0, crickets: 0, wind: 0.2, indoor: 0, calm: 0 }, ${JSON.stringify(w)})); a.nextOmen = 999; a.nextCricket = 999; ${extra} a.update(0.016, 0, ${w.river ?? 999});`;
+// ouvinte na origem e a igreja a d metros (inside: null, 'casa' ou 'igreja')
+const BELL = (d, inside = null) => `a.listen({ x: 0, z: 0 }, null, { x: ${d}, z: 0 }, ${JSON.stringify(inside)});`;
 const seq = (code, n, gap, t0 = 0) => Array.from({ length: n }, (_, i) => [t0 + i * gap, code]);
 
 // [grupo, nome, duração (s), eventos [[t, código]], janela estável [de, até] ou null]
@@ -105,16 +109,26 @@ const SONS = [
   ['ambiente', 'música de luta', 11, [[0, AMB({ wind: 0.2 }, 'a.setTension(1, 0);')]], [7, 11]],
   ['ambiente', 'música de chefe', 11, [[0, AMB({ wind: 0.2 }, 'a.setTension(1, 1);')]], [7, 11]],
   ['ambiente', 'grilo', 1, [[0, 'a.cricket()']]],
+  ['ambiente', 'quero-quero', 2, [[0, 'a.queroQuero(false)']]],
+  ['ambiente', 'bem-te-vi', 1.5, [[0, 'a.bemTeVi()']]],
+  ['ambiente', 'pomba', 1.5, [[0, 'a.dove()']]],
+  ['ambiente', 'sapo na beira do rio', 1, [[0, 'a.frog(1)']]],
+  ['ambiente', 'cachorro latindo longe', 2, [[0, 'a.dogBark()']]],
+  ['ambiente', 'madeira rangendo (dentro)', 1.5, [[0, 'a.creak()']]],
   ['ambiente', 'corvo', 2, [[0, 'a.crow()']]],
   ['ambiente', 'cachorro uivando longe', 4, [[0, 'a.howl()']]],
   ['ambiente', 'coruja ao longe', 1.5, [[0, 'a.owl()']]],
   ['ambiente', 'trovão perto', 5, [[0, 'a.thunder(1, false)']]],
   ['ambiente', 'trovão longe', 5, [[0, 'a.thunder(0.5, false)']]],
 
-  ['sino', 'sino: 1 badalada', 6, [[0, 'a.bell()']]],
-  ['sino', 'sino: 3 badaladas (1,3 s)', 9, seq('a.bell()', 3, 1.3)],
-  ['sino', 'sino: alarme, 4 em 0,7 s', 8, seq('a.bell()', 4, 0.7)],
-  ['sino', 'sino: tocando sem parar (3,6 s)', 14, seq('a.bell()', 4, 3.6)],
+  ['sino', 'sino: na praça (30 m)', 7, [[0, BELL(30) + 'a.bell()']]],
+  ['sino', 'sino: a 100 m', 7, [[0, BELL(100) + 'a.bell()']]],
+  ['sino', 'sino: longe (300 m)', 7, [[0, BELL(300) + 'a.bell()']]],
+  ['sino', 'sino: dentro de casa', 7, [[0, BELL(100, 'casa') + 'a.bell()']]],
+  ['sino', 'sino: dentro da igreja', 7, [[0, BELL(0, 'igreja') + 'a.bell()']]],
+  ['sino', 'sino: badalada solta ao longe (150 m)', 7, [[0, BELL(150) + 'a.bell(0.6)']]],
+  ['sino', 'sino: alarme na praça, 4 em 0,7 s', 8, [[0, BELL(30)], ...seq('a.bell()', 4, 0.7)]],
+  ['sino', 'sino: tocando sem parar a 60 m (3,6 s)', 14, [[0, BELL(60)], ...seq('a.bell()', 4, 3.6)]],
 
   ['interface', 'menu: mover', 1, [[0, 'a.menuMove()']]],
   ['interface', 'menu: confirmar', 1, [[0, 'a.menuOk()']]],
@@ -140,7 +154,7 @@ const page = await browser.newPage();
 page.on('pageerror', e => console.log('  ✖', e.message));
 await page.goto(url + '__sons', { waitUntil: 'load' });
 
-const results = await page.evaluate(async list => {
+const results = await page.evaluate(async (list, raw) => {
   const M = {
     A: await import('/src/engine/audio.js'),
     G: await import('/src/game/gunAudio.js'),
@@ -150,6 +164,9 @@ const results = await page.evaluate(async list => {
     W: await import('/src/game/creatures/witch.js'),
   };
   const SR = 48000;
+  // o limitador do Chrome aperta demais no começo do contexto: os sons só entram depois
+  // de meio segundo (no jogo o contexto já está rodando há muito tempo)
+  const LEAD = 0.5;
   // filtro K da BS.1770 (para 48 kHz): prateleira de agudos + passa-altas
   const KS = [[1.53512485958697, -2.69169618940638, 1.19839281085285, -1.69065929318241, 0.73248077421585], [1, -2, 1, -1.99004745483398, 0.99007225036621]];
   function kWeight(x) {
@@ -164,7 +181,7 @@ const results = await page.evaluate(async list => {
   }
   const lufs = ms => ms > 1e-12 ? -0.691 + 10 * Math.log10(ms) : -99;
   function analyze(buf, win) {
-    const ch = [0, 1].map(i => buf.getChannelData(i));
+    const ch = [0, 1].map(i => buf.getChannelData(i).subarray(LEAD * SR));
     let peak = 0;
     for (const d of ch) for (let i = 0; i < d.length; i++) peak = Math.max(peak, Math.abs(d[i]));
     const kw = ch.map(kWeight);
@@ -172,26 +189,26 @@ const results = await page.evaluate(async list => {
     for (let i = 0; i < kw[0].length; i++) sq[i + 1] = sq[i] + kw[0][i] * kw[0][i] + kw[1][i] * kw[1][i];
     const maxWin = w => { const n = Math.round(w * SR), hop = Math.round(0.01 * SR); let m = 0; for (let i = 0; i + n <= kw[0].length; i += hop) m = Math.max(m, (sq[i + n] - sq[i]) / n); return m; };
     const out = { peak: peak > 0 ? 20 * Math.log10(peak) : -99, M: lufs(maxWin(0.4)), S: lufs(maxWin(0.1)) };
-    if (win) { const i0 = Math.round(win[0] * SR), i1 = Math.round(win[1] * SR); out.M = out.S = lufs((sq[i1] - sq[i0]) / (i1 - i0)); }
+    if (win) { const i0 = Math.round(win[0] * SR), i1 = Math.min(kw[0].length, Math.round(win[1] * SR)); out.M = out.S = lufs((sq[i1] - sq[i0]) / (i1 - i0)); }
     return out;
   }
   const res = [];
   for (const [group, name, dur, events, win] of list) {
     const Real = window.AudioContext;
-    window.AudioContext = function () { return new OfflineAudioContext(2, Math.ceil(SR * dur), SR); };
+    window.AudioContext = function () { return new OfflineAudioContext(2, Math.ceil(SR * (dur + LEAD)), SR); };
     const a = new M.A.Audio();
     a.start(); a.setVolume(1);
+    if (raw && a.mix) { a.mix.disconnect(); a.mix.connect(a.out_); }
     window.AudioContext = Real;
     const run = code => new Function('a', 'M', code)(a, M);
-    for (const [t, code] of events) {
-      if (t <= 0) run(code);
-      else a.ctx.suspend(Math.round(t * SR / 128) * 128 / SR).then(() => { run(code); a.ctx.resume(); });
-    }
+    const at = new Map();   // eventos agrupados por instante (na ordem da lista)
+    for (const [t, code] of events) { const q = Math.round((t + LEAD) * SR / 128) * 128 / SR; at.set(q, [...(at.get(q) || []), code]); }
+    for (const [q, codes] of at) a.ctx.suspend(q).then(() => { codes.forEach(run); a.ctx.resume(); });
     const buf = await a.ctx.startRendering();
     res.push({ group, name, ...analyze(buf, win), steady: !!win });
   }
   return res;
-}, list);
+}, list, raw);
 
 await browser.close();
 await server.close();

@@ -1,5 +1,9 @@
 // Sons das criaturas, sintetizados com WebAudio (sem arquivos). Volume cai com a
-// distância (d em metros). Cada função recebe o Audio do jogo.
+// distância (d em metros). Cada função recebe o Audio do jogo. Tudo vai para o
+// barramento 'creatures', puxado para o lado da criatura que está pensando (a.at).
+
+// saída padrão (o Audio antigo, sem barramentos, só tinha a.master)
+const dest = a => a.out ? a.out('creatures') : a.master;
 
 function noise(a, t, dur, { type = 'lowpass', f = 1000, f1 = null, q = 0.8, vol = 0.2, attack = 0.005, out = null } = {}) {
   const c = a.ctx, src = c.createBufferSource();
@@ -12,7 +16,7 @@ function noise(a, t, dur, { type = 'lowpass', f = 1000, f1 = null, q = 0.8, vol 
   g.gain.setValueAtTime(0.0001, t);
   g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol), t + attack);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  src.connect(flt).connect(g).connect(out || a.master);
+  src.connect(flt).connect(g).connect(out || dest(a));
   src.start(t, Math.random() * 1.5, dur + 0.05);
 }
 
@@ -30,7 +34,7 @@ function tone(a, t, dur, { type = 'sawtooth', f = 440, f1 = null, fMid = null, v
   g.gain.setValueAtTime(0.0001, t);
   g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol), t + attack);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  o.connect(g).connect(out || a.master);
+  o.connect(g).connect(out || dest(a));
   o.start(t); o.stop(t + dur + 0.05);
 }
 
@@ -90,7 +94,7 @@ export const SFX = {
     const c = a.ctx, t = c.currentTime, v = fall(d, 60);
     const dl = c.createDelay(1), fb = c.createGain(), wet = c.createGain();
     dl.delayTime.value = 0.28; fb.gain.value = 0.45; wet.gain.value = 0.5;
-    dl.connect(fb).connect(dl); dl.connect(wet).connect(a.master);
+    dl.connect(fb).connect(dl); dl.connect(wet).connect(dest(a));
     tone(a, t, dur, { type: 'sine', f: 420 * p, fMid: 620 * p, f1: 300 * p, vol: 0.045 * v, attack: 0.4, vib: 9, vibF: 5, out: dl });
     tone(a, t, dur, { type: 'sine', f: 423 * p, fMid: 610 * p, f1: 305 * p, vol: 0.04 * v, attack: 0.4, vib: 7, vibF: 4 });
     noise(a, t, dur, { type: 'bandpass', f: 900 * p, q: 4, vol: 0.03 * v, attack: 0.5 });
@@ -112,15 +116,15 @@ export const SFX = {
   roar(a, d = 0, p = 1, dur = 1.6) {
     if (!ok(a) || fall(d, 120) <= 0) return;
     const t = a.ctx.currentTime, v = fall(d, 120);
-    tone(a, t, dur, { f: 70 * p, fMid: 110 * p, f1: 45 * p, vol: 0.2 * v, attack: 0.15, vib: 18 });
-    tone(a, t, dur, { type: 'square', f: 140 * p, fMid: 200 * p, f1: 80 * p, vol: 0.05 * v, attack: 0.2, vib: 25 });
-    noise(a, t, dur, { f: 600 * p, f1: 250, q: 1.5, vol: 0.3 * v, attack: 0.15 });
+    tone(a, t, dur, { f: 70 * p, fMid: 110 * p, f1: 45 * p, vol: 0.14 * v, attack: 0.15, vib: 18 });
+    tone(a, t, dur, { type: 'square', f: 140 * p, fMid: 200 * p, f1: 80 * p, vol: 0.04 * v, attack: 0.2, vib: 25 });
+    noise(a, t, dur, { f: 600 * p, f1: 250, q: 1.5, vol: 0.19 * v, attack: 0.15 });
   },
   stomp(a, d = 0, k = 1) {
     if (!ok(a) || fall(d, 80) <= 0) return;
     const t = a.ctx.currentTime, v = fall(d, 80) * k;
-    tone(a, t, 0.3, { type: 'sine', f: 60, f1: 30, vol: 0.3 * v });
-    noise(a, t, 0.2, { f: 250, vol: 0.25 * v });
+    tone(a, t, 0.3, { type: 'sine', f: 60, f1: 30, vol: 0.2 * v, attack: 0.004 });
+    noise(a, t, 0.2, { f: 250, vol: 0.16 * v });
   },
   // lobisomem: uivo longo
   howl(a, d = 0, p = 1) {
@@ -133,7 +137,7 @@ export const SFX = {
     f.type = 'bandpass'; f.frequency.value = 700; f.Q.value = 1.2;
     g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.09 * v, t + 0.5);
     g.gain.linearRampToValueAtTime(0.07 * v, t + 2.5); g.gain.linearRampToValueAtTime(0.0001, t + 3.3);
-    o.connect(f).connect(g).connect(a.master); o.start(t); o.stop(t + 3.4);
+    o.connect(f).connect(g).connect(dest(a)); o.start(t); o.stop(t + 3.4);
   },
   snarl(a, d = 0, p = 1) {
     if (!ok(a) || fall(d) <= 0) return;
@@ -157,7 +161,7 @@ export const SFX = {
   ufo(a, d = 0, dur = 3) {
     if (!ok(a) || fall(d, 200) <= 0) return;
     const t = a.ctx.currentTime, v = fall(d, 200);
-    tone(a, t, dur, { type: 'sine', f: 55, f1: 60, vol: 0.15 * v, attack: 0.6, vib: 6, vibF: 3 });
+    tone(a, t, dur, { type: 'sine', f: 55, f1: 60, vol: 0.09 * v, attack: 0.6, vib: 6, vibF: 3 });
     tone(a, t, dur, { type: 'triangle', f: 110, f1: 118, vol: 0.05 * v, attack: 0.6, vib: 8, vibF: 4 });
   },
   // bruxa: risada que cai, rouca
@@ -184,8 +188,8 @@ export const SFX = {
   quake(a, d = 0) {
     if (!ok(a) || fall(d, 100) <= 0) return;
     const t = a.ctx.currentTime, v = fall(d, 100);
-    tone(a, t, 0.8, { type: 'sine', f: 45, f1: 25, vol: 0.35 * v });
-    noise(a, t, 0.7, { f: 300, f1: 80, vol: 0.35 * v });
+    tone(a, t, 0.8, { type: 'sine', f: 45, f1: 25, vol: 0.22 * v, attack: 0.006 });
+    noise(a, t, 0.7, { f: 300, f1: 80, vol: 0.22 * v });
   },
   // vitória curta (criatura derrotada) e sino de alerta
   sting(a) {
@@ -196,4 +200,4 @@ export const SFX = {
   },
 };
 
-export { noise, tone, fall };
+export { noise, tone, fall, dest };
