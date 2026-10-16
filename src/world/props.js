@@ -359,15 +359,67 @@ export function sphere(B, mat, x, y, z, r, seg = 8, rings = 5) {
   }
 }
 
-// fonte da praça
+const ringPt = (x, y, z, r, i, n) => { const a = (i / n) * Math.PI * 2; return [x + Math.cos(a) * r, y, z + Math.sin(a) * r]; };
+
+// anel horizontal virado para cima (coroa da borda de uma bacia)
+function annulus(B, mat, x, y, z, rIn, rOut, n, us = 2) {
+  const uv = p => [p[0] / us, p[2] / us];
+  for (let i = 0; i < n; i++) {
+    const i0 = ringPt(x, y, z, rIn, i, n), i1 = ringPt(x, y, z, rIn, i + 1, n);
+    const o0 = ringPt(x, y, z, rOut, i, n), o1 = ringPt(x, y, z, rOut, i + 1, n);
+    B.quad(mat, i0, i1, o1, o0, [uv(i0), uv(i1), uv(o1), uv(o0)]);
+  }
+}
+
+// parede cilíndrica virada para dentro (lado de dentro de uma bacia)
+function innerWall(B, mat, x, y, z, r, h, n, us = 4) {
+  for (let i = 0; i < n; i++) {
+    const b0 = ringPt(x, y, z, r, i, n), b1 = ringPt(x, y, z, r, i + 1, n);
+    const t0 = ringPt(x, y + h, z, r, i, n), t1 = ringPt(x, y + h, z, r, i + 1, n);
+    const u0 = (i / n) * us, u1 = ((i + 1) / n) * us;
+    B.quad(mat, b0, b1, t1, t0, [[u0, 0], [u1, 0], [u1, h / 2], [u0, h / 2]]);
+  }
+}
+
+// disco horizontal virado para baixo (fundo de um prato)
+function discDown(B, mat, x, y, z, r, n) {
+  for (let i = 0; i < n; i++) {
+    const a = ringPt(x, y, z, r, i, n), b = ringPt(x, y, z, r, i + 1, n);
+    B.tri(mat, [x, y, z], a, b, [0.5, 0.5], [0.5 + (a[0] - x) / r * 0.5, 0.5 + (a[2] - z) / r * 0.5], [0.5 + (b[0] - x) / r * 0.5, 0.5 + (b[2] - z) / r * 0.5]);
+  }
+}
+
+// fonte da praça: bacia de granito com espelho d'água parado e uma taça no meio.
+// Malha fechada: a parede interna desce abaixo da água, então nada fica oco visto de dentro
 export function fountain(B, ctx, x, z, y) {
+  const water = (r, wy, n) => B.polygon('waterStill', Array.from({ length: n }, (_, i) => { const p = ringPt(x, 0, z, r, i, n); return [p[0], p[2]]; }), wy, 2);
+  // bacia
+  const N = 12, rO = 2.6, rI = 2.3, rim = y + 0.63, wy = y + 0.45;
   B.col = [1, 1, 1];
-  B.cylinder('granite', x, y, z, 2.6, 2.6, 0.55, 10, { uRepeat: 4, vRepeat: 0.3 });
-  B.cylinder('granite', x, y + 0.55, z, 2.6, 2.3, 0.08, 10, { cap: false });
-  B.polygon('water', Array.from({ length: 10 }, (_, i) => [x + Math.cos(i / 10 * Math.PI * 2) * 2.3, z + Math.sin(i / 10 * Math.PI * 2) * 2.3]), y + 0.42, 2);
-  B.cylinder('granite', x, y + 0.4, z, 0.35, 0.25, 1.4, 6, { cap: true });
-  B.cylinder('granite', x, y + 1.8, z, 0.9, 0.9, 0.18, 8, { cap: true });
-  B.cylinder('granite', x, y + 1.98, z, 0.12, 0.1, 0.7, 5, { cap: true });
+  B.cylinder('granite', x, y, z, rO, rO, 0.55, N, { uRepeat: 4, vRepeat: 0.3 });
+  B.cylinder('granite', x, y + 0.55, z, rO, rO - 0.08, 0.08, N, { uRepeat: 4, vRepeat: 0.05 });
+  annulus(B, 'granite', x, rim, z, rI, rO - 0.08, N);
+  B.col = [0.72, 0.72, 0.72];
+  innerWall(B, 'granite', x, wy - 0.15, z, rI, rim - wy + 0.15, N);
+  B.col = [1, 1, 1];
+  water(rI, wy, N);
+  // pedestal e coluna
+  B.cylinder('granite', x, wy - 0.1, z, 0.5, 0.45, 0.22, 8, { cap: true, vRepeat: 0.1 });
+  B.cylinder('granite', x, wy + 0.12, z, 0.32, 0.24, y + 1.62 - wy - 0.12, 6);
+  // taça de cima: fundo cônico fechado, borda, parede interna e água parada
+  const n = 10, tr = 0.95, ti = 0.8, tb = y + 1.62, tl = y + 1.84, tt = y + 1.96;
+  discDown(B, 'granite', x, tb, z, 0.28, n);
+  B.cylinder('granite', x, tb, z, 0.28, tr, tl - tb, n, { uRepeat: 2, vRepeat: 0.15 });
+  B.cylinder('granite', x, tl, z, tr, tr, tt - tl, n, { uRepeat: 2, vRepeat: 0.08 });
+  annulus(B, 'granite', x, tt, z, ti, tr, n);
+  B.col = [0.72, 0.72, 0.72];
+  innerWall(B, 'granite', x, tl, z, ti, tt - tl, n, 2);
+  B.col = [1, 1, 1];
+  water(ti, y + 1.91, n);
+  // bico
+  B.cylinder('granite', x, y + 1.88, z, 0.14, 0.09, 0.62, 6);
+  discDown(B, 'granite', x, y + 2.5, z, 0.16, 6);
+  B.cylinder('granite', x, y + 2.5, z, 0.16, 0.04, 0.18, 6, { cap: true });
   ctx.collision.addCircle(x, z, 2.7, y - 0.5, y + 2.6);
 }
 
