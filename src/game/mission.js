@@ -4,6 +4,7 @@ import { Paper } from '../ui/paper.js';
 import { drawText, textSprite, panel, FONT_UI, FONT_TITLE } from '../ui/overlay.js';
 import { Chupacabra, ChupaAudio, CHUPA_HP, makeSheep } from './chupacabra.js';
 import { PISTOL_MAG } from './items.js';
+import { tr } from '../i18n/index.js';
 
 // Missão 1: O Chupacabras. Cartaz de PROCURA-SE na praça -> galinheiro atacado perto
 // da Igreja Matriz -> pegadas mata adentro -> o bicho comendo uma ovelha na clareira.
@@ -374,17 +375,18 @@ export class Mission {
         // até duas linhas estreitas, para não encostar no nome do lugar (no alto, no meio)
         const size = Math.round(11 * k), maxW = 112 * k, lines = [];
         let line = '';
-        for (const w of obj.split(' ')) {
+        // traduzido antes de quebrar; os pedaços vão como estão (raw)
+        for (const w of tr(obj).split(' ')) {
           const t = line ? line + ' ' + w : w;
-          if (line && textSprite(t, size, FONT_UI, col).w > maxW) { lines.push(line); line = w; } else line = t;
+          if (line && textSprite(t, size, FONT_UI, col, '#140c08', true, true).w > maxW) { lines.push(line); line = w; } else line = t;
         }
         lines.push(line);
-        const tw = Math.max(...lines.map(l => textSprite(l, size, FONT_UI, col).w));
+        const tw = Math.max(...lines.map(l => textSprite(l, size, FONT_UI, col, '#140c08', true, true).w));
         // abaixo da munição (no alto à esquerda) ou do nome do lugar
         const y0 = (this.pistol.equipped ? 46 : this.hud.card ? 34 : 6) * k;
         panel(g, 6 * k, y0, tw + 12 * k, (15 + lines.length * 10) * k, 0.55);
         drawText(g, 'OBJETIVO', 11 * k, y0 + 1 * k, 9 * k, { color: '#f2c879' });
-        lines.forEach((l, i) => drawText(g, l, 11 * k, y0 + (10 + i * 10) * k, size, { color: col }));
+        lines.forEach((l, i) => drawText(g, l, 11 * k, y0 + (10 + i * 10) * k, size, { color: col, raw: true }));
       }
     }
     // marca na tela

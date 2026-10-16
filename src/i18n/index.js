@@ -51,7 +51,7 @@ const letters = s => (s.match(/\p{L}/gu) || []).length;
 const isUpper = s => s === s.toUpperCase() && s !== s.toLowerCase();
 
 function build(d) {
-  exact = new Map(); upper = new Map(); pats = []; outs = new Set();
+  exact = new Map(); upper = new Map(); pats = []; outs = new Set(LANGS.map(l => l.name));
   for (const [k, v] of Object.entries(d || {})) {
     if (typeof v !== 'string' || !v) continue;
     outs.add(v);
@@ -80,8 +80,10 @@ function compile(k, v) {
 
 // o valor de um {n}: número fica, palavra é traduzida se tiver tradução
 function part(s) {
-  if (!s || !/\p{L}{2}/u.test(s)) return s;
-  return whole(s, 1) ?? s;
+  if (!s || !/\p{L}{2}/u.test(s) || outs.has(s)) return s;
+  const t = whole(s, 1);
+  if (t == null) note(s);
+  return t ?? s;
 }
 
 function whole(t, depth) {

@@ -33,6 +33,7 @@ import { CHAPTERS, LAST_CHAPTER } from './game/chapters/index.js';
 import { Extras } from './game/extras.js';
 import { Journal } from './ui/journal.js';
 import { loadFonts, drawText, FONT_TITLE } from './ui/overlay.js';
+import { LANGS, detectLang, setLang, getLang, tr, missing } from './i18n/index.js';
 
 const params = new URLSearchParams(location.search);
 // estilo visual: 3D limpo (padrão) ou PS1 retrô; ?visual=ps1 força pela URL
@@ -41,6 +42,9 @@ const visualMode = s => (s.visual === 'ps1' ? 'ps1' : 'clean');
 // iluminação: avançada (padrão: sol avermelhado, sombras, estrelas) ou clássica; ?light=classic pela URL
 if (params.get('light')) settings.lighting = params.get('light') === 'classic' ? 'classic' : 'advanced';
 const advancedLight = s => s.lighting !== 'classic';
+// idioma: o escolhido nas opções; na primeira vez, o do navegador; ?lang=en pela URL
+if (LANGS.some(l => l.id === params.get('lang'))) settings.lang = params.get('lang');
+if (!LANGS.some(l => l.id === settings.lang)) settings.lang = detectLang();
 setMaterialStyle(visualMode(settings));
 const app = document.getElementById('app');
 const R = new Renderer(app);
@@ -120,6 +124,7 @@ function applySettings(s, key) {
   if (atmo) atmo.setDrawDistance(s.drawDistance); else applyAtmosphere(s.drawDistance);
   if (atmo && key === 'lighting') atmo.setAdvanced(advancedLight(s));
   audio.setVolume((s.volume / 10) * 0.8);
+  if (key === 'lang') setLang(s.lang);
 }
 
 // ---------- carregamento ----------
@@ -138,6 +143,7 @@ function drawLoading() {
 }
 
 async function boot() {
+  await setLang(settings.lang);
   drawLoading();
   await loadFonts();
   drawLoading();
@@ -534,6 +540,7 @@ function exposeDebug() {
   window.__teewald = {
     ctx, player, camera, tpc, settings, atmo, shadows, combat, interiors, audio, character, scene, renderer: R, G, input, menu, touchMenu, inventory, pistol, targets, effects, invScreen, npcs, mission, owls, extras, journal,
     get state() { return state; },
+    i18n: { tr, missing, setLang, getLang },
     get fading() { return !!onFaded || fade > 0.02; },
     setState: s => setState(s),
     startGame: (intro = false) => { startGame({ intro }); fade = 0; fadeTarget = 0; },

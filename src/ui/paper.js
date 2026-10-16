@@ -1,9 +1,11 @@
 import { drawText, FONT_UI, FONT_TITLE, FONT_HAND, FONT_TYPE } from './overlay.js';
 import { docArt } from '../game/docArt.js';
+import { tr, getLang } from '../i18n/index.js';
 
 // O papel na tela: documentos achados, fichas de lenda, o cartaz do capítulo 1, a ata,
 // o diário e o álbum dos capítulos. O que o papel "tem" aparece desenhado, não descrito:
-// letra à mão, carimbo, rasura, foto, desenho.
+// letra à mão, carimbo, rasura, foto, desenho. O texto é traduzido antes de quebrar as linhas
+// (i18n/index.js); nomes, assinaturas e a lista telefônica ficam como estão.
 //
 // doc = { kind, title, paper, marks, pages: [página] }
 // página = [blocos] ou { paper, marks, label, blocks } (outro papel: verso, envelope)
@@ -85,7 +87,7 @@ export class Paper {
 
   // monta as páginas da tela (cache por tamanho de tela): cada bloco vira itens com altura
   _layout(W, H) {
-    const k = H / 240, key = W + 'x' + H + ':' + this.doc.title;
+    const k = H / 240, key = W + 'x' + H + ':' + this.doc.title + ':' + getLang();
     if (this.key === key) return;
     this.key = key;
     const box = this._box(W, H), cw = box.w - 28 * k, ch = box.h - 62 * k;
@@ -146,7 +148,7 @@ export class Paper {
     if (b.t != null) {
       const st = STYLE[b.s] || STYLE.print, sz = b.size || st.size, size = sz * k;
       const lh = (pal.row && st.font === FONT_HAND ? pal.row : st.lh * sz / st.size) * k;
-      return wrap(b.t, size, cw - 4 * k, st.font).map((text, i) => ({
+      return wrap(tr(b.t), size, cw - 4 * k, st.font).map((text, i) => ({
         kind: 'text', text, st, size, font: st.font, color: b.color || st.color || pal.ink, h: lh,
         align: b.align, strike: b.strike, ring: b.ring, words: b.words, seed: seed * 100 + i,
       }));
@@ -160,7 +162,7 @@ export class Paper {
       return [{ kind: 'img', art, w: art.width * s, ih: art.height * s, h: art.height * s + 4 * k, align: b.align, corners: b.corners }];
     }
     if (b.stamp) {
-      const lines = b.stamp.split('\n'), size = (b.size || (lines.length > 1 ? 9 : 14)) * k, lh = size * 1.05;
+      const lines = tr(b.stamp).split('\n'), size = (b.size || (lines.length > 1 ? 9 : 14)) * k, lh = size * 1.05;
       const w = Math.max(...lines.map(l => measure(l, size))) + 12 * k, bh = lines.length * lh + 7 * k;
       const r = w / 2 + 1 * k;
       // float: carimbado por cima do que vem antes (não ocupa linha)
@@ -173,7 +175,7 @@ export class Paper {
     }
     if (b.scribble) return [{ kind: 'scribble', label: b.label, color: b.color || pal.ink, seed, h: 30 * k }];
     if (b.note) {
-      const st = STYLE[b.s] || STYLE.hand, size = st.size * k, w = cw * (b.w || 0.62), lines = wrap(b.note, size, w - 12 * k, st.font);
+      const st = STYLE[b.s] || STYLE.hand, size = st.size * k, w = cw * (b.w || 0.62), lines = wrap(tr(b.note), size, w - 12 * k, st.font);
       const bh = lines.length * st.lh * k + 9 * k;
       return [{ kind: 'note', lines, st, size, w, bh, bg: b.bg || '#e6d468', h: bh + 6 * k }];
     }
@@ -313,7 +315,7 @@ export class Paper {
     }
     if (it.kind === 'sign') {
       const w = measure(it.text, it.size, FONT_HAND), x = it.align === 'left' ? x0 + 6 * k : x0 + cw - w - 10 * k;
-      drawText(g, it.text, x, y, it.size, { font: FONT_HAND, color: it.color, shadow: null, alpha: a });
+      drawText(g, it.text, x, y, it.size, { font: FONT_HAND, color: it.color, shadow: null, alpha: a, raw: true });
       g.globalAlpha = a; g.strokeStyle = it.color; g.lineWidth = Math.max(1, R(0.9 * k));
       g.beginPath(); g.moveTo(x - 3 * k, y + it.size * 1.0); g.bezierCurveTo(x + w * 0.3, y + it.size * 1.12, x + w * 0.7, y + it.size * 0.86, x + w + 8 * k, y + it.size * 0.92); g.stroke();
       return;
@@ -338,16 +340,16 @@ export class Paper {
       g.globalAlpha = a * 0.3; g.fillStyle = '#000'; g.fillRect(-it.w / 2 + 2 * k, -it.bh / 2 + 2 * k, it.w, it.bh);
       g.globalAlpha = a; g.fillStyle = it.bg; g.fillRect(-it.w / 2, -it.bh / 2, it.w, it.bh);
       g.globalAlpha = a * 0.25; g.fillStyle = '#fff'; g.fillRect(-it.w / 2, -it.bh / 2, it.w, R(3 * k));
-      it.lines.forEach((l, i) => drawText(g, l, -it.w / 2 + 6 * k, -it.bh / 2 + 4 * k + i * it.st.lh * k, it.size, { font: it.st.font, color: it.st.color, shadow: null, alpha: a }));
+      it.lines.forEach((l, i) => drawText(g, l, -it.w / 2 + 6 * k, -it.bh / 2 + 4 * k + i * it.st.lh * k, it.size, { font: it.st.font, color: it.st.color, shadow: null, alpha: a, raw: true }));
       g.restore();
       return;
     }
     if (it.kind === 'entry') {
       const s = it.size, ink = pal.ink;
-      drawText(g, it.name, x0, y, s, { color: ink, shadow: null, alpha: a });
+      drawText(g, it.name, x0, y, s, { color: ink, shadow: null, alpha: a, raw: true });
       const nw = measure(it.name, s), aw = measure(it.addr, s), numW = measure(it.num, s);
-      drawText(g, it.addr, x0 + nw + 6 * k, y, s, { color: '#5a524a', shadow: null, alpha: a });
-      drawText(g, it.num, x0 + cw, y, s, { align: 'right', color: ink, shadow: null, alpha: a });
+      drawText(g, it.addr, x0 + nw + 6 * k, y, s, { color: '#5a524a', shadow: null, alpha: a, raw: true });
+      drawText(g, it.num, x0 + cw, y, s, { align: 'right', color: ink, shadow: null, alpha: a, raw: true });
       g.globalAlpha = a; g.fillStyle = '#7a7268';
       for (let x = x0 + nw + aw + 12 * k; x < x0 + cw - numW - 4 * k; x += 3 * k) g.fillRect(R(x), R(y + s * 0.62), Math.max(1, R(0.8 * k)), Math.max(1, R(0.8 * k)));
       if (it.ring) this._ring(g, x0 + nw / 2 + 1 * k, y + s * 0.56, nw / 2 + 6 * k, s * 0.55 + 1.5 * k, k, a, '#b2261c', it.seed);
@@ -361,7 +363,7 @@ export class Paper {
     x0 += it.indent || 0; cw -= it.narrow || 0;
     const w = measure(it.text, size, font);
     const x = it.align === 'center' ? x0 + (cw - w) / 2 : it.align === 'right' ? x0 + cw - w - 4 * k : x0;
-    const o = { font, color, shadow: null, alpha: a };
+    const o = { font, color, shadow: null, alpha: a, raw: true };
     if (st.jitter || it.words) {
       // palavra por palavra: letra de criança (fora da linha) e palavras circuladas
       let wx = x;
@@ -396,7 +398,7 @@ export class Paper {
       g.strokeRect(-it.w / 2, -it.bh / 2, it.w, it.bh);
       g.lineWidth = Math.max(1, R(0.7 * k)); g.strokeRect(-it.w / 2 + 2 * k, -it.bh / 2 + 2 * k, it.w - 4 * k, it.bh - 4 * k);
     }
-    it.lines.forEach((l, i) => drawText(g, l, 0, -it.lines.length * it.lh / 2 + i * it.lh - 1.5 * k, it.size, { align: 'center', color: it.color, shadow: null, alpha: a * 0.85 }));
+    it.lines.forEach((l, i) => drawText(g, l, 0, -it.lines.length * it.lh / 2 + i * it.lh - 1.5 * k, it.size, { align: 'center', color: it.color, shadow: null, alpha: a * 0.85, raw: true }));
     g.globalAlpha = a; g.fillStyle = pal.bg;
     const hw = it.round ? it.r : it.w / 2, hh = it.round ? it.r : it.bh / 2;
     for (let i = 0; i < 18; i++) g.fillRect((hash(i * 1.3) * 2 - 1) * hw, (hash(i * 2.7) * 2 - 1) * hh, Math.max(1, R((1 + hash(i) * 2) * k)), Math.max(1, R(k)));

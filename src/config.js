@@ -2,6 +2,7 @@
 const KEY = 'teewald.settings.v1';
 
 export const DEFAULTS = {
+  lang: null,           // idioma: 'pt' | 'en' | 'es' | 'de' (null = o do navegador; i18n/index.js)
   difficulty: 1,        // 0 fácil, 1 normal, 2 difícil (game/difficulty.js)
   visual: 'clean',      // 'clean' = 3D limpo (resolução da tela, sem pixel) | 'ps1' = retrô
   resolution: 240,      // só no estilo PS1: linhas internas (240 = PS1, 0 = nativa da tela)

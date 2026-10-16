@@ -21,6 +21,7 @@ import { GunAudio } from './gunAudio.js';
 import { ITEMS } from './items.js';
 import { CHAPTERS, LAST_CHAPTER, OLD_TO_NEW } from './chapters/index.js';
 import { difficulty } from './difficulty.js';
+import { tr } from '../i18n/index.js';
 
 // Campanha: os doze capítulos de Teewald. O capítulo 1 (o chupacabras na tarde de
 // neblina) é a missão original (game/mission.js); do 2 em diante, a noite que não
@@ -388,7 +389,7 @@ export class Campaign {
 
   // tela preta com texto (entre capítulos, cartas, diários)
   narrate(lines, then = null, o = {}) {
-    this.S.narr = { lines, i: 0, t: 0, chars: 0, then, title: o.title || null };
+    this.S.narr = { lines: lines.map(l => tr(l)), i: 0, t: 0, chars: 0, then, title: o.title || null };
     this.pendingCut = true;
   }
 
@@ -873,16 +874,17 @@ export class Campaign {
       else {
         const size = Math.round(11 * k), maxW = 118 * k, lines = [];
         let line = '';
-        for (const w of obj.split(' ')) {
+        // traduzido antes de quebrar; os pedaços vão como estão (raw)
+        for (const w of tr(obj).split(' ')) {
           const t = line ? line + ' ' + w : w;
-          if (line && textSprite(t, size, FONT_UI, col).w > maxW) { lines.push(line); line = w; } else line = t;
+          if (line && textSprite(t, size, FONT_UI, col, '#140c08', true, true).w > maxW) { lines.push(line); line = w; } else line = t;
         }
         lines.push(line);
-        const tw = Math.max(...lines.map(l => textSprite(l, size, FONT_UI, col).w));
+        const tw = Math.max(...lines.map(l => textSprite(l, size, FONT_UI, col, '#140c08', true, true).w));
         const y0 = (this.guns.equipped ? 46 : this.hud.card ? 34 : 6) * k;
         panel(g, 6 * k, y0, tw + 12 * k, (15 + lines.length * 10) * k, 0.55);
         drawText(g, 'OBJETIVO', 11 * k, y0 + 1 * k, 9 * k, { color: '#f2c879' });
-        lines.forEach((l, i) => drawText(g, l, 11 * k, y0 + (10 + i * 10) * k, size, { color: col }));
+        lines.forEach((l, i) => drawText(g, l, 11 * k, y0 + (10 + i * 10) * k, size, { color: col, raw: true }));
       }
     }
     // marca
@@ -970,14 +972,14 @@ export class Campaign {
       const N = S.narr, k = H / 240;
       g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
       if (N.title) drawText(g, N.title, W / 2, H * 0.2, 14 * k, { align: 'center', color: '#c86848' });
-      // texto quebrado em linhas, letra a letra
+      // texto quebrado em linhas, letra a letra (já traduzido em narrate)
       const size = Math.round(13 * k), maxW = Math.min(W - 40 * k, 300 * k), words = N.lines[N.i].slice(0, Math.floor(N.chars)).split(' ');
       const rows = [];
       let line = '';
-      for (const w of words) { const t = line ? line + ' ' + w : w; if (line && textSprite(t, size, FONT_UI).w > maxW) { rows.push(line); line = w; } else line = t; }
+      for (const w of words) { const t = line ? line + ' ' + w : w; if (line && textSprite(t, size, FONT_UI, undefined, undefined, true, true).w > maxW) { rows.push(line); line = w; } else line = t; }
       rows.push(line);
       const y0 = H * 0.42 - rows.length * 7 * k;
-      rows.forEach((r, i) => drawText(g, r, W / 2, y0 + i * 15 * k, size, { align: 'center', color: '#e6dccb' }));
+      rows.forEach((r, i) => drawText(g, r, W / 2, y0 + i * 15 * k, size, { align: 'center', color: '#e6dccb', raw: true }));
       if (N.chars >= N.lines[N.i].length && Math.floor(N.t * 2.5) % 2 === 0) drawText(g, '▼', W / 2, H * 0.78, 10 * k, { align: 'center', color: '#8a2a20' });
       return;
     }

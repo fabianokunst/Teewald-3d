@@ -1,7 +1,9 @@
 // Texto em pixels nítidos (estilo PS1) desenhado num canvas 2D na resolução interna.
-// Cada texto vira um "sprite" com alfa binário e fica em cache.
+// Cada texto vira um "sprite" com alfa binário e fica em cache. O texto chega em português
+// e sai no idioma escolhido (i18n/index.js); raw = já traduzido (pedaço de linha quebrada).
 
 import { VISUAL } from '../engine/ps1material.js';
+import { tr } from '../i18n/index.js';
 
 const cache = new Map();
 // gótica híbrida (legível); só o peso 600 é carregado, então o canvas usa ele mesmo pedindo peso normal
@@ -21,7 +23,8 @@ export async function loadFonts() {
   } catch (e) { /* usa fontes reserva */ }
 }
 
-export function textSprite(text, size, font = FONT_UI, color = '#e8dcc0', shadow = '#140c08', crisp = true) {
+export function textSprite(text, size, font = FONT_UI, color = '#e8dcc0', shadow = '#140c08', crisp = true, raw = false) {
+  if (!raw) text = tr(text);
   const key = [text, size, font, color, shadow, crisp].join('|');
   let s = cache.get(key);
   if (s) return s;
@@ -46,11 +49,11 @@ export function textSprite(text, size, font = FONT_UI, color = '#e8dcc0', shadow
   return s;
 }
 
-// desenha texto; align: 'left' | 'center' | 'right'
+// desenha texto; align: 'left' | 'center' | 'right'; raw: true = não traduz (já traduzido)
 export function drawText(g, text, x, y, size, o = {}) {
   // pixels nítidos no estilo PS1; no 3D limpo o texto fica suavizado
   const crisp = o.crisp ?? VISUAL.mode === 'ps1';
-  const s = textSprite(text, Math.round(size), o.font || FONT_UI, o.color || '#e8dcc0', o.shadow === undefined ? '#140c08' : o.shadow, crisp);
+  const s = textSprite(text, Math.round(size), o.font || FONT_UI, o.color || '#e8dcc0', o.shadow === undefined ? '#140c08' : o.shadow, crisp, o.raw);
   let dx = x;
   if (o.align === 'center') dx = x - s.w / 2;
   else if (o.align === 'right') dx = x - s.w;

@@ -37,15 +37,16 @@ const KEYS = /^(Key[A-Z]|Digit\d|Arrow[A-Z]|Numpad|Shift|Control|Alt|Meta|Escape
 // é texto de tela? (fora ids, caminhos, cores, fontes, código de shader...)
 function isText(key) {
   const bare = key.replace(/\{\d+\}/g, ' '), t = key.trim();
-  if ((bare.match(/\p{L}/gu) || []).length < 3 && !/\p{L}{2}/u.test(bare)) return false;
-  if (!/\p{L}{2}/u.test(bare)) return false;
-  if (/\{\d+\}/.test(key) && (bare.match(/\p{L}/gu) || []).length < 3) return false;
+  if (!/\p{L}{2}/u.test(bare) || (bare.match(/\p{L}/gu) || []).length < 3 && /\{\d+\}/.test(key)) return false;
   if (/^[a-z][\w$]*$/.test(t)) return false;                         // id, camelCase
   if (/_/.test(t) && !/\s/.test(t)) return false;                    // CONSTANTE_ID, snake_case
   if (/^[A-Za-z]\w*[a-z][A-Z]\w*$/.test(t)) return false;            // PascalCase, camelCase
-  if (KEYS.test(t)) return false;
-  if (/^[\w.\-/{}]+\.(png|jpe?g|webp|gif|glb|gltf|json|m?js|bin|mp3|ogg|wav|svg|html|css|txt)$/i.test(t)) return false;
-  if (/^(https?:|data:|blob:|\/\/|#|rgba?\(|hsla?\(|url\()/.test(t)) return false;
+  // uma palavra só com ':', '{' ou '!' no meio: id de peça, textura, ação ('int:f:clock', 'ombro.{1}')
+  if (!/\s/.test(t) && /[:{}!]/.test(t.replace(/[.!?…:]+$/, '')) && t !== t.toUpperCase()) return false;
+  if (KEYS.test(t) || t === 'Arrow') return false;
+  if (/\.(png|jpe?g|webp|gif|glb|gltf|json|m?js|bin|mp3|ogg|wav|svg|html|css|txt)$/i.test(t)) return false;
+  if (/^(https?:|data:|blob:|\/\/|#|rgba?\(|hsla?\(|url\(|env\(|\(\w+:)/.test(t)) return false;
+  if (/,\s*(serif|sans-serif|monospace|cursive)$/.test(t)) return false;     // fonte
   if (/^[a-z0-9]+([-/.][a-z0-9]+)+$/i.test(t)) return false;           // caminho, kebab-case
   if (/\d(px|em|rem|vh|vw|%)\b|\bpx\b/.test(bare)) return false;       // fonte, css
   if (/[;{}]|=>|\bvec[234]\b|\bgl_|\buniform\b|\bvarying\b|#include|\bvoid\b|\bfloat\b/.test(bare)) return false;

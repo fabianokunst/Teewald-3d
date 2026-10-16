@@ -2,10 +2,13 @@ import { drawText, panel, FONT_TITLE, FONT_UI } from './overlay.js';
 import { saveSettings } from '../config.js';
 import { DIFFICULTY_NAMES } from '../game/difficulty.js';
 import { LAST_CHAPTER } from '../game/chapters/index.js';
+import { LANGS, tr } from '../i18n/index.js';
 
 // Tela título, menu principal, opções, créditos e pausa
 const ps1Only = s => s.visual === 'ps1';
 const OPTIONS = [
+  // o nome de cada idioma fica escrito nele mesmo
+  { key: 'lang', label: 'IDIOMA / LANGUAGE', values: LANGS.map(l => l.id), fmt: v => LANGS.find(l => l.id === v)?.name ?? 'PORTUGUÊS' },
   // dano recebido, resistência dos bichos, o que eles largam e munição depois de cair
   { key: 'difficulty', label: 'DIFICULDADE', values: [0, 1, 2], fmt: v => DIFFICULTY_NAMES[v] ?? 'NORMAL' },
   { key: 'visual', label: 'ESTILO VISUAL', values: ['clean', 'ps1'], fmt: v => (v === 'ps1' ? 'PS1 RETRÔ' : '3D LIMPO') },
@@ -286,8 +289,8 @@ export class Menu {
       const color = on ? '#f2c879' : '#c8b898';
       if (it.opt) {
         drawText(g, it.label, W / 2 - 140 * k, y, fs, { color });
-        const v = it.opt.fmt(this.settings[it.opt.key]), arrows = on || touch;
-        const s = drawText(g, (arrows ? '◀ ' : '') + v + (arrows ? ' ▶' : ''), W / 2 + 140 * k, y, fs, { align: 'right', color: on ? '#fff2d0' : '#a89878', font: FONT_UI });
+        const v = tr(it.opt.fmt(this.settings[it.opt.key])), arrows = on || touch;
+        const s = drawText(g, (arrows ? '◀ ' : '') + v + (arrows ? ' ▶' : ''), W / 2 + 140 * k, y, fs, { align: 'right', color: on ? '#fff2d0' : '#a89878', font: FONT_UI, raw: true });
         const right = W / 2 + 140 * k;
         this.rects.push([W / 2 - 140 * k, y, 280 * k, step, { lo: right - s.w - 10 * k, mid: right - s.w / 2 }]);
       } else {
