@@ -7,6 +7,7 @@
 //      npm run teste -- 6       (do capítulo 6 até o fim)
 //      npm run teste -- 6 6     (só o capítulo 6)
 //      npm run teste -- 1 10 --rapido   (usa a última compilação, sem compilar de novo)
+//      npm run teste -- --idioma=en     (joga em inglês e anota o texto que apareceu sem tradução)
 import puppeteer from 'puppeteer-core';
 import { build, preview } from 'vite';
 import fs from 'node:fs';
@@ -23,6 +24,8 @@ const outDir = path.join(root, 'node_modules', '.teewald-teste');
 const STEP = 0.5;                 // segundos de jogo por passo do robô
 const STUCK = 240;                // segundos de jogo na mesma etapa = travou
 const LIMIT = 900 * (last - first + 1);
+// idioma: desenha a interface a cada passo e guarda o texto que ficou em português
+const lang = [...flags].find(f => f.startsWith('--idioma='))?.slice(9) || null;
 
 const t0 = Date.now();
 const clock = () => ((Date.now() - t0) / 1000).toFixed(0).padStart(4) + 's';
@@ -50,7 +53,7 @@ page.on('console', m => {
 });
 
 say(`abrindo o jogo no capítulo ${first} (${url})`);
-await page.goto(`${url}?chapter=${first}`, { waitUntil: 'load', timeout: 300000 });
+await page.goto(`${url}?chapter=${first}${lang ? '&lang=' + lang : ''}`,{ waitUntil: 'load', timeout: 300000 });
 await page.waitForFunction(() => window.__teewald && window.__teewald.campaign, { timeout: 600000, polling: 1000 });
 await page.addScriptTag({ content: fs.readFileSync(path.join(root, 'tools', 'campaign-bot.js'), 'utf8') });
 say('mundo carregado; o robô começou');
@@ -58,12 +61,13 @@ say('mundo carregado; o robô começou');
 const stuck = [];
 let simT = 0, lastKey = null, keyT = 0, finished = false;
 while (simT < LIMIT) {
-  const r = await page.evaluate(step => {
+  const r = await page.evaluate((step, lang) => {
     const T = window.__teewald, B = window.__bot;
     try { T.simulate(step); } catch (e) { B.events.push({ t: B.t, kind: 'erro', msg: 'simulate: ' + e.message }); }
     try { B.tick(step); } catch (e) { B.events.push({ t: B.t, kind: 'erro', msg: 'robô: ' + e.message + ' ' + (e.stack || '').split('\n')[1] }); }
+    if (lang) try { T.drawUI(); } catch (e) { B.events.push({ t: B.t, kind: 'erro', msg: 'interface: ' + e.message }); }
     return { key: B.key(), state: T.state, events: B.flush(), chapter: T.campaign.index };
-  }, STEP);
+  }, STEP, lang);
   simT += STEP;
   for (const e of r.events) {
     if (e.kind === 'etapa') say(`[${e.t.toFixed(0).padStart(5)}] ${e.msg}`);
@@ -88,6 +92,14 @@ say(finished ? 'CHEGOU AO FIM' : 'NÃO CHEGOU AO FIM (tempo esgotado)', `· ${Ma
 say(`travamentos: ${stuck.length} · problemas: ${problems.length}`);
 for (const s of stuck) say('  - travou:', s.key, '·', s.obj || '', '· pontos', s.points.join(','), '· bichos', s.foes.join(','));
 for (const p of [...new Set(problems)]) say('  - ', p.slice(0, 300));
+if (lang) {
+  const miss = await page.evaluate(() => [...window.__teewald.i18n.missing]);
+  const file = path.join(outDir, `faltando-${lang}.json`);
+  fs.writeFileSync(file, JSON.stringify(miss, null, 1));
+  say(`texto na tela sem tradução (${lang}): ${miss.length}`);
+  for (const m of miss.slice(0, 40)) say('  · ' + JSON.stringify(m).slice(0, 160));
+  if (miss.length) say(`  para acrescentar nos dicionários: npm run traduzir -- --vistos ${path.relative(root, file)}`);
+}
 await browser.close();
 await server.close();
 process.exit(finished && !stuck.length && !problems.length ? 0 : 1);

@@ -34,6 +34,17 @@ do console. `npm run teste -- 6` começa no capítulo 6, `npm run teste -- 6 6` 
 ele e `--rapido` usa a última compilação (`tools/test-campaign.mjs` e
 `tools/campaign-bot.js`).
 
+## Idiomas
+
+Português, inglês, espanhol e alemão (OPÇÕES → IDIOMA / LANGUAGE; na primeira vez vale o
+idioma do navegador, e `?lang=en` força pela URL). O texto fica escrito em português no código
+e é traduzido só na hora de desenhar (`src/i18n/index.js`), pelos dicionários
+`src/i18n/en.js`, `es.js` e `de.js`. `npm run traduzir` acha os textos novos no código e
+atualiza os dicionários, e diz quanto falta traduzir. O tom e o glossário estão em
+`src/i18n/GUIA.md`. Nomes, lugares, placas pintadas no cenário e frases em hunsrik ficam
+como estão. `npm run teste -- --idioma=en` joga a campanha em inglês e lista o texto que
+apareceu na tela sem tradução.
+
 ## Controles
 
 | Ação | Teclado / mouse | Controle | Toque (celular/tablet) |

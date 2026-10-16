@@ -541,6 +541,8 @@ function exposeDebug() {
     ctx, player, camera, tpc, settings, atmo, shadows, combat, interiors, audio, character, scene, renderer: R, G, input, menu, touchMenu, inventory, pistol, targets, effects, invScreen, npcs, mission, owls, extras, journal,
     get state() { return state; },
     i18n: { tr, missing, setLang, getLang },
+    // desenha só a interface (o npm run teste num idioma anota o texto que ficou sem tradução)
+    drawUI: () => drawUI(),
     get fading() { return !!onFaded || fade > 0.02; },
     setState: s => setState(s),
     startGame: (intro = false) => { startGame({ intro }); fade = 0; fadeTarget = 0; },

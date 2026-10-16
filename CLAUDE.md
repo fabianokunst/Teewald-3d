@@ -4,6 +4,24 @@ Jogo de terror em terceira pessoa com visual de PS1 (Three.js + Vite), ambientad
 Santa Maria do Herval (RS). O `README.md` descreve o jogo, os comandos (`npm run dev`,
 `npm run audit`, `npm run teste`) e a estrutura do código. Converse com o usuário em português.
 
+## Tradução (inglês, espanhol, alemão)
+
+O texto do jogo continua escrito em português no código. A tradução só acontece na hora de
+desenhar: `tr()` (`src/i18n/index.js`) roda dentro de `textSprite`/`drawText` e procura o texto
+nos dicionários `src/i18n/en.js`, `es.js` e `de.js` (chave = o texto em português; `{1}`, `{2}` =
+pedaços que o código encaixa). Sem tradução, aparece o português. O idioma fica em OPÇÕES → IDIOMA.
+
+- Ao acrescentar ou mudar texto que aparece na tela, rode `npm run traduzir` e preencha nos três
+  dicionários o que ficou `''` (o comando diz quanto falta; `-- --lista en` mostra quais). Siga o
+  glossário e o tom de `src/i18n/GUIA.md`: nomes de pessoas e lugares, a Kartoffelfest e as frases
+  em hunsrik/alemão ficam como estão.
+- Nunca use `tr()` na lógica do jogo (comparações, ids): só no desenho.
+- Texto quebrado em linhas ou mostrado letra a letra: traduza antes de quebrar (`tr(texto)`) e
+  desenhe os pedaços com `raw: true` (veja `ui/dialogue.js`, `ui/paper.js`).
+- `npm run teste -- --idioma=en` joga a campanha em inglês e lista o texto que apareceu sem
+  tradução (texto montado no código); `npm run traduzir -- --vistos <arquivo>` põe esse texto nos
+  dicionários, na parte `extra`.
+
 ## Sincronização entre computadores (GitHub)
 
 O projeto é editado em dois computadores. A fonte da verdade é a branch `main` de
