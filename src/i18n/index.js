@@ -104,7 +104,7 @@ function whole(t, depth) {
 }
 
 // texto juntado de pedaços ('3. A MOÇA DA FÁBRICA  [B]'): traduz cada pedaço
-const SEP = /(\s{2,}|\s+·\s+|\s+[—–|]\s+|:\s+|\s*\(|\)\s*|\s*\[|\]\s*|^\d+\.\s+|\s+\/\s+|\s+-\s+)/;
+const SEP = /(\s{2,}|\s+·\s+|\s+[—–|]\s+|:\s+|\s*\(|\)\s*|\s*\[|\]\s*|^\d+\.\s+|\s+\/\s+|\s+-\s+|\s*×\s*)/;
 function bySegments(text) {
   const parts = text.split(SEP);
   if (parts.length < 3) return null;
@@ -120,7 +120,8 @@ function bySegments(text) {
 }
 
 function note(text) {
-  if (missing.size < 3000 && /\p{L}{2}/u.test(text)) missing.add(text);
+  // endereço de site não se traduz
+  if (missing.size < 3000 && /\p{L}{2}/u.test(text) && !/^[\w-]+(\.[\w-]+)+$/.test(text)) missing.add(text);
 }
 
 function find(text) {

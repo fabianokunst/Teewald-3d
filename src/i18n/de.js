@@ -5,6 +5,8 @@
 // Pode editar as traduções à vontade: o npm run traduzir guarda o que já foi traduzido.
 // Nomes de pessoas e lugares e frases em hunsrik/alemão ficam como estão.
 export default {
+  // ── src/engine/carTextures.js
+  'TEE-1910': null,
   // ── src/engine/exporter.js
   'Protagonista': null,
   // ── src/engine/touch.js
@@ -455,6 +457,7 @@ export default {
   'LER': 'LESEN',
   'PEGAR': 'NEHMEN',
   'TOCAR O SINO': 'GLOCKE LÄUTEN',
+  'BENZER-SE': 'BEKREUZIGEN',
   'PEGAR A GATA': 'KATZE NEHMEN',
   'ARQUIVO GUARDADO {1}/{2}': 'AKTE ABGELEGT {1}/{2}',
   'RELEIA NA PAUSA → ARQUIVOS': 'NACHLESEN UNTER PAUSE → AKTEN',
@@ -551,6 +554,7 @@ export default {
   'A Brigada pede que ninguém saia armado pelo mato à noite.': 'Die Polizei bittet, nachts nicht bewaffnet in den Wald zu gehen.',
   'CARTAZ NUM POSTE': 'AUSHANG AN EINEM MAST',
   'Procura-se gata cinza': 'Graue Katze gesucht',
+  'PROCURA-SE': 'GESUCHT',
   'Gata cinza, olhos verdes, atende por MIMI. Muito mansa. Sumiu segunda-feira de noite.': 'Graue Katze, grüne Augen, hört auf MIMI. Sehr zahm. Seit Montagabend verschwunden.',
   'Quem encontrar, por favor levar na casa da Dona Hilda, no calçadão. Dou recompensa.': 'Wer sie findet, bitte zu Frau Hilda bringen, an der Fußgängerzone. Gebe Finderlohn.',
   'procura na igreja. os gatos sobem lá quando têm medo': 'such in der kirche. die katzen klettern da rauf wenn sie angst haben',
@@ -638,9 +642,9 @@ export default {
   'Joãozinho    4ª série': 'Joãozinho    4. Klasse',
   'O que eu vi da minha janela': 'Was ich aus meinem Fenster gesehen habe',
   'Eu vi um bixo no pátio da visinha. Ele anda pulando que nen canguru e tem espinho nas costa. Ele bebeu a galinha.': 'Ich hab ein Fieh im Hof von der Nachbahrin gesehn. Es hüpft wie ein Kängeru und hat Stacheln am Rücken. Es hat das Huhn ausgetrunken.',
-  'bixo visinha nen costa': '',
+  'bixo visinha nen costa': 'Fieh Nachbahrin Kängeru',
   'Depois ele olhou pra minha janela e eu me escondi em baixo da coberta. A mãe disse que era sonho.': 'Dann hat es zu meinem Fenster geschaut und ich hab mich unter der Decke verstekt. Die Mama hat gesagt das war ein Traum.',
-  'em baixo': '',
+  'em baixo': 'verstekt',
   'Não era sonho porque de manhã tinha pegada no barro.': 'Es war kein Traum weil am Morgen Spuren im Matsch waren.',
   'Muito criativo! Cuidado com a ortografia: bicho, vizinha, nem, embaixo.': 'Sehr fantasievoll! Achte auf die Rechtschreibung: Vieh, Nachbarin, Känguru, versteckt.',
   'Nota: 7,5': 'Note: 7,5',
@@ -1470,7 +1474,7 @@ export default {
   'CAFÉ COLONIAL': 'KAFFEE & KUCHEN',
   'ELETRO': 'ELEKTRO',
   'MÓVEIS': 'MÖBEL',
-  'MALHAS': 'STRICKWAREN',
+  'MALHAS': 'MODELLE',
   'BRECHÓ': 'SECONDHAND',
   'PIZZARIA': 'PIZZERIA',
   'VIDEOLOCADORA': 'VIDEOTHEK',
@@ -1556,6 +1560,7 @@ export default {
   'Praça 10 de Abril': 'Praça 10 de Abril',
   'PRAÇA 10 DE ABRIL': 'PRAÇA 10 DE ABRIL',
   'Rio Cadeia': 'Rio Cadeia',
+  'VRS-873': 'VRS-873',
   'CAMPO DA SOCIEDADE': 'SPORTPLATZ DER SOCIEDADE',
   'Rua Benno Closs': 'Rua Benno Closs',
   'PAVILHÃO DA KARTOFFELFEST': 'KARTOFFELFEST-ZELT',
@@ -1623,4 +1628,8 @@ export default {
 
 // textos que só aparecem montados na tela (achados pelo npm run teste); guardados à mão
 export const extra = {
+  'TEXTURAS': 'TEXTUREN',
+  'RELEVO': 'GELÄNDE',
+  'CASAS': 'HÄUSER',
+  'PRONTO': 'FERTIG',
 };

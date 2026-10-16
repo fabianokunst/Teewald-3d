@@ -47,7 +47,7 @@ function isText(key) {
   if (/\.(png|jpe?g|webp|gif|glb|gltf|json|m?js|bin|mp3|ogg|wav|svg|html|css|txt)$/i.test(t)) return false;
   if (/^(https?:|data:|blob:|\/\/|#|rgba?\(|hsla?\(|url\(|env\(|\(\w+:)/.test(t)) return false;
   if (/,\s*(serif|sans-serif|monospace|cursive)$/.test(t)) return false;     // fonte
-  if (/^[a-z0-9]+([-/.][a-z0-9]+)+$/i.test(t)) return false;           // caminho, kebab-case
+  if (/^[a-z0-9]+([-/.][a-z0-9]+)+$/.test(t)) return false;            // caminho, kebab-case (PROCURA-SE é texto)
   if (/\d(px|em|rem|vh|vw|%)\b|\bpx\b/.test(bare)) return false;       // fonte, css
   if (/[;{}]|=>|\bvec[234]\b|\bgl_|\buniform\b|\bvarying\b|#include|\bvoid\b|\bfloat\b/.test(bare)) return false;
   if (/^(source-over|multiply|lighter|screen|destination-\w+|evenodd|anonymous|use-credentials)$/.test(t)) return false;

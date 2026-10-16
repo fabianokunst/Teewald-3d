@@ -62,8 +62,9 @@ export class Hud {
     if (this.street && this.streetT < 6 && !o.hideCard) {
       const a = Math.min(1, this.streetT * 2) * Math.min(1, Math.max(0, (6 - this.streetT) / 1.5));
       // no toque o canto esquerdo é do analógico: nome da rua vai para o centro
-      if (o.device === 'touch') drawText(g, this.street, W / 2, H - 16 * k, 11 * k, { align: 'center', alpha: a, color: '#e0d2b4' });
-      else drawText(g, this.street, 8 * k, H - 16 * k, 11 * k, { alpha: a, color: '#e0d2b4' });
+      // nome de rua fica em português (raw: não passa pela tradução)
+      if (o.device === 'touch') drawText(g, this.street, W / 2, H - 16 * k, 11 * k, { align: 'center', alpha: a, color: '#e0d2b4', raw: true });
+      else drawText(g, this.street, 8 * k, H - 16 * k, 11 * k, { alpha: a, color: '#e0d2b4', raw: true });
     }
     if (o.lockHint) drawText(g, 'clique para controlar a câmera', W - 6 * k, 6 * k, 10 * k, { align: 'right', color: '#c8b898', alpha: 0.8 });
     // no toque o canto superior esquerdo tem os botões de pausa e tela cheia

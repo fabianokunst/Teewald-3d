@@ -5,6 +5,8 @@
 // Pode editar as traduções à vontade: o npm run traduzir guarda o que já foi traduzido.
 // Nomes de pessoas e lugares e frases em hunsrik/alemão ficam como estão.
 export default {
+  // ── src/engine/carTextures.js
+  'TEE-1910': null,
   // ── src/engine/exporter.js
   'Protagonista': null,
   // ── src/engine/touch.js
@@ -455,6 +457,7 @@ export default {
   'LER': 'LEER',
   'PEGAR': 'TOMAR',
   'TOCAR O SINO': 'TOCAR LA CAMPANA',
+  'BENZER-SE': 'PERSIGNARSE',
   'PEGAR A GATA': 'AGARRAR A LA GATA',
   'ARQUIVO GUARDADO {1}/{2}': 'ARCHIVO GUARDADO {1}/{2}',
   'RELEIA NA PAUSA → ARQUIVOS': 'RELEER EN LA PAUSA → ARCHIVOS',
@@ -551,6 +554,7 @@ export default {
   'A Brigada pede que ninguém saia armado pelo mato à noite.': 'La Brigada Militar pide que nadie salga armado al monte de noche.',
   'CARTAZ NUM POSTE': 'CARTEL EN UN POSTE',
   'Procura-se gata cinza': 'Se busca gata gris',
+  'PROCURA-SE': 'SE BUSCA',
   'Gata cinza, olhos verdes, atende por MIMI. Muito mansa. Sumiu segunda-feira de noite.': 'Gata gris, ojos verdes, responde al nombre de MIMI. Muy mansa. Se perdió el lunes a la noche.',
   'Quem encontrar, por favor levar na casa da Dona Hilda, no calçadão. Dou recompensa.': 'Si alguien la encuentra, por favor llevarla a la casa de doña Hilda, en la peatonal. Doy recompensa.',
   'procura na igreja. os gatos sobem lá quando têm medo': 'buscá en la iglesia. los gatos suben ahí cuando tienen miedo',
@@ -638,9 +642,9 @@ export default {
   'Joãozinho    4ª série': 'Joãozinho    4.º grado',
   'O que eu vi da minha janela': 'Lo que vi desde mi ventana',
   'Eu vi um bixo no pátio da visinha. Ele anda pulando que nen canguru e tem espinho nas costa. Ele bebeu a galinha.': 'Yo bi un vicho en el patio de la becina. Anda a los saltos como un canguro y tiene espinas en la espalda. Se bebió a la gallina.',
-  'bixo visinha nen costa': '',
+  'bixo visinha nen costa': 'bi vicho becina',
   'Depois ele olhou pra minha janela e eu me escondi em baixo da coberta. A mãe disse que era sonho.': 'Después miró para mi ventana y yo me escondí devajo de la frazada. Mamá dijo que era un sueño.',
-  'em baixo': '',
+  'em baixo': 'devajo',
   'Não era sonho porque de manhã tinha pegada no barro.': 'No era un sueño porque a la mañana había pisadas en el barro.',
   'Muito criativo! Cuidado com a ortografia: bicho, vizinha, nem, embaixo.': '¡Muy creativo! Cuidado con la ortografía: vi, bicho, vecina, debajo.',
   'Nota: 7,5': 'Nota: 7,5',
@@ -1470,7 +1474,7 @@ export default {
   'CAFÉ COLONIAL': 'CAFÉ COLONIAL',
   'ELETRO': 'ELECTRO',
   'MÓVEIS': 'MUEBLES',
-  'MALHAS': 'TEJIDOS',
+  'MALHAS': 'MALLAS',
   'BRECHÓ': 'ROPA USADA',
   'PIZZARIA': 'PIZZERÍA',
   'VIDEOLOCADORA': 'VIDEOCLUB',
@@ -1556,6 +1560,7 @@ export default {
   'Praça 10 de Abril': 'Praça 10 de Abril',
   'PRAÇA 10 DE ABRIL': 'PRAÇA 10 DE ABRIL',
   'Rio Cadeia': 'Rio Cadeia',
+  'VRS-873': 'VRS-873',
   'CAMPO DA SOCIEDADE': 'CANCHA DE LA SOCIEDAD',
   'Rua Benno Closs': 'Rua Benno Closs',
   'PAVILHÃO DA KARTOFFELFEST': 'PABELLÓN DE LA KARTOFFELFEST',
@@ -1623,4 +1628,8 @@ export default {
 
 // textos que só aparecem montados na tela (achados pelo npm run teste); guardados à mão
 export const extra = {
+  'TEXTURAS': 'TEXTURAS',
+  'RELEVO': 'RELIEVE',
+  'CASAS': 'CASAS',
+  'PRONTO': 'LISTO',
 };

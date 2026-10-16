@@ -5,6 +5,8 @@
 // Pode editar as traduções à vontade: o npm run traduzir guarda o que já foi traduzido.
 // Nomes de pessoas e lugares e frases em hunsrik/alemão ficam como estão.
 export default {
+  // ── src/engine/carTextures.js
+  'TEE-1910': null,
   // ── src/engine/exporter.js
   'Protagonista': null,
   // ── src/engine/touch.js
@@ -455,6 +457,7 @@ export default {
   'LER': 'READ',
   'PEGAR': 'TAKE',
   'TOCAR O SINO': 'RING THE BELL',
+  'BENZER-SE': 'CROSS YOURSELF',
   'PEGAR A GATA': 'PICK UP THE CAT',
   'ARQUIVO GUARDADO {1}/{2}': 'FILE ADDED {1}/{2}',
   'RELEIA NA PAUSA → ARQUIVOS': 'REREAD IN PAUSE → FILES',
@@ -551,6 +554,7 @@ export default {
   'A Brigada pede que ninguém saia armado pelo mato à noite.': 'The Brigada Militar asks that no one go into the woods armed at night.',
   'CARTAZ NUM POSTE': 'POSTER ON A POLE',
   'Procura-se gata cinza': 'Missing: gray cat',
+  'PROCURA-SE': 'WANTED',
   'Gata cinza, olhos verdes, atende por MIMI. Muito mansa. Sumiu segunda-feira de noite.': 'Gray cat, green eyes, answers to MIMI. Very tame. Went missing Monday night.',
   'Quem encontrar, por favor levar na casa da Dona Hilda, no calçadão. Dou recompensa.': 'If found, please bring her to Dona Hilda\'s house, on the promenade. Reward offered.',
   'procura na igreja. os gatos sobem lá quando têm medo': 'look in the church. cats climb up there when they\'re scared',
@@ -638,9 +642,9 @@ export default {
   'Joãozinho    4ª série': 'Joãozinho    4th grade',
   'O que eu vi da minha janela': 'What I saw from my window',
   'Eu vi um bixo no pátio da visinha. Ele anda pulando que nen canguru e tem espinho nas costa. Ele bebeu a galinha.': 'I saw a critter in the nayber\'s yard. It goes hopping like a kangaru and has spikes on it\'s back. It drank the chicken.',
-  'bixo visinha nen costa': '',
+  'bixo visinha nen costa': 'nayber\'s kangaru it\'s',
   'Depois ele olhou pra minha janela e eu me escondi em baixo da coberta. A mãe disse que era sonho.': 'Then it looked at my window and I hid under neath the blanket. Mom said it was a dream.',
-  'em baixo': '',
+  'em baixo': 'under neath',
   'Não era sonho porque de manhã tinha pegada no barro.': 'It wasn\'t a dream because in the morning there was footprints in the mud.',
   'Muito criativo! Cuidado com a ortografia: bicho, vizinha, nem, embaixo.': 'Very creative! Watch your spelling: neighbor\'s, kangaroo, its, underneath.',
   'Nota: 7,5': 'Grade: 7.5',
@@ -1470,7 +1474,7 @@ export default {
   'CAFÉ COLONIAL': 'COLONIAL CAFÉ',
   'ELETRO': 'ELECTRONICS',
   'MÓVEIS': 'FURNITURE',
-  'MALHAS': 'KNITWEAR',
+  'MALHAS': 'MESHES',
   'BRECHÓ': 'THRIFT SHOP',
   'PIZZARIA': 'PIZZERIA',
   'VIDEOLOCADORA': 'VIDEO RENTAL',
@@ -1556,6 +1560,7 @@ export default {
   'Praça 10 de Abril': 'Praça 10 de Abril',
   'PRAÇA 10 DE ABRIL': 'PRAÇA 10 DE ABRIL',
   'Rio Cadeia': 'Rio Cadeia',
+  'VRS-873': 'VRS-873',
   'CAMPO DA SOCIEDADE': 'SOCIEDADE FIELD',
   'Rua Benno Closs': 'Rua Benno Closs',
   'PAVILHÃO DA KARTOFFELFEST': 'KARTOFFELFEST PAVILION',
@@ -1623,4 +1628,8 @@ export default {
 
 // textos que só aparecem montados na tela (achados pelo npm run teste); guardados à mão
 export const extra = {
+  'TEXTURAS': 'TEXTURES',
+  'RELEVO': 'TERRAIN',
+  'CASAS': 'HOUSES',
+  'PRONTO': 'READY',
 };
