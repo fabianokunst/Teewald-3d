@@ -130,6 +130,14 @@ const SONS = [
   ['sino', 'sino: alarme na praça, 4 em 0,7 s', 8, [[0, BELL(30)], ...seq('a.bell()', 4, 0.7)]],
   ['sino', 'sino: tocando sem parar a 60 m (3,6 s)', 14, [[0, BELL(60)], ...seq('a.bell()', 4, 3.6)]],
 
+  ['mundo', 'telefone tocando a 6 m', 1.5, [[0, 'M.X.ringBurst(a, Math.pow(1 - 6 / 80, 1.6) * 0.9)']]],
+  ['mundo', 'gata miando no colo', 1, [[0, 'M.X.meow(a)']]],
+  ['mundo', 'pedra arrastando a 5 m', 1, [[0, 'M.C9.scrape(a, 5, 0.5)']]],
+  ['mundo', 'suindara cantando a 20 m', 2.5, [[0, 'M.O.VOICES.suindara.song(a, M.O.spatial(a, 20, 0.3, 120), a.ctx.currentTime)']]],
+  ['mundo', 'murucututu a 20 m', 3.5, [[0, 'M.O.VOICES.murucututu.song(a, M.O.spatial(a, 20, -0.3, 140), a.ctx.currentTime)']]],
+  ['mundo', 'buraqueira a 12 m', 1.5, [[0, 'M.O.VOICES.buraqueira.song(a, M.O.spatial(a, 12, 0.5, 75), a.ctx.currentTime)']]],
+  ['mundo', 'coruja voando perto (3 m)', 1.5, [[0, 'M.O.VOICES.suindara.flush(a, M.O.spatial(a, 3, 0, 30), a.ctx.currentTime)']]],
+  ['mundo', 'banda fantasma a 15 m', 6, [[0, 'a._w = new M.GB.Waltz(a); a._w.start(); a._w.update(Math.pow(1 - 15 / 45, 1.4) * 0.55, 0)'], ...seq('a._w.update(Math.pow(1 - 15 / 45, 1.4) * 0.55, 0)', 22, 0.25, 0.25)], [2, 6]],
   ['interface', 'menu: mover', 1, [[0, 'a.menuMove()']]],
   ['interface', 'menu: confirmar', 1, [[0, 'a.menuOk()']]],
   ['interface', 'menu: voltar', 1, [[0, 'a.menuBack()']]],
@@ -162,6 +170,10 @@ const results = await page.evaluate(async (list, raw) => {
     C: await import('/src/game/chupacabra.js'),
     B: await import('/src/game/creatures/bat.js'),
     W: await import('/src/game/creatures/witch.js'),
+    X: await import('/src/game/extras.js'),
+    O: await import('/src/game/owls.js'),
+    GB: await import('/src/game/ghostBand.js'),
+    C9: await import('/src/game/chapters/ch09.js'),
   };
   const SR = 48000;
   // o limitador do Chrome aperta demais no começo do contexto: os sons só entram depois

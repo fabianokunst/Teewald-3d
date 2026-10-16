@@ -268,10 +268,10 @@ function buildOwl(S, M) {
 // ---------- sons ----------
 
 // saída posicionada: volume pela distância, abafada de longe e no lado certo da câmera
-function spatial(a, d, pan, range) {
+export function spatial(a, d, pan, range) {
   const c = a.ctx, v = Math.max(0, 1 - d / range);
   const f = c.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 1400 + 11000 * v * v;
-  const g = c.createGain(); g.gain.value = v * (0.25 + 0.75 * v);
+  const g = c.createGain(); g.gain.value = v * (0.25 + 0.75 * v) * 0.7;
   f.connect(g);
   if (c.createStereoPanner) { const p = c.createStereoPanner(); p.pan.value = clamp(pan, -1, 1) * 0.8; g.connect(p).connect(a.bus?.omen || a.master); }
   else g.connect(a.bus?.omen || a.master);
@@ -298,7 +298,7 @@ function screech(a, out, t, dur, k = 1) {
   const lfo = c.createOscillator(), lg = c.createGain();
   lfo.type = 'triangle'; lfo.frequency.value = 36 + Math.random() * 14; lg.gain.value = 0.45;
   lfo.connect(lg).connect(am.gain);
-  const g = c.createGain(); env(g.gain, t, 0.08, dur, 0.24 * k);
+  const g = c.createGain(); env(g.gain, t, 0.08, dur, 0.12 * k);
   src.connect(hp).connect(bp).connect(am).connect(g).connect(out);
   // a parte de "voz": serra aguda com tremido num filtro estreito
   const o = c.createOscillator(); o.type = 'sawtooth';
@@ -306,7 +306,7 @@ function screech(a, out, t, dur, k = 1) {
   const vib = c.createOscillator(), vg = c.createGain(); vib.frequency.value = 21; vg.gain.value = 45;
   vib.connect(vg).connect(o.frequency);
   const of = c.createBiquadFilter(); of.type = 'bandpass'; of.frequency.value = 2700; of.Q.value = 3;
-  const og = c.createGain(); env(og.gain, t, 0.1, dur, 0.06 * k);
+  const og = c.createGain(); env(og.gain, t, 0.1, dur, 0.03 * k);
   o.connect(of).connect(og).connect(out);
   const end = t + dur + 0.05;
   src.start(t, Math.random() * 1.5, dur + 0.05); lfo.start(t); vib.start(t); o.start(t);
@@ -366,7 +366,7 @@ function whoosh(a, out, t) {
   noise(a, t, 0.1, { type: 'highpass', f: 3200, vol: 0.03, attack: 0.01, out });
 }
 
-const VOICES = {
+export const VOICES = {
   suindara: {
     song: (a, out, t) => screech(a, out, t, 1.3 + Math.random() * 0.7),
     alert: hiss,

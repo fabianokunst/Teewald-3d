@@ -353,13 +353,13 @@ export default {
 };
 
 // pedra arrastando no ladrilho (ruído grave e curto)
-function scrape(audio, d, k = 0.4) {
+export function scrape(audio, d, k = 0.4) {
   const c = audio.ctx;
   if (!c || !audio.white || d > 22) return;
   const t = c.currentTime, src = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
   src.buffer = audio.white;
-  f.type = 'bandpass'; f.frequency.setValueAtTime(380, t); f.frequency.linearRampToValueAtTime(260, t + 0.5); f.Q.value = 2.2;
-  const v = k * 0.08 * Math.max(0, 1 - d / 22);
+  f.type = 'bandpass'; f.frequency.setValueAtTime(380, t); f.frequency.linearRampToValueAtTime(260, t + 0.5); f.Q.value = 1.2;
+  const v = k * 0.5 * Math.max(0, 1 - d / 22);
   g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(Math.max(0.0002, v), t + 0.05); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);
   src.connect(f).connect(g).connect(audio.master);
   src.start(t, Math.random() * 1.5); src.stop(t + 0.6);

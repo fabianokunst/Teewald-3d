@@ -23,7 +23,7 @@ const CHORD = [AM, AM, DM, AM, E7, E7, AM, AM, DM, DM, AM, FM, E7, E7, AM, AM];
 const BASS = [45, 52, 50, 45, 40, 47, 45, 40, 50, 45, 45, 41, 40, 47, 45, 45];
 const hz = m => 440 * Math.pow(2, (m - 69) / 12);
 
-class Waltz {
+export class Waltz {
   constructor(audio) { this.a = audio; this.out = null; }
   get on() { return !!this.out; }
   start() {

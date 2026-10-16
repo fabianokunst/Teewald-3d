@@ -586,7 +586,7 @@ function makeCollar() {
 }
 
 // toque de telefone antigo: dois tons batendo rápido, num envelope de um segundo
-function ringBurst(audio, vol) {
+export function ringBurst(audio, vol) {
   if (!audio.ctx || vol <= 0.01) return;
   const c = audio.ctx, t = c.currentTime;
   const g = c.createGain(), am = c.createGain(), lfo = c.createOscillator(), bp = c.createBiquadFilter();
@@ -594,15 +594,15 @@ function ringBurst(audio, vol) {
   lfo.type = 'square'; lfo.frequency.value = 22;
   const lg = c.createGain(); lg.gain.value = 0.5; am.gain.value = 0.5;
   lfo.connect(lg).connect(am.gain);
-  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.09 * vol, t + 0.02);
-  g.gain.setValueAtTime(0.09 * vol, t + 0.95); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.05);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.03 * vol, t + 0.02);
+  g.gain.setValueAtTime(0.03 * vol, t + 0.95); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.05);
   for (const f of [1150, 1390]) { const o = c.createOscillator(); o.type = 'square'; o.frequency.value = f; o.connect(bp); o.start(t); o.stop(t + 1.1); }
   bp.connect(am).connect(g).connect(audio.master);
   lfo.start(t); lfo.stop(t + 1.1);
 }
 
 // miado (gata assustada no colo)
-function meow(audio) {
+export function meow(audio) {
   if (!audio.ctx) return;
   const c = audio.ctx, t = c.currentTime, o = c.createOscillator(), g = c.createGain(), bp = c.createBiquadFilter();
   o.type = 'sawtooth'; bp.type = 'bandpass'; bp.frequency.value = 1200; bp.Q.value = 2;

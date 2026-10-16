@@ -48,7 +48,7 @@ export class Audio {
     if (!AC) return;
     const c = this.ctx = new AC();
     // saída: soma -> limitador -> volume do menu
-    this.out_ = c.createGain(); this.out_.gain.value = this.volume; this.out_.connect(c.destination);
+    this.out_ = c.createGain(); this.out_.gain.value = Math.min(1, this.volume * 1.25); this.out_.connect(c.destination);
     const lim = c.createDynamicsCompressor();
     lim.threshold.value = -5; lim.knee.value = 3; lim.ratio.value = 16; lim.attack.value = 0.002; lim.release.value = 0.2;
     lim.connect(this.out_);
@@ -246,7 +246,8 @@ export class Audio {
     if (this.ctx && this.ctx.state !== 'running' && this.ctx.state !== 'closed') this.ctx.resume().catch(() => {});
   }
 
-  setVolume(v) { this.volume = v; if (this.out_) this.out_.gain.value = v; }
+  // o menu manda até 0,8; com o limitador segurando os picos, o volume máximo vai a 1
+  setVolume(v) { this.volume = v; if (this.out_) this.out_.gain.value = Math.min(1, v * 1.25); }
 
   setAmbience(on) { this.ambience = on; }
 
@@ -266,7 +267,7 @@ export class Audio {
     const rgain = A && !inside ? Math.pow(Math.max(0, 1 - riverDist / 30), 1.5) * 0.06 : 0;
     this.riverGain.gain.setTargetAtTime(rgain, now, 0.3);
     this.droneGain.gain.setTargetAtTime(A ? (0.017 + Math.sin(t * 0.06) * 0.006 + W.night * 0.007) * (1 - (W.calm || 0) * 0.6) * (inside ? 0.45 : 1) : 0.01, now, 1.5);
-    this.rainGain.gain.setTargetAtTime(A ? W.rain * (inside ? 0.014 : 0.034) : 0, now, 0.6);
+    this.rainGain.gain.setTargetAtTime(A ? W.rain * (inside ? 0.024 : 0.034) : 0, now, 0.6);
     const Tn = this.tension || { k: 0, boss: 0 };
     this.tensionGain.gain.setTargetAtTime(A ? Tn.k * 0.026 : 0, now, Tn.k > 0.1 ? 0.4 : 2.5);
     this.bossGain.gain.setTargetAtTime(A ? Tn.boss * 0.007 : 0, now, Tn.boss > 0.1 ? 0.8 : 2.5);
