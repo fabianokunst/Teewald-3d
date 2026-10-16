@@ -1621,6 +1621,7 @@ export default {
   'ruas e rio': 'Straßen und Fluss',
   'igreja, praça e calçadão': 'Kirche, Platz und Promenade',
   'postes e fios': 'Masten und Leitungen',
+  'malhas 3D': '3D-Modelle',
   'árvores': 'Bäume',
   'céu': 'Himmel',
   'Rodovia {1}': 'Landstraße {1}',

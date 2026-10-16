@@ -97,7 +97,7 @@ export async function buildWorld(scene, onStep) {
   wires.userData.noShadow = true;
   scene.add(wires);
 
-  await step(0.78, 'malhas');
+  await step(0.78, 'malhas 3D');
   const statics = B.build(M);
   // parte fixa da cidade: a sombra dela fica guardada (engine/shadows.js)
   statics.userData.shadowStatic = true;

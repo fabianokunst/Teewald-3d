@@ -1621,6 +1621,7 @@ export default {
   'ruas e rio': 'streets and river',
   'igreja, praça e calçadão': 'church, square and promenade',
   'postes e fios': 'poles and wires',
+  'malhas 3D': '3D meshes',
   'árvores': 'trees',
   'céu': 'sky',
   'Rodovia {1}': 'Highway {1}',

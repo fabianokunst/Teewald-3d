@@ -83,12 +83,15 @@ function compile(k, v) {
   return { re: new RegExp('^' + re + '$', 's'), reU: new RegExp('^' + reU + '$', 's'), chunk, chunkU: chunk.toUpperCase(), order, v, lit };
 }
 
-// o valor de um {n}: número fica, palavra é traduzida se tiver tradução
+// o valor de um {n}: número fica, palavra é traduzida se tiver tradução; valor juntado de
+// pedaços ('MUNIÇÃO 9MM ×12' em 'PEGAR {1}') traduz cada pedaço
 function part(s) {
   if (!s || !/\p{L}{2}/u.test(s) || outs.has(s)) return s;
   const t = whole(s, 1);
-  if (t == null) note(s);
-  return t ?? s;
+  if (t != null) return t;
+  const b = bySegments(s);
+  if (!b || b.miss) note(s);
+  return b ? b.s : s;
 }
 
 function whole(t, depth) {
