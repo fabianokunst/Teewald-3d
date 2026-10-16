@@ -14,7 +14,8 @@
     "teste": "node tools/test-campaign.mjs",
     "retratos": "node tools/retratos.mjs",
     "exportar": "node tools/exportar.mjs",
-    "traduzir": "node tools/traduzir.mjs"
+    "traduzir": "node tools/traduzir.mjs",
+    "sons": "node tools/sons.mjs"
   },
   "dependencies": {
     "three": "^0.186.1"

@@ -366,8 +366,18 @@ feitos em código. O cenário fica em `src/world/chupaSites.js` e a missão em
 - Milhares de árvores (araucárias, plátanos de outono, nativas, pinheiros,
   ciprestes) e folhas caindo.
 - **Clima de terror**: céu encoberto, neblina fechada, luz fria, cores sem
-  saturação, bordas escuras e grão de filme; som de vento, zumbido grave e, ao
-  longe, corvos, cachorro uivando e o sino da igreja.
+  saturação, bordas escuras e grão de filme; som de vento dos dois lados, zumbido
+  grave, folhas nas rajadas, rio, chuva e, ao longe, corvos, cachorros, quero-quero,
+  bem-te-vi e pombas de dia, grilos e sapos de noite, a madeira rangendo dentro de
+  casa e o sino da igreja (mais forte e mais claro perto da torre, abafado dentro
+  de casa).
+- **Mixagem do som**: tudo é sintetizado (WebAudio) e passa por barramentos (armas,
+  golpes, criaturas, passos, ambiente, sinais ao longe, sino, música, interface) e por
+  um limitador, então nada estoura. O tiro é o som mais alto do jogo e abaixa o
+  ambiente por um instante; as criaturas soam do lado de onde vêm. Os níveis estão em
+  `MIX`, no começo de `src/engine/audio.js`. `npm run sons` toca cada som num Chrome
+  sem janela e mede o volume (LUFS) de cada um em relação ao tiro de pistola
+  (`npm run sons -- passo sino` mede só os que têm essas palavras no nome).
 - **Estilo visual** (em **Opções**):
   - **3D LIMPO** (padrão): resolução da própria tela, antisserrilhado, texturas
     suaves com o dobro da resolução e sem pixel nem dithering; os polígonos

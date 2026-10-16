@@ -263,7 +263,7 @@ export class Audio {
       w.g.gain.setTargetAtTime(A ? (0.036 + gust * 0.032) * own * windK : 0.016, now, 0.5);
       w.f.frequency.setTargetAtTime(300 + gust * 160 + W.wind * 220 + i * 40, now, 0.5);
     });
-    this.leafGain.gain.setTargetAtTime(A && !inside ? Math.max(0, gust - 0.45) * (0.2 + W.wind) * 0.006 : 0, now, 0.6);
+    this.leafGain.gain.setTargetAtTime(A && !inside ? Math.max(0, gust - 0.45) * (0.2 + W.wind) * 0.03 : 0, now, 0.6);
     const rgain = A && !inside ? Math.pow(Math.max(0, 1 - riverDist / 30), 1.5) * 0.06 : 0;
     this.riverGain.gain.setTargetAtTime(rgain, now, 0.3);
     this.droneGain.gain.setTargetAtTime(A ? (0.017 + Math.sin(t * 0.06) * 0.006 + W.night * 0.007) * (1 - (W.calm || 0) * 0.6) * (inside ? 0.45 : 1) : 0.01, now, 1.5);
@@ -473,6 +473,7 @@ export class Audio {
     let v = k * Math.max(0.12, Math.min(1, Math.pow(20 / d, 0.75)));
     let lp = 700 + 3800 * Math.pow(clamp(1 - d / 350, 0, 1), 2);
     if (this.inside === 'casa') { v *= 0.4; lp = 480; }
+    if (this.inside === 'igreja') { v *= 0.55; lp = 1800; }   // atrás das paredes de pedra
     const f = c.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = lp;
     const g = c.createGain(); g.gain.value = v;
     f.connect(g).connect(this._route(pan, this.bus.bell));

@@ -100,6 +100,7 @@ const SONS = [
 
   ['ambiente', 'vento (dia comum)', 11, [[0, AMB({ wind: 0.2 })]], [7, 11]],
   ['ambiente', 'vento forte', 11, [[0, AMB({ wind: 0.9 })]], [7, 11]],
+  ['ambiente', 'folhas na rajada (só elas, vento forte)', 11, [[0, AMB({ wind: 0.9 }) + 'for (const g of [...a.winds.map(w => w.g), a.droneGain]) { g.gain.cancelScheduledValues(0); g.gain.value = 0; }']], [7, 11]],
   ['ambiente', 'tarde calma', 11, [[0, AMB({ wind: 0.1, calm: 1 })]], [7, 11]],
   ['ambiente', 'noite', 11, [[0, AMB({ wind: 0.3, night: 1 })]], [7, 11]],
   ['ambiente', 'dentro de casa', 11, [[0, AMB({ wind: 0.3, indoor: 1 })]], [7, 11]],
