@@ -254,16 +254,17 @@ export class Menu {
     }
     // título
     // logo parado (a flutuação de 1,5 px virava um pulo de pixel de vez em quando)
-    const ty = 44 * k;
+    const ty = 44 * k, lineY = ty + 74 * k;
     drawText(g, 'Teewald', W / 2, ty, 58 * k, { align: 'center', font: FONT_TITLE, color: '#efe2c4', shadow: '#4a0d08' });
     g.fillStyle = '#b89a62';
-    g.fillRect(Math.round(W / 2 - 70 * k), Math.round(ty + 74 * k), Math.round(140 * k), Math.max(1, Math.round(k)));
+    g.fillRect(Math.round(W / 2 - 70 * k), Math.round(lineY), Math.round(140 * k), Math.max(1, Math.round(k)));
     if (this.screen === 'press') {
       const prompt = pad ? 'PRESSIONE START' : touch ? 'TOQUE PARA COMEÇAR' : 'PRESSIONE ENTER';
       if (Math.floor(this.t * 1.6) % 2 === 0) drawText(g, prompt, W / 2, 168 * k, 16 * k, { align: 'center', color: '#f2e6c8' });
     } else {
+      // lista sempre abaixo do traço do logo (com 5 ou 6 itens ela subia por cima dele)
       const n = this.items().length;
-      this._list(g, W, H, k, (n > 3 ? 132 - (n - 3) * 7 : 140) * k);
+      this._list(g, W, H, k, n > 3 ? lineY + 7 * k : 140 * k);
       help('DIRECIONAL escolher   A confirmar', '↑↓ escolher   ENTER confirmar', 'TOQUE para escolher');
     }
     drawText(g, 'v0.1', W - 6 * k, H - 14 * k, 10 * k, { align: 'right', color: '#a89878' });
