@@ -93,61 +93,79 @@ export class Paper {
     const box = this._box(W, H), cw = box.w - 28 * k, ch = box.h - 62 * k;
     this.pages = [];
     for (const src of this.doc.pages) {
-      const pg = Array.isArray(src) ? { blocks: src } : src;
-      const paper = pg.paper || this.doc.paper || 'old', pal = PAPER[paper] || PAPER.old;
-      const meta = { paper, marks: pg.marks || (pg.paper ? [] : this.doc.marks || []), label: pg.label || null, postmark: pg.postmark || null };
-      // no caderno o parágrafo novo só começa na linha de baixo
-      const gap = (pal.row ? 0 : 6.5) * k;
-      let cur = [], used = 0, float = null, prev = null;
-      const flush = () => { this.pages.push({ ...meta, items: cur }); cur = []; used = 0; float = null; };
-      const place = it => {
-        if (it.kind === 'gap' && !it.keep && !cur.length) return;
-        if (cur.length && used + it.h > ch) {
-          while (cur.length && cur[cur.length - 1].kind === 'gap') cur.pop();
-          flush();
-          if (it.kind === 'gap') return;
-        }
-        cur.push(it); used += it.h;
-      };
-      // o que sobra da imagem ao lado do texto vira espaço
-      const endFloat = () => { if (float && used < float.until) place({ kind: 'gap', h: float.until - used }); float = null; };
-      for (const b0 of pg.blocks) {
-        const b = typeof b0 === 'string' ? { t: b0 } : b0;
-        if (prev && gap && !(prev.entry && b.entry)) place({ kind: 'gap', h: gap });
-        prev = b;
-        // imagem flutuante: o texto seguinte corre do lado dela
-        if (b.img && b.float) {
-          endFloat();
-          const it = this._items(b, k, cw, ch, pal)[0];
-          if (!it) continue;
-          if (cur.length && used + it.ih > ch) flush();
-          it.float = b.float; it.h = 0;
-          place(it);
-          float = { until: used + it.ih + 4 * k, w: it.w + 8 * k, side: b.float };
-          prev = null;
-          continue;
-        }
-        if (float && (b.t == null || used >= float.until)) endFloat();
-        const side = float ? float.w : 0;
-        for (const it of this._items(b, k, cw - side, ch, pal)) {
-          if (float && it.kind === 'text') { it.narrow = side; if (float.side === 'left') it.indent = side; }
-          place(it);
+      let pages = this._lay(src, k, cw, ch, 1);
+      // a tradução às vezes passa um pouco do papel: em vez de uma página com uma ou duas linhas,
+      // a letra daquela página diminui um pouco até caber (o português fica como está)
+      if (pages.length > 1 && pages[pages.length - 1].used <= ch * 0.3) {
+        for (let f = 0.98; f > 0.83; f -= 0.02) {
+          const p = this._lay(src, k, cw, ch, f);
+          if (p.length < pages.length) { pages = p; break; }
         }
       }
-      endFloat();
-      flush();
+      this.pages.push(...pages);
     }
     this.page = Math.min(this.page, this.pages.length - 1);
   }
 
-  _items(b, k, cw, ch, pal) {
+  // uma página do documento em páginas da tela; f = escala da letra
+  _lay(src, k, cw, ch, f) {
+    const pg = Array.isArray(src) ? { blocks: src } : src;
+    const paper = pg.paper || this.doc.paper || 'old', pal = PAPER[paper] || PAPER.old;
+    const meta = { paper, marks: pg.marks || (pg.paper ? [] : this.doc.marks || []), label: pg.label || null, postmark: pg.postmark || null };
+    const pages = [];
+    // no caderno o parágrafo novo só começa na linha de baixo
+    const gap = (pal.row ? 0 : 6.5) * k * f;
+    let cur = [], used = 0, float = null, prev = null;
+    const flush = () => { pages.push({ ...meta, items: cur, used }); cur = []; used = 0; float = null; };
+    const place = it => {
+      if (it.kind === 'gap' && !it.keep && !cur.length) return;
+      if (cur.length && used + it.h > ch) {
+        while (cur.length && cur[cur.length - 1].kind === 'gap') used -= cur.pop().h;
+        flush();
+        if (it.kind === 'gap') return;
+      }
+      cur.push(it); used += it.h;
+    };
+    // o que sobra da imagem ao lado do texto vira espaço
+    const endFloat = () => { if (float && used < float.until) place({ kind: 'gap', h: float.until - used }); float = null; };
+    for (const b0 of pg.blocks) {
+      const b = typeof b0 === 'string' ? { t: b0 } : b0;
+      if (prev && gap && !(prev.entry && b.entry)) place({ kind: 'gap', h: gap });
+      prev = b;
+      // imagem flutuante: o texto seguinte corre do lado dela
+      if (b.img && b.float) {
+        endFloat();
+        const it = this._items(b, k, cw, ch, pal)[0];
+        if (!it) continue;
+        if (cur.length && used + it.ih > ch) flush();
+        it.float = b.float; it.h = 0;
+        place(it);
+        float = { until: used + it.ih + 4 * k, w: it.w + 8 * k, side: b.float };
+        prev = null;
+        continue;
+      }
+      if (float && (b.t == null || used >= float.until)) endFloat();
+      const side = float ? float.w : 0;
+      for (const it of this._items(b, k, cw - side, ch, pal, f)) {
+        if (float && it.kind === 'text') { it.narrow = side; if (float.side === 'left') it.indent = side; }
+        place(it);
+      }
+    }
+    endFloat();
+    flush();
+    return pages;
+  }
+
+  // f = escala da letra (texto, bilhete, lista); imagem, carimbo e assinatura não mudam
+  _items(b, k, cw, ch, pal, f = 1) {
     if (typeof b === 'string') b = { t: b };
     const key = b.t || b.note || b.sign || b.img || (b.entry || []).join('') || b.label || '';
     const seed = hash(key.length * 1.37 + (key.charCodeAt(0) || 0) + (key.charCodeAt(key.length - 1) || 0) * 0.01);
     if (b.space) return [{ kind: 'gap', keep: true, h: b.space * k }];
     if (b.t != null) {
-      const st = STYLE[b.s] || STYLE.print, sz = b.size || st.size, size = sz * k;
-      const lh = (pal.row && st.font === FONT_HAND ? pal.row : st.lh * sz / st.size) * k;
+      const st = STYLE[b.s] || STYLE.print, sz = b.size || st.size, size = sz * k * f;
+      // no caderno a letra à mão fica em cima da pauta
+      const lh = (pal.row && st.font === FONT_HAND ? pal.row : st.lh * sz / st.size * f) * k;
       return wrap(tr(b.t), size, cw - 4 * k, st.font).map((text, i) => ({
         kind: 'text', text, st, size, font: st.font, color: b.color || st.color || pal.ink, h: lh,
         align: b.align, strike: b.strike, ring: b.ring, words: b.words && tr(b.words).split(' ').map(norm), seed: seed * 100 + i,
@@ -175,13 +193,13 @@ export class Paper {
     }
     if (b.scribble) return [{ kind: 'scribble', label: b.label, color: b.color || pal.ink, seed, h: 30 * k }];
     if (b.note) {
-      const st = STYLE[b.s] || STYLE.hand, size = st.size * k, w = cw * (b.w || 0.62), lines = wrap(tr(b.note), size, w - 12 * k, st.font);
-      const bh = lines.length * st.lh * k + 9 * k;
-      return [{ kind: 'note', lines, st, size, w, bh, bg: b.bg || '#e6d468', h: bh + 6 * k }];
+      const st = STYLE[b.s] || STYLE.hand, size = st.size * k * f, lh = st.lh * k * f, w = cw * (b.w || 0.62), lines = wrap(tr(b.note), size, w - 12 * k, st.font);
+      const bh = lines.length * lh + 9 * k;
+      return [{ kind: 'note', lines, st, size, lh, w, bh, bg: b.bg || '#e6d468', h: bh + 6 * k }];
     }
     if (b.entry) {
       const [name, addr, num] = b.entry;
-      return [{ kind: 'entry', name, addr, num, ring: b.ring, size: 10.5 * k, seed, h: 11 * k }];
+      return [{ kind: 'entry', name, addr, num, ring: b.ring, size: 10.5 * k * f, seed, h: 11 * k * f }];
     }
     if (b.rule) return [{ kind: 'rule', h: 6 * k }];
     return [];
@@ -340,7 +358,7 @@ export class Paper {
       g.globalAlpha = a * 0.3; g.fillStyle = '#000'; g.fillRect(-it.w / 2 + 2 * k, -it.bh / 2 + 2 * k, it.w, it.bh);
       g.globalAlpha = a; g.fillStyle = it.bg; g.fillRect(-it.w / 2, -it.bh / 2, it.w, it.bh);
       g.globalAlpha = a * 0.25; g.fillStyle = '#fff'; g.fillRect(-it.w / 2, -it.bh / 2, it.w, R(3 * k));
-      it.lines.forEach((l, i) => drawText(g, l, -it.w / 2 + 6 * k, -it.bh / 2 + 4 * k + i * it.st.lh * k, it.size, { font: it.st.font, color: it.st.color, shadow: null, alpha: a, raw: true }));
+      it.lines.forEach((l, i) => drawText(g, l, -it.w / 2 + 6 * k, -it.bh / 2 + 4 * k + i * it.lh, it.size, { font: it.st.font, color: it.st.color, shadow: null, alpha: a, raw: true }));
       g.restore();
       return;
     }
