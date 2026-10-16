@@ -21,7 +21,7 @@ const OBJ = {
 };
 
 // o cartaz da praça, como está no mural (o desenho é o mesmo da textura, missionArt.js)
-const BOARD = {
+export const BOARD = {
   kind: 'CARTAZ NA PRAÇA', title: 'Procura-se: chupacabras', paper: 'white',
   pages: [[
     { t: 'PROCURA-SE', s: 'poster', align: 'center', color: '#8a1612' },
