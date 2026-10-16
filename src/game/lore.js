@@ -165,8 +165,8 @@ export const DOCS = [
     pages: [[
       { t: 'Joãozinho    4ª série', s: 'child' },
       { t: 'O que eu vi da minha janela', s: 'child', align: 'center' },
-      { t: 'Eu vi um bixo no pátio da visinha. Ele anda pulando que nen canguru e tem espinho nas costa. Ele bebeu a galinha.', s: 'child', words: ['bixo', 'visinha', 'nen', 'costa'] },
-      { t: 'Depois ele olhou pra minha janela e eu me escondi em baixo da coberta. A mãe disse que era sonho.', s: 'child', words: ['em', 'baixo'] },
+      { t: 'Eu vi um bixo no pátio da visinha. Ele anda pulando que nen canguru e tem espinho nas costa. Ele bebeu a galinha.', s: 'child', words: 'bixo visinha nen costa' },
+      { t: 'Depois ele olhou pra minha janela e eu me escondi em baixo da coberta. A mãe disse que era sonho.', s: 'child', words: 'em baixo' },
       { t: 'Não era sonho porque de manhã tinha pegada no barro.', s: 'child' },
     ], [
       { img: 'pegada', w: 0.2, h: 0.4, float: 'left' },

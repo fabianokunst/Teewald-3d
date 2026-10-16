@@ -14,7 +14,7 @@ import { tr, getLang } from '../i18n/index.js';
 //   { t, s, align, color, size }    parágrafo num estilo de STYLE (letra à mão, máquina...)
 //        strike: true               riscado
 //        ring: true                 a linha circulada (caneta vermelha)
-//        words: ['bixo', ...]       palavras circuladas
+//        words: 'bixo visinha'      palavras circuladas (traduzidas junto com o texto)
 //   { img, w, h, align, corners }   desenho de game/docArt.js (w, h = fração da largura/altura)
 //   { stamp, color, round, rot, align }  carimbo ('\n' separa as linhas)
 //   { sign, s, align }              assinatura com o traço embaixo
@@ -150,7 +150,7 @@ export class Paper {
       const lh = (pal.row && st.font === FONT_HAND ? pal.row : st.lh * sz / st.size) * k;
       return wrap(tr(b.t), size, cw - 4 * k, st.font).map((text, i) => ({
         kind: 'text', text, st, size, font: st.font, color: b.color || st.color || pal.ink, h: lh,
-        align: b.align, strike: b.strike, ring: b.ring, words: b.words, seed: seed * 100 + i,
+        align: b.align, strike: b.strike, ring: b.ring, words: b.words && tr(b.words).split(' ').map(norm), seed: seed * 100 + i,
       }));
     }
     if (b.img) {
