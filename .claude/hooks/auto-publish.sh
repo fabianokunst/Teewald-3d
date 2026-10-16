@@ -9,7 +9,8 @@ git rev-parse --git-dir >/dev/null 2>&1 || exit 0
 
 gitdir=$(git rev-parse --git-dir)
 # no meio de um rebase/merge com conflito não dá para commitar nem publicar
-if [ -d "$gitdir/rebase-merge" ] || [ -d "$gitdir/rebase-apply" ] || [ -f "$gitdir/MERGE_HEAD" ]; then
+if [ -d "$gitdir/rebase-merge" ] || [ -d "$gitdir/rebase-apply" ] || [ -f "$gitdir/MERGE_HEAD" ] ||
+   [ -n "$(git diff --name-only --diff-filter=U)" ]; then
   echo '{"systemMessage": "Não publicado: há um conflito do Git pendente. Peça ao Claude para resolver."}'
   exit 0
 fi
