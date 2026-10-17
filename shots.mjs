@@ -5,13 +5,14 @@
 import { createRequire } from 'node:module';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
 const puppeteer = require('puppeteer-core');
 const W = 1920, H = 1080;
 const langs = (process.argv[2] || 'pt,en,es,de').split(',');
 const only = process.argv[3] ? process.argv[3].split(',') : null;
-const root = path.join(path.dirname(new URL(import.meta.url).pathname).replace(/^\/([A-Z]:)/, '$1'), 'shots');
+const root = path.join(path.dirname(fileURLToPath(import.meta.url)), 'shots');
 
 const browser = await puppeteer.launch({ executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: 'new' });
 const page = await browser.newPage();

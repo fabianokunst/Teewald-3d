@@ -5,11 +5,12 @@
 
 ## The game
 Third-person horror game with a PS1 look, set in **Teewald**, a fictional version of Santa Maria do
-Herval, a small town of German immigrants in Rio Grande do Sul (south Brazil). Autumn, fog, a town
+Herval, a small town of German immigrants in Rio Grande do Sul (south Brazil). May, which is autumn
+in the southern hemisphere (never October or November), fog, a town
 afraid of what walks in the woods. Twelve chapters, each one a Brazilian/German-colonial legend:
 the chupacabra, fire dogs, the factory girl ghost (Lúcia), the Varginha aliens, the Beast of the
-dawn, phones calling people into the woods, the werewolf (seventh son), the cemetery on All Souls'
-Day, the woman in the photograph, vampire bats, and the witch **Otília Kranz** (a healer buried
+dawn, phones calling people into the woods, the werewolf (seventh son), the cemetery on the Night of
+Souls (Monday, the day of the souls), the woman in the photograph, vampire bats, and the witch **Otília Kranz** (a healer buried
 alive by the colonists in 1878 with an iron cross on top). Townsfolk are old German-Brazilian
 colonists: they speak rural gaúcho Portuguese ("tu", "guri", "piá", "cusco", "bah", "tchê") and
 drop phrases in **Hunsrik** (a German dialect) or German.
@@ -108,7 +109,7 @@ Many texts at once: `npm run traduzir -- --exportar <folder>` writes batches `xx
 - fábrica de calçados → shoe factory | fábrica de calzado | Schuhfabrik ; capataz → foreman | capataz | Vorarbeiter
 - museu → museum | museo | Museum ; forja → forge | fragua | Schmiede ; mato / mata → the woods | el monte | der Wald
 - orelhão → payphone | teléfono público | Telefonzelle (Münztelefon)
-- Festa da Batata → Potato Festival | Fiesta de la Papa | Kartoffelfest ; Finados → All Souls' Day | Día de los Difuntos | Allerseelen
+- Festa da Batata → Potato Festival | Fiesta de la Papa | Kartoffelfest ; Noite das Almas → Night of Souls | Noche de Ánimas | Seelennacht ; dia das almas (segunda-feira) → day of the souls | día de las ánimas | Tag der armen Seelen ; maio → May | mayo | Mai (autumn)
 
 ### Items & weapons (item names are UPPERCASE in the game)
 - PISTOLA 9MM → 9MM PISTOL | PISTOLA 9MM | PISTOLE 9MM ; MUNIÇÃO 9MM → 9MM AMMO | MUNICIÓN 9MM | MUNITION 9MM ; pente → magazine | cargador | Magazin

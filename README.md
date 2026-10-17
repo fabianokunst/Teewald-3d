@@ -28,10 +28,10 @@
 </p>
 
 Jogo de terror em terceira pessoa com visual de PlayStation 1, ambientado numa
-versão de Santa Maria do Herval (RS) no outono: neblina, céu encoberto e uma
+versão de Santa Maria do Herval (RS) em maio, no outono: neblina, céu encoberto e uma
 cidade com medo do que anda no mato. São doze capítulos: o chupacabras, os cães de
 fogo, a moça da fábrica, os ETs de Varginha, a Fera da madrugada, os telefones que
-chamam para o mato, o lobisomem, o cemitério em Finados, a mulher da fotografia, os
+chamam para o mato, o lobisomem, o cemitério na Noite das Almas, a mulher da fotografia, os
 morcegos-vampiro e a bruxa Otília, com luta corpo a corpo,
 armas especiais, noite, chuva, tempestade, neblina e lua cheia. Roda no navegador
 (Three.js + Vite).
@@ -913,7 +913,7 @@ são dela ou vêm atrás dela.
 | 5 | A Fera da Madrugada | neblina fechada | o rastro do bicho enorme até a Prefeitura e a luta entre as colunas do pavilhão da Kartoffelfest (batendo nelas, ela fica tonta) | dinamite (almoxarifado da Prefeitura) |
 | 6 | A Linha Cruzada | noite | todos os telefones da cidade tocam juntos; quem atende sai andando para o mato. Atender de novo os orelhões que chamam três sonâmbulos para acordá-los (as almas rondam cada um); no livro de atas de 1879, o acordo do sino às oito; tocar o sino da torre e aguentar as almas que sobem | — |
 | 7 | Lua Cheia | lua cheia, céu limpo | o sétimo filho dos Hoffmann; revólver do museu, prata dos castiçais da igreja fundida na forja do Seu Arno; a caçada ao lobisomem | revólver .38 com balas de prata |
-| 8 | Finados | garoa e neblina | acender as velas dos quatro fundadores com o cemitério cheio de fantasmas, descer à cripta e trazer a cruz de ferro | cruz de ferro (e a pá do coveiro) |
+| 8 | Noite das Almas | garoa e neblina | acender as velas dos quatro fundadores com o cemitério cheio de fantasmas, descer à cripta e trazer a cruz de ferro | cruz de ferro (e a pá do coveiro) |
 | 9 | A Mulher da Fotografia | chuva | o padre liga do orelhão: a mulher de preto da foto de 1910 saiu da foto. Na igreja apagada, as imagens cobertas andam quando ninguém olha; acender os castiçais e a lamparina, subir à torre e afastar o vulto com o lampião (ela foge para o telhado) | — |
 | 10 | Asas da Noite | noite de vento | a bruxa aparece no telhado da igreja; queimar os três ninhos de morcegos-vampiro gigantes e derrubar a rainha deles na torre | — |
 | 11 | O Covil | chuva | rifle de dardos na agropecuária, o rastro de sangue até a gruta, cansar o chupacabras e capturá-lo vivo; quebrar os cristais da pedra do céu | rifle de dardos (só derruba bicho cansado) |
