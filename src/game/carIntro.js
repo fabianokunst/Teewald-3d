@@ -2,9 +2,9 @@
 // encosta no meio-fio do lado do calçadão, o motor desliga, a porta abre e ele desce. Fecha a
 // porta, olha em volta e segue a pé, contornando a traseira do carro, até o calçadão; a câmera
 // passa para trás dele e o jogo começa.
-// Planos: (A) parada na beira da rua, o carro vindo de longe; (B) rente ao chão na roda da
-// frente, o motor desligando; (C) três quartos de frente para a porta, ele saindo; (D) a
-// câmera do jogo, da frente dele girando até as costas.
+// Planos: (A) parada na beira da rua, o carro vindo de longe; (B) de frente para o para-brisa,
+// baixo, o motor desligando e os faróis morrendo; (C) três quartos de frente para a porta, ele
+// saindo; (D) a câmera do jogo, da frente dele girando até as costas.
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const ease = t => { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); };
@@ -35,7 +35,7 @@ export function introRoute(ctx, start) {
     back.push({ p: R.pts[k], hw: R.hw });
     let len = 0;
     for (let q = 1; q < back.length; q++) len += Math.hypot(back[q].p[0] - back[q - 1].p[0], back[q].p[1] - back[q - 1].p[1]);
-    if (len > 80) break;
+    if (len > 64) break;
     const nk = k + dir;
     if (nk >= 0 && nk < R.pts.length) { k = nk; continue; }
     // acabou a rua: continua na outra que sai daquela ponta seguindo reto (no trevo da pista
@@ -125,13 +125,13 @@ export class CarIntro {
       return false;
     }
     if (this.shot === 'B') {
-      // rente ao chão, na roda da frente, olhando a porta do motorista
-      const [cx, cz] = car.world(1.75, 3.2), [lx, lz] = car.world(0.95, -0.6);
-      camera.position.set(cx, car.body.y + 0.62, cz);
-      camera.fov += (46 - camera.fov) * Math.min(1, dt * 3);
+      // de frente, baixo, um pouco para o lado do motorista: o para-brisa e os faróis
+      const tb = t - this.tB, k = ease(tb / 2.3);
+      const [cx, cz] = car.world(1.0 - k * 0.15, 6.2 - k * 0.5), [lx, lz] = car.world(0.35, -0.2);
+      camera.position.set(cx, car.body.y + 1.12, cz);
+      camera.fov += (34 - camera.fov) * Math.min(1, dt * 3);
       camera.updateProjectionMatrix();
-      camera.lookAt(lx, car.body.y + 0.95, lz);
-      const tb = t - this.tB;
+      camera.lookAt(lx, car.body.y + 0.98, lz);
       if (tb > 0.9 && car.engine) { car.ai = null; car.engine = false; car.introLights = false; car.sound.stop(); }
       if (tb > 2.1) { this.shot = 'C'; this.tC = t; car.startExit(); }
       return false;
@@ -139,9 +139,9 @@ export class CarIntro {
     if (this.shot === 'C') {
       // três quartos de frente para a porta; empurra devagar
       const tc = t - this.tC, k = ease(tc / 3);
-      const [cx, cz] = car.world(3.5 - k * 0.4, 1.8 - k * 0.3), [lx, lz] = car.world(1.1, -0.55);
-      camera.position.set(cx, car.body.y + 1.45 - k * 0.1, cz);
-      camera.fov += (50 - camera.fov) * Math.min(1, dt * 3);
+      const [cx, cz] = car.world(4.3 - k * 0.5, 1.6 - k * 0.3), [lx, lz] = car.world(1.1, -0.55);
+      camera.position.set(cx, car.body.y + 1.5 - k * 0.1, cz);
+      camera.fov += (48 - camera.fov) * Math.min(1, dt * 3);
       camera.updateProjectionMatrix();
       camera.lookAt(lx, car.body.y + 1.05 + k * 0.15, lz);
       if (!player.vehicle && !this.tD) {

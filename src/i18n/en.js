@@ -9,6 +9,8 @@ export default {
   'TEE-1910': null,
   // ── src/engine/exporter.js
   'Protagonista': null,
+  // ── src/engine/heroCarTextures.js
+  'BBY-1967': null,
   // ── src/engine/touch.js
   'GIRE O APARELHO': 'ROTATE YOUR DEVICE',
   'para jogar em tela cheia': 'to play in full screen',
@@ -22,11 +24,16 @@ export default {
   'INV': 'INV',
   'ARMA': 'WEAPON',
   'CURA {1}': 'HEAL {1}',
+  'ACELERAR': 'GAS',
+  'FREIO': 'BRAKE',
+  'F. DE MÃO': 'E-BRAKE',
+  'BUZINA': 'HORN',
+  'SAIR': 'EXIT',
+  'FAROL': 'LIGHTS',
   // ── src/game/campaign.js
   'PROGRESSO CARREGADO': 'PROGRESS LOADED',
   'EXAMINAR': 'EXAMINE',
   'SABC': null,
-  'SAIR': 'EXIT',
   'VOCÊ CAIU...': 'YOU FELL...',
   'relógio': null,
   'O rastro de sangue entrava fundo na mata, além da clareira.': 'The blood trail ran deep into the woods, past the clearing.',
@@ -42,6 +49,19 @@ export default {
   'CRIATURAS {1}   QUEDAS {2}   TEMPO {3}:{4}   AVALIAÇÃO {5}': 'CREATURES {1}   DEATHS {2}   TIME {3}:{4}   RANK {5}',
   'FIM': 'THE END',
   'A NOITE TE ENGOLIU': 'THE NIGHT SWALLOWED YOU',
+  // ── src/game/car.js
+  'W acelerar   S freio e ré   A D volante   ESPAÇO freio de mão': 'W gas   S brake and reverse   A D steer   SPACE handbrake',
+  'G buzina   L farol   C olhar para trás   F sair do carro': 'G horn   L lights   C look back   F get out',
+  'R2 acelerar   L2 freio e ré   ANALÓGICO volante   B freio de mão': 'R2 gas   L2 brake and reverse   STICK steer   B handbrake',
+  'X buzina   ↑ farol   LB olhar para trás   A sair do carro': 'X horn   ↑ lights   LB look back   A get out',
+  'ESQUERDA volante   ACELERAR   FREIO e ré': 'LEFT steer   GAS   BRAKE and reverse',
+  'F. DE MÃO   BUZINA   FAROL   SAIR': 'E-BRAKE   HORN   LIGHTS   EXIT',
+  'YXZ': null,
+  'O MOTOR NÃO PEGA NA ÁGUA': 'THE ENGINE WON\'T START IN WATER',
+  'O MOTOR AFOGOU': 'THE ENGINE FLOODED',
+  'ENTRAR NO CARRO': 'GET IN THE CAR',
+  // ── src/game/carIntro.js
+  'VRS-873': 'VRS-873',
   // ── src/game/chapters/ch02.js
   'PADRE BERNARDO': 'FATHER BERNARDO',
   'Os Cães de Fogo': 'The Fire Dogs',
@@ -399,8 +419,6 @@ export default {
   'O SELO': 'THE SEAL',
   // ── src/game/chapters/index.js
   'O Chupacabras': 'The Chupacabra',
-  // ── src/game/character.js
-  'YXZ': null,
   // ── src/game/combat.js
   'SOCO': 'PUNCH',
   'CORONHADA': 'PISTOL WHIP',
@@ -1143,6 +1161,14 @@ export default {
   'Quem tá tocando o sino?': 'Who\'s ringing the bell?',
   'Credo... o sino de novo.': 'Lord... the bell again.',
   'Mein Gott, o sino!': 'Mein Gott, the bell!',
+  'Olha o carro!': 'Watch the car!',
+  'Ei! Devagar!': 'Hey! Slow down!',
+  'Cuidado!': 'Careful!',
+  'Tá louco?!': 'Are you crazy?!',
+  'Ai! Olha por onde anda!': 'Ow! Watch where you\'re going!',
+  'Quase me atropela!': 'You nearly ran me over!',
+  'Tá cego?!': 'Are you blind?!',
+  'Mas que coisa!': 'Good grief!',
   'Queimado de sol, barba cheia grisalha e sobrancelhas grossas.': 'Sunburned, with a full gray beard and bushy eyebrows.',
   'Baixo e atarracado, braços e mãos grossos de quem bateu ferro a vida inteira.': 'Short and stocky, with the thick arms and hands of a man who pounded iron all his life.',
   'Camisa xadrez vermelha, calça cinza, botas e chapéu de palha. Vara de pescar.': 'Red plaid shirt, gray pants, boots and a straw hat. Fishing rod.',
@@ -1560,7 +1586,6 @@ export default {
   'Praça 10 de Abril': 'Praça 10 de Abril',
   'PRAÇA 10 DE ABRIL': 'PRAÇA 10 DE ABRIL',
   'Rio Cadeia': 'Rio Cadeia',
-  'VRS-873': 'VRS-873',
   'CAMPO DA SOCIEDADE': 'SOCIEDADE FIELD',
   'Rua Benno Closs': 'Rua Benno Closs',
   'PAVILHÃO DA KARTOFFELFEST': 'KARTOFFELFEST PAVILION',

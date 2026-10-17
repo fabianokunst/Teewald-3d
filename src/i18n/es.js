@@ -9,6 +9,8 @@ export default {
   'TEE-1910': null,
   // ── src/engine/exporter.js
   'Protagonista': null,
+  // ── src/engine/heroCarTextures.js
+  'BBY-1967': null,
   // ── src/engine/touch.js
   'GIRE O APARELHO': 'GIRAR EL APARATO',
   'para jogar em tela cheia': 'para jugar en pantalla completa',
@@ -22,11 +24,16 @@ export default {
   'INV': 'INV',
   'ARMA': 'ARMA',
   'CURA {1}': 'CURAR {1}',
+  'ACELERAR': 'ACELERAR',
+  'FREIO': 'FRENO',
+  'F. DE MÃO': 'F. MANO',
+  'BUZINA': 'BOCINA',
+  'SAIR': 'SALIR',
+  'FAROL': 'LUCES',
   // ── src/game/campaign.js
   'PROGRESSO CARREGADO': 'PROGRESO CARGADO',
   'EXAMINAR': 'EXAMINAR',
   'SABC': null,
-  'SAIR': 'SALIR',
   'VOCÊ CAIU...': 'CAÍSTE...',
   'relógio': null,
   'O rastro de sangue entrava fundo na mata, além da clareira.': 'El rastro de sangre se metía hondo en el monte, más allá del claro.',
@@ -42,6 +49,19 @@ export default {
   'CRIATURAS {1}   QUEDAS {2}   TEMPO {3}:{4}   AVALIAÇÃO {5}': 'CRIATURAS {1}   MUERTES {2}   TIEMPO {3}:{4}   CALIFICACIÓN {5}',
   'FIM': 'FIN',
   'A NOITE TE ENGOLIU': 'LA NOCHE TE TRAGÓ',
+  // ── src/game/car.js
+  'W acelerar   S freio e ré   A D volante   ESPAÇO freio de mão': 'W acelerar   S freno y reversa   A D volante   ESPACIO freno de mano',
+  'G buzina   L farol   C olhar para trás   F sair do carro': 'G bocina   L luces   C mirar atrás   F bajarse',
+  'R2 acelerar   L2 freio e ré   ANALÓGICO volante   B freio de mão': 'R2 acelerar   L2 freno y reversa   STICK volante   B freno de mano',
+  'X buzina   ↑ farol   LB olhar para trás   A sair do carro': 'X bocina   ↑ luces   LB mirar atrás   A bajarse',
+  'ESQUERDA volante   ACELERAR   FREIO e ré': 'IZQUIERDA volante   ACELERAR   FRENO y reversa',
+  'F. DE MÃO   BUZINA   FAROL   SAIR': 'F. MANO   BOCINA   LUCES   SALIR',
+  'YXZ': null,
+  'O MOTOR NÃO PEGA NA ÁGUA': 'EL MOTOR NO ARRANCA EN EL AGUA',
+  'O MOTOR AFOGOU': 'EL MOTOR SE AHOGÓ',
+  'ENTRAR NO CARRO': 'SUBIR AL AUTO',
+  // ── src/game/carIntro.js
+  'VRS-873': 'VRS-873',
   // ── src/game/chapters/ch02.js
   'PADRE BERNARDO': 'PADRE BERNARDO',
   'Os Cães de Fogo': 'Los Perros de Fuego',
@@ -399,8 +419,6 @@ export default {
   'O SELO': 'EL SELLO',
   // ── src/game/chapters/index.js
   'O Chupacabras': 'El Chupacabras',
-  // ── src/game/character.js
-  'YXZ': null,
   // ── src/game/combat.js
   'SOCO': 'PUÑETAZO',
   'CORONHADA': 'CULATAZO',
@@ -1143,6 +1161,14 @@ export default {
   'Quem tá tocando o sino?': '¿Quién está tocando la campana?',
   'Credo... o sino de novo.': 'Ave María... la campana otra vez.',
   'Mein Gott, o sino!': '¡Mein Gott, la campana!',
+  'Olha o carro!': '¡Cuidado con el auto!',
+  'Ei! Devagar!': '¡Eh! ¡Despacio!',
+  'Cuidado!': '¡Cuidado!',
+  'Tá louco?!': '¿Vos estás loco?!',
+  'Ai! Olha por onde anda!': '¡Ay! ¡Mirá por dónde andás!',
+  'Quase me atropela!': '¡Casi me atropellás!',
+  'Tá cego?!': '¿Vos estás ciego?!',
+  'Mas que coisa!': '¡Pero qué cosa!',
   'Queimado de sol, barba cheia grisalha e sobrancelhas grossas.': 'Quemado por el sol, barba tupida canosa y cejas gruesas.',
   'Baixo e atarracado, braços e mãos grossos de quem bateu ferro a vida inteira.': 'Bajo y macizo, brazos y manos gruesos de quien golpeó hierro toda la vida.',
   'Camisa xadrez vermelha, calça cinza, botas e chapéu de palha. Vara de pescar.': 'Camisa a cuadros roja, pantalón gris, botas y sombrero de paja. Caña de pescar.',
@@ -1560,7 +1586,6 @@ export default {
   'Praça 10 de Abril': 'Praça 10 de Abril',
   'PRAÇA 10 DE ABRIL': 'PRAÇA 10 DE ABRIL',
   'Rio Cadeia': 'Rio Cadeia',
-  'VRS-873': 'VRS-873',
   'CAMPO DA SOCIEDADE': 'CANCHA DE LA SOCIEDAD',
   'Rua Benno Closs': 'Rua Benno Closs',
   'PAVILHÃO DA KARTOFFELFEST': 'PABELLÓN DE LA KARTOFFELFEST',

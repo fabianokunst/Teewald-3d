@@ -32,6 +32,8 @@ const AMB = (w, extra = '') => `a.setAmbience(true); a.setWeather(Object.assign(
 // ouvinte na origem e a igreja a d metros (inside: null, 'casa' ou 'igreja')
 const BELL = (d, inside = null) => `a.listen({ x: 0, z: 0 }, null, { x: ${d}, z: 0 }, ${JSON.stringify(inside)});`;
 const seq = (code, n, gap, t0 = 0) => Array.from({ length: n }, (_, i) => [t0 + i * gap, code]);
+// estado contínuo do carro (CarAudio.update), criando o carro na primeira vez
+const CAR = o => `(a._car ||= new M.CA.CarAudio(a)).update(0.016, ${JSON.stringify({ on: true, rpm: 720, load: 0, speed: 0, skid: 0, surface: 'asphalt', inside: true, x: 0, z: 0, rain: 0, crank: 0, ...o })})`;
 
 // [grupo, nome, duração (s), eventos [[t, código]], janela estável [de, até] ou null]
 const SONS = [
@@ -145,6 +147,20 @@ const SONS = [
   ['interface', 'item pego', 1, [[0, 'M.G.GunAudio.pickup(a)']]],
   ['interface', 'acerto no alvo (ding)', 1.5, [[0, 'M.G.GunAudio.ding(a)']]],
   ['interface', 'fala de NPC (bipe)', 1, seq('a.tone(1800, 0.025, "square", 0.03)', 6, 0.06)],
+
+  // o carro (game/carAudio.js): estados contínuos medidos no trecho estável
+  ['carro', 'motor em marcha lenta (dentro)', 3, [[0, CAR({ rpm: 720 })], ...seq(CAR({ rpm: 720 }), 10, 0.25, 0.25)], [1, 3]],
+  ['carro', 'motor acelerando forte (dentro)', 3, [[0, CAR({ rpm: 3800, load: 1, speed: 8 })], ...seq(CAR({ rpm: 3800, load: 1, speed: 8 }), 10, 0.25, 0.25)], [1, 3]],
+  ['carro', 'motor a 60 km/h no asfalto (dentro)', 3, [[0, CAR({ rpm: 2700, load: 0.4, speed: 17 })], ...seq(CAR({ rpm: 2700, load: 0.4, speed: 17 }), 10, 0.25, 0.25)], [1, 3]],
+  ['carro', 'paralelepípedo a 40 km/h (dentro)', 3, [[0, CAR({ rpm: 2200, load: 0.3, speed: 11, surface: 'sett' })], ...seq(CAR({ rpm: 2200, load: 0.3, speed: 11, surface: 'sett' }), 10, 0.25, 0.25)], [1, 3]],
+  ['carro', 'pneu cantando (dentro)', 3, [[0, CAR({ rpm: 2500, load: 0.6, speed: 15, skid: 1 })], ...seq(CAR({ rpm: 2500, load: 0.6, speed: 15, skid: 1 }), 10, 0.25, 0.25)], [1, 3]],
+  ['carro', 'motor em marcha lenta a 10 m (fora)', 3, [[0, 'a.listen({ x: 0, z: 0 }); ' + CAR({ rpm: 720, inside: false, x: 10 })], ...seq(CAR({ rpm: 720, inside: false, x: 10 }), 10, 0.25, 0.25)], [1, 3]],
+  ['carro', 'partida', 2, [[0, 'a._car = new M.CA.CarAudio(a); a._car.crank(0.62)']]],
+  ['carro', 'porta batendo', 1, [[0, 'a._car = new M.CA.CarAudio(a); a._car.door(false)']]],
+  ['carro', 'porta abrindo', 1, [[0, 'a._car = new M.CA.CarAudio(a); a._car.door(true)']]],
+  ['carro', 'buzina', 1.5, [[0, 'a._car = new M.CA.CarAudio(a); a._car.horn(true)'], [1, 'a._car.horn(false)']]],
+  ['carro', 'batida forte', 1.5, [[0, 'a._car = new M.CA.CarAudio(a); a._car.crash(1)']]],
+  ['carro', 'atropelou um bicho', 1, [[0, 'a._car = new M.CA.CarAudio(a); a._car.thud(1)']]],
 ];
 
 const list = SONS.filter(([g, n]) => !filters.length || filters.some(f => (g + ' ' + n).toLowerCase().includes(f)));
@@ -175,6 +191,7 @@ const results = await page.evaluate(async (list, raw) => {
     O: await import('/src/game/owls.js'),
     GB: await import('/src/game/ghostBand.js'),
     C9: await import('/src/game/chapters/ch09.js'),
+    CA: await import('/src/game/carAudio.js'),
   };
   const SR = 48000;
   // o limitador do Chrome aperta demais no começo do contexto: os sons só entram depois

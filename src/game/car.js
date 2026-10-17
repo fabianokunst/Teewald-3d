@@ -40,6 +40,12 @@ const FLOOR = CAR.seat[1];              // assoalho (altura no carro)
 const OUT = { x: 1.38, z: -0.7 };       // onde o motorista fica em pé do lado de fora (fora do arco da porta)
 const SEAT = { x: CAR.seat[0], z: CAR.seat[2] };
 
+const DRIVE_HINTS = {
+  keyboard: ['W acelerar   S freio e ré   A D volante   ESPAÇO freio de mão', 'G buzina   L farol   C olhar para trás   F sair do carro'],
+  pad: ['R2 acelerar   L2 freio e ré   ANALÓGICO volante   B freio de mão', 'X buzina   ↑ farol   LB olhar para trás   A sair do carro'],
+  touch: ['ESQUERDA volante   ACELERAR   FREIO e ré', 'F. DE MÃO   BUZINA   FAROL   SAIR'],
+};
+
 const _v = new THREE.Vector3(), _v2 = new THREE.Vector3(), _q = new THREE.Quaternion(), _e = new THREE.Euler(0, 0, 0, 'YXZ');
 const _m = new THREE.Matrix4(), _m2 = new THREE.Matrix4(), _s = new THREE.Vector3(1, 1, 1), _p = new THREE.Vector3();
 const _hand = [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()];
@@ -302,7 +308,8 @@ export class Car {
     if (!this.reverse && sp < 0.6 && brk > 0.3 && thr < 0.1) { this.revT += dt; if (this.revT > 0.22) this.reverse = true; }
     else if (this.reverse && sp < 0.6 && thr > 0.3 && brk < 0.1) { this.revT += dt; if (this.revT > 0.12) this.reverse = false; }
     else this.revT = 0;
-    if (this.reverse) [thr, brk] = [running ? brk : 0, thr];
+    // de ré os pedais trocam (o freio acelera para trás); c.stop = só frear, para qualquer lado
+    if (this.reverse && !c.stop) [thr, brk] = [running ? brk : 0, thr];
     // alguém parado na frente que não vai sair: o carro freia sozinho (ninguém é atropelado)
     if (this._assist > 0) { this._assist -= dt; thr = 0; brk = 1; }
     this.throttle = thr; this.brake = brk; this.hand = !!c.hand;
@@ -678,7 +685,7 @@ export class Car {
         if (input.driveHorn()) this._honk();
       }
     } else this.sound.horn(false);
-    if (this.mode === 'exit' && this.anim.t === 0 && this.speed > 1.2) ctl = { throttle: 0, brake: 1, steer: 0, hand: false };
+    if (this.mode === 'exit' && this.anim.t === 0 && this.speed > 1.2) ctl = { throttle: 0, brake: 1, steer: 0, hand: false, stop: true };
     this._step(dt, ctl);
     this._animate(dt);
     this._sync();
@@ -717,7 +724,11 @@ export class Car {
       if (t > 0.12) once('open', () => this.sound.door(true));
       if (t > 1.62) once('close', () => { this.sound.door(false); this._shake(0.05); });
       if (t > 1.85) once('crank', () => { if (!this.engine) { this.crankT = 0.62; this.sound.crank(0.62); } });
-      if (t > 1.75) { this.mode = 'drive'; this.anim = { t: 1.75, tail: true, sound: S }; }
+      if (t > 1.75) {
+        this.mode = 'drive'; this.anim = { t: 1.75, tail: true, sound: S };
+        // as duas primeiras vezes: como dirigir
+        if ((this.taught = (this.taught || 0) + 1) <= 2) this.hud.showHints(DRIVE_HINTS);
+      }
     } else if (this.mode === 'drive' && A.tail) {
       // as mãos ainda indo para o volante
       A.t += dt;
@@ -1066,7 +1077,8 @@ export class Car {
       this._aiStall = Math.abs(v) < 0.3 && left < 3 ? (this._aiStall || 0) + dt : 0;
       const done = (left < 0.6 && Math.abs(v) < 0.4) || this._aiStall > 0.7;
       if (done && !this._aiDone) { this._aiDone = true; o.onArrive?.(); }
-      return { throttle: done ? 0 : clamp(err * 0.35, 0, 1), brake: done ? 1 : clamp(-err * 0.6, 0, 1), steer: clamp(ang / maxSt, -1, 1), hand: false };
+      // parado, sem pedal: o carro segura sozinho (o freio segurado engataria a ré)
+      return { throttle: done ? 0 : clamp(err * 0.35, 0, 1), brake: done || Math.abs(v) < 0.5 ? 0 : clamp(-err * 0.6, 0, 1), steer: clamp(ang / maxSt, -1, 1), hand: false };
     };
     this._aiDone = false;
   }

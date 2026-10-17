@@ -91,23 +91,23 @@ export class CarAudio {
     this.o2.frequency.setTargetAtTime(F * 0.5, now, T);
     this.o3.frequency.setTargetAtTime(F * 0.5, now, T);
     this.intakeF.frequency.setTargetAtTime(F * 4, now, T);
-    this.intakeG.gain.setTargetAtTime(on ? 0.05 + load * 0.35 : 0, now, 0.05);
-    this.engLP.frequency.setTargetAtTime(220 + load * 1500 + rpm * 0.22, now, 0.05);
+    this.intakeG.gain.setTargetAtTime(on ? 0.04 + load * 0.1 : 0, now, 0.05);
+    this.engLP.frequency.setTargetAtTime(200 + load * 750 + rpm * 0.12, now, 0.05);
     const idle = clamp(1 - (rpm - 700) / 700, 0, 1);
-    const vol = on ? (0.07 + load * 0.075 + clamp((rpm - 800) / 4000, 0, 1) * 0.04) * (s.inside ? 0.8 : 1) : 0;
+    const vol = on ? (0.07 + load * 0.02 + clamp((rpm - 800) / 4000, 0, 1) * 0.01) * (s.inside ? 0.8 : 1) : 0;
     this.eng.gain.setTargetAtTime(vol, now, s.on ? 0.06 : 0.25);
     this.lfo.frequency.setTargetAtTime(F / 4, now, T);
     this.lfoG.gain.setTargetAtTime(on ? idle * 0.32 + 0.04 : 0, now, 0.1);
     // rodando
     const v = Math.abs(s.speed), paved = s.surface === 'asphalt' || s.surface === 'concrete' || s.surface === 'walk';
     const loose = s.surface === 'dirt' || s.surface === 'grass' || s.surface === 'leaves';
-    this.skid.g.gain.setTargetAtTime(paved || s.surface === 'sett' ? clamp(s.skid, 0, 1) * 0.06 : 0, now, 0.05);
+    this.skid.g.gain.setTargetAtTime(paved || s.surface === 'sett' ? clamp(s.skid, 0, 1) * 0.028 : 0, now, 0.05);
     this.skid.f.frequency.setTargetAtTime(2100 + clamp(s.skid, 0, 1) * 500, now, 0.1);
-    this.road.g.gain.setTargetAtTime(clamp(v / 25, 0, 1) * (paved ? 0.06 : 0.04), now, 0.1);
+    this.road.g.gain.setTargetAtTime(clamp(v / 25, 0, 1) * (paved ? 0.03 : 0.022), now, 0.1);
     this.road.f.frequency.setTargetAtTime(180 + v * 12, now, 0.1);
     const st = s.surface === 'sett' ? clamp(v / 14, 0, 1) : 0;
-    this.sett.g.gain.setTargetAtTime(st * 0.05, now, 0.08);
-    this.tremG.gain.setTargetAtTime(st * 0.04, now, 0.08);
+    this.sett.g.gain.setTargetAtTime(st * 0.026, now, 0.08);
+    this.tremG.gain.setTargetAtTime(st * 0.022, now, 0.08);
     this.trem.frequency.setTargetAtTime(clamp(v * 7, 4, 90), now, 0.08);
     this.gravel.g.gain.setTargetAtTime(loose ? clamp(v / 12, 0, 1) * 0.035 + clamp(s.skid, 0, 1) * 0.03 : 0, now, 0.08);
     this.wind.g.gain.setTargetAtTime(Math.pow(clamp(v / 32, 0, 1), 2) * (s.inside ? 0.012 : 0.02), now, 0.15);
@@ -152,11 +152,11 @@ export class CarAudio {
     if (!this._init()) return;
     const A = this.a, c = A.ctx, t = c.currentTime, out = this.out;
     if (open) {
-      A._wash(t, 0.035, 3800, 2600, 0.05, 'bandpass', 2.2, out, 0.002);
-      A._wash(t + 0.03, 0.12, 900, 400, 0.03, 'lowpass', 0.7, out, 0.01);
+      A._wash(t, 0.035, 3800, 2600, 0.13, 'bandpass', 2.2, out, 0.002);
+      A._wash(t + 0.03, 0.12, 900, 400, 0.07, 'lowpass', 0.7, out, 0.01);
       const o = c.createOscillator(), g = c.createGain();
       o.type = 'triangle'; o.frequency.setValueAtTime(560, t + 0.08); o.frequency.exponentialRampToValueAtTime(330, t + 0.45);
-      g.gain.setValueAtTime(0.0001, t + 0.08); g.gain.exponentialRampToValueAtTime(0.008, t + 0.15); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.46);
+      g.gain.setValueAtTime(0.0001, t + 0.08); g.gain.exponentialRampToValueAtTime(0.02, t + 0.15); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.46);
       o.connect(g).connect(out); o.start(t + 0.08); o.stop(t + 0.5);
     } else {
       const o = c.createOscillator(), g = c.createGain();
@@ -180,12 +180,12 @@ export class CarAudio {
     if (!this._init()) return;
     const A = this.a, c = A.ctx, t = c.currentTime, out = this.out;
     k = clamp(k, 0.2, 1.4);
-    A._wash(t, 0.3 + 0.3 * k, 1600, 220, 0.12 + 0.16 * k, 'lowpass', 0.7, out, 0.003);
-    A._wash(t + 0.01, 0.15, 3000, 900, 0.05 * k, 'bandpass', 1.2, out, 0.003);
+    A._wash(t, 0.3 + 0.3 * k, 1600, 220, 0.26 + 0.36 * k, 'lowpass', 0.7, out, 0.003);
+    A._wash(t + 0.01, 0.15, 3000, 900, 0.12 * k, 'bandpass', 1.2, out, 0.003);
     for (const f of [612, 1130, 1790]) {
       const o = c.createOscillator(), g = c.createGain();
       o.frequency.value = f * (0.95 + Math.random() * 0.1);
-      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.012 * k, t + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35 + 0.3 * k);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.026 * k, t + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35 + 0.3 * k);
       o.connect(g).connect(out); o.start(t); o.stop(t + 0.8);
     }
     if (k > 0.85) for (let i = 0; i < 5; i++) A._wash(t + 0.03 + Math.random() * 0.25, 0.05, 6000 + Math.random() * 2500, 4500, 0.02, 'highpass', 1, out, 0.002);
@@ -199,7 +199,7 @@ export class CarAudio {
     o.frequency.setValueAtTime(120, t); o.frequency.exponentialRampToValueAtTime(40, t + 0.22);
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22 * clamp(k, 0.3, 1.2), t + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.26);
     o.connect(g).connect(out); o.start(t); o.stop(t + 0.3);
-    A._wash(t, 0.2, 700, 180, 0.12 * k, 'bandpass', 0.9, out, 0.004);
+    A._wash(t, 0.2, 700, 180, 0.16 * k, 'bandpass', 0.9, out, 0.004);
     A._wash(t + 0.03, 0.12, 1400, 600, 0.04 * k, 'bandpass', 1.4, out, 0.004);
   }
 

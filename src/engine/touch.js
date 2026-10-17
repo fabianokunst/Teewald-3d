@@ -451,7 +451,7 @@ export class TouchControls {
     };
     btn(L.jump, L.Rj, 'gas', 'ACELERAR', '#173a12', 0.32);
     btn(L.run, L.Rr, 'brakeT', 'FREIO', '#3a1208', 0.4);
-    btn(L.dodge, L.Rr * 0.85, 'hand', 'FREIO DE MÃO', '#0d0907', 0.22);
+    btn(L.dodge, L.Rr * 0.95, 'hand', 'F. DE MÃO', '#0d0907', 0.3);
     btn(L.fire, L.Rj * 0.75, 'horn', 'BUZINA', '#0d0907', 0.36);
     const box = (r, text, color = '#efe2c4') => {
       g.globalAlpha = 0.35; g.fillStyle = '#0d0907'; g.fillRect(Math.round(P(r.x)), Math.round(P(r.y)), Math.round(P(r.w)), Math.round(P(r.h)));

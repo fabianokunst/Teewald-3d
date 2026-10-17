@@ -494,7 +494,7 @@ function playIntro(dt) {
     player.update(dt, tpc.yaw, null);
     const end = carIntro.update(dt, input);
     if (carIntro.shot === 'D') tpc.update(dt, player, null, settings, false);
-    R.bars = 0.12 * (carIntro.shot !== 'D' ? 1 : Math.max(0, 1 - (carIntro.t - carIntro.tDD - 5.6) / 0.9));
+    R.bars = 0.12 * (carIntro.shot !== 'D' ? 1 : Math.min(1, Math.max(0, 1 - (carIntro.t - carIntro.tDD - 5.6) / 0.9)));
     if (skip && !end) {
       carIntro.skip();
       player.place(START.x, START.z, START.heading);

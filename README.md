@@ -33,8 +33,9 @@ cidade com medo do que anda no mato. São doze capítulos: o chupacabras, os cã
 fogo, a moça da fábrica, os ETs de Varginha, a Fera da madrugada, os telefones que
 chamam para o mato, o lobisomem, o cemitério na Noite das Almas, a mulher da fotografia, os
 morcegos-vampiro e a bruxa Otília, com luta corpo a corpo,
-armas especiais, noite, chuva, tempestade, neblina e lua cheia. Roda no navegador
-(Three.js + Vite).
+armas especiais, noite, chuva, tempestade, neblina e lua cheia. O protagonista chega
+à cidade no carro dele, um sedã preto de quatro portas do fim dos anos 60, que dá para
+dirigir a qualquer hora. Roda no navegador (Three.js + Vite).
 
 <table>
   <tr>
@@ -63,6 +64,8 @@ armas especiais, noite, chuva, tempestade, neblina e lua cheia. Roda no navegado
   morte em cada capítulo. Outros scripts auditam o mapa, medem o volume de cada som em LUFS e
   tiram as fotos do site.
 - **Quatro idiomas** sem mexer no código do jogo: o texto é traduzido na hora de desenhar.
+- **Carro dirigível** com física própria (derrapagem, ladeiras, suspensão, batidas com giro),
+  moradores que pulam para fora do caminho, criaturas atropeladas e animação de entrar e sair.
 - **Teclado e mouse, controle e toque**, com mira assistida, vibração e menus próprios para o celular.
 
 ## Em números
@@ -84,7 +87,8 @@ armas especiais, noite, chuva, tempestade, neblina e lua cheia. Roda no navegado
 | Moradores | 24, no mesmo esqueleto do protagonista, com 27 gestos |
 | Criaturas | 8 espécies (chupacabras, cão de fogo, morcego, fantasma, ET, Fera, lobisomem, bruxa) e 9 chefes |
 | Sons | ~120 funções de síntese; 105 deles medidos pelo `npm run sons` |
-| Texto | 1.566 textos em cada dicionário (en, es, de) |
+| Carro do protagonista | ~3.000 triângulos (porta, volante e rodas soltos), 12 sons sintetizados |
+| Texto | 1.589 textos em cada dicionário (en, es, de) |
 | Arquivos do jogo | 20 documentos, 11 fichas de lenda, 9 ligações de orelhão |
 
 ¹ Build de produção, Chrome 155 sem janela, NVIDIA T1000, 1600×900, estilo 3D limpo e iluminação avançada.
@@ -98,6 +102,7 @@ armas especiais, noite, chuva, tempestade, neblina e lua cheia. Roda no navegado
 - [Física, colisão e chão](#física-colisão-e-chão)
 - [Personagens e animação](#personagens-e-animação)
 - [Combate, armas e criaturas](#combate-armas-e-criaturas)
+- [O carro](#o-carro)
 - [Campanha, salvamento e dificuldade](#campanha-salvamento-e-dificuldade)
 - [Som](#som)
 - [Idiomas](#idiomas)
@@ -567,6 +572,67 @@ Só no controle e no toque (no teclado e mouse nada muda). Opção MIRA ASSISTID
 - A linha de visão de cada alvo fica guardada por 150 ms; um movimento forte do analógico
   cancela o puxão.
 
+## O carro
+
+`src/game/car.js` (física, entrar e sair, luzes, efeitos), `carModel.js` (a malha),
+`carAudio.js` (os sons), `carIntro.js` (a chegada na abertura) e
+`src/engine/heroCarTextures.js` (texturas). Há um carro só, o do protagonista, e ele não gasta
+combustível.
+
+**Modelo.** Um sedã preto de quatro portas sem coluna do meio, do fim dos anos 60, sem nenhuma
+marca: capô comprido, grade de lado a lado com faróis duplos, três lanternas de cada lado, frisos
+e para-choques cromados, banco inteiriço de couro cor de vinho. A lataria é montada por seções
+ao longo do carro (estações nas caixas de roda e nas emendas das portas), com normais suaves e
+quina viva no vinco da cintura, que sobe no paralama de trás. A lateral inteira é uma textura só,
+com vincos, maçanetas, frisos e lanternas laterais no lugar da malha. O brilho da lataria, do
+cromado e dos vidros vem do material PS1 com `gloss`: reflexo de mentira (chão escuro, horizonte
+claro, céu), brilho do sol (apagado pela sombra) e das luzes dinâmicas, mais forte de lado. A
+porta do motorista, o volante e as quatro rodas são peças separadas.
+
+**Física** (fliperama, sem biblioteca). Modelo de bicicleta: o giro sai do esterço e da distância
+entre eixos, limitado pela aderência; a velocidade guarda a direção do mundo e o que sobra de lado
+morre pela aderência do piso, então no paralelepípedo molhado, na terra ou no freio de mão a
+traseira escapa. Aderência e atrito por piso (asfalto, concreto, calçada, paralelepípedo, terra,
+grama, folhas, água; a chuva tira até 32%). Motor limitado pela aderência, câmbio automático de
+três marchas, ré segurando o freio parado, ladeira (a gravidade puxa ao longo do carro). As quatro
+rodas leem o chão: a carroceria fica numa mola (afunda no meio-fio, mergulha na freada, levanta na
+arrancada, inclina na curva) que só desce com a gravidade, então o carro pula nas lombadas do morro.
+Água funda afoga o motor.
+
+**Batidas.** O contorno do carro (caixa de 5,5 × 2 m) contra as caixas e os círculos da grade de
+colisão, em passos de 22 cm: teste de eixos separados para caixas, ponto mais perto para círculos,
+e impulso no ponto de contato, então bater de quina faz o carro girar. Batida forte faz faísca,
+amassa (o carro solta fumaça, os faróis falham e, bem batido, anda devagar) e assusta quem está
+perto. O carro também é uma caixa móvel na grade (`CollisionWorld.moveBox`): moradores,
+criaturas e o protagonista a pé esbarram nele.
+
+**Moradores e criaturas.** Quem está no caminho (até 1,7 s de distância) pula para o lado mais
+perto e grita (`NPC.dodgeCar`); quem não sai (sentado, já pulou) faz o carro frear sozinho, e se
+encostar o carro para nele como num poste, sem ferir ninguém, e o morador reclama. Criaturas são
+atropeladas acima de 11 km/h (dano pela velocidade, o bicho voa longe); as grandes (Fera,
+lobisomem, chefes) seguram o carro e o amassam. Fantasmas atravessam. Dentro do carro o golpe
+das criaturas fere menos e ninguém é jogado longe.
+
+**Entrar e sair.** Perto do carro aparece ENTRAR NO CARRO; ele anda até a porta (dando a volta se
+estiver do outro lado), abre, se abaixa e senta (pose por IK: quadril no banco, pés nos pedais,
+mãos no volante, que gira junto), puxa a porta e dá a partida. Saindo: solta o volante, abre a
+porta, põe as pernas para fora, levanta e fecha a porta. Cena, morte, teletransporte ou capítulo
+novo tiram ele do carro na hora (`Player.place`). A câmera do carro fica atrás, olha um pouco à
+frente, se afasta e abre o campo de visão com a velocidade e volta sozinha para trás do carro.
+
+**Luzes e efeitos.** Faróis acesos de noite, na neblina e na chuva (ou pelo botão): a luz 0 do
+shader vira um foco à frente do carro, com brilho nas lentes e um facho que aparece na neblina;
+lanternas e luz de freio vermelhas no chão atrás. Fumaça do escapamento, fumaça e marcas de pneu
+na derrapagem, poeira e torrões na terra, água espirrando nas rodas.
+
+**Som.** Motor V8 sintetizado (dente de serra nas explosões, o galope da marcha lenta, admissão
+abrindo com o acelerador), partida, troca de marcha, pneu cantando, ronco do asfalto, trepidação
+do paralelepípedo, cascalho, vento, chuva no teto, buzina, portas, batidas e atropelos. Dentro do
+carro o ambiente fica abafado (`Audio.setMuffle`). Medidos no `npm run sons` (grupo carro).
+
+**Salvamento.** O carro fica onde foi deixado (posição e dano no save). Num capítulo novo, se ele
+estiver longe da partida, aparece estacionado na beira da rua mais perto, consertado.
+
 ## Campanha, salvamento e dificuldade
 
 O capítulo 1 é `src/game/mission.js`; os outros ficam em `src/game/chapters/`, um arquivo por
@@ -731,9 +797,20 @@ Como funciona por dentro:
 | Minimapa (liga/desliga) | M | Select | Opções |
 | Tela cheia | F11 | — | botão ⛶ (Android e iPad) |
 | Mostrar FPS | F3 | — | — |
+| Entrar no carro (perto dele) | F ou E | A | botão ENTRAR NO CARRO |
+| Acelerar · frear e ré | W · S (ou setas) | R2 · L2 (pela pressão) | ACELERAR · FREIO |
+| Volante | A / D | analógico esquerdo | arrastar no lado esquerdo |
+| Freio de mão | Espaço | B | F. DE MÃO |
+| Buzina · farol | G · L | X · direcional ↑ | BUZINA · FAROL |
+| Olhar para trás (dirigindo) | C | LB | — |
+| Sair do carro | F ou E | A | SAIR |
 
 Menus: setas/ENTER, direcional/A/B (segurar repete), clique ou toque. Na pausa,
 START ou P de novo voltam ao jogo.
+
+Dirigindo, a ré entra segurando o freio com o carro parado. No toque, os botões de andar viram
+os do carro nos mesmos lugares, e SAIR e FAROL ficam na barra de cima. As duas primeiras vezes
+que ele entra no carro aparecem as dicas de como dirigir.
 
 Atirar sem mirar levanta a pistola, atira e mantém a mira por um instante.
 Mirando, o personagem anda devagar em qualquer direção e a câmera vai para o
@@ -940,7 +1017,9 @@ uma avaliação (S, A, B, C). Morrendo, o jogador volta ao último ponto de reto
 ### Missão 1: O Chupacabras
 
 O foco do jogo é pegar o chupacabras. Animais aparecem mortos e sem sangue em
-Teewald, e a primeira missão começa assim que a abertura no calçadão termina:
+Teewald. Na abertura, o protagonista chega de carro pela VRS-873 e encosta ao lado do calçadão
+do Rio Cadeia; o motor desliga, ele desce, olha em volta e segue a pé. A primeira missão começa
+assim que a abertura termina:
 
 1. **Cartaz de PROCURA-SE** no mural da Praça 10 de Abril, ao lado do fim do calçadão.
 2. **Galinheiro atacado** perto da Igreja Matriz (no terreno atrás da escola, na
@@ -1237,6 +1316,7 @@ src/engine/             motor
   textures.js           carga e redução das fotos, texturas geradas, placas traduzidas
   archTextures.js       igreja, enxaimel, janelas, portas e vitrines em pixel art
   carTextures.js        carros em pixel art
+  heroCarTextures.js    o carro do protagonista (lateral inteira, grade, lanternas, calotas, painel)
   builder.js            MeshBuilder: junta triângulos por material e por pedaço de 200 m
   collision.js          caixas orientadas e cilindros numa grade espacial
   input.js, touch.js    teclado, mouse, controle e toque
@@ -1259,7 +1339,8 @@ src/world/              cidade
   mapdata.json              dados de mapa gerados por tools/build-mapdata.mjs
 
 src/game/               jogo
-  player.js, camera.js            controle do protagonista e câmera
+  player.js, camera.js            controle do protagonista e câmera (a pé e no carro)
+  car.js, carModel.js, carAudio.js, carIntro.js   o carro: física, malha, sons, chegada na abertura
   character.js, heroTexture.js    malha com esqueleto, caminhada com IK, atlas pintado
   combat.js, weapon.js, aimAssist.js, effects.js, gunAudio.js
   items.js, itemModels.js         inventário e modelos dos itens
