@@ -1,70 +1,70 @@
-# Galeria — Teewald
+# Galerie — Teewald
 
-> Capturas de Teewald tiradas do próprio jogo: a Igreja Matriz, a praça à noite, o calçadão do Rio Cadeia, a Kartoffelfest, chuva, neblina e o visual PS1 RETRÔ.
+> Screenshots von Teewald, direkt aus dem Spiel: die Pfarrkirche, der Platz bei Nacht, die Promenade am Rio Cadeia, das Kartoffelfest, Regen, Nebel und der Stil PS1 RETRO.
 
-Página: https://fabianokunst.github.io/Teewald-3d/site/de/galeria.html  
-Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/?lang=de
+Seite: https://fabianokunst.github.io/Teewald-3d/site/de/galeria.html  
+Kostenlos im Browser spielen: https://fabianokunst.github.io/Teewald-3d/?lang=de
 
-*Galeria*
+*Galerie*
 
-## Capturas
+## Screenshots
 
-Tudo tirado do próprio jogo, sem retoque. Clique para ampliar.
+Alles direkt aus dem Spiel, ohne Retusche. Zum Vergrößern anklicken.
 
-![A Igreja Matriz ao anoitecer](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/capa.jpg)
+![Die Pfarrkirche in der Dämmerung](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/capa.jpg)
 
-![A Praça 10 de Abril à noite](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
+![Die Praça 10 de Abril bei Nacht](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
 
-![Noite de chuva, de lanterna acesa](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg)
+![Regennacht, mit eingeschalteter Taschenlampe](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg)
 
-![Dentro do pavilhão da Kartoffelfest](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
+![Im Festzelt des Kartoffelfests](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
 
-![Lua cheia atrás da torre](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg)
+![Vollmond hinter dem Turm](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg)
 
-![A nave da Igreja Matriz](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg)
+![Das Kirchenschiff der Pfarrkirche](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg)
 
-![O calçadão do Rio Cadeia](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
+![Die Promenade am Rio Cadeia](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
 
-![O cemitério na garoa](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg)
+![Der Friedhof im Nieselregen](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg)
 
-![Conversa com o Seu Valdir](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/de/conversa.jpg)
+![Gespräch mit Herrn Valdir](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/de/conversa.jpg)
 
-![Rua fechada, festa cancelada](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest-portico.jpg)
+![Straße gesperrt, Fest abgesagt](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest-portico.jpg)
 
-![A repórter fotografa o letreiro](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/letreiro.jpg)
+![Die Reporterin fotografiert den Schriftzug](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/letreiro.jpg)
 
-![Mirando na beira do mato](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
+![Zielen am Waldrand](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
 
-![O Museu, em enxaimel](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg)
+![Das Museum, in Fachwerk](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg)
 
-![Pegadas entrando no mato](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/pegadas.jpg)
+![Spuren, die in den Wald führen](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/pegadas.jpg)
 
-![Primeiro o clarão, depois o trovão](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg)
+![Erst der Blitz, dann der Donner](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg)
 
-![Seu Valdir e o chimarrão](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg)
+![Herr Valdir und sein Mate](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg)
 
-![Praça 10 de Abril, fim de tarde](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca.jpg)
+![Praça 10 de Abril, am späten Nachmittag](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca.jpg)
 
-![O inventário](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/de/inventario.jpg)
+![Das Inventar](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/de/inventario.jpg)
 
-![A tela título](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/de/titulo.jpg)
+![Der Titelbildschirm](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/de/titulo.jpg)
 
-![A Matriz vista do alto](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
+![Die Pfarrkirche von oben](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
 
-![PS1 RETRÔ: a Matriz ao anoitecer](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg)
+![PS1 RETRO: die Pfarrkirche in der Dämmerung](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg)
 
-![PS1 RETRÔ: a praça à noite](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-praca.jpg)
+![PS1 RETRO: der Platz bei Nacht](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-praca.jpg)
 
-![PS1 RETRÔ: o calçadão](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-calcadao.jpg)
+![PS1 RETRO: die Promenade](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-calcadao.jpg)
 
-![PS1 RETRÔ: dentro da Matriz](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-igreja-dentro.jpg)
+![PS1 RETRO: in der Pfarrkirche](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-igreja-dentro.jpg)
 
-### Agora veja de perto
+### Jetzt sieh es dir aus der Nähe an
 
-As lâmpadas do pavilhão acendem todo fim de tarde, com ou sem festa.
+Die Lampen im Festzelt gehen jeden Abend an, mit oder ohne Fest.
 
-[Jogar agora](https://fabianokunst.github.io/Teewald-3d/?lang=de) Grátis · no navegador
+[Jetzt spielen](https://fabianokunst.github.io/Teewald-3d/?lang=de) Kostenlos · im Browser
 
 ---
 
-*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
+*Fiktives Werk: Alle Namen, Figuren und Geschichten des Spiels sind frei erfunden und haben keinen realen Bezug zur Stadt Santa Maria do Herval oder zu ihren Einwohnern. Nur die Karte (Straßen, Fluss und Gelände) stammt von der echten Stadt.*

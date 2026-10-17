@@ -238,7 +238,7 @@
   .marca:hover { color: var(--cor-destaque); }
   .menu { display: flex; gap: 2px; margin-left: auto; }
   .menu a {
-    position: relative; display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--e-3) 0 var(--e-5);
+    position: relative; display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--e-3) 0 var(--e-5); white-space: nowrap;
     font: var(--ui-2) / 1 var(--fonte-ui); text-transform: uppercase; letter-spacing: .04em; color: var(--cor-texto-suave); text-decoration: none;
   }
   .menu a::before { content: '▶'; position: absolute; left: 6px; font-size: .7em; color: var(--cor-destaque); opacity: 0; transform: translateX(-4px); transition: opacity var(--dur-1), transform var(--dur-1); }
@@ -257,7 +257,7 @@
   .aberto .menu-botao i { background: transparent; }
   .aberto .menu-botao i::before { transform: translateY(5px) rotate(45deg); }
   .aberto .menu-botao i::after { transform: translateY(-5px) rotate(-45deg); }
-  @media (max-width: 1040px) {
+  @media (max-width: 1180px) {
     .menu-botao { display: inline-flex; }
     .topo .botao-jogar-topo { display: none; }
     .menu {
@@ -295,7 +295,7 @@
   .idiomas li a b { min-width: 2ch; font-weight: 400; color: var(--cor-metal); }
   .idiomas li a:hover, .idiomas li a[aria-current] { color: var(--cor-destaque); background: rgb(242 200 121 / .06); }
   .idiomas-rodape a[aria-current] { color: var(--cor-destaque); }
-  @media (max-width: 1040px) {
+  @media (max-width: 1180px) {
     .topo .idiomas { order: 1; margin-left: auto; }
     .topo .menu-botao { order: 2; margin-left: 0; }
   }
@@ -313,7 +313,7 @@
   /* ---- botão ---- */
   .botao {
     position: relative; isolation: isolate; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; gap: var(--e-3);
-    min-height: 48px; padding: 6px var(--e-5) 4px; border: 0; cursor: pointer;
+    min-height: 48px; padding: 6px var(--e-5) 4px; border: 0; cursor: pointer; white-space: nowrap;
     font: var(--ui-3) / 1 var(--fonte-ui); text-transform: uppercase; letter-spacing: .06em; text-decoration: none;
     color: var(--cor-fundo); background: var(--cor-destaque);
     clip-path: polygon(var(--corte) 0, calc(100% - var(--corte)) 0, 100% var(--corte), 100% calc(100% - var(--corte)), calc(100% - var(--corte)) 100%, var(--corte) 100%, 0 calc(100% - var(--corte)), 0 var(--corte));

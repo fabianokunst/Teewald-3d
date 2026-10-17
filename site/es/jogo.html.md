@@ -1,163 +1,163 @@
-# O jogo — Teewald
+# El juego — Teewald
 
-> Como se joga Teewald: combate, inventário, arquivos, estilos visuais 3D LIMPO e PS1 RETRÔ, clima, controles no teclado, no controle e no toque, e perguntas frequentes.
+> Cómo se juega Teewald: combate, inventario, archivos, estilos visuales 3D LIMPIO y PS1 RETRO, clima, controles con teclado, control y pantalla táctil, y preguntas frecuentes.
 
 Página: https://fabianokunst.github.io/Teewald-3d/site/es/jogo.html  
-Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/?lang=es
+Jugar gratis en el navegador: https://fabianokunst.github.io/Teewald-3d/?lang=es
 
-*O jogo*
+*El juego*
 
-## Como se sobrevive
+## Cómo se sobrevive
 
-Terceira pessoa, câmera por cima do ombro e munição contada. Teewald é um survival horror à moda antiga, que roda direto no navegador.
+Tercera persona, cámara por encima del hombro y munición contada. Teewald es un survival horror a la antigua, que corre directo en el navegador.
 
 *Combate*
 
-### Com o que tiver à mão
+### Con lo que tengas a mano
 
-- Soco em combo de três golpes, sempre disponível. O golpe vira sozinho para quem estiver mais perto.
-- Pedaço de pau, cano de ferro, pá, foice e machado. Batem mais forte, mas gastam e quebram.
-- Pedras e tijolos para arremessar. Com a arma na mão, coronhada.
-- Esquiva rápida, com um instante de folga para sair do bote.
-- Uma pistola 9 mm para começar. O resto você conquista pelo caminho.
-- Cada lenda tem o seu ponto fraco. Bala nem sempre resolve.
+- Puñetazos en combo de tres golpes, siempre disponibles. El golpe gira solo hacia quien esté más cerca.
+- Palo, caño de hierro, pala, guadaña y hacha. Pegan más fuerte, pero se gastan y se rompen.
+- Piedras y ladrillos para arrojar. Con el arma en la mano, culatazo.
+- Esquiva rápida, con un instante de margen para zafar del zarpazo.
+- Una pistola 9 mm para empezar. El resto lo conseguís por el camino.
+- Cada leyenda tiene su punto débil. Las balas no siempre alcanzan.
 
-Cada capítulo termina com uma nota, de S a C, pelas criaturas derrotadas, pelas quedas e pelo tempo. Três dificuldades: fácil, normal e difícil.
+Cada capítulo termina con una nota, de S a C, según las criaturas derrotadas, las muertes y el tiempo. Tres dificultades: fácil, normal y difícil.
 
-![O protagonista mirando a pistola por cima do ombro](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
-*Mirando, a câmera vai para o ombro*
+![El protagonista apuntando la pistola por encima del hombro](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
+*Al apuntar, la cámara pasa al hombro*
 
-![Tela do inventário com os espaços e um item em 3D](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/es/inventario.jpg)
-*Inventário de 16 espaços*
+![Pantalla del inventario con las casillas y un objeto en 3D](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/es/inventario.jpg)
+*Inventario de 16 casillas*
 
-*Inventário e arquivos*
+*Inventario y archivos*
 
-### Tudo que cabe no bolso
+### Todo lo que entra en el bolsillo
 
-Dezesseis espaços no estilo dos survival horror de PS1, com o item girando em 3D. Equipar, carregar, comer, examinar. A vida volta com **cuca** e **chá de marcela**, e criatura derrotada às vezes larga munição.
+Dieciséis casillas al estilo de los survival horror de PS1, con el objeto girando en 3D. Equipar, cargar, comer, examinar. La vida vuelve con **cuca** y **té de marcela**, y a veces una criatura derrotada suelta munición.
 
-Pela cidade há recortes de jornal, cartas, cartazes e páginas de diário, e cada um fica guardado em ARQUIVOS. As lendas que você vê de perto ganham uma ficha. E tem gente pedindo ajuda: uma gata e um cachorro sumiram.
+Por el pueblo hay recortes de periódico, cartas, carteles y páginas de diario, y cada uno queda guardado en ARCHIVOS. Las leyendas que ves de cerca ganan una ficha. Y hay gente pidiendo ayuda: se perdieron una gata y un perro.
 
 *Estilo visual*
 
-### Dois jeitos de ver
+### Dos maneras de ver
 
-Arraste a divisória. À esquerda, o 3D LIMPO; à direita, o PS1 RETRÔ. Os dois estão em OPÇÕES, junto com a iluminação.
+Arrastrá el divisor. A la izquierda, el 3D LIMPIO; a la derecha, el PS1 RETRO. Los dos están en OPCIONES, junto con la iluminación.
 
-![A Matriz ao anoitecer no estilo 3D LIMPO](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-limpo.jpg)
+![La Matriz al anochecer en el estilo 3D LIMPIO](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-limpo.jpg)
 
-![A mesma vista no estilo PS1 RETRÔ, em baixa resolução](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg)
+![La misma vista en el estilo PS1 RETRO, en baja resolución](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg)
 
-#### 3D limpo
+#### 3D limpio
 
-Resolução da própria tela, antisserrilhado e texturas suaves. Os polígonos low poly aparecem nítidos.
+Resolución nativa de la pantalla, antialiasing y texturas suaves. Los polígonos low poly se ven nítidos.
 
-#### PS1 retrô
+#### PS1 retro
 
-320×240 ampliado sem suavização, dithering e cor de 15 bits. Do jeito que a televisão de tubo mostrava.
+320×240 ampliado sin suavizado, dithering y color de 15 bits. Como lo mostraba el televisor de tubo.
 
-#### Iluminação
+#### Iluminación
 
-AVANÇADA, com sol baixo no fim da tarde, sombras do sol e do luar e halo nos lampiões. Ou CLÁSSICA, encoberta e sem sombra.
+AVANZADA, con sol bajo al caer la tarde, sombras del sol y de la luna y halo en los faroles. O CLÁSICA, nublada y sin sombras.
 
-*Clima e som*
+*Clima y sonido*
 
-### O tempo muda
+### El tiempo cambia
 
-Tarde encoberta, anoitecer, noite fechada, neblina de madrugada, chuva, garoa e tempestade, com o trovão chegando depois do clarão. De noite a lanterna vai na frente, os lampiões da praça acendem e o resto fica no escuro.
+Tarde nublada, anochecer, noche cerrada, niebla de madrugada, lluvia, llovizna y tormenta, con el trueno llegando después del relámpago. De noche la linterna va adelante, los faroles de la plaza se prenden y el resto queda a oscuras.
 
-Todo som do jogo é feito em código: vento, rio, chuva no telhado, grilos, corvos, quero-quero, a madeira rangendo dentro de casa e o sino da igreja, mais alto perto da torre e abafado entre paredes. Com fone de ouvido, dá para saber de que lado vem o barulho.
+Todo el sonido del juego está hecho en código: viento, río, lluvia en el techo, grillos, cuervos, teros, la madera crujiendo dentro de la casa y la campana de la iglesia, más fuerte cerca de la torre y apagada entre paredes. Con auriculares, se puede saber de qué lado viene el ruido.
 
-![Clarão de raio sobre a cidade numa noite de tempestade](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg)
-*Primeiro o clarão, depois o trovão*
+![Relámpago sobre el pueblo en una noche de tormenta](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg)
+*Primero el relámpago, después el trueno*
 
 *Controles*
 
-### Teclado, controle ou toque
+### Teclado, control o pantalla táctil
 
-**Teclado e mouse**
+**Teclado y mouse**
 
-- **Andar:** `W` `A` `S` `D` ou setas
+- **Caminar:** `W` `A` `S` `D` o flechas
 - **Correr:** `Shift`
-- **Pular · esquivar:** `Espaço` · `C` ou `Ctrl`
-- **Câmera:** mouse (clique na tela para prender) · `Q` `E` · roda aproxima
-- **Conversar, ler, pegar, entrar:** `F` ou `E`
-- **Mirar · atirar:** botão direito (segurar) · botão esquerdo
-- **Golpe:** `V` · botão esquerdo sem arma de fogo
-- **Trocar de arma · recarregar:** `1` a `8` · `R`
-- **Comer, beber (cura):** `H`
-- **Inventário · arquivos:** `I` ou `Tab` · `J`
-- **Minimapa · pausa:** `M` · `Esc` ou `P`
+- **Saltar · esquivar:** `Espacio` · `C` o `Ctrl`
+- **Cámara:** mouse (clic en la pantalla para capturarlo) · `Q` `E` · la rueda acerca
+- **Conversar, leer, tomar, entrar:** `F` o `E`
+- **Apuntar · disparar:** botón derecho (mantener) · botón izquierdo
+- **Golpe:** `V` · botón izquierdo sin arma de fuego
+- **Cambiar de arma · recargar:** `1` a `8` · `R`
+- **Comer, beber (curar):** `H`
+- **Inventario · archivos:** `I` o `Tab` · `J`
+- **Minimapa · pausa:** `M` · `Esc` o `P`
 
-**Controle**
+**Control**
 
-- **Andar · câmera:** analógico esquerdo · analógico direito (`R3` centraliza)
-- **Correr:** `B` (segurar) ou `L3`
-- **Pular · esquivar:** `A` · `B` (toque rápido)
-- **Conversar, ler, pegar, entrar:** `A`
-- **Mirar · atirar:** `L2` ou `LB` · `R2`
+- **Caminar · cámara:** stick izquierdo · stick derecho (`R3` centra)
+- **Correr:** `B` (mantener) o `L3`
+- **Saltar · esquivar:** `A` · `B` (toque rápido)
+- **Conversar, leer, tomar, entrar:** `A`
+- **Apuntar · disparar:** `L2` o `LB` · `R2`
 - **Golpe:** `RB`
-- **Trocar de arma · recarregar:** direcional ◀ ▶ · `X`
-- **Comer, beber (cura):** direcional ▲
-- **Inventário:** `Y`
-- **Pausa e arquivos · minimapa:** `Start` · `Select`
+- **Cambiar de arma · recargar:** cruceta ◀ ▶ · `X`
+- **Comer, beber (curar):** cruceta ▲
+- **Inventario:** `Y`
+- **Pausa y archivos · minimapa:** `Start` · `Select`
 
-**Toque**
+**Táctil**
 
-- **Andar:** arrastar no lado esquerdo da tela
-- **Câmera:** arrastar no lado direito (ou no próprio ATIRAR) · toque duplo centraliza · pinça aproxima
-- **Correr · pular · esquivar:** botões CORRER, PULAR e ESQUIVA
-- **Conversar, ler, pegar, entrar:** o botão aparece em cima do morador ou do objeto
-- **Mirar · atirar · golpe:** MIRAR liga e desliga · ATIRAR · GOLPE
-- **Arma · recarregar · cura:** ARMA · REC · CURA (aparece quando você está ferido)
-- **Inventário · pausa:** INV · ❚❚
+- **Caminar:** arrastrar en el lado izquierdo de la pantalla
+- **Cámara:** arrastrar en el lado derecho (o sobre el mismo DISPARAR) · doble toque centra · pellizco acerca
+- **Correr · saltar · esquivar:** botones CORRER, SALTAR y ESQUIVA
+- **Conversar, leer, tomar, entrar:** el botón aparece sobre el vecino o el objeto
+- **Apuntar · disparar · golpe:** APUNTAR activa y desactiva · DISPARAR · GOLPE
+- **Arma · recargar · curar:** ARMA · REC · CURAR (aparece cuando estás herido)
+- **Inventario · pausa:** INV · ❚❚
 
-No controle e no toque há mira assistida (desligada, normal ou forte) e vibração nos tiros e golpes. No celular os botões da tela somem quando um controle Bluetooth é usado.
+Con control y en pantalla táctil hay mira asistida (desactivada, normal o fuerte) y vibración en los disparos y golpes. En el celular, los botones de la pantalla desaparecen cuando se usa un control Bluetooth.
 
-*Onde jogar*
+*Dónde jugar*
 
-### Sem instalar nada
+### Sin instalar nada
 
-**Plataformas:** PC, Celular, Tablet, Controle, Toque.
+**Plataformas:** PC, Celular, Tablet, Control, Táctil.
 
-Basta um navegador atualizado com WebGL: Chrome, Edge, Firefox ou Safari. No celular fica melhor deitado, e no Android o jogo entra em tela cheia ao tocar na tela inicial.
+Alcanza con un navegador actualizado con WebGL: Chrome, Edge, Firefox o Safari. En el celular queda mejor en horizontal, y en Android el juego pasa a pantalla completa al tocar la pantalla de inicio.
 
-O progresso fica salvo sozinho no próprio navegador: ao trocar de etapa, nos pontos de retorno e a cada vinte segundos. CONTINUAR volta exatamente para onde você parou.
+El progreso se guarda solo en el propio navegador: al cambiar de etapa, en los puntos de control y cada veinte segundos. CONTINUAR te lleva exactamente adonde lo dejaste.
 
 **Idiomas:** Português, English, Español, Deutsch.
 
-*Perguntas*
+*Preguntas*
 
-**Quanto custa?**
+**¿Cuánto cuesta?**
 
-Nada. É só abrir e jogar.
+Nada. Abrís y jugás.
 
-**Onde fica o meu progresso?**
+**¿Dónde queda mi progreso?**
 
-No navegador do aparelho em que você jogou. Limpar os dados do site apaga o progresso, e outro aparelho começa do zero.
+En el navegador del dispositivo en el que jugaste. Si borrás los datos del sitio, se borra el progreso, y en otro dispositivo se empieza de cero.
 
-**Dá para jogar com controle?**
+**¿Se puede jugar con control?**
 
-Dá, no PC e no celular, com controle USB ou Bluetooth. Os menus também funcionam no controle.
+Sí, en PC y en el celular, con control USB o Bluetooth. Los menús también funcionan con el control.
 
-**É muito assustador?**
+**¿Da mucho miedo?**
 
-É um jogo de terror: tem escuro, sangue, criaturas e sustos, no espírito dos survival horror dos anos 90. Jogue de noite, com fone, se tiver coragem.
+Es un juego de terror: hay oscuridad, sangre, criaturas y sustos, en el espíritu de los survival horror de los años 90. Jugalo de noche, con auriculares, si te animás.
 
-**A cidade é de verdade?**
+**¿El pueblo es de verdad?**
 
-O mapa é inspirado em Santa Maria do Herval (RS), com ruas e relevo reais. Os moradores e as histórias são inventados.
+El mapa está inspirado en Santa Maria do Herval (RS), con calles y relieve reales. Los vecinos y las historias son inventados.
 
-**Quantos capítulos são?**
+**¿Cuántos capítulos son?**
 
-Doze. O que acontece em cada um, o jogo conta.
+Doce. Lo que pasa en cada uno lo cuenta el juego.
 
-### Pronto para a primeira noite?
+### ¿Listo para la primera noche?
 
-Pistola no coldre, pente de doze e uma caixa de balas. O resto você acha pelo caminho.
+Pistola en la funda, cargador de doce y una caja de balas. El resto lo encontrás por el camino.
 
-[Jogar agora](https://fabianokunst.github.io/Teewald-3d/?lang=es) Grátis · no navegador
+[Jugá ahora](https://fabianokunst.github.io/Teewald-3d/?lang=es) Gratis · en el navegador
 
 ---
 
-*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
+*Obra de ficción: todos los nombres, personajes e historias del juego son inventados y no tienen ninguna relación real con la ciudad de Santa Maria do Herval ni con sus habitantes. Solo el mapa (calles, río y relieve) viene de la ciudad de verdad.*

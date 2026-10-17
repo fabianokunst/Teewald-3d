@@ -1,119 +1,119 @@
-# Teewald — survival horror com cara de PS1
+# Teewald — Survival-Horror im PS1-Look
 
-> Survival horror em terceira pessoa com visual de PlayStation 1, numa cidadezinha de colonos alemães na serra gaúcha. Grátis, no navegador.
+> Survival-Horror in der dritten Person im Look der PlayStation 1, in einem Städtchen deutscher Kolonisten im Bergland Südbrasiliens. Kostenlos, im Browser.
 
-Página: https://fabianokunst.github.io/Teewald-3d/site/de/  
-Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/?lang=de
+Seite: https://fabianokunst.github.io/Teewald-3d/site/de/  
+Kostenlos im Browser spielen: https://fabianokunst.github.io/Teewald-3d/?lang=de
 
-*Vale do Herval · Rio Grande do Sul · maio*
+*Vale do Herval · Rio Grande do Sul · Mai*
 
 ## Teewald
 
-Alguma coisa anda no mato.
+Etwas geht im Wald um.
 
-Um survival horror em terceira pessoa com cara de PlayStation 1, numa cidadezinha de colonos alemães na serra gaúcha. A neblina não levanta, a criação aparece seca no potreiro e ninguém sai de casa depois que escurece. Menos você.
+Ein Survival-Horror in der dritten Person im Look der PlayStation 1, in einem Städtchen deutscher Kolonisten im Bergland Südbrasiliens. Der Nebel hebt sich nicht, das Vieh liegt blutleer auf der Koppel, und nach Einbruch der Dunkelheit geht keiner mehr vor die Tür. Außer dir.
 
-[Jogar agora](https://fabianokunst.github.io/Teewald-3d/?lang=de) [Conhecer a história](https://fabianokunst.github.io/Teewald-3d/site/de/historia.html)
+[Jetzt spielen](https://fabianokunst.github.io/Teewald-3d/?lang=de) [Zur Geschichte](https://fabianokunst.github.io/Teewald-3d/site/de/historia.html)
 
-Grátis · no navegador · sem instalar nada
+Kostenlos · im Browser · ohne Installation
 
-**Manchetes da Folha de Teewald:** Ovelhas mortas na Linha Schmitt · Prefeitura: “é graxaim” · Kartoffelfest cancelada · Comércio fecha às 18 h · Procura-se gata cinza, atende por Mimi · Perdeu-se cachorro preto de coleira vermelha · Ônibus para Novo Hamburgo não passou · Brigada pede que ninguém saia armado pelo mato à noite.
+**Schlagzeilen der Folha de Teewald:** Tote Schafe in der Linha Schmitt · Rathaus: „ein Pampasfuchs“ · Kartoffelfest abgesagt · Geschäfte schließen um 18 Uhr · Graue Katze gesucht, hört auf Mimi · Schwarzer Hund mit rotem Halsband entlaufen · Bus nach Novo Hamburgo ist nicht gekommen · Polizei bittet, nachts nicht bewaffnet in den Wald zu gehen.
 
-*Cartaz na praça*
+*Aushang am Platz*
 
-### Procura-se
+### Gesucht
 
-Nas últimas noites, galinhas, patos e até ovelhas apareceram mortos em Teewald. Todos com dois furos no pescoço e sem uma gota de sangue.
+In den letzten Nächten wurden in Teewald Hühner, Enten und sogar Schafe tot aufgefunden. Alle mit zwei Löchern im Hals und ohne einen Tropfen Blut.
 
-A Prefeitura diz que é graxaim. A inspetoria veterinária fala em cachorro. A repórter que veio de Porto Alegre já contou onze casos em dez dias, e ninguém quer falar com ela.
+Das Rathaus sagt, es sei ein Pampasfuchs. Das Veterinäramt spricht von Hunden. Die Reporterin aus Porto Alegre hat schon elf Fälle in zehn Tagen gezählt, und niemand will mit ihr reden.
 
-Você não é daqui. Chegou numa tarde de neblina, pelo calçadão do Rio Cadeia, e resolveu ficar para descobrir o que anda no mato. A cidade não gosta de perguntas, mas cada morador sabe um pedaço da história.
+Du bist nicht von hier. Du bist an einem nebligen Nachmittag über die Promenade am Rio Cadeia gekommen und hast beschlossen zu bleiben, um herauszufinden, was im Wald umgeht. Die Stadt mag keine Fragen, aber jeder hier kennt ein Stück der Geschichte.
 
-> Quando eu acendi a lanterna, os olhos brilharam vermelho. Aí sumiu no mato, aos pulos.
+> Als ich die Taschenlampe anmachte, leuchteten die Augen rot. Dann verschwand es in Sprüngen im Wald.
 >
-> — Seu Arno, pescador do calçadão
+> — Herr Arno, Angler an der Promenade
 
-![Cartaz de procura-se com a silhueta de um bicho corcunda de olhos vermelhos](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/cartaz-chupacabras.png)
-*Pregado no mural da Praça 10 de Abril, ao lado do fim do calçadão.*
+![Suchplakat mit dem Umriss eines buckligen Biests mit roten Augen](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/cartaz-chupacabras.png)
+*Angeheftet am Schwarzen Brett der Praça 10 de Abril, gleich am Ende der Promenade.*
 
-*O que te espera*
+*Was dich erwartet*
 
-### Terror à moda antiga
+### Horror alter Schule
 
-Câmera por cima do ombro, munição contada e uma cidade inteira para atravessar no escuro. Do jeito que os jogos de terror eram nos anos 90, só que no navegador.
+Kamera über der Schulter, knappe Munition und eine ganze Stadt, die du im Dunkeln durchqueren musst. So, wie Horrorspiele in den 90ern waren, nur im Browser.
 
-*PS1 RETRÔ · 320×240*
+*PS1 RETRO · 320×240*
 
-#### Cara de PlayStation 1
+#### Wie auf der PlayStation 1
 
-Polígonos duros, texturas em pixel art e personagens montados como nos primeiros jogos 3D. Jogue no 3D LIMPO ou no PS1 RETRÔ, com dithering e cor de 15 bits de verdade.
+Kantige Polygone, Texturen in Pixel-Art und Figuren, gebaut wie in den ersten 3D-Spielen. Spiel in KLARES 3D oder in PS1 RETRO, mit echtem Dithering und echter 15-Bit-Farbe.
 
-*Mapa real*
+*Echte Karte*
 
-#### Uma cidade que existe
+#### Eine Stadt, die es gibt
 
-Ruas, rio, praça e morros de mapas reais, com cerca de 600 construções nos contornos de verdade.
+Straßen, Fluss, Platz und Hügel aus echten Karten, mit rund 600 Gebäuden in ihren echten Umrissen.
 
-#### Survival horror clássico
+#### Klassischer Survival-Horror
 
-Inventário que pausa o jogo, armas brancas que gastam e quebram, pedra para arremessar e cuca com chá de marcela para remendar a vida.
+Ein Inventar, das das Spiel anhält, Nahkampfwaffen, die sich abnutzen und zerbrechen, Steine zum Werfen und Kuchen mit Marcela-Tee, um das Leben zu flicken.
 
-#### Lendas do interior
+#### Legenden vom Land
 
-Doze capítulos, cada um com uma história que os mais velhos só contam baixinho, perto do fogão. Qual é qual, você descobre lá dentro.
+Zwölf Kapitel, jedes mit einer Geschichte, die die Alten nur leise erzählen, nah am Herd. Welche welche ist, findest du drinnen heraus.
 
-#### Neblina, chuva e trovão
+#### Nebel, Regen und Donner
 
-A lanterna alcança poucos metros, e o som vem de todos os lados.
+Die Taschenlampe reicht nur ein paar Meter, und die Geräusche kommen von überall.
 
-#### Joga em qualquer lugar
+#### Läuft überall
 
-No PC, no celular ou no tablet, com teclado e mouse, controle ou toque. O progresso fica salvo sozinho no navegador.
+Auf PC, Handy oder Tablet, mit Tastatur und Maus, Controller oder Touch. Der Fortschritt wird von selbst im Browser gespeichert.
 
-**Onde e como jogar:** PC, Celular, Tablet, Controle, Toque, Português, English, Español, Deutsch.
+**Wo und wie du spielst:** PC, Handy, Tablet, Controller, Touch, Português, English, Español, Deutsch.
 
-> Herval vem de erva-mate. Teewald, em hunsrik: mato do chá. Bonito, não é? Mas os antigos tinham outro respeito por esse mato. Ninguém entrava nele depois do sol posto.
+> Herval kommt von Erva-Mate, dem Mate-Tee. Und auf Hunsrik heißt das Teewald. Schön, nicht wahr? Aber die Alten hatten einen anderen Respekt vor diesem Wald. Nach Sonnenuntergang ging niemand hinein.
 >
-> — Professor Edgar, que conhece os diários dos colonos
+> — Lehrer Edgar, der die Tagebücher der Kolonisten kennt
 
-*Galeria*
+*Galerie*
 
-### Capturas do jogo
+### Screenshots aus dem Spiel
 
-![A Igreja Matriz no fim da tarde, com neblina](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
-*A Igreja Matriz no fim da tarde*
+![Die Pfarrkirche am späten Nachmittag, im Nebel](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
+*Die Pfarrkirche am späten Nachmittag*
 
-![O calçadão na beira do Rio Cadeia](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
-*O calçadão do Rio Cadeia*
+![Die Promenade am Ufer des Rio Cadeia](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
+*Die Promenade am Rio Cadeia*
 
-![Rua da cidade numa noite de chuva, o forasteiro de lanterna acesa](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg)
-*Noite de chuva*
+![Eine Straße der Stadt in einer Regennacht, der Fremde mit eingeschalteter Taschenlampe](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg)
+*Regennacht*
 
-![O pavilhão vazio da Kartoffelfest com as bandeirolas](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
-*A Kartoffelfest que não aconteceu*
+![Das leere Festzelt des Kartoffelfests mit den Wimpelketten](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
+*Das Kartoffelfest, das nicht stattfand*
 
-![A Praça 10 de Abril à noite, com os lampiões acesos](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
-*A praça à noite*
+![Die Praça 10 de Abril bei Nacht, mit brennenden Laternen](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
+*Der Platz bei Nacht*
 
-![A torre da Matriz com a lua cheia atrás](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg)
-*Lua cheia atrás da torre*
+![Der Turm der Pfarrkirche, dahinter der Vollmond](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg)
+*Vollmond hinter dem Turm*
 
-[Ver todas as capturas](https://fabianokunst.github.io/Teewald-3d/site/de/galeria.html)
+[Alle Screenshots ansehen](https://fabianokunst.github.io/Teewald-3d/site/de/galeria.html)
 
-*Mais de Teewald*
+*Mehr von Teewald*
 
-### Antes de escurecer
+### Bevor es dunkel wird
 
-- [A história](https://fabianokunst.github.io/Teewald-3d/site/de/historia.html): Os colonos do Hunsrück, o mato do chá e as últimas semanas na Folha de Teewald.
-- [A cidade](https://fabianokunst.github.io/Teewald-3d/site/de/cidade.html): Do calçadão ao cemitério: os lugares onde ninguém fica depois das seis.
-- [Personagens](https://fabianokunst.github.io/Teewald-3d/site/de/personagens.html): Vinte e quatro moradores com medo, e cada um sabe um pedaço da história.
+- [Die Geschichte](https://fabianokunst.github.io/Teewald-3d/site/de/historia.html): Die Kolonisten aus dem Hunsrück, der Wald vom Tee und die letzten Wochen in der Folha de Teewald.
+- [Die Stadt](https://fabianokunst.github.io/Teewald-3d/site/de/cidade.html): Von der Promenade bis zum Friedhof: die Orte, an denen nach sechs keiner mehr bleibt.
+- [Figuren](https://fabianokunst.github.io/Teewald-3d/site/de/personagens.html): Vierundzwanzig Einwohner voller Angst, und jeder kennt ein Stück der Geschichte.
 
-### A neblina já baixou
+### Der Nebel ist schon da
 
-O ônibus para Novo Hamburgo não passa desde o meio-dia. Já que você vai ficar, fique de olho no mato.
+Der Bus nach Novo Hamburgo ist seit Mittag nicht gekommen. Wenn du schon bleibst, behalt den Wald im Auge.
 
-[Jogar agora](https://fabianokunst.github.io/Teewald-3d/?lang=de) Grátis · PC, celular e controle
+[Jetzt spielen](https://fabianokunst.github.io/Teewald-3d/?lang=de) Kostenlos · PC, Handy und Controller
 
 ---
 
-*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
+*Fiktives Werk: Alle Namen, Figuren und Geschichten des Spiels sind frei erfunden und haben keinen realen Bezug zur Stadt Santa Maria do Herval oder zu ihren Einwohnern. Nur die Karte (Straßen, Fluss und Gelände) stammt von der echten Stadt.*

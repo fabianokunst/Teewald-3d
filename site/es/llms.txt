@@ -1,0 +1,47 @@
+# Teewald
+
+> Teewald es un survival horror en tercera persona con estética de PlayStation 1, gratuito, que corre directo en el navegador (PC, celular y tablet). Transcurre en Teewald, un pueblito ficticio de colonos alemanes en la sierra gaúcha, inspirado en Santa Maria do Herval (RS): un mayo de niebla, en pleno otoño, en el que los animales aparecen muertos, con dos agujeros en el cuello y sin una gota de sangre, y un forastero decide quedarse para descubrir qué anda en el monte.
+
+- Jugar: https://fabianokunst.github.io/Teewald-3d/?lang=es (gratis, sin instalar nada ni crear una cuenta)
+- Sitio oficial: https://fabianokunst.github.io/Teewald-3d/site/es/
+- Creador: Fabiano Kunst (juego independiente)
+- Género: survival horror / terror en tercera persona, un jugador, doce capítulos, cada uno con una leyenda del interior
+- Jugabilidad: cámara por encima del hombro, munición contada, puñetazos y armas blancas que se gastan y se rompen, pistola 9 mm, esquiva, inventario de 16 casillas, documentos para leer (ARCHIVOS), charlas con 24 vecinos, tres dificultades y nota de S a C por capítulo
+- Estilo visual: 3D LIMPIO (predeterminado) o PS1 RETRO (320×240, dithering y color de 15 bits); clima con tarde, noche, niebla, lluvia y tormenta; todo el sonido generado por código
+- Plataformas: cualquier navegador actualizado con WebGL (Chrome, Edge, Firefox, Safari) en PC, celular y tablet
+- Controles: teclado y mouse, control (USB o Bluetooth, con mira asistida y vibración) o pantalla táctil
+- Idiomas: portugués, inglés, español y alemán
+- Progreso: se guarda automáticamente en el propio navegador
+- Escenario: calles, río y relieve de datos abiertos (OpenStreetMap, Microsoft Global ML Building Footprints y SRTM), con unas 600 construcciones en sus contornos reales
+- Tecnología: Three.js (WebGL) y Vite
+
+Obra de ficción: todos los nombres, personajes e historias del juego son inventados y no tienen ninguna relación real con la ciudad de Santa Maria do Herval ni con sus habitantes. Solo el mapa (calles, río y relieve) viene de la ciudad de verdad.
+
+Sin spoilers: el sitio cuenta solo lo que el jugador oye y lee apenas llega al pueblo. Las criaturas de cada capítulo y lo que pasa después de la primera noche quedan para el juego.
+
+In English: Teewald is a free third-person survival horror game with a PlayStation 1 look that runs in the web browser on PC, phones and tablets (keyboard and mouse, gamepad or touch). It is set in a fictional small town of German immigrants in the hills of southern Brazil, inspired by the map of Santa Maria do Herval (Rio Grande do Sul), where livestock keeps turning up drained of blood. Twelve chapters, each built around a rural legend. Available in Portuguese, English, Spanish and German. Play at https://fabianokunst.github.io/Teewald-3d/?lang=es
+
+## Páginas del sitio
+
+- [Inicio](https://fabianokunst.github.io/Teewald-3d/site/es/index.html.md): Survival horror en tercera persona con estética de PlayStation 1, en un pueblito de colonos alemanes de la sierra gaúcha. Gratis, en el navegador.
+- [La historia](https://fabianokunst.github.io/Teewald-3d/site/es/historia.html.md): Teewald, el monte del té: una colonia de inmigrantes del Hunsrück en el Valle del Herval, un mayo de niebla y animales que aparecen muertos sin una gota de sangre.
+- [El pueblo](https://fabianokunst.github.io/Teewald-3d/site/es/cidade.html.md): Los lugares de Teewald: la peatonal del Rio Cadeia, la Praça 10 de Abril, la iglesia matriz, el pabellón de la Kartoffelfest, las casas de entramado y el monte. Un pueblo hecho con mapas de verdad.
+- [Personajes](https://fabianokunst.github.io/Teewald-3d/site/es/personagens.html.md): Los personajes de Teewald: el forastero y los 24 vecinos que hablan, con retrato, altura, ropa y carácter de cada uno, sacados de los modelos del juego.
+- [El juego](https://fabianokunst.github.io/Teewald-3d/site/es/jogo.html.md): Cómo se juega Teewald: combate, inventario, archivos, estilos visuales 3D LIMPIO y PS1 RETRO, clima, controles con teclado, control y pantalla táctil, y preguntas frecuentes.
+- [Galería](https://fabianokunst.github.io/Teewald-3d/site/es/galeria.html.md): Capturas de Teewald sacadas del propio juego: la iglesia matriz, la plaza de noche, la peatonal del Rio Cadeia, la Kartoffelfest, lluvia, niebla y el estilo PS1 RETRO.
+
+## Juego
+
+- [Teewald en el navegador](https://fabianokunst.github.io/Teewald-3d/?lang=es): el juego en sí (WebGL; la página no tiene texto para leer sin ejecutar el juego). El idioma sigue al del navegador; `?lang=pt`, `?lang=en` o `?lang=de` en la dirección fuerza otro idioma.
+
+## Otros idiomas
+
+El sitio y estos textos también existen en portugués, inglés y alemán (los mismos idiomas del juego):
+
+- [Português](https://fabianokunst.github.io/Teewald-3d/site/llms.txt)
+- [English](https://fabianokunst.github.io/Teewald-3d/site/en/llms.txt)
+- [Deutsch](https://fabianokunst.github.io/Teewald-3d/site/de/llms.txt)
+
+## Optional
+
+- [Todo el sitio en un solo archivo](https://fabianokunst.github.io/Teewald-3d/site/es/llms-full.txt): el resumen de arriba y el texto de todas las páginas del sitio, en markdown

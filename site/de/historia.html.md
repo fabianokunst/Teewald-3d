@@ -1,101 +1,101 @@
-# A história — Teewald
+# Die Geschichte — Teewald
 
-> Teewald, o mato do chá: uma colônia de imigrantes do Hunsrück no Vale do Herval, um maio de neblina e criação aparecendo morta sem uma gota de sangue.
+> Teewald, der Wald vom Tee: eine Kolonie von Einwanderern aus dem Hunsrück im Vale do Herval, ein nebliger Mai und Vieh, das tot aufgefunden wird, ohne einen Tropfen Blut.
 
-Página: https://fabianokunst.github.io/Teewald-3d/site/de/historia.html  
-Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/?lang=de
+Seite: https://fabianokunst.github.io/Teewald-3d/site/de/historia.html  
+Kostenlos im Browser spielen: https://fabianokunst.github.io/Teewald-3d/?lang=de
 
-*A história*
+*Die Geschichte*
 
-## Mato do chá
+## Der Wald vom Tee
 
-Teewald é uma cidade pequena de colonos alemães no Vale do Herval, na serra gaúcha. Tem igreja de torre alta, fábrica de calçados, festa da batata e um mato onde os antigos não entravam depois do sol posto.
+Teewald ist eine kleine Stadt deutscher Kolonisten im Vale do Herval, im Bergland Südbrasiliens. Es gibt eine Kirche mit hohem Turm, eine Schuhfabrik, ein Kartoffelfest und einen Wald, den die Alten nach Sonnenuntergang nicht betraten.
 
-*A colônia*
+*Die Kolonie*
 
-### Quem abriu picada
+### Wer die ersten Pfade schlug
 
-Os primeiros colonos vieram do Hunsrück, no século XIX, e abriram picada no meio do mato de araucária. Deram ao lugar o nome do que acharam ali: *Teewald*, o mato do chá, por causa da erva-mate. Em português, ficou Herval.
+Die ersten Kolonisten kamen im 19. Jahrhundert aus dem Hunsrück und schlugen Pfade mitten durch den Araukarienwald. Sie benannten den Ort nach dem, was sie dort fanden: *Teewald*, der Wald vom Tee, wegen der Erva-Mate, aus der man Mate-Tee macht. Auf Portugiesisch wurde daraus Herval.
 
-Até hoje se fala hunsrik na cozinha, se toma chimarrão no banco da praça e se come cuca no café colonial. A Igreja Matriz olha a cidade de cima, a fábrica de calçados troca de turno à noite e, todo outono, a Rua Beno Closs vira o pavilhão da Kartoffelfest.
+Bis heute spricht man in der Küche Hunsrik, trinkt Mate auf der Bank am Platz und isst Kuchen beim Kolonistenkaffee. Die Pfarrkirche schaut von oben auf die Stadt, in der Schuhfabrik wechselt nachts die Schicht, und jeden Herbst wird die Rua Beno Closs zum Festzelt des Kartoffelfests.
 
-Os antigos tinham respeito por aquele mato. Nos diários deles aparece uma palavra que ninguém gosta de repetir: *Blutsauger*. O chupador de sangue.
+Die Alten hatten Respekt vor diesem Wald. In ihren Tagebüchern steht ein Wort, das keiner gern wiederholt: *Blutsauger*. Das Ding, das Blut saugt.
 
-![A Igreja Matriz no fim da tarde, com neblina](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
-*A Igreja Matriz vista da praça*
+![Die Pfarrkirche am späten Nachmittag, im Nebel](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
+*Die Pfarrkirche vom Platz aus gesehen*
 
-*Maio*
+*Mai*
 
-### As últimas semanas
+### Die letzten Wochen
 
-Começou longe, no interior. Depois foi chegando perto das casas.
+Es fing weit draußen an, auf dem Land. Dann kam es immer näher an die Häuser.
 
-Tudo o que está aqui você ouve dos moradores ou lê nos papéis da cidade logo que chega. O resto, o jogo conta.
+Alles, was hier steht, hörst du von den Einwohnern oder liest es in den Papieren der Stadt, gleich wenn du ankommst. Den Rest erzählt das Spiel.
 
-1. **3 de maio:** A Folha de Teewald noticia sete ovelhas mortas na Linha Schmitt. Nenhum ferimento grande, só dois furos no pescoço. Secas.
-2. **Na mesma semana:** Galinha, pato, cabrito, um gato duro atrás do galpão. A Dona Erna perde as doze galinhas numa noite só.
-3. **Domingo à noite:** O Bóris, cachorro do Lucas, arrebenta a corrente latindo para o mato. Depois para de latir. De repente.
-4. **Segunda à noite:** A Mimi, gata da Dona Hilda, sai e não volta. Ela nunca dormiu fora.
-5. **Comunicado nº 41:** A Prefeitura cancela a Kartoffelfest e manda o comércio fechar às seis. Oficialmente, é graxaim.
-6. **Hoje:** Você chega numa tarde de outono, com neblina, pelo calçadão do Rio Cadeia. No mural da praça tem um cartaz novo.
+1. **3. Mai:** Die Folha de Teewald meldet sieben tote Schafe in der Linha Schmitt. Keine großen Wunden, nur zwei Löcher am Hals. Blutleer.
+2. **In derselben Woche:** Huhn, Ente, Zicklein, eine steife Katze hinter dem Schuppen. Frau Erna verliert alle zwölf Hühner in einer einzigen Nacht.
+3. **Sonntagnacht:** Bóris, der Hund von Lucas, bellt in den Wald und zerreißt seine Kette. Dann hört er auf zu bellen. Ganz plötzlich.
+4. **Montagnacht:** Mimi, die Katze von Frau Hilda, geht hinaus und kommt nicht zurück. Sie hat noch nie draußen geschlafen.
+5. **Bekanntmachung Nr. 41:** Das Rathaus sagt das Kartoffelfest ab und lässt die Geschäfte um sechs schließen. Offiziell ist es ein Pampasfuchs.
+6. **Heute:** Du kommst an einem nebligen Herbstnachmittag über die Promenade am Rio Cadeia. Am Schwarzen Brett auf dem Platz hängt ein neuer Aushang.
 
-*Do arquivo da cidade*
+*Aus dem Archiv der Stadt*
 
-### Papéis pregados
+### Angeheftete Zettel
 
-Pela cidade há recortes de jornal, cartazes, cartas e páginas de diário. No jogo, cada papel que você lê fica guardado em ARQUIVOS. Estes aqui estão no mural.
+In der Stadt gibt es Zeitungsausschnitte, Aushänge, Briefe und Tagebuchseiten. Im Spiel landet jedes Papier, das du liest, in den AKTEN. Diese hier hängen am Schwarzen Brett.
 
-![Recorte da Folha de Teewald: ovelhas mortas na Linha Schmitt](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/jornal.png)
-*Folha de Teewald, 3 de maio*
+![Ausschnitt aus der Folha de Teewald: tote Schafe in der Linha Schmitt](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/jornal.png)
+*Folha de Teewald, 3. Mai*
 
-![Ofício da Prefeitura cancelando a Kartoffelfest](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/oficio.png)
-*Ofício da Prefeitura*
+![Schreiben des Rathauses, das das Kartoffelfest absagt](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/oficio.png)
+*Schreiben des Rathauses*
 
-![Programa da Kartoffelfest com uma batata de chapéu](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/programa.png)
-*Programa da Kartoffelfest*
+![Programm des Kartoffelfests mit einer Kartoffel mit Hut](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/programa.png)
+*Programm des Kartoffelfests*
 
-![Redação escolar: o que eu vi da minha janela](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/redacao.png)
-*Redação da escola*
+![Schulaufsatz: Was ich aus meinem Fenster gesehen habe](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/redacao.png)
+*Schulaufsatz*
 
-![Cartaz de cachorro perdido, o Bóris](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/cartaz-boris.png)
-*Cartaz na ponte*
+![Suchplakat für den entlaufenen Hund Bóris](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/cartaz-boris.png)
+*Aushang an der Brücke*
 
-Agora eu só pesco de dia. E tu devia fazer o mesmo.
+Jetzt angle ich nur noch bei Tag. Und du solltest es genauso machen.
 
-Antes de escurecer, pra casa.
+Vor der Dunkelheit nach Hause.
 
-![Seu Valdir sentado no banco da praça](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg)
-*Seu Valdir não larga o chimarrão*
+![Herr Valdir auf der Bank am Platz](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg)
+*Herr Valdir lässt seinen Mate nicht los*
 
-*Já aconteceu antes*
+*Das ist schon mal passiert*
 
-### Setenta e oito
+### Achtundsiebzig
 
-> Em setenta e oito aconteceu de novo. Eu era moço. Morreu criação em três linhas. Depois parou, do nada. A cidade preferiu esquecer.
+> Achtundsiebzig ist es wieder passiert. Ich war ein junger Mann. In drei Siedlungen ist Vieh verendet. Dann hörte es auf, einfach so. Die Stadt hat es lieber vergessen.
 >
-> — Professor Edgar
+> — Lehrer Edgar
 
-Quem viveu aquele ano não gosta de falar dele. O Seu Valdir toma chimarrão sozinho no banco da praça e tem uma cicatriz antiga na bochecha. Se você tiver paciência, ele conta.
+Wer jenes Jahr erlebt hat, redet nicht gern darüber. Herr Valdir trinkt allein seinen Mate auf der Bank am Platz und hat eine alte Narbe auf der Wange. Wenn du Geduld hast, erzählt er.
 
-*O forasteiro*
+*Der Fremde*
 
-### Você
+### Du
 
-O protagonista não tem nome. Chegou de fora, de jaqueta de couro, e todo mundo percebe. Decidiu ficar para caçar o que anda no mato.
+Der Protagonist hat keinen Namen. Er ist von auswärts gekommen, in Lederjacke, und alle merken es. Er hat beschlossen zu bleiben und zu jagen, was im Wald umgeht.
 
-Os moradores têm medo, fecham a janela e encaram quem passa. Mas cada um viu, ouviu ou perdeu alguma coisa. Converse com todos: é deles que vêm as pistas.
+Die Einwohner haben Angst, schließen die Fenster und starren jeden an, der vorbeikommt. Aber jeder hat etwas gesehen, gehört oder verloren. Sprich mit allen: Von ihnen kommen die Hinweise.
 
-Daqui para a frente, a história é sua. Não vamos contar o que acontece depois da primeira noite. Algumas coisas em Teewald só fazem sentido vistas de perto.
+Ab hier ist es deine Geschichte. Was nach der ersten Nacht passiert, verraten wir nicht. Manche Dinge in Teewald ergeben erst aus der Nähe einen Sinn.
 
-![O protagonista mirando a pistola na neblina](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
-*Pistola 9 mm, pente de doze*
+![Der Protagonist zielt mit der Pistole in den Nebel](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
+*Pistole 9 mm, Magazin mit zwölf Schuss*
 
-### A cidade prefere esquecer
+### Die Stadt vergisst lieber
 
-Você não. O cartaz já está no mural da praça.
+Du nicht. Der Aushang hängt schon am Schwarzen Brett auf dem Platz.
 
-[Jogar agora](https://fabianokunst.github.io/Teewald-3d/?lang=de) Grátis · no navegador
+[Jetzt spielen](https://fabianokunst.github.io/Teewald-3d/?lang=de) Kostenlos · im Browser
 
 ---
 
-*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
+*Fiktives Werk: Alle Namen, Figuren und Geschichten des Spiels sind frei erfunden und haben keinen realen Bezug zur Stadt Santa Maria do Herval oder zu ihren Einwohnern. Nur die Karte (Straßen, Fluss und Gelände) stammt von der echten Stadt.*

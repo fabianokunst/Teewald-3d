@@ -1,0 +1,989 @@
+# Teewald
+
+> Teewald ist ein kostenloser Survival-Horror in der dritten Person im Look der PlayStation 1, der direkt im Browser läuft (PC, Handy und Tablet). Er spielt in Teewald, einem erfundenen Städtchen deutscher Kolonisten im Bergland von Rio Grande do Sul in Südbrasilien, nach dem Vorbild von Santa Maria do Herval (RS): ein nebliger Mai mitten im Herbst, in dem das Vieh tot aufgefunden wird, mit zwei Löchern im Hals und ohne einen Tropfen Blut, und ein Fremder beschließt zu bleiben, um herauszufinden, was im Wald umgeht.
+
+- Spielen: https://fabianokunst.github.io/Teewald-3d/?lang=de (kostenlos, ohne Installation und ohne Konto)
+- Offizielle Website: https://fabianokunst.github.io/Teewald-3d/site/de/
+- Entwickler: Fabiano Kunst (Indie-Spiel)
+- Genre: Survival-Horror / Horror in der dritten Person, Einzelspieler, zwölf Kapitel, jedes mit einer Legende vom Land
+- Spielweise: Kamera über der Schulter, knappe Munition, Faustschläge und Nahkampfwaffen, die sich abnutzen und zerbrechen, 9-mm-Pistole, Ausweichen, Inventar mit 16 Plätzen, Dokumente zum Lesen (AKTEN), Gespräche mit 24 Einwohnern, drei Schwierigkeitsgrade und eine Wertung von S bis C pro Kapitel
+- Grafik: KLARES 3D (Standard) oder PS1 RETRO (320×240, Dithering und 15-Bit-Farbe); Wetter mit Nachmittag, Nacht, Nebel, Regen und Gewitter; alle Töne im Code erzeugt
+- Plattformen: jeder aktuelle Browser mit WebGL (Chrome, Edge, Firefox, Safari) auf PC, Handy und Tablet
+- Steuerung: Tastatur und Maus, Controller (USB oder Bluetooth, mit Zielhilfe und Vibration) oder Touchscreen
+- Sprachen: Portugiesisch, Englisch, Spanisch und Deutsch
+- Fortschritt: wird automatisch im Browser gespeichert
+- Schauplatz: Straßen, Fluss und Gelände aus offenen Daten (OpenStreetMap, Microsoft Global ML Building Footprints und SRTM), mit rund 600 Gebäuden in ihren echten Umrissen
+- Technik: Three.js (WebGL) und Vite
+
+Fiktives Werk: Alle Namen, Figuren und Geschichten des Spiels sind frei erfunden und haben keinen realen Bezug zur Stadt Santa Maria do Herval oder zu ihren Einwohnern. Nur die Karte (Straßen, Fluss und Gelände) stammt von der echten Stadt.
+
+Keine Spoiler: Die Website erzählt nur, was der Spieler gleich nach seiner Ankunft in der Stadt hört und liest. Die Kreaturen der einzelnen Kapitel und das, was nach der ersten Nacht geschieht, bleiben dem Spiel vorbehalten.
+
+In English: Teewald is a free third-person survival horror game with a PlayStation 1 look that runs in the web browser on PC, phones and tablets (keyboard and mouse, gamepad or touch). It is set in a fictional small town of German immigrants in the hills of southern Brazil, inspired by the map of Santa Maria do Herval (Rio Grande do Sul), where livestock keeps turning up drained of blood. Twelve chapters, each built around a rural legend. Available in Portuguese, English, Spanish and German. Play at https://fabianokunst.github.io/Teewald-3d/?lang=de
+
+---
+
+# Teewald — Survival-Horror im PS1-Look
+
+> Survival-Horror in der dritten Person im Look der PlayStation 1, in einem Städtchen deutscher Kolonisten im Bergland Südbrasiliens. Kostenlos, im Browser.
+
+Seite: https://fabianokunst.github.io/Teewald-3d/site/de/  
+Kostenlos im Browser spielen: https://fabianokunst.github.io/Teewald-3d/?lang=de
+
+*Vale do Herval · Rio Grande do Sul · Mai*
+
+## Teewald
+
+Etwas geht im Wald um.
+
+Ein Survival-Horror in der dritten Person im Look der PlayStation 1, in einem Städtchen deutscher Kolonisten im Bergland Südbrasiliens. Der Nebel hebt sich nicht, das Vieh liegt blutleer auf der Koppel, und nach Einbruch der Dunkelheit geht keiner mehr vor die Tür. Außer dir.
+
+[Jetzt spielen](https://fabianokunst.github.io/Teewald-3d/?lang=de) [Zur Geschichte](https://fabianokunst.github.io/Teewald-3d/site/de/historia.html)
+
+Kostenlos · im Browser · ohne Installation
+
+**Schlagzeilen der Folha de Teewald:** Tote Schafe in der Linha Schmitt · Rathaus: „ein Pampasfuchs“ · Kartoffelfest abgesagt · Geschäfte schließen um 18 Uhr · Graue Katze gesucht, hört auf Mimi · Schwarzer Hund mit rotem Halsband entlaufen · Bus nach Novo Hamburgo ist nicht gekommen · Polizei bittet, nachts nicht bewaffnet in den Wald zu gehen.
+
+*Aushang am Platz*
+
+### Gesucht
+
+In den letzten Nächten wurden in Teewald Hühner, Enten und sogar Schafe tot aufgefunden. Alle mit zwei Löchern im Hals und ohne einen Tropfen Blut.
+
+Das Rathaus sagt, es sei ein Pampasfuchs. Das Veterinäramt spricht von Hunden. Die Reporterin aus Porto Alegre hat schon elf Fälle in zehn Tagen gezählt, und niemand will mit ihr reden.
+
+Du bist nicht von hier. Du bist an einem nebligen Nachmittag über die Promenade am Rio Cadeia gekommen und hast beschlossen zu bleiben, um herauszufinden, was im Wald umgeht. Die Stadt mag keine Fragen, aber jeder hier kennt ein Stück der Geschichte.
+
+> Als ich die Taschenlampe anmachte, leuchteten die Augen rot. Dann verschwand es in Sprüngen im Wald.
+>
+> — Herr Arno, Angler an der Promenade
+
+![Suchplakat mit dem Umriss eines buckligen Biests mit roten Augen](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/cartaz-chupacabras.png)
+*Angeheftet am Schwarzen Brett der Praça 10 de Abril, gleich am Ende der Promenade.*
+
+*Was dich erwartet*
+
+### Horror alter Schule
+
+Kamera über der Schulter, knappe Munition und eine ganze Stadt, die du im Dunkeln durchqueren musst. So, wie Horrorspiele in den 90ern waren, nur im Browser.
+
+*PS1 RETRO · 320×240*
+
+#### Wie auf der PlayStation 1
+
+Kantige Polygone, Texturen in Pixel-Art und Figuren, gebaut wie in den ersten 3D-Spielen. Spiel in KLARES 3D oder in PS1 RETRO, mit echtem Dithering und echter 15-Bit-Farbe.
+
+*Echte Karte*
+
+#### Eine Stadt, die es gibt
+
+Straßen, Fluss, Platz und Hügel aus echten Karten, mit rund 600 Gebäuden in ihren echten Umrissen.
+
+#### Klassischer Survival-Horror
+
+Ein Inventar, das das Spiel anhält, Nahkampfwaffen, die sich abnutzen und zerbrechen, Steine zum Werfen und Kuchen mit Marcela-Tee, um das Leben zu flicken.
+
+#### Legenden vom Land
+
+Zwölf Kapitel, jedes mit einer Geschichte, die die Alten nur leise erzählen, nah am Herd. Welche welche ist, findest du drinnen heraus.
+
+#### Nebel, Regen und Donner
+
+Die Taschenlampe reicht nur ein paar Meter, und die Geräusche kommen von überall.
+
+#### Läuft überall
+
+Auf PC, Handy oder Tablet, mit Tastatur und Maus, Controller oder Touch. Der Fortschritt wird von selbst im Browser gespeichert.
+
+**Wo und wie du spielst:** PC, Handy, Tablet, Controller, Touch, Português, English, Español, Deutsch.
+
+> Herval kommt von Erva-Mate, dem Mate-Tee. Und auf Hunsrik heißt das Teewald. Schön, nicht wahr? Aber die Alten hatten einen anderen Respekt vor diesem Wald. Nach Sonnenuntergang ging niemand hinein.
+>
+> — Lehrer Edgar, der die Tagebücher der Kolonisten kennt
+
+*Galerie*
+
+### Screenshots aus dem Spiel
+
+![Die Pfarrkirche am späten Nachmittag, im Nebel](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
+*Die Pfarrkirche am späten Nachmittag*
+
+![Die Promenade am Ufer des Rio Cadeia](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
+*Die Promenade am Rio Cadeia*
+
+![Eine Straße der Stadt in einer Regennacht, der Fremde mit eingeschalteter Taschenlampe](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg)
+*Regennacht*
+
+![Das leere Festzelt des Kartoffelfests mit den Wimpelketten](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
+*Das Kartoffelfest, das nicht stattfand*
+
+![Die Praça 10 de Abril bei Nacht, mit brennenden Laternen](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
+*Der Platz bei Nacht*
+
+![Der Turm der Pfarrkirche, dahinter der Vollmond](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg)
+*Vollmond hinter dem Turm*
+
+[Alle Screenshots ansehen](https://fabianokunst.github.io/Teewald-3d/site/de/galeria.html)
+
+*Mehr von Teewald*
+
+### Bevor es dunkel wird
+
+- [Die Geschichte](https://fabianokunst.github.io/Teewald-3d/site/de/historia.html): Die Kolonisten aus dem Hunsrück, der Wald vom Tee und die letzten Wochen in der Folha de Teewald.
+- [Die Stadt](https://fabianokunst.github.io/Teewald-3d/site/de/cidade.html): Von der Promenade bis zum Friedhof: die Orte, an denen nach sechs keiner mehr bleibt.
+- [Figuren](https://fabianokunst.github.io/Teewald-3d/site/de/personagens.html): Vierundzwanzig Einwohner voller Angst, und jeder kennt ein Stück der Geschichte.
+
+### Der Nebel ist schon da
+
+Der Bus nach Novo Hamburgo ist seit Mittag nicht gekommen. Wenn du schon bleibst, behalt den Wald im Auge.
+
+[Jetzt spielen](https://fabianokunst.github.io/Teewald-3d/?lang=de) Kostenlos · PC, Handy und Controller
+
+---
+
+*Fiktives Werk: Alle Namen, Figuren und Geschichten des Spiels sind frei erfunden und haben keinen realen Bezug zur Stadt Santa Maria do Herval oder zu ihren Einwohnern. Nur die Karte (Straßen, Fluss und Gelände) stammt von der echten Stadt.*
+
+---
+
+# Die Geschichte — Teewald
+
+> Teewald, der Wald vom Tee: eine Kolonie von Einwanderern aus dem Hunsrück im Vale do Herval, ein nebliger Mai und Vieh, das tot aufgefunden wird, ohne einen Tropfen Blut.
+
+Seite: https://fabianokunst.github.io/Teewald-3d/site/de/historia.html  
+Kostenlos im Browser spielen: https://fabianokunst.github.io/Teewald-3d/?lang=de
+
+*Die Geschichte*
+
+## Der Wald vom Tee
+
+Teewald ist eine kleine Stadt deutscher Kolonisten im Vale do Herval, im Bergland Südbrasiliens. Es gibt eine Kirche mit hohem Turm, eine Schuhfabrik, ein Kartoffelfest und einen Wald, den die Alten nach Sonnenuntergang nicht betraten.
+
+*Die Kolonie*
+
+### Wer die ersten Pfade schlug
+
+Die ersten Kolonisten kamen im 19. Jahrhundert aus dem Hunsrück und schlugen Pfade mitten durch den Araukarienwald. Sie benannten den Ort nach dem, was sie dort fanden: *Teewald*, der Wald vom Tee, wegen der Erva-Mate, aus der man Mate-Tee macht. Auf Portugiesisch wurde daraus Herval.
+
+Bis heute spricht man in der Küche Hunsrik, trinkt Mate auf der Bank am Platz und isst Kuchen beim Kolonistenkaffee. Die Pfarrkirche schaut von oben auf die Stadt, in der Schuhfabrik wechselt nachts die Schicht, und jeden Herbst wird die Rua Beno Closs zum Festzelt des Kartoffelfests.
+
+Die Alten hatten Respekt vor diesem Wald. In ihren Tagebüchern steht ein Wort, das keiner gern wiederholt: *Blutsauger*. Das Ding, das Blut saugt.
+
+![Die Pfarrkirche am späten Nachmittag, im Nebel](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
+*Die Pfarrkirche vom Platz aus gesehen*
+
+*Mai*
+
+### Die letzten Wochen
+
+Es fing weit draußen an, auf dem Land. Dann kam es immer näher an die Häuser.
+
+Alles, was hier steht, hörst du von den Einwohnern oder liest es in den Papieren der Stadt, gleich wenn du ankommst. Den Rest erzählt das Spiel.
+
+1. **3. Mai:** Die Folha de Teewald meldet sieben tote Schafe in der Linha Schmitt. Keine großen Wunden, nur zwei Löcher am Hals. Blutleer.
+2. **In derselben Woche:** Huhn, Ente, Zicklein, eine steife Katze hinter dem Schuppen. Frau Erna verliert alle zwölf Hühner in einer einzigen Nacht.
+3. **Sonntagnacht:** Bóris, der Hund von Lucas, bellt in den Wald und zerreißt seine Kette. Dann hört er auf zu bellen. Ganz plötzlich.
+4. **Montagnacht:** Mimi, die Katze von Frau Hilda, geht hinaus und kommt nicht zurück. Sie hat noch nie draußen geschlafen.
+5. **Bekanntmachung Nr. 41:** Das Rathaus sagt das Kartoffelfest ab und lässt die Geschäfte um sechs schließen. Offiziell ist es ein Pampasfuchs.
+6. **Heute:** Du kommst an einem nebligen Herbstnachmittag über die Promenade am Rio Cadeia. Am Schwarzen Brett auf dem Platz hängt ein neuer Aushang.
+
+*Aus dem Archiv der Stadt*
+
+### Angeheftete Zettel
+
+In der Stadt gibt es Zeitungsausschnitte, Aushänge, Briefe und Tagebuchseiten. Im Spiel landet jedes Papier, das du liest, in den AKTEN. Diese hier hängen am Schwarzen Brett.
+
+![Ausschnitt aus der Folha de Teewald: tote Schafe in der Linha Schmitt](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/jornal.png)
+*Folha de Teewald, 3. Mai*
+
+![Schreiben des Rathauses, das das Kartoffelfest absagt](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/oficio.png)
+*Schreiben des Rathauses*
+
+![Programm des Kartoffelfests mit einer Kartoffel mit Hut](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/programa.png)
+*Programm des Kartoffelfests*
+
+![Schulaufsatz: Was ich aus meinem Fenster gesehen habe](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/redacao.png)
+*Schulaufsatz*
+
+![Suchplakat für den entlaufenen Hund Bóris](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/cartaz-boris.png)
+*Aushang an der Brücke*
+
+Jetzt angle ich nur noch bei Tag. Und du solltest es genauso machen.
+
+Vor der Dunkelheit nach Hause.
+
+![Herr Valdir auf der Bank am Platz](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg)
+*Herr Valdir lässt seinen Mate nicht los*
+
+*Das ist schon mal passiert*
+
+### Achtundsiebzig
+
+> Achtundsiebzig ist es wieder passiert. Ich war ein junger Mann. In drei Siedlungen ist Vieh verendet. Dann hörte es auf, einfach so. Die Stadt hat es lieber vergessen.
+>
+> — Lehrer Edgar
+
+Wer jenes Jahr erlebt hat, redet nicht gern darüber. Herr Valdir trinkt allein seinen Mate auf der Bank am Platz und hat eine alte Narbe auf der Wange. Wenn du Geduld hast, erzählt er.
+
+*Der Fremde*
+
+### Du
+
+Der Protagonist hat keinen Namen. Er ist von auswärts gekommen, in Lederjacke, und alle merken es. Er hat beschlossen zu bleiben und zu jagen, was im Wald umgeht.
+
+Die Einwohner haben Angst, schließen die Fenster und starren jeden an, der vorbeikommt. Aber jeder hat etwas gesehen, gehört oder verloren. Sprich mit allen: Von ihnen kommen die Hinweise.
+
+Ab hier ist es deine Geschichte. Was nach der ersten Nacht passiert, verraten wir nicht. Manche Dinge in Teewald ergeben erst aus der Nähe einen Sinn.
+
+![Der Protagonist zielt mit der Pistole in den Nebel](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
+*Pistole 9 mm, Magazin mit zwölf Schuss*
+
+### Die Stadt vergisst lieber
+
+Du nicht. Der Aushang hängt schon am Schwarzen Brett auf dem Platz.
+
+[Jetzt spielen](https://fabianokunst.github.io/Teewald-3d/?lang=de) Kostenlos · im Browser
+
+---
+
+*Fiktives Werk: Alle Namen, Figuren und Geschichten des Spiels sind frei erfunden und haben keinen realen Bezug zur Stadt Santa Maria do Herval oder zu ihren Einwohnern. Nur die Karte (Straßen, Fluss und Gelände) stammt von der echten Stadt.*
+
+---
+
+# Die Stadt — Teewald
+
+> Die Orte von Teewald: die Promenade am Rio Cadeia, die Praça 10 de Abril, die Pfarrkirche, das Festzelt des Kartoffelfests, die Fachwerkhäuser und der Wald. Eine Stadt aus echten Karten.
+
+Seite: https://fabianokunst.github.io/Teewald-3d/site/de/cidade.html  
+Kostenlos im Browser spielen: https://fabianokunst.github.io/Teewald-3d/?lang=de
+
+*Die Stadt*
+
+## Geschäfte schließen um sechs
+
+Straßen, Fluss, Platz und Hügel von Teewald stammen aus echten Karten. Du kannst überall hingehen: von der Promenade am Rio Cadeia bis zum Friedhof hinter der Pfarrkirche, vorbei am Platz, am Rathaus und am Festzelt.
+
+![Die Promenade am Ufer des Rio Cadeia](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
+
+### Promenade am Rio Cadeia
+
+Wo alles beginnt.
+
+Ein Weg am Flussufer, zwischen Wasser und Hauptstraße, mit Geländer, Bänken, dem Schriftzug TEEWALD und dem Einwanderer-Denkmal. Es gibt einen Schießstand mit Dosen und Flaschen, um das Zielen zu üben. Herr Arno angelt hier, aber jetzt nur noch bei Tag.
+
+![Die Praça 10 de Abril bei Nacht, mit dem Brunnen und den Laternen](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
+
+### Praça 10 de Abril
+
+Brunnen, Hortensien, Laternen und ein Münztelefon.
+
+Frau Ernas Kuchenstand ist geschlossen, Herr Valdir lässt seinen Mate nicht los, und die junge Frau am Münztelefon ruft immer wieder ihre Tante an, die nicht abhebt. Am Schwarzen Brett, nahe dem Ende der Promenade, hängt ein neuer Aushang.
+
+![Das Kirchenschiff der Pfarrkirche von innen, mit den Bänken und dem Altar](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg)
+
+### Pfarrkirche
+
+Ein Turm, den man fast von überall in der Stadt sieht.
+
+Fensterrose, Portal mit Archivolten, Spitzbogenfenster mit Buntglas und ein Glockenturm mit Schallläden. Innen ein blaues Gewölbe mit Sternen, Kanzel, Beichtstuhl, Empore mit Orgel, Sakristei und eine Treppe hinauf bis zur Glocke. Pfarrer Bernardo schließt alles ab, bevor es dunkel wird.
+
+![Das leere Festzelt des Kartoffelfests mit brennenden Lichterketten](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
+
+### Festzelt des Kartoffelfests
+
+Alles war fertig.
+
+Siebzig Meter gestreifte Plane über der Rua Beno Closs: ein Fachwerktor, eine Schießbude, Bratwurst, Fassbier, das Kartoffelhaus voller Kartoffelsäcke, lange Tische mit karierten Decken, eine Tanzfläche und die Bühne für die Blaskapellen. Das Fest wurde dieses Jahr abgesagt. Die Lampen gehen trotzdem an.
+
+![Das Museum, ein Fachwerkhaus](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg)
+
+### Fachwerkhäuser
+
+Dunkle Balken, weißer Putz, sichtbare Ziegel.
+
+Verputzte Mauer, Lattenzaun, ein Tor vor der Tür und ein schmaler Gehweg bis zum Eingang. Das Museum bewahrt, was die Kolonisten aus dem Hunsrück mitbrachten. Die Nachtschicht der Schuhfabriken geht zu Fuß über die Promenade heim. Ging.
+
+![Der Friedhof im Nebel](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg)
+
+### Der Friedhof
+
+Hinter der Pfarrkirche, alte Grabsteine mit deutschen Namen.
+
+Herr Otto ist seit dreißig Jahren Friedhofswärter. Er redet wenig, achtet die Toten und mag keinen Lärm.
+
+![Bäume im Nebel, am Waldrand](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mato.jpg)
+
+### Der Wald
+
+Er beginnt, wo die Straßen enden.
+
+Araukarien, herbstliche Platanen und ein Nebel, der sich nicht hebt. Die Alten gingen nach Sonnenuntergang nicht hinein. Du wirst hineinmüssen.
+
+*Aus echten Karten gebaut*
+
+### Eine Stadt, die es gibt
+
+Teewald ist Santa Maria do Herval (RS) nachempfunden. Straßenverlauf, Fluss, Bäche und Gelände stammen aus offenen Daten. Die Menschen und die Geschichten sind erfunden.
+
+![Teewald von oben, mit dem Fluss, den Straßen, dem Fußballplatz und dem Friedhof](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mapa.jpg)
+*Von oben: der Fluss, der Bach, der Fußballplatz und der Friedhof*
+
+**600** Gebäude, mehr oder weniger, in ihren echten Umrissen
+
+**SRTM** Gelände mit den echten Höhen
+
+**OSM** Straßen, Fluss, Platz und Fußballplatz aus OpenStreetMap
+
+**24** Einwohner, die reden, jeder in seiner Ecke
+
+### Nach sechs gehört die Straße dir
+
+Dir und dem, was sonst noch da draußen ist.
+
+[Jetzt spielen](https://fabianokunst.github.io/Teewald-3d/?lang=de) Kostenlos · im Browser
+
+---
+
+*Fiktives Werk: Alle Namen, Figuren und Geschichten des Spiels sind frei erfunden und haben keinen realen Bezug zur Stadt Santa Maria do Herval oder zu ihren Einwohnern. Nur die Karte (Straßen, Fluss und Gelände) stammt von der echten Stadt.*
+
+---
+
+# Figuren — Teewald
+
+> Die Figuren von Teewald: der Fremde und die 24 Einwohner, die reden, mit Porträt, Größe, Kleidung und Wesen von jedem, direkt aus den Modellen des Spiels.
+
+Seite: https://fabianokunst.github.io/Teewald-3d/site/de/personagens.html  
+Kostenlos im Browser spielen: https://fabianokunst.github.io/Teewald-3d/?lang=de
+
+*Figuren*
+
+## Wer noch draußen ist
+
+Vierundzwanzig Einwohner, die reden, jeder mit einem Stück der Geschichte. Alle haben Angst. Die Porträts stammen direkt von den Modellen des Spiels, und die Ganzkörperbilder haben alle denselben Maßstab.
+
+*Protagonist*
+
+### Du
+
+##### DER FREMDE
+
+Protagonist, ohne Namen. Kam von auswärts und blieb, um den Chupacabra zu jagen.
+
+- **Alter:** 33 Jahre
+- **Größe:** 1,75 m
+- **Körperbau:** mittel
+- **Gesicht:** Blond, nach hinten gekämmtes Haar, tief liegende Augen, gerade Augenbrauen und spärlicher Bart.
+- **Figur:** Mittelgroß, breite Schultern.
+- **Kleidung:** Braune Lederjacke mit Revers, grauer Pullover mit V-Ausschnitt, dunkles Hemd, dunkle Hose und Stiefel.
+- **Wesen:** Ernst und schweigsam. Er ist nicht von hier, und alle merken es.
+
+![Gesicht des Fremden](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/heroi.jpg) ![Der Fremde in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/heroi.jpg)
+
+*Einwohner*
+
+### Wen du treffen wirst
+
+24 Einwohner, die reden, über die ganze Stadt verteilt. Größe, Körperbau und Haltung aus jedem Steckbrief gelten auch im Spiel, und die Gesichtszüge (Falten, Augenringe, Sommersprossen, Bartstoppeln, Muttermal, Narbe) sind in die Textur gemalt.
+
+#### Promenade am Rio Cadeia
+
+##### HERR ARNO
+
+Schmied im Ruhestand; angelt an der Promenade am Rio Cadeia
+
+- **Alter:** 68 Jahre
+- **Größe:** 1,70 m
+- **Körperbau:** kräftig
+- **Gesicht:** Sonnenverbrannt, grauer Vollbart und buschige Augenbrauen.
+- **Figur:** Klein und stämmig, kräftige Arme und Hände von einem, der sein Leben lang Eisen geschmiedet hat.
+- **Kleidung:** Rot kariertes Hemd, graue Hose, Stiefel und Strohhut. Angelrute.
+- **Wesen:** Redet wenig und misstraut allen. Angelt jetzt nur noch bei Tag.
+
+![Gesicht von Herrn Arno](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/arno.jpg) ![Herr Arno in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/arno.jpg)
+
+##### FRAU HILDA
+
+Witwe von der Promenade; sucht ihre Katze Mimi
+
+- **Alter:** 74 Jahre
+- **Größe:** 1,55 m
+- **Körperbau:** dünn, gebeugt
+- **Gesicht:** Tiefe Falten, Augenringe und Brille; graues Haar unter einem violetten Kopftuch.
+- **Figur:** Zierlich und dünn, etwas gebeugt.
+- **Kleidung:** Weinroter Pullover, langer grauer Rock, Strumpfhose und Schuhe.
+- **Wesen:** Verzweifelt, aber höflich. Ruft ständig nach Mimi.
+
+![Gesicht von Frau Hilda](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/hilda.jpg) ![Frau Hilda in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/hilda.jpg)
+
+##### LUCAS
+
+Sucht seinen Hund Bóris; wohnt im letzten Haus vor der Brücke
+
+- **Alter:** 19 Jahre
+- **Größe:** 1,81 m
+- **Körperbau:** dünn
+- **Gesicht:** Dunkle Haut, spärlicher Bart und braune Augen.
+- **Figur:** Groß und dünn, geht schnell.
+- **Kleidung:** Blaue Jacke mit grauem Kragen, dunkle Hose, helle Turnschuhe und rote Schirmmütze.
+- **Wesen:** Unruhig; pfeift und ruft nach Bóris.
+
+![Gesicht von Lucas](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lucas.jpg) ![Lucas in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lucas.jpg)
+
+##### MARLENE
+
+Reporterin einer Zeitung aus Porto Alegre
+
+- **Alter:** 31 Jahre
+- **Größe:** 1,68 m
+- **Körperbau:** mittel
+- **Gesicht:** Hellbraune Haut, braune Augen und ein Muttermal auf der Wange; schwarzes Haar im Pferdeschwanz.
+- **Figur:** Mittelgroß, flink.
+- **Kleidung:** Senfgelbe Jacke, Jeans und Turnschuhe. Fotokamera in der Hand.
+- **Wesen:** Hartnäckig und neugierig. Niemand in der Stadt will mit ihr reden.
+
+![Gesicht von Marlene](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/marlene.jpg) ![Marlene in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/marlene.jpg)
+
+##### LEHRER EDGAR
+
+Geschichtslehrer im Ruhestand; kennt die Tagebücher der Kolonisten
+
+- **Alter:** 79 Jahre
+- **Größe:** 1,76 m
+- **Körperbau:** dünn, gebeugt
+- **Gesicht:** Weißes Haar und weißer Schnurrbart, Brille mit hellem Rahmen, buschige Augenbrauen und tiefe Falten.
+- **Figur:** Groß und dünn, vom Alter gebeugt.
+- **Kleidung:** Abgetragener brauner Anzug, helles Hemd, blaue Krawatte und graue Baskenmütze. Immer mit einem Buch.
+- **Wesen:** Spricht langsam, wie im Klassenzimmer. Starrt jeden an, der vorbeikommt.
+
+![Gesicht von Lehrer Edgar](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/edgar.jpg) ![Lehrer Edgar in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/edgar.jpg)
+
+##### HERR LAURO
+
+Wartet seit Mittag auf den Bus nach Novo Hamburgo
+
+- **Alter:** 66 Jahre
+- **Größe:** 1,72 m
+- **Körperbau:** mittel
+- **Gesicht:** Ergraut, unrasiert und Augenringe von einem, der nicht schläft.
+- **Figur:** Mittelgroß, hängende Schultern.
+- **Kleidung:** Olivgrüne Jacke, Khakihose, Stiefel und grüne Schirmmütze. Koffer neben sich.
+- **Wesen:** Müde und entschlossen, die Stadt zu verlassen.
+
+![Gesicht von Herrn Lauro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lauro.jpg) ![Herr Lauro in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lauro.jpg)
+
+##### KÁTIA
+
+Arbeiterin der Nachtschicht in der Schuhfabrik
+
+- **Alter:** 27 Jahre
+- **Größe:** 1,62 m
+- **Körperbau:** dünn
+- **Gesicht:** Dunkle Haut, braune Augen und Augenringe von der Nachtschicht; schwarzes Haar im Pferdeschwanz.
+- **Figur:** Schlank, mittelgroß.
+- **Kleidung:** Hellblaues Hemd, marineblaue Hose und Schuhe. Stofftasche.
+- **Wesen:** Verängstigt; schaut sich beim Gehen immer wieder um.
+
+![Gesicht von Kátia](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/katia.jpg) ![Kátia in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/katia.jpg)
+
+##### HERR BRUNO
+
+Besitzer des Blumenladens
+
+- **Alter:** 56 Jahre
+- **Größe:** 1,77 m
+- **Körperbau:** kräftig
+- **Gesicht:** Braunes Haar, Schnurrbart, Brille und grüne Augen.
+- **Figur:** Kräftig gebaut, mit dem Bauch von einem, der über fünfzig ist.
+- **Kleidung:** Grüne Latzhose über hellem Hemd, Stiefel. Gießkanne in der Hand.
+- **Wesen:** Schweigsam und aufmerksam; starrt jeden an, der vorbeikommt.
+
+![Gesicht von Herrn Bruno](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bruno.jpg) ![Herr Bruno in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bruno.jpg)
+
+#### Praça 10 de Abril
+
+##### HERR VALDIR
+
+Gaúcho im Ruhestand; trinkt Mate auf der Bank am Platz
+
+- **Alter:** 72 Jahre
+- **Größe:** 1,71 m
+- **Körperbau:** dünn
+- **Gesicht:** Gegerbte Haut, grauer Schnurrbart, buschige Augenbrauen und eine alte Narbe auf der Wange.
+- **Figur:** Dünn und zäh trotz seines Alters.
+- **Kleidung:** Schwarzer Krempenhut, dunkle Jacke, rotes Hemd und helle Hose. Mate-Kürbis und Thermoskanne.
+- **Wesen:** Wortkarg. Hat den Fall von 1978 erlebt und nicht vergessen.
+
+![Gesicht von Herrn Valdir](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/valdir.jpg) ![Herr Valdir in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/valdir.jpg)
+
+##### FRAU ERNA
+
+Verkauft Kuchen am Stand auf dem Platz
+
+- **Alter:** 63 Jahre
+- **Größe:** 1,58 m
+- **Körperbau:** beleibt
+- **Gesicht:** Rote Wangen und aschblondes Haar, zum Dutt gebunden.
+- **Figur:** Klein und rundlich.
+- **Kleidung:** Grünes Kleid, weiße Schürze, Strumpfhose und Schuhe.
+- **Wesen:** Praktisch und direkt. Hat alle zwölf Hühner in einer Nacht verloren.
+
+![Gesicht von Frau Erna](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/erna.jpg) ![Frau Erna in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/erna.jpg)
+
+##### JOÃOZINHO
+
+Schüler der 4. Klasse; sein Hund ist im Wald verschwunden
+
+- **Alter:** 9 Jahre
+- **Größe:** 1,30 m
+- **Körperbau:** dünn
+- **Gesicht:** Braunes Haar, grüne Augen und Sommersprossen auf der Nase.
+- **Figur:** Schmächtig.
+- **Kleidung:** Brauner Pullover, marineblaue kurze Hose, helle Socken und Schuhe.
+- **Wesen:** Still; redet wenig und schaut einen starr an.
+
+![Gesicht von Joãozinho](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/joao.jpg) ![Joãozinho in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/joao.jpg)
+
+##### ANA
+
+Versucht, ihre Tante anzurufen, die am Waldrand wohnt
+
+- **Alter:** 22 Jahre
+- **Größe:** 1,66 m
+- **Körperbau:** dünn
+- **Gesicht:** Langes dunkelrotes Haar, grüne Augen und verweinte Augenringe.
+- **Figur:** Schlank, mittelgroß.
+- **Kleidung:** Hellgrauer Pullover mit weinrotem Stickband, marineblaue Hose und Schuhe.
+- **Wesen:** Nervös; geht nicht vom Münztelefon weg.
+
+![Gesicht von Ana](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ana.jpg) ![Ana in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ana.jpg)
+
+##### HERR ALFREDO
+
+Rentner; geht seit fünfzig Jahren mit seiner Frau um den Platz
+
+- **Alter:** 81 Jahre
+- **Größe:** 1,69 m
+- **Körperbau:** dünn, gebeugt
+- **Gesicht:** Weißes Haar, blaue Augen, sehr faltiges Gesicht und Augenringe.
+- **Figur:** Dünn und gebeugt; geht am Stock.
+- **Kleidung:** Brauner Anzug, Krawatte und Filzhut.
+- **Wesen:** Höflich und beschützend gegenüber Wilma. Schläft nicht mehr, seit am Fenster gekratzt wurde.
+
+![Gesicht von Herrn Alfredo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/alfredo.jpg) ![Herr Alfredo in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/alfredo.jpg)
+
+##### FRAU WILMA
+
+Ehefrau von Herrn Alfredo
+
+- **Alter:** 78 Jahre
+- **Größe:** 1,53 m
+- **Körperbau:** mittel, gebeugt
+- **Gesicht:** Weißes Haar im Dutt, Brille und blaue Augen.
+- **Figur:** Klein und etwas gebeugt.
+- **Kleidung:** Fliederfarbener Pullover mit Stickband, langer violetter Rock und Strumpfhose. Tasche in der Hand.
+- **Wesen:** Herzlich; nennt jeden „mein Lieber“.
+
+![Gesicht von Frau Wilma](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/wilma.jpg) ![Frau Wilma in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/wilma.jpg)
+
+##### PAULA
+
+Verkäuferin im Teewald Store
+
+- **Alter:** 24 Jahre
+- **Größe:** 1,71 m
+- **Körperbau:** dünn
+- **Gesicht:** Rothaarig mit Pferdeschwanz, Sommersprossen und grünen Augen.
+- **Figur:** Groß und schlank.
+- **Kleidung:** Weinrotes Polohemd der Uniform, schwarze Hose und Schuhe.
+- **Wesen:** Hat es eilig, den Laden zu schließen. Starrt jeden an, der kommt.
+
+![Gesicht von Paula](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/paula.jpg) ![Paula in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/paula.jpg)
+
+##### HERR ROMEU
+
+Angestellter im Rathaus; hat eine Koppel vor der Stadt
+
+- **Alter:** 52 Jahre
+- **Größe:** 1,75 m
+- **Körperbau:** beleibt
+- **Gesicht:** Gekämmtes schwarzes Haar, gestutzter Schnurrbart und buschige Augenbrauen.
+- **Figur:** Korpulent, mit Bauch unter dem Sakko.
+- **Kleidung:** Grauer Anzug, rote Krawatte und geputzte Schuhe. Ledermappe.
+- **Wesen:** Redet wie bei einer Amtsrede und sagt, alles sei unter Kontrolle.
+
+![Gesicht von Herrn Romeu](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/romeu.jpg) ![Herr Romeu in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/romeu.jpg)
+
+#### Pfarrkirche und Friedhof
+
+##### PFARRER BERNARDO
+
+Pfarrer der Pfarrkirche
+
+- **Alter:** 70 Jahre
+- **Größe:** 1,78 m
+- **Körperbau:** dünn
+- **Gesicht:** Kurzes weißes Haar, Brille mit Goldrand und Augenringe vom nächtlichen Beten.
+- **Figur:** Groß und dünn, aufrechte Haltung.
+- **Kleidung:** Schwarze Soutane mit Kollar und schwarze Schuhe.
+- **Wesen:** Ruhig und bestimmt. Schließt die Kirche vor Einbruch der Nacht ab.
+
+![Gesicht von Pfarrer Bernardo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bernardo.jpg) ![Pfarrer Bernardo in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bernardo.jpg)
+
+##### FRAU IRMA
+
+Betschwester; betet jeden Tag den Rosenkranz in der Kirche
+
+- **Alter:** 76 Jahre
+- **Größe:** 1,52 m
+- **Körperbau:** dünn, gebeugt
+- **Gesicht:** Weißes Haar unter schwarzem Kopftuch, graue Augen und ein Muttermal am Mund.
+- **Figur:** Klein, dünn und gebeugt.
+- **Kleidung:** Schwarzes Trauerkleid, schwarzes Kopftuch, Strumpfhose und Schuhe.
+- **Wesen:** Streng; hält alles für eine Strafe Gottes.
+
+![Gesicht von Frau Irma](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/irma.jpg) ![Frau Irma in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/irma.jpg)
+
+##### RUDI, DER BRIEFTRÄGER
+
+Seit fünfzehn Jahren Briefträger der Stadt
+
+- **Alter:** 38 Jahre
+- **Größe:** 1,79 m
+- **Körperbau:** kräftig
+- **Gesicht:** Dunkle Haut, kurzes schwarzes Haar, unrasiert, braune Augen.
+- **Figur:** Kräftig, mit den Beinen von einem, der den ganzen Tag läuft.
+- **Kleidung:** Gelbes Polohemd mit blauem Kragen, blaue Hose, blaue Schirmmütze und Posttasche.
+- **Wesen:** Hilfsbereit, aber diese Woche nervös.
+
+![Gesicht von Rudi, dem Briefträger](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/rudi.jpg) ![Rudi, der Briefträger, in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/rudi.jpg)
+
+##### HERR OTTO
+
+Seit dreißig Jahren Friedhofswärter
+
+- **Alter:** 69 Jahre
+- **Größe:** 1,74 m
+- **Körperbau:** kräftig
+- **Gesicht:** Grauer Vollbart, buschige Augenbrauen und eine Narbe quer durch eine Braue.
+- **Figur:** Breit und kräftig, schwielige Hände.
+- **Kleidung:** Marineblaue Latzhose über kariertem Hemd, Stiefel und grüne Schirmmütze. Rechen in der Hand.
+- **Wesen:** Redet wenig; achtet die Toten und mag keinen Lärm.
+
+![Gesicht von Herrn Otto](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/otto.jpg) ![Herr Otto in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/otto.jpg)
+
+#### Kartoffelfest und Fußballplatz
+
+##### HERR IVO
+
+Im Festkomitee des Kartoffelfests; bewacht nachts das Festzelt
+
+- **Alter:** 58 Jahre
+- **Größe:** 1,80 m
+- **Körperbau:** beleibt
+- **Gesicht:** Rothaarig, mit rotem Schnurrbart, blauen Augen und gerötetem Gesicht.
+- **Figur:** Groß und schwer.
+- **Kleidung:** Rot kariertes Hemd, braune Hose, Stiefel und Hut. Bierkrug in der Hand.
+- **Wesen:** Ernst und hilfsbereit; passt auf das leere Festzelt auf.
+
+![Gesicht von Herrn Ivo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ivo.jpg) ![Herr Ivo in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ivo.jpg)
+
+##### FRAU GERTRUD
+
+Köchin im Kartoffelhaus seit dem ersten Fest
+
+- **Alter:** 71 Jahre
+- **Größe:** 1,60 m
+- **Körperbau:** beleibt
+- **Gesicht:** Rundes, rotwangiges Gesicht, graues Haar im Dutt und blaue Augen.
+- **Figur:** Klein und robust.
+- **Kleidung:** Dunkelrotes Kleid mit weißer Schürze, Strumpfhose und Schuhe. Korb am Arm.
+- **Wesen:** Mütterlich; gibt allen zu essen.
+
+![Gesicht von Frau Gertrud](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/gertrud.jpg) ![Frau Gertrud in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/gertrud.jpg)
+
+##### LUANA
+
+Königin des diesjährigen Kartoffelfests
+
+- **Alter:** 18 Jahre
+- **Größe:** 1,67 m
+- **Körperbau:** dünn
+- **Gesicht:** Blond, mit langem Haar und blauen Augen.
+- **Figur:** Schlank, mittelgroß.
+- **Kleidung:** Grünes Trachtenkleid mit heller Schürze, Strumpfhose und Schuhe.
+- **Wesen:** Bedrückt; hat der Mutter versprochen, vor der Dunkelheit heimzukommen.
+
+![Gesicht von Luana](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/luana.jpg) ![Luana in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/luana.jpg)
+
+##### TIAGO
+
+Mittelstürmer der Fußballmannschaft der Stadt
+
+- **Alter:** 17 Jahre
+- **Größe:** 1,78 m
+- **Körperbau:** mittel
+- **Gesicht:** Dunkle Haut, kurzes schwarzes Haar und braune Augen.
+- **Figur:** Athletisch.
+- **Kleidung:** Rotes Trikot mit der Nummer 9, schwarze Shorts, rote Stutzen und Fußballschuhe.
+- **Wesen:** Redet wenig; ist allein auf dem Fußballplatz geblieben.
+
+![Gesicht von Tiago](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/tiago.jpg) ![Tiago in voller Größe](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/tiago.jpg)
+
+![Umriss eines buckligen Biests mit roten Augen, vom Suchplakat](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/silhueta.png)
+*Vom Aushang am Schwarzen Brett auf dem Platz*
+
+*Was im Wald umgeht*
+
+### Gesucht
+
+Niemand hat es richtig gesehen. Herr Arno sah rote Augen am anderen Flussufer. Joãozinho aus der 4. Klasse schwört, dass das Biest hüpft wie ein Känguru und Stacheln auf dem Rücken hat.
+
+Im Spiel bekommt jede Kreatur, die du aus der Nähe siehst, einen Eintrag in LEGENDEN AUS HERVAL. Hier bleiben sie gesperrt. Und es ist nicht nur eine.
+
+### Sie haben Angst
+
+Du hast eine 9 mm, eine Taschenlampe und die ganze Nacht vor dir.
+
+[Jetzt spielen](https://fabianokunst.github.io/Teewald-3d/?lang=de) Kostenlos · im Browser
+
+---
+
+*Fiktives Werk: Alle Namen, Figuren und Geschichten des Spiels sind frei erfunden und haben keinen realen Bezug zur Stadt Santa Maria do Herval oder zu ihren Einwohnern. Nur die Karte (Straßen, Fluss und Gelände) stammt von der echten Stadt.*
+
+---
+
+# Das Spiel — Teewald
+
+> So spielt man Teewald: Kampf, Inventar, Akten, die Grafikstile KLARES 3D und PS1 RETRO, Wetter, Steuerung mit Tastatur, Controller und Touch, und häufige Fragen.
+
+Seite: https://fabianokunst.github.io/Teewald-3d/site/de/jogo.html  
+Kostenlos im Browser spielen: https://fabianokunst.github.io/Teewald-3d/?lang=de
+
+*Das Spiel*
+
+## Wie man überlebt
+
+Dritte Person, Kamera über der Schulter und knappe Munition. Teewald ist ein Survival-Horror alter Schule, der direkt im Browser läuft.
+
+*Kampf*
+
+### Mit allem, was zur Hand ist
+
+- Faustschläge als Dreierkombo, immer verfügbar. Der Schlag zielt von selbst auf den, der am nächsten steht.
+- Knüppel, Eisenrohr, Schaufel, Sense und Axt. Sie schlagen härter zu, aber nutzen sich ab und zerbrechen.
+- Steine und Ziegel zum Werfen. Mit der Waffe in der Hand: Kolbenschlag.
+- Schnelles Ausweichen, mit einem Augenblick Luft, um dem Zuschnappen zu entgehen.
+- Zum Anfang eine 9-mm-Pistole. Den Rest erkämpfst du dir unterwegs.
+- Jede Legende hat ihre Schwachstelle. Kugeln helfen nicht immer.
+
+Jedes Kapitel endet mit einer Wertung von S bis C, nach besiegten Kreaturen, Toden und Zeit. Drei Schwierigkeitsgrade: leicht, normal und schwer.
+
+![Der Protagonist zielt mit der Pistole über die Schulter](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
+*Beim Zielen geht die Kamera an die Schulter*
+
+![Inventarbildschirm mit den Plätzen und einem Gegenstand in 3D](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/de/inventario.jpg)
+*Inventar mit 16 Plätzen*
+
+*Inventar und Akten*
+
+### Alles, was in die Tasche passt
+
+Sechzehn Plätze im Stil der Survival-Horror-Spiele der PS1, der Gegenstand dreht sich in 3D. Ausrüsten, nachladen, essen, untersuchen. Leben gibt es mit **Kuchen** und **Marcela-Tee** zurück, und besiegte Kreaturen lassen manchmal Munition fallen.
+
+In der Stadt gibt es Zeitungsausschnitte, Briefe, Aushänge und Tagebuchseiten, und jedes Stück landet in den AKTEN. Die Legenden, die du aus der Nähe siehst, bekommen einen Eintrag. Und es gibt Leute, die um Hilfe bitten: Eine Katze und ein Hund sind verschwunden.
+
+*Grafikstil*
+
+### Zwei Arten zu sehen
+
+Zieh den Trennstrich. Links KLARES 3D, rechts PS1 RETRO. Beides findest du in den OPTIONEN, zusammen mit der Beleuchtung.
+
+![Die Pfarrkirche bei Einbruch der Nacht im Stil KLARES 3D](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-limpo.jpg)
+
+![Dieselbe Ansicht im Stil PS1 RETRO, in niedriger Auflösung](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg)
+
+#### Klares 3D
+
+Native Bildschirmauflösung, Kantenglättung und weiche Texturen. Die Low-Poly-Polygone wirken scharf.
+
+#### PS1 Retro
+
+320×240, ohne Glättung hochskaliert, mit Dithering und 15-Bit-Farbe. So, wie es der Röhrenfernseher zeigte.
+
+#### Beleuchtung
+
+ERWEITERT, mit tiefer Abendsonne, Schatten von Sonne und Mond und einem Lichtkranz um die Laternen. Oder KLASSISCH, bedeckt und ohne Schatten.
+
+*Wetter und Ton*
+
+### Das Wetter schlägt um
+
+Bedeckter Nachmittag, Abenddämmerung, tiefe Nacht, Nebel im Morgengrauen, Regen, Nieselregen und Gewitter, und der Donner kommt erst nach dem Blitz. Nachts leuchtet die Taschenlampe voraus, die Laternen auf dem Platz gehen an, und der Rest bleibt im Dunkeln.
+
+Jeder Ton im Spiel entsteht im Code: Wind, Fluss, Regen auf dem Dach, Grillen, Krähen, Kiebitze, knarrendes Holz im Haus und die Kirchenglocke, lauter nahe am Turm und gedämpft hinter Mauern. Mit Kopfhörern hörst du, von welcher Seite das Geräusch kommt.
+
+![Blitz über der Stadt in einer Gewitternacht](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg)
+*Erst der Blitz, dann der Donner*
+
+*Steuerung*
+
+### Tastatur, Controller oder Touch
+
+**Tastatur und Maus**
+
+- **Gehen:** `W` `A` `S` `D` oder Pfeiltasten
+- **Rennen:** `Shift`
+- **Springen · Ausweichen:** `Leertaste` · `C` oder `Ctrl`
+- **Kamera:** Maus (ins Bild klicken, um den Zeiger zu fangen) · `Q` `E` · Mausrad zoomt
+- **Reden, Lesen, Nehmen, Betreten:** `F` oder `E`
+- **Zielen · Schießen:** rechte Taste (halten) · linke Taste
+- **Schlag:** `V` · linke Taste ohne Schusswaffe
+- **Waffe wechseln · Nachladen:** `1` bis `8` · `R`
+- **Essen, Trinken (heilt):** `H`
+- **Inventar · Akten:** `I` oder `Tab` · `J`
+- **Minikarte · Pause:** `M` · `Esc` oder `P`
+
+**Controller**
+
+- **Gehen · Kamera:** linker Stick · rechter Stick (`R3` zentriert)
+- **Rennen:** `B` (halten) oder `L3`
+- **Springen · Ausweichen:** `A` · `B` (kurz tippen)
+- **Reden, Lesen, Nehmen, Betreten:** `A`
+- **Zielen · Schießen:** `L2` oder `LB` · `R2`
+- **Schlag:** `RB`
+- **Waffe wechseln · Nachladen:** Steuerkreuz ◀ ▶ · `X`
+- **Essen, Trinken (heilt):** Steuerkreuz ▲
+- **Inventar:** `Y`
+- **Pause und Akten · Minikarte:** `Start` · `Select`
+
+**Touch**
+
+- **Gehen:** auf der linken Bildschirmseite ziehen
+- **Kamera:** auf der rechten Seite ziehen (oder direkt auf FEUER) · Doppeltippen zentriert · zwei Finger zoomen
+- **Rennen · Springen · Ausweichen:** Tasten RENNEN, SPRING und AUSW.
+- **Reden, Lesen, Nehmen, Betreten:** die Taste erscheint über der Person oder dem Gegenstand
+- **Zielen · Schießen · Schlag:** ZIELEN schaltet an und aus · FEUER · SCHLAG
+- **Waffe · Nachladen · Heilen:** WAFFE · NACHL · HEILEN (erscheint, wenn du verletzt bist)
+- **Inventar · Pause:** INV · ❚❚
+
+Mit Controller und Touch gibt es Zielhilfe (aus, normal oder stark) und Vibration bei Schüssen und Schlägen. Auf dem Handy verschwinden die Bildschirmtasten, sobald ein Bluetooth-Controller benutzt wird.
+
+*Wo du spielst*
+
+### Ohne Installation
+
+**Plattformen:** PC, Handy, Tablet, Controller, Touch.
+
+Ein aktueller Browser mit WebGL genügt: Chrome, Edge, Firefox oder Safari. Auf dem Handy spielt es sich am besten quer, und unter Android wechselt das Spiel in den Vollbildmodus, wenn du auf den Startbildschirm tippst.
+
+Der Fortschritt wird von selbst im Browser gespeichert: bei jedem neuen Abschnitt, an den Rückkehrpunkten und alle zwanzig Sekunden. FORTSETZEN bringt dich genau dorthin zurück, wo du aufgehört hast.
+
+**Sprachen:** Português, English, Español, Deutsch.
+
+*Fragen*
+
+**Was kostet es?**
+
+Nichts. Einfach öffnen und spielen.
+
+**Wo wird mein Fortschritt gespeichert?**
+
+Im Browser des Geräts, auf dem du gespielt hast. Wenn du die Website-Daten löschst, ist der Fortschritt weg, und auf einem anderen Gerät fängst du von vorn an.
+
+**Kann ich mit Controller spielen?**
+
+Ja, auf PC und Handy, mit USB- oder Bluetooth-Controller. Auch die Menüs lassen sich mit dem Controller bedienen.
+
+**Ist es sehr gruselig?**
+
+Es ist ein Horrorspiel: Dunkelheit, Blut, Kreaturen und Schreckmomente, im Geist der Survival-Horror-Spiele der 90er. Spiel nachts, mit Kopfhörern, wenn du dich traust.
+
+**Gibt es die Stadt wirklich?**
+
+Die Karte ist Santa Maria do Herval (RS) nachempfunden, mit echten Straßen und echtem Gelände. Die Einwohner und die Geschichten sind erfunden.
+
+**Wie viele Kapitel gibt es?**
+
+Zwölf. Was in jedem passiert, erzählt das Spiel.
+
+### Bereit für die erste Nacht?
+
+Pistole im Holster, ein Magazin mit zwölf Schuss und eine Schachtel Patronen. Den Rest findest du unterwegs.
+
+[Jetzt spielen](https://fabianokunst.github.io/Teewald-3d/?lang=de) Kostenlos · im Browser
+
+---
+
+*Fiktives Werk: Alle Namen, Figuren und Geschichten des Spiels sind frei erfunden und haben keinen realen Bezug zur Stadt Santa Maria do Herval oder zu ihren Einwohnern. Nur die Karte (Straßen, Fluss und Gelände) stammt von der echten Stadt.*
+
+---
+
+# Galerie — Teewald
+
+> Screenshots von Teewald, direkt aus dem Spiel: die Pfarrkirche, der Platz bei Nacht, die Promenade am Rio Cadeia, das Kartoffelfest, Regen, Nebel und der Stil PS1 RETRO.
+
+Seite: https://fabianokunst.github.io/Teewald-3d/site/de/galeria.html  
+Kostenlos im Browser spielen: https://fabianokunst.github.io/Teewald-3d/?lang=de
+
+*Galerie*
+
+## Screenshots
+
+Alles direkt aus dem Spiel, ohne Retusche. Zum Vergrößern anklicken.
+
+![Die Pfarrkirche in der Dämmerung](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/capa.jpg)
+
+![Die Praça 10 de Abril bei Nacht](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
+
+![Regennacht, mit eingeschalteter Taschenlampe](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg)
+
+![Im Festzelt des Kartoffelfests](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
+
+![Vollmond hinter dem Turm](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg)
+
+![Das Kirchenschiff der Pfarrkirche](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg)
+
+![Die Promenade am Rio Cadeia](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
+
+![Der Friedhof im Nieselregen](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg)
+
+![Gespräch mit Herrn Valdir](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/de/conversa.jpg)
+
+![Straße gesperrt, Fest abgesagt](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest-portico.jpg)
+
+![Die Reporterin fotografiert den Schriftzug](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/letreiro.jpg)
+
+![Zielen am Waldrand](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
+
+![Das Museum, in Fachwerk](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg)
+
+![Spuren, die in den Wald führen](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/pegadas.jpg)
+
+![Erst der Blitz, dann der Donner](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg)
+
+![Herr Valdir und sein Mate](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg)
+
+![Praça 10 de Abril, am späten Nachmittag](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca.jpg)
+
+![Das Inventar](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/de/inventario.jpg)
+
+![Der Titelbildschirm](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/de/titulo.jpg)
+
+![Die Pfarrkirche von oben](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
+
+![PS1 RETRO: die Pfarrkirche in der Dämmerung](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg)
+
+![PS1 RETRO: der Platz bei Nacht](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-praca.jpg)
+
+![PS1 RETRO: die Promenade](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-calcadao.jpg)
+
+![PS1 RETRO: in der Pfarrkirche](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-igreja-dentro.jpg)
+
+### Jetzt sieh es dir aus der Nähe an
+
+Die Lampen im Festzelt gehen jeden Abend an, mit oder ohne Fest.
+
+[Jetzt spielen](https://fabianokunst.github.io/Teewald-3d/?lang=de) Kostenlos · im Browser
+
+---
+
+*Fiktives Werk: Alle Namen, Figuren und Geschichten des Spiels sind frei erfunden und haben keinen realen Bezug zur Stadt Santa Maria do Herval oder zu ihren Einwohnern. Nur die Karte (Straßen, Fluss und Gelände) stammt von der echten Stadt.*

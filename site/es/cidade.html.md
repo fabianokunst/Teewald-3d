@@ -1,95 +1,95 @@
-# A cidade — Teewald
+# El pueblo — Teewald
 
-> Os lugares de Teewald: o calçadão do Rio Cadeia, a Praça 10 de Abril, a Igreja Matriz, o pavilhão da Kartoffelfest, as casas de enxaimel e o mato. Uma cidade feita de mapas de verdade.
+> Los lugares de Teewald: la peatonal del Rio Cadeia, la Praça 10 de Abril, la iglesia matriz, el pabellón de la Kartoffelfest, las casas de entramado y el monte. Un pueblo hecho con mapas de verdad.
 
 Página: https://fabianokunst.github.io/Teewald-3d/site/es/cidade.html  
-Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/?lang=es
+Jugar gratis en el navegador: https://fabianokunst.github.io/Teewald-3d/?lang=es
 
-*A cidade*
+*El pueblo*
 
-## Comércio fecha às seis
+## El comercio cierra a las seis
 
-Ruas, rio, praça e morros de Teewald vêm de mapas de verdade. Dá para andar por tudo: do calçadão do Rio Cadeia ao cemitério atrás da Matriz, passando pela praça, pela Prefeitura e pelo pavilhão da festa.
+Las calles, el río, la plaza y los cerros de Teewald salen de mapas de verdad. Se puede recorrer todo: de la peatonal del Rio Cadeia al cementerio detrás de la Matriz, pasando por la plaza, la Municipalidad y el pabellón de la fiesta.
 
-![O calçadão na beira do Rio Cadeia](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
+![La peatonal a la orilla del Rio Cadeia](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
 
-### Calçadão do Rio Cadeia
+### Peatonal del Rio Cadeia
 
-Onde tudo começa.
+Donde empieza todo.
 
-Um caminho na beira do rio, entre a água e a avenida, com guarda-corpo, bancos, o letreiro TEEWALD e o Monumento ao Imigrante. Tem estande de tiro ao alvo com latas e garrafas para treinar a mira. O Seu Arno pesca aqui, mas agora só de dia.
+Un camino a la orilla del río, entre el agua y la avenida, con baranda, bancos, el letrero TEEWALD y el Monumento al Inmigrante. Hay un stand de tiro al blanco con latas y botellas para practicar puntería. Don Arno pesca acá, pero ahora solo de día.
 
-![A Praça 10 de Abril à noite, com a fonte e os lampiões](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
+![La Praça 10 de Abril de noche, con la fuente y los faroles](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
 
 ### Praça 10 de Abril
 
-Fonte, hortênsias, lampiões e um orelhão.
+Fuente, hortensias, faroles y un teléfono público.
 
-A banca de cuca da Dona Erna está fechada, o Seu Valdir não larga o chimarrão e a moça do orelhão continua ligando para a tia, que não atende. No mural, perto do fim do calçadão, tem um cartaz novo.
+El puesto de cuca de doña Erna está cerrado, don Valdir no suelta el mate y la muchacha del teléfono público sigue llamando a su tía, que no atiende. En la cartelera, cerca del final de la peatonal, hay un cartel nuevo.
 
-![A nave da Igreja Matriz por dentro, com os bancos e o altar](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg)
+![La nave de la iglesia matriz por dentro, con los bancos y el altar](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg)
 
-### Igreja Matriz
+### Iglesia Matriz
 
-Uma torre que se vê de quase toda a cidade.
+Una torre que se ve desde casi todo el pueblo.
 
-Rosácea, portal de arquivoltas, janelas ogivais com vitral e campanário com venezianas. Por dentro, abóbada azul com estrelas, púlpito, confessionário, coro com órgão, sacristia e uma escada que sobe até o sino. O Padre Bernardo tranca tudo antes de anoitecer.
+Rosetón, portal de arquivoltas, ventanas ojivales con vitrales y campanario con celosías. Por dentro, bóveda azul con estrellas, púlpito, confesionario, coro con órgano, sacristía y una escalera que sube hasta la campana. El padre Bernardo cierra todo con llave antes de que anochezca.
 
-![O pavilhão da Kartoffelfest vazio, com varais de lâmpadas acesas](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
+![El pabellón de la Kartoffelfest vacío, con guirnaldas de lamparitas prendidas](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
 
-### Pavilhão da Kartoffelfest
+### Pabellón de la Kartoffelfest
 
-Estava tudo pronto.
+Estaba todo listo.
 
-Setenta metros de lona listrada em cima da Rua Beno Closs: pórtico de enxaimel, barraca de tiro, salsichão, chope, a Kartoffelhaus cheia de sacos de batata, mesas compridas de toalha xadrez, pista de dança e o palco das bandinhas. A festa deste ano foi cancelada. As lâmpadas acendem do mesmo jeito.
+Setenta metros de lona a rayas sobre la Rua Beno Closs: pórtico de entramado, puesto de tiro, salchichas, chopp, la Kartoffelhaus llena de bolsas de papas, mesas largas con manteles a cuadros, pista de baile y el escenario de las banditas. La fiesta de este año se canceló. Las lamparitas se prenden igual.
 
-![O Museu, uma casa de enxaimel](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg)
+![El Museo, una casa de entramado](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg)
 
-### Casas de enxaimel
+### Casas de entramado
 
-Vigas escuras, reboco branco, tijolo à vista.
+Vigas oscuras, revoque blanco, ladrillo a la vista.
 
-Muro rebocado, cerca de ripa, portão na frente da porta e calçadinha até a entrada. O Museu guarda o que os colonos trouxeram do Hunsrück. Nas fábricas de calçados, o turno da noite volta a pé pelo calçadão. Voltava.
+Muro revocado, cerco de listones, portón frente a la puerta y una veredita hasta la entrada. El Museo guarda lo que los colonos trajeron del Hunsrück. En las fábricas de calzado, el turno noche vuelve a pie por la peatonal. Volvía.
 
-![O cemitério com neblina](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg)
+![El cementerio con niebla](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg)
 
-### O cemitério
+### El cementerio
 
-Atrás da Matriz, lápides antigas com nomes alemães.
+Detrás de la Matriz, lápidas viejas con nombres alemanes.
 
-O Seu Otto é zelador há trinta anos. Fala pouco, respeita os mortos e não gosta de barulho.
+Don Otto es el cuidador desde hace treinta años. Habla poco, respeta a los muertos y no le gusta el ruido.
 
-![Árvores na neblina, na beira do mato](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mato.jpg)
+![Árboles en la niebla, al borde del monte](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mato.jpg)
 
-### O mato
+### El monte
 
-Começa onde as ruas acabam.
+Empieza donde terminan las calles.
 
-Araucárias, plátanos de outono e uma neblina que não levanta. Os antigos não entravam nele depois do sol posto. Você vai ter que entrar.
+Araucarias, plátanos de otoño y una niebla que no levanta. Los antiguos no entraban en él después de la puesta del sol. Vos vas a tener que entrar.
 
-*Feita de mapas de verdade*
+*Hecho con mapas de verdad*
 
-### Uma cidade que existe
+### Un pueblo que existe
 
-Teewald é inspirada em Santa Maria do Herval (RS). O traçado das ruas, o rio, os arroios e o relevo vêm de dados abertos. As pessoas e as histórias são inventadas.
+Teewald está inspirado en Santa Maria do Herval (RS). El trazado de las calles, el río, los arroyos y el relieve salen de datos abiertos. Las personas y las historias son inventadas.
 
-![Teewald vista do alto, com o rio, as ruas, o campo de futebol e o cemitério](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mapa.jpg)
-*Vista do alto: o rio, o arroio, o campo e o cemitério*
+![Teewald visto desde arriba, con el río, las calles, la cancha de fútbol y el cementerio](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mapa.jpg)
+*Vista desde arriba: el río, el arroyo, la cancha y el cementerio*
 
-**600** construções, mais ou menos, nos contornos reais dos prédios
+**600** construcciones, más o menos, en los contornos reales de los edificios
 
-**SRTM** relevo com a altitude de verdade
+**SRTM** relieve con la altitud de verdad
 
-**OSM** ruas, rio, praça e campo do OpenStreetMap
+**OSM** calles, río, plaza y cancha de OpenStreetMap
 
-**24** moradores com fala, cada um no seu canto
+**24** vecinos que hablan, cada uno en su rincón
 
-### Depois das seis, a rua é sua
+### Después de las seis, la calle es tuya
 
-Sua e do que mais estiver lá fora.
+Tuya, y de lo que ande ahí afuera.
 
-[Jogar agora](https://fabianokunst.github.io/Teewald-3d/?lang=es) Grátis · no navegador
+[Jugá ahora](https://fabianokunst.github.io/Teewald-3d/?lang=es) Gratis · en el navegador
 
 ---
 
-*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
+*Obra de ficción: todos los nombres, personajes e historias del juego son inventados y no tienen ninguna relación real con la ciudad de Santa Maria do Herval ni con sus habitantes. Solo el mapa (calles, río y relieve) viene de la ciudad de verdad.*

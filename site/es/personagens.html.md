@@ -1,401 +1,401 @@
-# Personagens — Teewald
+# Personajes — Teewald
 
-> Os personagens de Teewald: o forasteiro e os 24 moradores com fala, com retrato, altura, roupa e jeito de cada um, tirados dos modelos do jogo.
+> Los personajes de Teewald: el forastero y los 24 vecinos que hablan, con retrato, altura, ropa y carácter de cada uno, sacados de los modelos del juego.
 
 Página: https://fabianokunst.github.io/Teewald-3d/site/es/personagens.html  
-Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/?lang=es
+Jugar gratis en el navegador: https://fabianokunst.github.io/Teewald-3d/?lang=es
 
-*Personagens*
+*Personajes*
 
-## Quem ainda está na rua
+## Quién sigue en la calle
 
-Vinte e quatro moradores com fala, cada um com um pedaço da história. Todos com medo. Os retratos foram tirados dos próprios modelos do jogo, e as figuras de corpo inteiro estão na mesma escala.
+Veinticuatro vecinos que hablan, cada uno con un pedazo de la historia. Todos con miedo. Los retratos salen de los propios modelos del juego, y las figuras de cuerpo entero están en la misma escala.
 
 *Protagonista*
 
-### Você
+### Vos
 
-##### O FORASTEIRO
+##### EL FORASTERO
 
-Protagonista, sem nome. Chegou de fora e ficou para caçar o chupacabras.
+Protagonista, sin nombre. Llegó de afuera y se quedó para cazar al chupacabras.
 
-- **Idade:** 33 anos
+- **Edad:** 33 años
 - **Altura:** 1,75 m
-- **Porte:** médio
-- **Rosto:** Loiro, cabelo penteado para trás, olhos fundos, sobrancelhas retas e barba rala.
-- **Corpo:** Estatura média e ombros largos.
-- **Roupa:** Jaqueta de couro marrom com lapelas, suéter cinza de gola V, camisa escura, calça escura e botas.
-- **Jeito:** Sério e calado. Não é da cidade, e todo mundo percebe.
+- **Contextura:** mediana
+- **Rostro:** Rubio, pelo peinado hacia atrás, ojos hundidos, cejas rectas y barba rala.
+- **Cuerpo:** Estatura media y hombros anchos.
+- **Ropa:** Campera de cuero marrón con solapas, suéter gris de cuello en V, camisa oscura, pantalón oscuro y botas.
+- **Carácter:** Serio y callado. No es del pueblo, y todo el mundo lo nota.
 
-![Rosto de O Forasteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/heroi.jpg) ![O Forasteiro de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/heroi.jpg)
+![Rostro del forastero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/heroi.jpg) ![El forastero de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/heroi.jpg)
 
-*Moradores*
+*Vecinos*
 
-### Quem você vai encontrar
+### A quién vas a encontrar
 
-24 moradores com fala, espalhados pela cidade. Altura, porte e postura de cada ficha valem no jogo, e os traços do rosto (rugas, olheiras, sardas, barba por fazer, pinta, cicatriz) estão pintados na textura.
+24 vecinos que hablan, repartidos por el pueblo. La altura, la contextura y la postura de cada ficha valen en el juego, y los rasgos de la cara (arrugas, ojeras, pecas, barba de días, lunar, cicatriz) están pintados en la textura.
 
-#### Calçadão do Rio Cadeia
+#### Peatonal del Rio Cadeia
 
-##### SEU ARNO
+##### DON ARNO
 
-Ferreiro aposentado; pesca no calçadão do Rio Cadeia
+Herrero jubilado; pesca en la peatonal del Rio Cadeia
 
-- **Idade:** 68 anos
+- **Edad:** 68 años
 - **Altura:** 1,70 m
-- **Porte:** forte
-- **Rosto:** Queimado de sol, barba cheia grisalha e sobrancelhas grossas.
-- **Corpo:** Baixo e atarracado, braços e mãos grossos de quem bateu ferro a vida inteira.
-- **Roupa:** Camisa xadrez vermelha, calça cinza, botas e chapéu de palha. Vara de pescar.
-- **Jeito:** Fala pouco e desconfia de todo mundo. Agora só pesca de dia.
+- **Contextura:** fuerte
+- **Rostro:** Quemado por el sol, barba tupida canosa y cejas gruesas.
+- **Cuerpo:** Bajo y macizo, brazos y manos gruesos de quien golpeó hierro toda la vida.
+- **Ropa:** Camisa a cuadros roja, pantalón gris, botas y sombrero de paja. Caña de pescar.
+- **Carácter:** Habla poco y desconfía de todo el mundo. Ahora solo pesca de día.
 
-![Rosto de Seu Arno](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/arno.jpg) ![Seu Arno de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/arno.jpg)
+![Rostro de don Arno](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/arno.jpg) ![Don Arno de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/arno.jpg)
 
-##### DONA HILDA
+##### DOÑA HILDA
 
-Viúva do calçadão; procura a gata Mimi
+Viuda de la peatonal; busca a su gata Mimi
 
-- **Idade:** 74 anos
+- **Edad:** 74 años
 - **Altura:** 1,55 m
-- **Porte:** magro, curvado
-- **Rosto:** Rugas fundas, olheiras e óculos; cabelo grisalho sob um lenço roxo.
-- **Corpo:** Miúda e magra, um pouco curvada.
-- **Roupa:** Suéter vinho, saia comprida cinza, meia-calça e sapatos.
-- **Jeito:** Aflita, mas educada. Chama pela Mimi o tempo todo.
+- **Contextura:** delgada, de espalda curva
+- **Rostro:** Arrugas profundas, ojeras y anteojos; pelo canoso bajo un pañuelo violeta.
+- **Cuerpo:** Menuda y delgada, un poco encorvada.
+- **Ropa:** Suéter color vino, falda larga gris, medias y zapatos.
+- **Carácter:** Afligida, pero educada. Llama a Mimi todo el tiempo.
 
-![Rosto de Dona Hilda](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/hilda.jpg) ![Dona Hilda de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/hilda.jpg)
+![Rostro de doña Hilda](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/hilda.jpg) ![Doña Hilda de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/hilda.jpg)
 
 ##### LUCAS
 
-Procura o cachorro Bóris; mora na última casa antes da ponte
+Busca a su perro Bóris; vive en la última casa antes del puente
 
-- **Idade:** 19 anos
+- **Edad:** 19 años
 - **Altura:** 1,81 m
-- **Porte:** magro
-- **Rosto:** Pele morena, barba rala e olhos castanhos.
-- **Corpo:** Alto e magro, anda depressa.
-- **Roupa:** Jaqueta azul de gola cinza, calça escura, tênis claros e boné vermelho.
-- **Jeito:** Agitado; assobia e grita pelo Bóris.
+- **Contextura:** delgada
+- **Rostro:** Piel morena, barba rala y ojos marrones.
+- **Cuerpo:** Alto y delgado, camina rápido.
+- **Ropa:** Campera azul de cuello gris, pantalón oscuro, zapatillas claras y gorra roja.
+- **Carácter:** Inquieto; silba y grita llamando a Bóris.
 
-![Rosto de Lucas](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lucas.jpg) ![Lucas de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lucas.jpg)
+![Rostro de Lucas](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lucas.jpg) ![Lucas de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lucas.jpg)
 
 ##### MARLENE
 
-Repórter de um jornal de Porto Alegre
+Periodista de un diario de Porto Alegre
 
-- **Idade:** 31 anos
+- **Edad:** 31 años
 - **Altura:** 1,68 m
-- **Porte:** médio
-- **Rosto:** Pele morena-clara, olhos castanhos e uma pinta na bochecha; cabelo preto em rabo de cavalo.
-- **Corpo:** Estatura média, ágil.
-- **Roupa:** Jaqueta mostarda, calça jeans e tênis. Câmera fotográfica na mão.
-- **Jeito:** Insistente e curiosa. Ninguém na cidade quer falar com ela.
+- **Contextura:** mediana
+- **Rostro:** Piel trigueña, ojos marrones y un lunar en la mejilla; pelo negro con cola de caballo.
+- **Cuerpo:** Estatura media, ágil.
+- **Ropa:** Campera mostaza, jeans y zapatillas. Cámara de fotos en la mano.
+- **Carácter:** Insistente y curiosa. Nadie en el pueblo quiere hablar con ella.
 
-![Rosto de Marlene](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/marlene.jpg) ![Marlene de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/marlene.jpg)
+![Rostro de Marlene](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/marlene.jpg) ![Marlene de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/marlene.jpg)
 
-##### PROFESSOR EDGAR
+##### PROFESOR EDGAR
 
-Professor de história aposentado; conhece os diários dos colonos
+Profesor de historia jubilado; conoce los diarios de los colonos
 
-- **Idade:** 79 anos
+- **Edad:** 79 años
 - **Altura:** 1,76 m
-- **Porte:** magro, curvado
-- **Rosto:** Cabelo e bigode brancos, óculos de aro claro, sobrancelhas grossas e rugas fundas.
-- **Corpo:** Alto e magro, curvado pela idade.
-- **Roupa:** Terno marrom gasto, camisa clara, gravata azul e boina cinza. Sempre com um livro.
-- **Jeito:** Fala devagar, como em sala de aula. Encara quem passa.
+- **Contextura:** delgada, de espalda curva
+- **Rostro:** Pelo y bigote blancos, anteojos de armazón claro, cejas gruesas y arrugas profundas.
+- **Cuerpo:** Alto y delgado, encorvado por la edad.
+- **Ropa:** Traje marrón gastado, camisa clara, corbata azul y boina gris. Siempre con un libro.
+- **Carácter:** Habla despacio, como en el aula. Mira fijo a quien pasa.
 
-![Rosto de Professor Edgar](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/edgar.jpg) ![Professor Edgar de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/edgar.jpg)
+![Rostro del profesor Edgar](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/edgar.jpg) ![Profesor Edgar de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/edgar.jpg)
 
-##### SEU LAURO
+##### DON LAURO
 
-Espera o ônibus para Novo Hamburgo desde o meio-dia
+Espera el ómnibus a Novo Hamburgo desde el mediodía
 
-- **Idade:** 66 anos
+- **Edad:** 66 años
 - **Altura:** 1,72 m
-- **Porte:** médio
-- **Rosto:** Grisalho, barba por fazer e olheiras de quem não dorme.
-- **Corpo:** Estatura média, ombros caídos.
-- **Roupa:** Jaqueta verde-oliva, calça cáqui, botas e boné verde. Mala do lado.
-- **Jeito:** Cansado e decidido a ir embora da cidade.
+- **Contextura:** mediana
+- **Rostro:** Canoso, barba de días y ojeras de quien no duerme.
+- **Cuerpo:** Estatura media, hombros caídos.
+- **Ropa:** Campera verde oliva, pantalón caqui, botas y gorra verde. Valija al lado.
+- **Carácter:** Cansado y decidido a irse del pueblo.
 
-![Rosto de Seu Lauro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lauro.jpg) ![Seu Lauro de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lauro.jpg)
+![Rostro de don Lauro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lauro.jpg) ![Don Lauro de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lauro.jpg)
 
 ##### KÁTIA
 
-Operária do turno da noite na fábrica de calçados
+Obrera del turno noche en la fábrica de calzado
 
-- **Idade:** 27 anos
+- **Edad:** 27 años
 - **Altura:** 1,62 m
-- **Porte:** magro
-- **Rosto:** Pele morena, olhos castanhos e olheiras do turno da noite; cabelo preto em rabo de cavalo.
-- **Corpo:** Magra, de estatura mediana.
-- **Roupa:** Camisa azul-clara, calça azul-marinho e sapatos. Sacola de pano.
-- **Jeito:** Assustada; olha para trás enquanto anda.
+- **Contextura:** delgada
+- **Rostro:** Piel morena, ojos marrones y ojeras del turno noche; pelo negro con cola de caballo.
+- **Cuerpo:** Delgada, de estatura mediana.
+- **Ropa:** Camisa celeste, pantalón azul marino y zapatos. Bolsa de tela.
+- **Carácter:** Asustada; mira para atrás mientras camina.
 
-![Rosto de Kátia](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/katia.jpg) ![Kátia de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/katia.jpg)
+![Rostro de Kátia](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/katia.jpg) ![Kátia de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/katia.jpg)
 
-##### SEU BRUNO
+##### DON BRUNO
 
-Dono da floricultura
+Dueño de la florería
 
-- **Idade:** 56 anos
+- **Edad:** 56 años
 - **Altura:** 1,77 m
-- **Porte:** forte
-- **Rosto:** Cabelo castanho, bigode, óculos e olhos verdes.
-- **Corpo:** Encorpado, com a barriga de quem passou dos cinquenta.
-- **Roupa:** Macacão verde sobre camisa clara e botas. Regador na mão.
-- **Jeito:** Calado e observador; encara quem passa.
+- **Contextura:** fuerte
+- **Rostro:** Pelo castaño, bigote, anteojos y ojos verdes.
+- **Cuerpo:** Corpulento, con la panza de quien pasó los cincuenta.
+- **Ropa:** Overol verde sobre camisa clara y botas. Regadera en la mano.
+- **Carácter:** Callado y observador; mira fijo a quien pasa.
 
-![Rosto de Seu Bruno](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bruno.jpg) ![Seu Bruno de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bruno.jpg)
+![Rostro de don Bruno](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bruno.jpg) ![Don Bruno de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bruno.jpg)
 
 #### Praça 10 de Abril
 
-##### SEU VALDIR
+##### DON VALDIR
 
-Gaúcho aposentado; toma chimarrão no banco da praça
+Gaúcho jubilado; toma mate en el banco de la plaza
 
-- **Idade:** 72 anos
+- **Edad:** 72 años
 - **Altura:** 1,71 m
-- **Porte:** magro
-- **Rosto:** Pele curtida, bigode grisalho, sobrancelhas grossas e uma cicatriz antiga na bochecha.
-- **Corpo:** Magro e rijo apesar da idade.
-- **Roupa:** Chapéu de aba preto, jaqueta escura, camisa vermelha e calça clara. Cuia e garrafa térmica.
-- **Jeito:** De poucas palavras. Viveu o caso de 1978 e não esqueceu.
+- **Contextura:** delgada
+- **Rostro:** Piel curtida, bigote canoso, cejas gruesas y una cicatriz vieja en la mejilla.
+- **Cuerpo:** Delgado y fibroso pese a la edad.
+- **Ropa:** Sombrero de ala negro, campera oscura, camisa roja y pantalón claro. Mate y termo.
+- **Carácter:** De pocas palabras. Vivió el caso de 1978 y no lo olvidó.
 
-![Rosto de Seu Valdir](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/valdir.jpg) ![Seu Valdir de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/valdir.jpg)
+![Rostro de don Valdir](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/valdir.jpg) ![Don Valdir de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/valdir.jpg)
 
-##### DONA ERNA
+##### DOÑA ERNA
 
-Vende cuca na banca da praça
+Vende cuca en el puesto de la plaza
 
-- **Idade:** 63 anos
+- **Edad:** 63 años
 - **Altura:** 1,58 m
-- **Porte:** gordo
-- **Rosto:** Bochechas coradas e cabelo loiro-acinzentado preso em coque.
-- **Corpo:** Baixa e cheinha.
-- **Roupa:** Vestido verde, avental branco, meia-calça e sapatos.
-- **Jeito:** Prática e direta. Perdeu as doze galinhas numa noite só.
+- **Contextura:** gruesa
+- **Rostro:** Mejillas sonrosadas y pelo rubio ceniza recogido en un moño.
+- **Cuerpo:** Baja y rellenita.
+- **Ropa:** Vestido verde, delantal blanco, medias y zapatos.
+- **Carácter:** Práctica y directa. Perdió las doce gallinas en una sola noche.
 
-![Rosto de Dona Erna](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/erna.jpg) ![Dona Erna de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/erna.jpg)
+![Rostro de doña Erna](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/erna.jpg) ![Doña Erna de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/erna.jpg)
 
 ##### JOÃOZINHO
 
-Aluno da 4ª série; o cachorro dele sumiu no mato
+Alumno de 4.º grado; su perro se perdió en el monte
 
-- **Idade:** 9 anos
+- **Edad:** 9 años
 - **Altura:** 1,30 m
-- **Porte:** magro
-- **Rosto:** Cabelo castanho, olhos verdes e sardas no nariz.
-- **Corpo:** Franzino.
-- **Roupa:** Suéter marrom, bermuda azul-marinho, meias claras e sapatos.
-- **Jeito:** Quieto; fala pouco e fica olhando fixo.
+- **Contextura:** delgada
+- **Rostro:** Pelo castaño, ojos verdes y pecas en la nariz.
+- **Cuerpo:** Flacucho.
+- **Ropa:** Suéter marrón, bermuda azul marino, medias claras y zapatos.
+- **Carácter:** Callado; habla poco y se queda mirando fijo.
 
-![Rosto de Joãozinho](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/joao.jpg) ![Joãozinho de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/joao.jpg)
+![Rostro de Joãozinho](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/joao.jpg) ![Joãozinho de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/joao.jpg)
 
 ##### ANA
 
-Tenta ligar para a tia que mora na beira do mato
+Intenta llamar a su tía, que vive al borde del monte
 
-- **Idade:** 22 anos
+- **Edad:** 22 años
 - **Altura:** 1,66 m
-- **Porte:** magro
-- **Rosto:** Cabelo ruivo-escuro comprido, olhos verdes e olheiras de choro.
-- **Corpo:** Magra, de estatura mediana.
-- **Roupa:** Suéter cinza-claro com uma faixa bordada vinho, calça azul-marinho e sapatos.
-- **Jeito:** Ansiosa; não larga o orelhão.
+- **Contextura:** delgada
+- **Rostro:** Pelo largo pelirrojo oscuro, ojos verdes y ojeras de llorar.
+- **Cuerpo:** Delgada, de estatura mediana.
+- **Ropa:** Suéter gris claro con una franja bordada color vino, pantalón azul marino y zapatos.
+- **Carácter:** Ansiosa; no suelta el teléfono público.
 
-![Rosto de Ana](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ana.jpg) ![Ana de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ana.jpg)
+![Rostro de Ana](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ana.jpg) ![Ana de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ana.jpg)
 
-##### SEU ALFREDO
+##### DON ALFREDO
 
-Aposentado; dá a volta na praça com a esposa há cinquenta anos
+Jubilado; da la vuelta a la plaza con su esposa desde hace cincuenta años
 
-- **Idade:** 81 anos
+- **Edad:** 81 años
 - **Altura:** 1,69 m
-- **Porte:** magro, curvado
-- **Rosto:** Cabelo branco, olhos azuis, rosto muito enrugado e olheiras.
-- **Corpo:** Magro e curvado; anda de bengala.
-- **Roupa:** Terno marrom, gravata e chapéu de feltro.
-- **Jeito:** Educado e protetor com a Wilma. Não dorme desde que arranharam a janela.
+- **Contextura:** delgada, de espalda curva
+- **Rostro:** Pelo blanco, ojos azules, cara muy arrugada y ojeras.
+- **Cuerpo:** Delgado y encorvado; camina con bastón.
+- **Ropa:** Traje marrón, corbata y sombrero de fieltro.
+- **Carácter:** Educado y protector con Wilma. No duerme desde que arañaron la ventana.
 
-![Rosto de Seu Alfredo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/alfredo.jpg) ![Seu Alfredo de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/alfredo.jpg)
+![Rostro de don Alfredo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/alfredo.jpg) ![Don Alfredo de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/alfredo.jpg)
 
-##### DONA WILMA
+##### DOÑA WILMA
 
-Esposa do Seu Alfredo
+Esposa de don Alfredo
 
-- **Idade:** 78 anos
+- **Edad:** 78 años
 - **Altura:** 1,53 m
-- **Porte:** médio, curvado
-- **Rosto:** Cabelo branco em coque, óculos e olhos azuis.
-- **Corpo:** Baixinha e um pouco curvada.
-- **Roupa:** Suéter lilás com faixa bordada, saia comprida roxa e meia-calça. Sacola na mão.
-- **Jeito:** Carinhosa; chama todo mundo de querido.
+- **Contextura:** mediana, de espalda curva
+- **Rostro:** Pelo blanco en moño, anteojos y ojos azules.
+- **Cuerpo:** Bajita y un poco encorvada.
+- **Ropa:** Suéter lila con franja bordada, falda larga violeta y medias. Bolsa en la mano.
+- **Carácter:** Cariñosa; a todo el mundo le dice querido.
 
-![Rosto de Dona Wilma](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/wilma.jpg) ![Dona Wilma de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/wilma.jpg)
+![Rostro de doña Wilma](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/wilma.jpg) ![Doña Wilma de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/wilma.jpg)
 
 ##### PAULA
 
-Atendente da Teewald Store
+Vendedora de la Teewald Store
 
-- **Idade:** 24 anos
+- **Edad:** 24 años
 - **Altura:** 1,71 m
-- **Porte:** magro
-- **Rosto:** Ruiva de rabo de cavalo, sardas e olhos verdes.
-- **Corpo:** Alta e magra.
-- **Roupa:** Camisa polo vinho do uniforme, calça preta e sapatos.
-- **Jeito:** Apressada para fechar a loja. Encara quem chega.
+- **Contextura:** delgada
+- **Rostro:** Pelirroja de cola de caballo, pecas y ojos verdes.
+- **Cuerpo:** Alta y delgada.
+- **Ropa:** Camisa polo color vino del uniforme, pantalón negro y zapatos.
+- **Carácter:** Apurada por cerrar la tienda. Mira fijo a quien llega.
 
-![Rosto de Paula](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/paula.jpg) ![Paula de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/paula.jpg)
+![Rostro de Paula](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/paula.jpg) ![Paula de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/paula.jpg)
 
-##### SEU ROMEU
+##### DON ROMEU
 
-Funcionário da Prefeitura; tem um potreiro fora da cidade
+Empleado de la Municipalidad; tiene un potrero fuera del pueblo
 
-- **Idade:** 52 anos
+- **Edad:** 52 años
 - **Altura:** 1,75 m
-- **Porte:** gordo
-- **Rosto:** Cabelo preto penteado, bigode aparado e sobrancelhas grossas.
-- **Corpo:** Corpulento, com barriga sob o paletó.
-- **Roupa:** Terno cinza, gravata vermelha e sapatos engraxados. Pasta de couro.
-- **Jeito:** Fala como em discurso oficial e diz que está tudo sob controle.
+- **Contextura:** gruesa
+- **Rostro:** Pelo negro peinado, bigote recortado y cejas gruesas.
+- **Cuerpo:** Corpulento, con panza bajo el saco.
+- **Ropa:** Traje gris, corbata roja y zapatos lustrados. Portafolios de cuero.
+- **Carácter:** Habla como en un discurso oficial y dice que todo está bajo control.
 
-![Rosto de Seu Romeu](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/romeu.jpg) ![Seu Romeu de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/romeu.jpg)
+![Rostro de don Romeu](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/romeu.jpg) ![Don Romeu de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/romeu.jpg)
 
-#### Igreja Matriz e cemitério
+#### Iglesia Matriz y cementerio
 
 ##### PADRE BERNARDO
 
-Pároco da Igreja Matriz
+Párroco de la iglesia matriz
 
-- **Idade:** 70 anos
+- **Edad:** 70 años
 - **Altura:** 1,78 m
-- **Porte:** magro
-- **Rosto:** Cabelo branco curto, óculos de aro dourado e olheiras de quem reza à noite.
-- **Corpo:** Alto e magro, postura reta.
-- **Roupa:** Batina preta com colarinho clerical e sapatos pretos.
-- **Jeito:** Calmo e firme. Tranca a igreja antes de anoitecer.
+- **Contextura:** delgada
+- **Rostro:** Pelo blanco corto, anteojos de armazón dorado y ojeras de quien reza de noche.
+- **Cuerpo:** Alto y delgado, postura recta.
+- **Ropa:** Sotana negra con cuello clerical y zapatos negros.
+- **Carácter:** Calmo y firme. Cierra la iglesia con llave antes de que anochezca.
 
-![Rosto de Padre Bernardo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bernardo.jpg) ![Padre Bernardo de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bernardo.jpg)
+![Rostro del padre Bernardo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bernardo.jpg) ![Padre Bernardo de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bernardo.jpg)
 
-##### DONA IRMA
+##### DOÑA IRMA
 
-Beata; reza o terço todo dia na igreja
+Beata; reza el rosario todos los días en la iglesia
 
-- **Idade:** 76 anos
+- **Edad:** 76 años
 - **Altura:** 1,52 m
-- **Porte:** magro, curvado
-- **Rosto:** Cabelo branco sob lenço preto, olhos cinzentos e uma pinta perto da boca.
-- **Corpo:** Pequena, magra e curvada.
-- **Roupa:** Vestido preto de luto, lenço preto, meia-calça e sapatos.
-- **Jeito:** Severa; acha que tudo é castigo de Deus.
+- **Contextura:** delgada, de espalda curva
+- **Rostro:** Pelo blanco bajo un pañuelo negro, ojos grises y un lunar cerca de la boca.
+- **Cuerpo:** Pequeña, delgada y encorvada.
+- **Ropa:** Vestido negro de luto, pañuelo negro, medias y zapatos.
+- **Carácter:** Severa; cree que todo es castigo de Dios.
 
-![Rosto de Dona Irma](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/irma.jpg) ![Dona Irma de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/irma.jpg)
+![Rostro de doña Irma](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/irma.jpg) ![Doña Irma de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/irma.jpg)
 
-##### RUDI, O CARTEIRO
+##### RUDI, EL CARTERO
 
-Carteiro da cidade há quinze anos
+Cartero del pueblo desde hace quince años
 
-- **Idade:** 38 anos
+- **Edad:** 38 años
 - **Altura:** 1,79 m
-- **Porte:** forte
-- **Rosto:** Pele morena, cabelo preto curto, barba por fazer e olhos castanhos.
-- **Corpo:** Forte, com as pernas de quem anda o dia inteiro.
-- **Roupa:** Camisa polo amarela de gola azul, calça azul, boné azul e sacola de cartas.
-- **Jeito:** Prestativo, mas nervoso esta semana.
+- **Contextura:** fuerte
+- **Rostro:** Piel morena, pelo negro corto, barba de días y ojos marrones.
+- **Cuerpo:** Fuerte, con las piernas de quien camina todo el día.
+- **Ropa:** Camisa polo amarilla de cuello azul, pantalón azul, gorra azul y bolso de cartas.
+- **Carácter:** Servicial, pero nervioso esta semana.
 
-![Rosto de Rudi, O Carteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/rudi.jpg) ![Rudi, O Carteiro de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/rudi.jpg)
+![Rostro de Rudi, el cartero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/rudi.jpg) ![Rudi, el cartero, de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/rudi.jpg)
 
-##### SEU OTTO
+##### DON OTTO
 
-Zelador do cemitério há trinta anos
+Cuidador del cementerio desde hace treinta años
 
-- **Idade:** 69 anos
+- **Edad:** 69 años
 - **Altura:** 1,74 m
-- **Porte:** forte
-- **Rosto:** Barba cheia grisalha, sobrancelhas grossas e uma cicatriz cortando a sobrancelha.
-- **Corpo:** Largo e forte, mãos calejadas.
-- **Roupa:** Macacão azul-marinho sobre camisa xadrez, botas e boné verde. Rastelo na mão.
-- **Jeito:** Fala pouco; respeita os mortos e não gosta de barulho.
+- **Contextura:** fuerte
+- **Rostro:** Barba tupida canosa, cejas gruesas y una cicatriz que le corta la ceja.
+- **Cuerpo:** Ancho y fuerte, manos callosas.
+- **Ropa:** Overol azul marino sobre camisa a cuadros, botas y gorra verde. Rastrillo en la mano.
+- **Carácter:** Habla poco; respeta a los muertos y no le gusta el ruido.
 
-![Rosto de Seu Otto](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/otto.jpg) ![Seu Otto de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/otto.jpg)
+![Rostro de don Otto](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/otto.jpg) ![Don Otto de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/otto.jpg)
 
-#### Kartoffelfest e campo de futebol
+#### Kartoffelfest y cancha de fútbol
 
-##### SEU IVO
+##### DON IVO
 
-Da comissão da Kartoffelfest; vigia o pavilhão de noite
+De la comisión de la Kartoffelfest; cuida el pabellón de noche
 
-- **Idade:** 58 anos
+- **Edad:** 58 años
 - **Altura:** 1,80 m
-- **Porte:** gordo
-- **Rosto:** Ruivo, de bigode ruivo, olhos azuis e rosto corado.
-- **Corpo:** Grande e pesado.
-- **Roupa:** Camisa xadrez vermelha, calça marrom, botas e chapéu. Caneca de chope na mão.
-- **Jeito:** Sério e prestativo; cuida do pavilhão vazio.
+- **Contextura:** gruesa
+- **Rostro:** Pelirrojo, de bigote pelirrojo, ojos azules y cara colorada.
+- **Cuerpo:** Grande y pesado.
+- **Ropa:** Camisa a cuadros roja, pantalón marrón, botas y sombrero. Jarra de chopp en la mano.
+- **Carácter:** Serio y servicial; cuida el pabellón vacío.
 
-![Rosto de Seu Ivo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ivo.jpg) ![Seu Ivo de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ivo.jpg)
+![Rostro de don Ivo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ivo.jpg) ![Don Ivo de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ivo.jpg)
 
-##### DONA GERTRUD
+##### DOÑA GERTRUD
 
-Cozinheira da Kartoffelhaus desde a primeira festa
+Cocinera de la Kartoffelhaus desde la primera fiesta
 
-- **Idade:** 71 anos
+- **Edad:** 71 años
 - **Altura:** 1,60 m
-- **Porte:** gordo
-- **Rosto:** Rosto redondo e corado, cabelo grisalho em coque e olhos azuis.
-- **Corpo:** Baixa e robusta.
-- **Roupa:** Vestido vermelho-escuro com avental branco, meia-calça e sapatos. Cesta no braço.
-- **Jeito:** Maternal; dá comida a todo mundo.
+- **Contextura:** gruesa
+- **Rostro:** Cara redonda y colorada, pelo canoso en moño y ojos azules.
+- **Cuerpo:** Baja y robusta.
+- **Ropa:** Vestido rojo oscuro con delantal blanco, medias y zapatos. Canasta en el brazo.
+- **Carácter:** Maternal; le da de comer a todo el mundo.
 
-![Rosto de Dona Gertrud](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/gertrud.jpg) ![Dona Gertrud de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/gertrud.jpg)
+![Rostro de doña Gertrud](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/gertrud.jpg) ![Doña Gertrud de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/gertrud.jpg)
 
 ##### LUANA
 
-Rainha da Kartoffelfest deste ano
+Reina de la Kartoffelfest de este año
 
-- **Idade:** 18 anos
+- **Edad:** 18 años
 - **Altura:** 1,67 m
-- **Porte:** magro
-- **Rosto:** Loira de cabelo comprido e olhos azuis.
-- **Corpo:** Magra, de estatura mediana.
-- **Roupa:** Vestido típico verde com avental claro, meia-calça e sapatos.
-- **Jeito:** Tristonha; prometeu à mãe voltar antes de escurecer.
+- **Contextura:** delgada
+- **Rostro:** Rubia de pelo largo y ojos azules.
+- **Cuerpo:** Delgada, de estatura mediana.
+- **Ropa:** Vestido típico verde con delantal claro, medias y zapatos.
+- **Carácter:** Tristona; le prometió a su madre volver antes de que oscurezca.
 
-![Rosto de Luana](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/luana.jpg) ![Luana de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/luana.jpg)
+![Rostro de Luana](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/luana.jpg) ![Luana de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/luana.jpg)
 
 ##### TIAGO
 
-Centroavante do time de futebol da cidade
+Centrodelantero del equipo de fútbol del pueblo
 
-- **Idade:** 17 anos
+- **Edad:** 17 años
 - **Altura:** 1,78 m
-- **Porte:** médio
-- **Rosto:** Pele morena, cabelo preto curto e olhos castanhos.
-- **Corpo:** Atlético.
-- **Roupa:** Camisa vermelha número 9, calção preto, meias vermelhas e chuteiras.
-- **Jeito:** Fala pouco; ficou sozinho no campo.
+- **Contextura:** mediana
+- **Rostro:** Piel morena, pelo negro corto y ojos marrones.
+- **Cuerpo:** Atlético.
+- **Ropa:** Camiseta roja número 9, short negro, medias rojas y botines.
+- **Carácter:** Habla poco; se quedó solo en la cancha.
 
-![Rosto de Tiago](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/tiago.jpg) ![Tiago de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/tiago.jpg)
+![Rostro de Tiago](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/tiago.jpg) ![Tiago de cuerpo entero](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/tiago.jpg)
 
-![Silhueta de um bicho corcunda de olhos vermelhos, do cartaz de procura-se](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/silhueta.png)
-*Do cartaz no mural da praça*
+![Silueta de un bicho jorobado de ojos rojos, del cartel de «Se busca»](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/silhueta.png)
+*Del cartel en la cartelera de la plaza*
 
-*O que anda no mato*
+*Lo que anda en el monte*
 
-### Procura-se
+### Se busca
 
-Ninguém viu direito. O Seu Arno viu olhos vermelhos na outra margem do rio. O Joãozinho, da 4ª série, jura que o bicho anda pulando que nem canguru e tem espinho nas costas.
+Nadie lo vio bien. Don Arno vio ojos rojos en la otra orilla del río. Joãozinho, de 4.º grado, jura que el bicho anda a los saltos como un canguro y tiene espinas en la espalda.
 
-No jogo, cada criatura que você vê de perto ganha uma ficha em LENDAS DO HERVAL. Aqui elas ficam trancadas. E não é uma só.
+En el juego, cada criatura que ves de cerca gana una ficha en LEYENDAS DEL HERVAL. Acá están bloqueadas. Y no es una sola.
 
-### Eles têm medo
+### Ellos tienen miedo
 
-Você tem uma 9 mm, uma lanterna e a noite inteira pela frente.
+Vos tenés una 9 mm, una linterna y toda la noche por delante.
 
-[Jogar agora](https://fabianokunst.github.io/Teewald-3d/?lang=es) Grátis · no navegador
+[Jugá ahora](https://fabianokunst.github.io/Teewald-3d/?lang=es) Gratis · en el navegador
 
 ---
 
-*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
+*Obra de ficción: todos los nombres, personajes e historias del juego son inventados y no tienen ninguna relación real con la ciudad de Santa Maria do Herval ni con sus habitantes. Solo el mapa (calles, río y relieve) viene de la ciudad de verdad.*
