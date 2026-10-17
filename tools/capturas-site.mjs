@@ -6,6 +6,10 @@
 // (img/capturas/<nome>.jpg) e em 960x540 (img/capturas/p/<nome>.jpg, para as grades do site).
 // As fotos PS1 RETRÔ saem de uma segunda página aberta com ?visual=ps1.
 // Usa a placa de vídeo; se não houver, CHROME_SW=1 usa o SwiftShader (bem mais lento).
+//   npm run capturas -- --idioma=en,es,de titulo conversa inventario
+// tira as fotos com o jogo em outro idioma (as que mostram texto da tela) e grava em
+// img/capturas/<idioma>/ e img/capturas/p/<idioma>/; as páginas traduzidas do site
+// (npm run site) usam essa versão quando ela existe.
 import { createServer } from 'vite';
 import puppeteer from 'puppeteer-core';
 import fs from 'node:fs';
@@ -15,7 +19,10 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'site', 'img', 'capturas');
 const W = 1920, H = 1080;
-const so = process.argv.slice(2);
+const args = process.argv.slice(2);
+const opIdioma = args.find(a => a.startsWith('--idioma='));
+const IDIOMAS = opIdioma ? opIdioma.slice(9).split(',').filter(Boolean) : ['pt'];
+const so = args.filter(a => !a.startsWith('--'));
 
 // cena: clima, câmera e alvo em [x, altura acima do chão, z] (interior: coordenadas absolutas),
 // jogador [x, z, heading] (sem ele, fica 3 m atrás da câmera, fora da foto), fov, lanterna.
@@ -168,31 +175,34 @@ const args = process.env.CHROME_SW
   ? ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist']
   : ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'];
 const browser = await puppeteer.launch({ executablePath: exe, headless: 'new', args: [...args, `--window-size=${W},${H}`], defaultViewport: { width: W, height: H } });
-fs.mkdirSync(path.join(OUT, 'p'), { recursive: true });
+
 const erros = [];
 
-async function abre(ps1) {
+async function abre(ps1, idioma) {
   const page = await browser.newPage();
   page.on('pageerror', e => erros.push(`[página] ${e.message}`));
-  await page.evaluateOnNewDocument(() => {
-    localStorage.setItem('teewald.settings.v1', JSON.stringify({ lang: 'pt', drawDistance: 2, minimap: false }));
-  });
+  await page.evaluateOnNewDocument(idioma => {
+    localStorage.setItem('teewald.settings.v1', JSON.stringify({ lang: idioma, drawDistance: 2, minimap: false }));
+  }, idioma);
   const t0 = Date.now();
-  await page.goto(`${base}?lang=pt${ps1 ? '&visual=ps1' : ''}`, { waitUntil: 'load', timeout: 180000 });
+  await page.goto(`${base}?lang=${idioma}${ps1 ? '&visual=ps1' : ''}`, { waitUntil: 'load', timeout: 180000 });
   await page.waitForFunction(() => window.__teewald, { timeout: 900000, polling: 500 });
   const gpu = await page.evaluate(() => {
     try { const c = window.__teewald.renderer.gl.getContext(); return c.getParameter(c.getExtension('WEBGL_debug_renderer_info').UNMASKED_RENDERER_WEBGL); } catch (e) { return '?'; }
   });
-  console.log(`jogo carregado em ${((Date.now() - t0) / 1000).toFixed(0)} s ${ps1 ? '(PS1 RETRÔ)' : ''} · ${gpu}`);
+  console.log(`jogo carregado em ${((Date.now() - t0) / 1000).toFixed(0)} s ${ps1 ? '(PS1 RETRÔ) ' : ''}[${idioma}] · ${gpu}`);
   await page.evaluate(() => document.fonts.ready);
   return page;
 }
 
 const quais = FOTOS.filter(f => !so.length || so.includes(f.nome));
-for (const ps1 of [false, true]) {
+for (const idioma of IDIOMAS) for (const ps1 of [false, true]) {
   const lista = quais.filter(f => !!f.ps1 === ps1);
   if (!lista.length) continue;
-  const page = await abre(ps1);
+  const sub = idioma === 'pt' ? '' : idioma;
+  fs.mkdirSync(path.join(OUT, sub), { recursive: true });
+  fs.mkdirSync(path.join(OUT, 'p', sub), { recursive: true });
+  const page = await abre(ps1, idioma);
   let instalado = false;
   for (const f of lista) {
     if (f.titulo) await new Promise(r => setTimeout(r, f.espera));
@@ -208,13 +218,13 @@ for (const ps1 of [false, true]) {
     const png = await page.screenshot({ type: 'png', encoding: 'base64' });
     const grande = await reduz(page, png, W, H, f.brilho);
     const pequena = await reduz(page, png, 960, 540, f.brilho);
-    fs.writeFileSync(path.join(OUT, f.nome + '.jpg'), Buffer.from(grande.split(',')[1], 'base64'));
-    fs.writeFileSync(path.join(OUT, 'p', f.nome + '.jpg'), Buffer.from(pequena.split(',')[1], 'base64'));
-    console.log('  ' + f.nome);
+    fs.writeFileSync(path.join(OUT, sub, f.nome + '.jpg'), Buffer.from(grande.split(',')[1], 'base64'));
+    fs.writeFileSync(path.join(OUT, 'p', sub, f.nome + '.jpg'), Buffer.from(pequena.split(',')[1], 'base64'));
+    console.log('  ' + (sub ? sub + '/' : '') + f.nome);
   }
   await page.close();
 }
 await browser.close();
 await server.close();
 if (erros.length) console.log(erros.join('\n'));
-console.log(`site/img/capturas/: ${quais.length} fotos`);
+console.log(`site/img/capturas/: ${quais.length * IDIOMAS.length} fotos`);
