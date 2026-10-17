@@ -39,6 +39,10 @@ const SUBSTEP = 0.22;                   // passo máximo (m) por iteração: nã
 const FLOOR = CAR.seat[1];              // assoalho (altura no carro)
 const OUT = { x: 1.38, z: -0.7 };       // onde o motorista fica em pé do lado de fora (fora do arco da porta)
 const SEAT = { x: CAR.seat[0], z: CAR.seat[2] };
+const EDGE = { x: 1.0, z: -0.42 };      // sentado na beira da porta (entrando e saindo)
+// postura no banco: altura do quadril acima do assoalho, avanço e o quanto o tronco reclina.
+// Sentado baixo e reclinado: o alto da cabeça fica a ~1,27 m, abaixo do forro (1,33) e do teto
+const SEAT_POSE = { hips: [0.19, 0.08], lean: 0.42 };
 
 const DRIVE_HINTS = {
   keyboard: ['W acelerar   S freio e ré   A D volante   ESPAÇO freio de mão', 'G buzina   L farol   C olhar para trás   F sair do carro'],
@@ -767,15 +771,18 @@ export class Car {
     const gOut = this._groundLocal(OUT.x, OUT.z);
     if (mode === 'enter') {
       const t = A.t;
-      // 0 → 0,5: na porta, abrindo; 0,5 → 1,25: vira, abaixa e entra; 1,25 → 1,62: puxa a porta
-      const m = ease(seg(t, 0.55, 1.22));
+      // 0 → 0,45: na porta, abrindo; 0,45 → 0,88: vira, se curva e senta na beira da porta (a
+      // cabeça ainda fora); 0,9 → 1,25: desliza para o banco já sentado e reclinado, a cabeça
+      // abaixo do teto (curvar ali levantaria a cabeça: o tronco reclinado passaria pela vertical);
+      // 1,25 → 1,62: puxa a porta
       const x0 = lerp(A.x0, OUT.x, ease(seg(t, 0, 0.35))), z0 = lerp(A.z0, OUT.z, ease(seg(t, 0, 0.35)));
-      x = lerp(x0, SEAT.x, m); z = lerp(z0, SEAT.z, m);
-      y = lerp(gOut, FLOOR, ease(seg(t, 0.62, 1.15)));
-      yaw = lerp(lerp(A.yaw0, -Math.PI / 2, ease(seg(t, 0, 0.3))), 0, ease(seg(t, 0.45, 0.85)));
-      k = ease(seg(t, 0.7, 1.18));
-      legs = ease(seg(t, 0.82, 1.3));
-      duck = Math.sin(Math.PI * seg(t, 0.6, 1.25));
+      const e1 = ease(seg(t, 0.45, 0.85)), e2 = ease(seg(t, 0.9, 1.25));
+      x = lerp(lerp(x0, EDGE.x, e1), SEAT.x, e2); z = lerp(lerp(z0, EDGE.z, e1), SEAT.z, e2);
+      y = lerp(gOut, FLOOR, ease(seg(t, 0.5, 0.85)));
+      yaw = lerp(lerp(A.yaw0, -Math.PI / 2, ease(seg(t, 0, 0.3))), 0, ease(seg(t, 0.45, 0.75)));
+      k = ease(seg(t, 0.5, 0.85));
+      legs = ease(seg(t, 0.92, 1.3));
+      duck = Math.sin(Math.PI * seg(t, 0.45, 0.88));
       hR = ease(seg(t, 1.55, 1.85)); hL = ease(seg(t, 1.62, 1.95));
       doorHand = t < 0.6 ? Math.sin(Math.PI * seg(t, 0.05, 0.55)) : Math.sin(Math.PI * seg(t, 1.18, 1.66));
       this._exitYaw = 0;
@@ -783,14 +790,15 @@ export class Car {
       hR = ease(seg(A.t, 1.55, 1.85)); hL = ease(seg(A.t, 1.62, 1.95));
     } else if (mode === 'exit' && A) {
       const t = A.t;
-      // 0 → 0,6: solta o volante e abre a porta; 0,6 → 1,15: pernas para fora e levanta;
-      // 1,15 → 1,55: em pé, fecha a porta empurrando
-      const m = ease(seg(t, 0.62, 1.12));
-      x = lerp(SEAT.x, OUT.x, m); z = lerp(SEAT.z, OUT.z, m);
-      y = lerp(FLOOR, gOut, ease(seg(t, 0.75, 1.12)));
-      legs = 1 - ease(seg(t, 0.5, 0.88));
-      k = 1 - ease(seg(t, 0.78, 1.14));
-      duck = Math.sin(Math.PI * seg(t, 0.62, 1.2));
+      // 0 → 0,6: solta o volante e abre a porta; 0,4 → 0,8: pernas para fora e desliza sentado e
+      // reclinado até a beira da porta; 0,82 → 1,15: se curva e levanta do lado de fora;
+      // 1,15 → 1,55: fecha a porta
+      const e1 = ease(seg(t, 0.45, 0.8)), e2 = ease(seg(t, 0.84, 1.12));
+      x = lerp(lerp(SEAT.x, EDGE.x, e1), OUT.x, e2); z = lerp(lerp(SEAT.z, EDGE.z, e1), OUT.z, e2);
+      y = lerp(FLOOR, gOut, ease(seg(t, 0.85, 1.1)));
+      legs = 1 - ease(seg(t, 0.4, 0.75));
+      k = 1 - ease(seg(t, 0.86, 1.14));
+      duck = Math.sin(Math.PI * seg(t, 0.8, 1.2));
       yaw = lerp(0, 0.35, ease(seg(t, 1.1, 1.5)));
       hR = 1 - ease(seg(t, 0.0, 0.25)); hL = 1 - ease(seg(t, 0.05, 0.3));
       doorHand = t < 0.7 ? Math.sin(Math.PI * seg(t, 0.12, 0.66)) : Math.sin(Math.PI * seg(t, 1.12, 1.52));
@@ -837,7 +845,8 @@ export class Car {
       if (K > 0.01) { const wk = handK[1]; hands[1] = wk > 0.01 ? _hand[3].copy(_hand[1]).lerp(_hand[2], K) : _hand[2]; handK[1] = Math.max(wk, K); }
     }
     if (k > 0.002 || legs > 0.002) {
-      ch.seatPose({ k: Math.max(k, 0.0001), hips: [0.27, 0.03], lean: 0.28, duck, feet, pole: [0, 0.75, 1], hands, handK, look: this._look() });
+      const P0 = SEAT_POSE;
+      ch.seatPose({ k: Math.max(k, 0.0001), hips: P0.hips, lean: P0.lean, duck, feet, pole: [0, 0.75, 1], hands, handK, look: this._look() });
     } else {
       // em pé do lado de fora: só a mão na porta
       ch.root.updateMatrixWorld(true);

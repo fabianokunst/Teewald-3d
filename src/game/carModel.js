@@ -17,7 +17,7 @@ export const CAR = {
   axleF: AXLE_F, axleR: AXLE_R, base: AXLE_F - AXLE_R, track: 0.79, wheelR: WHEEL_R,
   // raiz do motorista sentado (no assoalho, embaixo do quadril) e o volante
   seat: [0.4, 0.3, -0.4],
-  wheel: { c: [0.4, 0.86, 0.04], r: 0.2, tilt: 0.62 },
+  wheel: { c: [0.4, 0.86, -0.08], r: 0.2, tilt: 0.62 },
   // dobradiça da porta e onde o motorista fica em pé do lado de fora
   hinge: [0.99, DOOR_F - 0.02], doorOpen: -1.08,
   outside: [1.62, -0.12],
@@ -396,7 +396,7 @@ export function buildHeroCar() {
       A.poly('body', 'seat', [[x, y0, b], [x, top - 0.02, b], [x, backTop, bt], [x, backTop - 0.02, bt - 0.12], [x, y0, b - 0.1]], [[0, 0], [0.4, 0], [1, 0.5], [1, 0.6], [0, 0.6]], [Math.sign(x), 0, 0]);
     }
   };
-  bench(-0.1, -0.64, 0.5, 1.06, 0.22);
+  bench(-0.1, -0.64, 0.44, 1.0, 0.26);
   bench(-1.08, -1.52, 0.48, 0.94, 0.14);
   // prateleira de trás, embaixo do vidro
   A.poly('body', 'cloth', [[-0.8, 0.94, -1.5], [0.8, 0.94, -1.5], [0.8, 0.96, -1.8], [-0.8, 0.96, -1.8]], [[0, 0], [1, 0], [1, 1], [0, 1]], [0, 1, 0]);

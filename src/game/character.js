@@ -821,7 +821,7 @@ export class Character {
     // bacia deitada para trás no banco; o tronco compensa e se inclina para entrar
     H.rotation.set(lerp(H.rotation.x, -0.32, k), lerp(H.rotation.y, 0, k), lerp(H.rotation.z, 0, k));
     const duck = s.duck || 0;
-    S.rotation.set(lerp(S.rotation.x, 0.32 - (s.lean ?? 0.12) + duck * 0.55, k), lerp(S.rotation.y, 0, k), lerp(S.rotation.z, 0, k));
+    S.rotation.set(lerp(S.rotation.x, 0.32 - (s.lean ?? 0.12) + duck * 0.8, k), lerp(S.rotation.y, 0, k), lerp(S.rotation.z, 0, k));
     this.neck.rotation.set(lerp(this.neck.rotation.x, -0.05 + duck * 0.2, k), 0, 0);
     this.head.rotation.set(lerp(this.head.rotation.x, 0.02 + duck * 0.25, k), lerp(this.head.rotation.y, s.look || 0, Math.max(k, 0.5)), lerp(this.head.rotation.z, 0, k));
     const p = s.pole || [0, 0.6, 1];
