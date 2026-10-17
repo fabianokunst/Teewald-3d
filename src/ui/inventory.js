@@ -5,7 +5,7 @@ import { GUNS } from '../game/weapon.js';
 import { makeItemModel } from '../game/itemModels.js';
 import { G } from '../engine/ps1material.js';
 
-// Tela de inventário (pausa o jogo): 8 espaços, item selecionado girando em 3D,
+// Tela de inventário (pausa o jogo): 16 espaços (4x4), item selecionado girando em 3D,
 // nome, descrição e ações (equipar, guardar, carregar, examinar).
 // A prévia 3D é desenhada pelo Renderer num recorte da tela (R.overlay).
 

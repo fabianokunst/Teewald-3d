@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { Chupacabra, ChupaAudio, makeSheep } from './chupacabra.js';
 import { G } from '../engine/ps1material.js';
 
-// A presença: nas noites antes da captura (capítulos 2 a 8), de vez em quando o
+// A presença: nas noites antes da captura (capítulos 2 a 10), de vez em quando o
 // chupacabras aparece na beira da neblina, agachado sobre uma ovelha morta. Não é
 // luta: o barulho de mastigar chega antes da imagem. Quando o jogador chega perto,
 // mira nele ou fica olhando muito tempo, ele levanta a cabeça, guincha e foge aos
