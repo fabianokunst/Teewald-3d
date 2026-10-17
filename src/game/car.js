@@ -38,6 +38,8 @@ const HL = 2.74, HW = 1.02, INERTIA = 2.9;
 const SUBSTEP = 0.22;                   // passo máximo (m) por iteração: não atravessa poste nem parede fina
 const FLOOR = CAR.seat[1];              // assoalho (altura no carro)
 const OUT = { x: 1.38, z: -0.7 };       // onde o motorista fica em pé do lado de fora (fora do arco da porta)
+const WATER_START = 0.55;               // água (m) acima da qual o motor não pega: parado ali, o carro fica preso
+const WATER_FLOOD = 0.75;               // água (m) acima da qual o motor afoga andando
 const SEAT = { x: CAR.seat[0], z: CAR.seat[2] };
 const EDGE = { x: 1.0, z: -0.42 };      // sentado na beira da porta (entrando e saindo)
 // postura no banco: altura do quadril acima do assoalho, avanço e o quanto o tronco reclina.
@@ -177,6 +179,13 @@ export class Car {
 
   // estaciona na beira da rua mais perto de (x, z), longe pelo menos `min` m do ponto
   parkNear(x, z, min = 7, max = 70) {
+    const s = this._parkSpot(x, z, min, max);
+    if (s) this.place(s[0], s[1], s[2]);
+    return !!s;
+  }
+
+  // a vaga de parkNear: [x, z, rumo] ou null
+  _parkSpot(x, z, min, max) {
     const ctx = this.ctx, best = [];
     for (const r of ctx.roads.list) {
       if (r.rank < 2 || r.pts.length < 3) continue;
@@ -198,10 +207,10 @@ export class Car {
         // lado direito de quem anda na mão (o carro estaciona encostado)
         const off = Math.max(0, r.hw - 1.2), rx = -Math.cos(h), rz = Math.sin(h);
         const px = r.pts[i][0] + rx * off, pz = r.pts[i][1] + rz * off;
-        if (this._clearAt(px, pz, h)) { this.place(px, pz, h); return true; }
+        if (this._clearAt(px, pz, h)) return [px, pz, h];
       }
     }
-    return false;
+    return null;
   }
 
   // cabe ali? (sem muro, poste, água funda e sem desnível grande)
@@ -383,13 +392,13 @@ export class Car {
       this.crankT -= dt;
       this.rpm = 180 + Math.sin(this.crankT * 60) * 40;
       if (this.crankT <= 0) {
-        if (this.water > 0.55) { this.hud.toast('O MOTOR NÃO PEGA NA ÁGUA'); this.rpm = 0; }
+        if (this.water > WATER_START) { this.hud.toast('O MOTOR NÃO PEGA NA ÁGUA'); this.rpm = 0; }
         else { this.engine = true; this.flooded = false; this.rpm = 1500; this._puff(1.4); }
       }
       return;
     }
     if (!this.engine) { this.rpm = Math.max(0, this.rpm - dt * 2500); return; }
-    if (this.water > 0.75 && !this.flooded) {
+    if (this.water > WATER_FLOOD && !this.flooded) {
       this.flooded = true; this.engine = false;
       this.sound.stop(); this.hud.toast('O MOTOR AFOGOU');
       return;
@@ -762,6 +771,7 @@ export class Car {
     P.ch.root.rotation.set(0, this.heading, 0);
     // em pé do lado da porta, de frente para onde o carro aponta (a câmera continua de onde estava)
     P.place(x, z, wrapA(this.heading + (this._exitYaw || 0)));
+    if (this.stuck) this.hud.toast('DEPOIS UM COLONO PUXA O CARRO');
     this.onExit?.();
   }
 
@@ -1005,18 +1015,56 @@ export class Car {
     this.audio.setMuffle?.(inside ? 1 : 0);
   }
 
-  // longe e fora da vista, preso na água funda: volta para o último lugar bom
+  // ---------- preso na água ----------
+  // profundidade da água no meio do carro agora (0 fora do rio e nos interiores)
+  _depth() {
+    const wl = this.ctx.waterLevel?.(this.pos.x, this.pos.z);
+    return wl == null ? 0 : Math.max(0, wl - this.pos.y);
+  }
+
+  // desligado onde o motor não pega: sozinho, o carro não sai mais dali
+  get stuck() { return !this.engine && this.crankT <= 0 && this._depth() > WATER_START; }
+
+  // o jogador veria este ponto? (perto, ou a meia distância e dentro da tela)
+  _inView(x, z) {
+    const P = this.player.pos, d = Math.hypot(P.x - x, P.z - z);
+    if (d > 70) return false;
+    if (d < 25) return true;
+    const v = _v.set(x, this.ctx.groundAt(x, z, 1000) + 0.8, z).project(this.camera);
+    return v.z <= 1 && v.z >= -1 && Math.abs(v.x) < 1.2 && Math.abs(v.y) < 1.2;
+  }
+
+  // para onde o colono puxa o carro: a rua mais perto do rio; senão o último lugar onde ele
+  // ficou parado no seco; senão uma rua perto do jogador
+  _rescueSpot() {
+    const g = this.lastGood, P = this.player.pos;
+    return this._parkSpot(this.pos.x, this.pos.z, 0, 160)
+      || (g && this._clearAt(g.x, g.z, g.h) ? [g.x, g.z, g.h] : null)
+      || this._parkSpot(P.x, P.z, 30, 250);
+  }
+
+  _rescue([x, z, h]) {
+    this.place(x, z, h);
+    this.engine = false; this.flooded = false; this.crankT = 0;
+    this.lastGood = { x, z, h }; this.goodT = 0;
+  }
+
+  // preso na água funda: um colono puxa o carro com o trator até a rua, quando o jogador não
+  // está olhando (nem para o rio, nem para a rua aonde ele vai)
   _recover(dt) {
-    const P = this.player;
+    if (this.ctx.indoor) return;
     if (this.water < 0.3 && this.air < 0.5 && this.speed < 0.5) {
       this.goodT += dt;
       if (this.goodT > 2 && this.surface !== 'water') { this.lastGood = { x: this.pos.x, z: this.pos.z, h: this.heading }; this.goodT = 0; }
     }
-    if (this.driving || !this.lastGood || this.water < 0.6) return;
-    if (Math.hypot(P.pos.x - this.pos.x, P.pos.z - this.pos.z) < 60) return;
-    const g = this.lastGood;
-    this.place(g.x, g.z, g.h);
-    this.flooded = false;
+    if (this.driving || this.mode !== 'parked') return;
+    if ((this._rescueT = (this._rescueT || 0) - dt) > 0) return;
+    this._rescueT = 0.5;
+    if (!this.stuck || this._inView(this.pos.x, this.pos.z)) return;
+    const s = this._rescueSpot();
+    if (!s || this._inView(s[0], s[1])) return;
+    this._rescue(s);
+    this.hud.toast('TIRARAM O CARRO DA ÁGUA');
   }
 
   // ---------- HUD ----------
@@ -1096,12 +1144,19 @@ export class Car {
   }
 
   // ---------- salvar ----------
-  serialize() { return { x: +this.pos.x.toFixed(2), z: +this.pos.z.toFixed(2), h: +this.heading.toFixed(3), dmg: Math.round(this.damage) }; }
+  // preso na água, o jogo guarda o carro já na rua (o colono puxa enquanto o jogo está fechado)
+  serialize() {
+    const [x, z, h] = (this.stuck && !this.driving && this._rescueSpot()) || [this.pos.x, this.pos.z, this.heading];
+    return { x: +x.toFixed(2), z: +z.toFixed(2), h: +h.toFixed(3), dmg: Math.round(this.damage) };
+  }
 
   load(o) {
     if (!o || !Number.isFinite(o.x)) return false;
     this.place(o.x, o.z, o.h || 0);
     this.damage = clamp(o.dmg || 0, 0, 100);
+    // save antigo com o carro dentro do rio
+    const s = this.stuck && this._rescueSpot();
+    if (s) this._rescue(s);
     return true;
   }
 }
