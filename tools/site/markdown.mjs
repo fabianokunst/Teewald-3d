@@ -1,13 +1,16 @@
-// Versões do site para LLMs (padrão llms.txt, https://llmstxt.org), feitas a partir do HTML:
-//   site/<página>.html.md   o conteúdo do <main> de cada página em markdown
-//   site/llms.txt           o resumo do jogo (texto de tools/site/llms.md) e a lista das páginas
-//   site/llms-full.txt      o resumo e todas as páginas num arquivo só
+// Versões do site para LLMs (padrão llms.txt, https://llmstxt.org), feitas a partir do HTML,
+// em cada idioma (português em site/, os outros em site/<idioma>/):
+//   <página>.html.md   o conteúdo do <main> de cada página em markdown
+//   llms.txt           o resumo do jogo (tools/site/llms.md, llms.en.md...) e a lista das páginas
+//   llms-full.txt      o resumo e todas as páginas num arquivo só
 // Usado por tools/site.mjs (npm run site) e pelo build (vite.config.js), que refaz tudo a partir
 // do HTML publicado. O que é enfeite (aria-hidden, abas, índice, fichas trancadas) fica de fora.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { JOGO, ENDERECO, PAGINAS, AUTOR, urlDaPagina, indexadas } from './paginas.mjs';
+import { JOGO, ENDERECO, PAGINAS, AUTOR, indexadas } from './paginas.mjs';
+import { IDIOMAS, urlEm } from './idiomas.mjs';
+import { tradutor } from './traduz.mjs';
 
 const AQUI = path.dirname(fileURLToPath(import.meta.url));
 
@@ -69,10 +72,10 @@ const pula = n => n.tag && (n.attrs['aria-hidden'] === 'true' || n.attrs.role ==
   || ['script', 'style', 'svg', 'input', 'hr', 'template', 'noscript'].includes(n.tag) || PULA_CLASSE.some(c => tem(n, c)));
 const escapa = s => s.replace(/([\\`*_[\]])/g, '\\$1');
 
-function criaContexto(arq, raiz) {
+function criaContexto(arq, raiz, idioma = 'pt') {
   const ids = {};
   for (const n of todos(raiz, n => n.attrs.id)) ids[n.attrs.id] = n;
-  return { base: urlDaPagina(arq), ids, nivel: 1, grande: null };
+  return { base: urlEm(arq, idioma), ids, nivel: 1, grande: null };
 }
 // a miniatura img/capturas/p/x.jpg (960x540) tem a mesma foto grande em img/capturas/x.jpg
 export const grandeDe = src => src.replace(/(^|\/)capturas\/p\//, '$1capturas/');
@@ -229,44 +232,62 @@ function bloco(n, ctx) {
 }
 
 // ---- páginas
-const lerPagina = (dir, arq) => fs.readFileSync(path.join(dir, arq), 'utf8');
+// textos fixos dos arquivos para LLMs passam pelo dicionário como o resto do site
+const pt = { tt: s => s };
 
-export function paginaEmMarkdown(arq, html) {
+export function paginaEmMarkdown(arq, html, idioma = 'pt', tr = pt) {
   const p = PAGINAS[arq];
   const raiz = lerHtml(html);
   const main = primeiro(raiz, n => n.tag === 'main') || raiz;
-  const corpo = blocos(main, criaContexto(arq, raiz)).join('\n\n');
+  const corpo = blocos(main, criaContexto(arq, raiz, idioma)).join('\n\n');
+  const jogo = idioma === 'pt' ? JOGO : `${JOGO}?lang=${idioma}`;
   return [
-    `# ${p.titulo}`,
-    `> ${p.descricao}`,
-    `Página: ${urlDaPagina(arq)}  \nJogar grátis no navegador: ${JOGO}`,
+    `# ${tr.tt(p.titulo)}`,
+    `> ${tr.tt(p.descricao)}`,
+    `${tr.tt('Página:')} ${urlEm(arq, idioma)}  \n${tr.tt('Jogar grátis no navegador:')} ${jogo}`,
     corpo,
     '---',
-    `*${AVISO}*`,
+    `*${tr.tt(AVISO)}*`,
   ].join('\n\n').replace(/\n{3,}/g, '\n\n') + '\n';
 }
 
-// llms.txt: o texto fixo de tools/site/llms.md com {{jogo}}, {{endereco}}, {{autor}}, {{paginas}}
-export function llmsTxt() {
-  const lista = indexadas().map(([arq, p]) => `- [${p.nome}](${ENDERECO}${arq}.md): ${p.descricao}`).join('\n');
-  const v = { jogo: JOGO, endereco: ENDERECO, autor: AUTOR, paginas: lista, aviso: AVISO };
-  return fs.readFileSync(path.join(AQUI, 'llms.md'), 'utf8').replace(/\{\{([a-z]+)\}\}/g, (m, k) => v[k] ?? m).trimEnd() + '\n';
+// llms.txt: o texto fixo de tools/site/llms.md (llms.en.md, llms.es.md, llms.de.md) com
+// {{jogo}}, {{endereco}}, {{autor}}, {{aviso}}, {{paginas}} e {{idiomas}} (os outros llms.txt)
+export function llmsTxt(idioma = 'pt', tr = pt) {
+  const I = IDIOMAS[idioma];
+  const lista = indexadas().map(([arq, p]) => `- [${tr.tt(p.nome)}](${ENDERECO}${I.pasta}${arq}.md): ${tr.tt(p.descricao)}`).join('\n');
+  const outros = Object.entries(IDIOMAS).filter(([l]) => l !== idioma)
+    .map(([, o]) => `- [${o.nome}](${ENDERECO}${o.pasta}llms.txt)`).join('\n');
+  const v = {
+    jogo: idioma === 'pt' ? JOGO : `${JOGO}?lang=${idioma}`, endereco: ENDERECO + I.pasta, autor: AUTOR,
+    paginas: lista, aviso: tr.tt(AVISO), idiomas: outros,
+  };
+  const modelo = path.join(AQUI, idioma === 'pt' ? 'llms.md' : `llms.${idioma}.md`);
+  if (!fs.existsSync(modelo)) return null;
+  return fs.readFileSync(modelo, 'utf8').replace(/\{\{([a-z]+)\}\}/g, (m, k) => v[k] ?? m).trimEnd() + '\n';
 }
 
-// tudo que é gerado a partir das páginas de dir (site/): { 'historia.html.md': '...', 'llms.txt': '...', ... }
+// tudo que é gerado a partir das páginas de dir (site/), nos caminhos relativos a ele:
+// { 'historia.html.md': '...', 'llms.txt': '...', 'en/historia.html.md': '...', ... }
 export function derivados(dir) {
   const arquivos = {};
-  const paginas = [];
-  for (const [arq] of indexadas()) {
-    if (!fs.existsSync(path.join(dir, arq))) continue;
-    const md = paginaEmMarkdown(arq, lerPagina(dir, arq));
-    arquivos[arq + '.md'] = md;
-    paginas.push(md);
+  for (const idioma of Object.keys(IDIOMAS)) {
+    const I = IDIOMAS[idioma];
+    const tr = idioma === 'pt' ? pt : tradutor(idioma);
+    const paginas = [];
+    for (const [arq] of indexadas()) {
+      const html = path.join(dir, I.pasta, arq);
+      if (!fs.existsSync(html)) continue;
+      const md = paginaEmMarkdown(arq, fs.readFileSync(html, 'utf8'), idioma, tr);
+      arquivos[I.pasta + arq + '.md'] = md;
+      paginas.push(md);
+    }
+    const llms = llmsTxt(idioma, tr);
+    if (!llms || !paginas.length) continue;
+    arquivos[I.pasta + 'llms.txt'] = llms;
+    // llms-full.txt: o resumo (sem a lista de links) seguido do texto de todas as páginas
+    const resumo = llms.split(/\n## /)[0].trimEnd();
+    arquivos[I.pasta + 'llms-full.txt'] = [resumo, ...paginas.map(md => md.trimEnd())].join('\n\n---\n\n') + '\n';
   }
-  const llms = llmsTxt();
-  arquivos['llms.txt'] = llms;
-  // llms-full.txt: o resumo (sem a lista de links) seguido do texto de todas as páginas
-  const resumo = llms.split(/\n## /)[0].trimEnd();
-  arquivos['llms-full.txt'] = [resumo, ...paginas.map(md => md.trimEnd())].join('\n\n---\n\n') + '\n';
   return arquivos;
 }

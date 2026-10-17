@@ -103,6 +103,21 @@ export function roadSurfaceAt(roads, terrain, x, z) {
   return best;
 }
 
+// pavimento da rua num ponto ('asphalt', 'sett', 'concrete', 'dirt'; 'walk' = calçada), ou
+// null fora das ruas (mesmos triângulos de roadSurfaceAt)
+export function roadMatAt(roads, terrain, x, z) {
+  let walk = false;
+  for (const id of roads.index.candidates(x, z)) {
+    const s = roads.index.segs[id], r = s.data;
+    if (distSeg(x, z, s.ax, s.az, s.bx, s.bz)[0] > r.hw + (r.sidewalk ? 2 : 0) + 1) continue;
+    const { L, R } = roadFrame(r), i = s.i, w = r.hw, one = () => 0;
+    if (quadAt(x, z, R(i, w), R(i + 1, w), L(i + 1, w), L(i, w), one) !== null) return r.mat;
+    if (r.sidewalk && (quadAt(x, z, L(i, w), L(i + 1, w), L(i + 1, w + 2), L(i, w + 2), one) !== null ||
+      quadAt(x, z, R(i + 1, w), R(i, w), R(i, w + 2), R(i + 1, w + 2), one) !== null)) walk = true;
+  }
+  return walk ? 'walk' : null;
+}
+
 export function buildRoads(B, ctx) {
   const { terrain, roads, rivers } = ctx;
   const H = (x, z) => terrain.roadHeight(x, z);

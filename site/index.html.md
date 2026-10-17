@@ -5,7 +5,7 @@
 Página: https://fabianokunst.github.io/Teewald-3d/site/  
 Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/
 
-*Vale do Herval · Rio Grande do Sul · outubro*
+*Vale do Herval · Rio Grande do Sul · maio*
 
 ## Teewald
 

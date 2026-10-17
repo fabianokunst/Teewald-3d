@@ -272,6 +272,44 @@
     .menu a.botao::before { content: none; }
   }
 
+  /* ---- seletor de idioma (os mesmos do jogo) e aviso de idioma ---- */
+  .idiomas { position: relative; flex-shrink: 0; }
+  .idiomas summary {
+    display: inline-flex; align-items: center; gap: var(--e-2); min-height: 44px; padding: 0 var(--e-3); list-style: none; cursor: pointer;
+    border: 1px solid var(--cor-borda-forte); color: var(--cor-texto-suave);
+    font: var(--ui-2) / 1 var(--fonte-ui); letter-spacing: var(--espaco-ui); text-transform: uppercase;
+    transition: color var(--dur-1), border-color var(--dur-1);
+  }
+  .idiomas summary::-webkit-details-marker { display: none; }
+  .idiomas summary::after { content: '▾'; font-size: .8em; }
+  .idiomas summary:hover, .idiomas[open] summary { color: var(--cor-destaque); border-color: var(--cor-destaque); }
+  .icone-globo { width: 16px; height: 16px; }
+  .idiomas ul {
+    position: absolute; right: 0; top: calc(100% + var(--e-2)); min-width: 12rem; margin: 0; padding: var(--e-2) 0; list-style: none;
+    background: var(--cor-fundo); border: 1px solid var(--cor-borda); box-shadow: var(--sombra-3);
+  }
+  .idiomas li a {
+    display: flex; align-items: center; gap: var(--e-3); min-height: 44px; padding: 0 var(--e-4);
+    font: var(--ui-2) / 1 var(--fonte-ui); letter-spacing: .04em; text-transform: uppercase; color: var(--cor-texto-suave); text-decoration: none;
+  }
+  .idiomas li a b { min-width: 2ch; font-weight: 400; color: var(--cor-metal); }
+  .idiomas li a:hover, .idiomas li a[aria-current] { color: var(--cor-destaque); background: rgb(242 200 121 / .06); }
+  .idiomas-rodape a[aria-current] { color: var(--cor-destaque); }
+  @media (max-width: 1040px) {
+    .topo .idiomas { order: 1; margin-left: auto; }
+    .topo .menu-botao { order: 2; margin-left: 0; }
+  }
+  .aviso-idioma {
+    position: fixed; left: 50%; bottom: var(--e-4); z-index: calc(var(--z-topo) + 2); transform: translateX(-50%);
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--e-3) var(--e-4);
+    width: max-content; max-width: calc(100% - 2 * var(--e-4)); padding: var(--e-3) var(--e-3) var(--e-3) var(--e-5);
+    background: var(--cor-superficie); border: 1px solid var(--cor-borda-viva); box-shadow: var(--sombra-3);
+    font-size: var(--t-1); color: var(--cor-texto);
+  }
+  .aviso-idioma p { margin: 0; }
+  .aviso-idioma .fechar-aviso { min-width: 44px; min-height: 44px; background: none; border: 0; color: var(--cor-texto-suave); font-size: 1.1rem; cursor: pointer; }
+  .aviso-idioma .fechar-aviso:hover { color: var(--cor-destaque); }
+
   /* ---- botão ---- */
   .botao {
     position: relative; isolation: isolate; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; gap: var(--e-3);

@@ -29,6 +29,12 @@ In English: Teewald is a free third-person survival horror game with a PlayStati
 
 - [Teewald no navegador]({{jogo}}): o jogo em si (WebGL; a página não tem texto para ler sem rodar o jogo). O idioma segue o navegador; `?lang=en`, `?lang=es` ou `?lang=de` no endereço força outro idioma.
 
+## Outros idiomas
+
+O site e estes textos também existem em inglês, espanhol e alemão (os mesmos idiomas do jogo):
+
+{{idiomas}}
+
 ## Optional
 
 - [Site inteiro num arquivo só]({{endereco}}llms-full.txt): o resumo acima e o texto de todas as páginas do site, em markdown

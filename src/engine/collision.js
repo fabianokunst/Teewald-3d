@@ -10,16 +10,30 @@ export class CollisionWorld {
   }
 
   _insert(item, x0, z0, x1, z1) {
-    const c = this.cell;
     const id = this.items.push(item) - 1;
     item.id = id; item.mark = 0;
+    this._bucket(item, x0, z0, x1, z1);
+    return item;
+  }
+
+  _bucket(item, x0, z0, x1, z1) {
+    const c = this.cell;
+    if (item.dynamic) item.cells = [];
     for (let i = Math.floor(x0 / c); i <= Math.floor(x1 / c); i++)
       for (let j = Math.floor(z0 / c); j <= Math.floor(z1 / c); j++) {
         const k = i * 65536 + j;
         let l = this.map.get(k); if (!l) { l = []; this.map.set(k, l); }
         l.push(item);
+        if (item.dynamic) item.cells.push(l);
       }
-    return item;
+  }
+
+  // caixa que se mexe (o carro): opts.dynamic guarda as células para poder mudar de lugar
+  moveBox(item, x, z, rot, y0 = item.y0, y1 = item.y1) {
+    for (const l of item.cells || []) { const i = l.indexOf(item); if (i >= 0) l.splice(i, 1); }
+    item.x = x; item.z = z; item.c = Math.cos(rot); item.s = Math.sin(rot); item.y0 = y0; item.y1 = y1;
+    const r = Math.hypot(item.hx, item.hz);
+    this._bucket(item, x - r, z - r, x + r, z + r);
   }
 
   // caixa: centro (x,z), meias-medidas locais hx/hz, rotação em Y, faixa de altura y0..y1
@@ -27,7 +41,7 @@ export class CollisionWorld {
   addBox(x, z, hx, hz, rot, y0, y1, opts = {}) {
     const c = Math.cos(rot), s = Math.sin(rot);
     const r = Math.hypot(hx, hz);
-    return this._insert({ t: 'box', x, z, hx, hz, c, s, y0, y1, walk: !!opts.walk, ramp: opts.ramp || null, cam: opts.cam !== false }, x - r, z - r, x + r, z + r);
+    return this._insert({ t: 'box', x, z, hx, hz, c, s, y0, y1, walk: !!opts.walk, ramp: opts.ramp || null, cam: opts.cam !== false, dynamic: !!opts.dynamic, owner: opts.owner || null }, x - r, z - r, x + r, z + r);
   }
 
   addCircle(x, z, r, y0, y1, opts = {}) {

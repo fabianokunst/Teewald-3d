@@ -1,6 +1,6 @@
 # A história — Teewald
 
-> Teewald, o mato do chá: uma colônia de imigrantes do Hunsrück no Vale do Herval, um outubro de neblina e criação aparecendo morta sem uma gota de sangue.
+> Teewald, o mato do chá: uma colônia de imigrantes do Hunsrück no Vale do Herval, um maio de neblina e criação aparecendo morta sem uma gota de sangue.
 
 Página: https://fabianokunst.github.io/Teewald-3d/site/historia.html  
 Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/
@@ -24,7 +24,7 @@ Os antigos tinham respeito por aquele mato. Nos diários deles aparece uma palav
 ![A Igreja Matriz no fim da tarde, com neblina](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
 *A Igreja Matriz vista da praça*
 
-*Outubro*
+*Maio*
 
 ### As últimas semanas
 
@@ -32,12 +32,12 @@ Começou longe, no interior. Depois foi chegando perto das casas.
 
 Tudo o que está aqui você ouve dos moradores ou lê nos papéis da cidade logo que chega. O resto, o jogo conta.
 
-1. **3 de outubro:** A Folha de Teewald noticia sete ovelhas mortas na Linha Schmitt. Nenhum ferimento grande, só dois furos no pescoço. Secas.
+1. **3 de maio:** A Folha de Teewald noticia sete ovelhas mortas na Linha Schmitt. Nenhum ferimento grande, só dois furos no pescoço. Secas.
 2. **Na mesma semana:** Galinha, pato, cabrito, um gato duro atrás do galpão. A Dona Erna perde as doze galinhas numa noite só.
 3. **Domingo à noite:** O Bóris, cachorro do Lucas, arrebenta a corrente latindo para o mato. Depois para de latir. De repente.
 4. **Segunda à noite:** A Mimi, gata da Dona Hilda, sai e não volta. Ela nunca dormiu fora.
 5. **Comunicado nº 41:** A Prefeitura cancela a Kartoffelfest e manda o comércio fechar às seis. Oficialmente, é graxaim.
-6. **Hoje:** Você chega numa tarde de neblina, pelo calçadão do Rio Cadeia. No mural da praça tem um cartaz novo.
+6. **Hoje:** Você chega numa tarde de outono, com neblina, pelo calçadão do Rio Cadeia. No mural da praça tem um cartaz novo.
 
 *Do arquivo da cidade*
 
@@ -46,7 +46,7 @@ Tudo o que está aqui você ouve dos moradores ou lê nos papéis da cidade logo
 Pela cidade há recortes de jornal, cartazes, cartas e páginas de diário. No jogo, cada papel que você lê fica guardado em ARQUIVOS. Estes aqui estão no mural.
 
 ![Recorte da Folha de Teewald: ovelhas mortas na Linha Schmitt](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/jornal.png)
-*Folha de Teewald, 3 de outubro*
+*Folha de Teewald, 3 de maio*
 
 ![Ofício da Prefeitura cancelando a Kartoffelfest](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/oficio.png)
 *Ofício da Prefeitura*

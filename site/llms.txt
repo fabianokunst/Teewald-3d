@@ -1,6 +1,6 @@
 # Teewald
 
-> Teewald é um survival horror em terceira pessoa com visual de PlayStation 1, gratuito, que roda direto no navegador (PC, celular e tablet). Se passa em Teewald, uma cidadezinha fictícia de colonos alemães na serra gaúcha, inspirada em Santa Maria do Herval (RS): um outubro de neblina em que a criação aparece morta, com dois furos no pescoço e sem uma gota de sangue, e um forasteiro decide ficar para descobrir o que anda no mato.
+> Teewald é um survival horror em terceira pessoa com visual de PlayStation 1, gratuito, que roda direto no navegador (PC, celular e tablet). Se passa em Teewald, uma cidadezinha fictícia de colonos alemães na serra gaúcha, inspirada em Santa Maria do Herval (RS): um maio de neblina, em pleno outono, em que a criação aparece morta, com dois furos no pescoço e sem uma gota de sangue, e um forasteiro decide ficar para descobrir o que anda no mato.
 
 - Jogar: https://fabianokunst.github.io/Teewald-3d/ (grátis, sem instalar nem criar conta)
 - Site oficial: https://fabianokunst.github.io/Teewald-3d/site/
@@ -24,7 +24,7 @@ In English: Teewald is a free third-person survival horror game with a PlayStati
 ## Páginas do site
 
 - [Início](https://fabianokunst.github.io/Teewald-3d/site/index.html.md): Survival horror em terceira pessoa com visual de PlayStation 1, numa cidadezinha de colonos alemães na serra gaúcha. Grátis, no navegador.
-- [A história](https://fabianokunst.github.io/Teewald-3d/site/historia.html.md): Teewald, o mato do chá: uma colônia de imigrantes do Hunsrück no Vale do Herval, um outubro de neblina e criação aparecendo morta sem uma gota de sangue.
+- [A história](https://fabianokunst.github.io/Teewald-3d/site/historia.html.md): Teewald, o mato do chá: uma colônia de imigrantes do Hunsrück no Vale do Herval, um maio de neblina e criação aparecendo morta sem uma gota de sangue.
 - [A cidade](https://fabianokunst.github.io/Teewald-3d/site/cidade.html.md): Os lugares de Teewald: o calçadão do Rio Cadeia, a Praça 10 de Abril, a Igreja Matriz, o pavilhão da Kartoffelfest, as casas de enxaimel e o mato. Uma cidade feita de mapas de verdade.
 - [Personagens](https://fabianokunst.github.io/Teewald-3d/site/personagens.html.md): Os personagens de Teewald: o forasteiro e os 24 moradores com fala, com retrato, altura, roupa e jeito de cada um, tirados dos modelos do jogo.
 - [O jogo](https://fabianokunst.github.io/Teewald-3d/site/jogo.html.md): Como se joga Teewald: combate, inventário, arquivos, estilos visuais 3D LIMPO e PS1 RETRÔ, clima, controles no teclado, no controle e no toque, e perguntas frequentes.
@@ -33,6 +33,14 @@ In English: Teewald is a free third-person survival horror game with a PlayStati
 ## Jogo
 
 - [Teewald no navegador](https://fabianokunst.github.io/Teewald-3d/): o jogo em si (WebGL; a página não tem texto para ler sem rodar o jogo). O idioma segue o navegador; `?lang=en`, `?lang=es` ou `?lang=de` no endereço força outro idioma.
+
+## Outros idiomas
+
+O site e estes textos também existem em inglês, espanhol e alemão (os mesmos idiomas do jogo):
+
+- [English](https://fabianokunst.github.io/Teewald-3d/site/en/llms.txt)
+- [Español](https://fabianokunst.github.io/Teewald-3d/site/es/llms.txt)
+- [Deutsch](https://fabianokunst.github.io/Teewald-3d/site/de/llms.txt)
 
 ## Optional
 

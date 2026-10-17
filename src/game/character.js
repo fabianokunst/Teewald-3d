@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { ATLAS, REG, headU, headRow, hairline } from './heroTexture.js';
+import { armIK } from './npcActs.js';
 
 // Protagonista: loiro, pele clara, jaqueta de lona marrom, calça marrom-escura e botas.
 // Malha única com esqueleto (~1200 triângulos) e sombreamento Gouraud. As juntas são
@@ -585,7 +586,8 @@ export class Character {
     // giro do corpo: quem move o personagem gira a raiz depois de animar (um quadro de atraso)
     const yaw = this.root.rotation.y;
     let w = this.yaw0 === null || dt <= 0 ? 0 : wrapPi(yaw - this.yaw0) / dt;
-    if (Math.abs(w) > 20) w = 0;
+    // sentado no carro: o carro faz a curva, o corpo não "dá passos" girando no lugar
+    if (Math.abs(w) > 20 || o.seated) w = 0;
     this.yaw0 = yaw;
     this.turn += (w - this.turn) * k(10);
     // aceleração: inclina para a frente ao arrancar e para trás ao frear
@@ -629,7 +631,7 @@ export class Character {
     gaitParams(v, act, r, g, this.cad);
     const prev = this.cyc;
     if (grounded) this.cyc = (this.cyc + this.back * g.f * dt * this.move + 1) % 1;
-    if (grounded && act > 0.3 && this.swim < 0.3) {
+    if (grounded && act > 0.3 && this.swim < 0.3 && !o.seated) {
       for (let i = 0; i < 2; i++) {
         const u0 = (prev + i * 0.5) % 1, u1 = (this.cyc + i * 0.5) % 1;
         if (this.back > 0 ? u1 < u0 - 0.5 : u0 >= g.duty && u1 < g.duty && u0 - u1 < 0.5) this.onStep?.(running);
@@ -804,6 +806,37 @@ export class Character {
       L.knee.rotation.x = lerp(L.knee.rotation.x, kn, w);
       L.ankle.quaternion.slerp(_q.setFromEuler(_eu2.set(an, 0, 0)), w);
       L.toe.rotation.x = lerp(L.toe.rotation.x, 0, w);
+    }
+  }
+
+  // sentado (carro), por cima da pose parada; medidas em metros no espaço da raiz:
+  // s = { k: 0..1 sentado, hips: [y, z] do quadril sentado, lean: tronco para trás (rad),
+  //       duck: 0..1 abaixa a cabeça (entrando pela porta), feet: [[x, y, z] tornozelo direito,
+  //       esquerdo], pole: para onde os joelhos apontam, hands: [alvo do punho direito, esquerdo]
+  //       (no mundo, ou null) com handK, look: giro da cabeça }
+  seatPose(s) {
+    const k = s.k, sc = this.root.scale.y || 1, H = this.hips, S = this.spine;
+    const hy = s.hips[0] / sc, hz = s.hips[1] / sc;
+    H.position.set(lerp(H.position.x, 0, k), lerp(H.position.y, hy, k), lerp(H.position.z, hz, k));
+    // bacia deitada para trás no banco; o tronco compensa e se inclina para entrar
+    H.rotation.set(lerp(H.rotation.x, -0.32, k), lerp(H.rotation.y, 0, k), lerp(H.rotation.z, 0, k));
+    const duck = s.duck || 0;
+    S.rotation.set(lerp(S.rotation.x, 0.32 - (s.lean ?? 0.12) + duck * 0.55, k), lerp(S.rotation.y, 0, k), lerp(S.rotation.z, 0, k));
+    this.neck.rotation.set(lerp(this.neck.rotation.x, -0.05 + duck * 0.2, k), 0, 0);
+    this.head.rotation.set(lerp(this.head.rotation.x, 0.02 + duck * 0.25, k), lerp(this.head.rotation.y, s.look || 0, Math.max(k, 0.5)), lerp(this.head.rotation.z, 0, k));
+    const p = s.pole || [0, 0.6, 1];
+    for (let i = 0; i < 2; i++) {
+      const f = s.feet[i];
+      this._leg(this.legs[i], _tg.set(f[0] / sc, f[1] / sc, f[2] / sc), _pole.set(p[0], p[1], p[2]), 0, f[3] || 0, 0);
+    }
+    if (!s.hands) return;
+    this.root.updateMatrixWorld(true);
+    for (let i = 0; i < 2; i++) {
+      const t = s.hands[i], hk = s.handK ? s.handK[i] : 1;
+      if (!t || hk <= 0.002) continue;
+      const A = this.arms[i], l = S.worldToLocal(_tg.copy(t));
+      // cotovelos para baixo e um pouco para fora; o punho dobra segurando o aro
+      armIK(A, l.x, l.y, l.z, A.side * 0.7, -1, -0.15, hk, -0.15);
     }
   }
 

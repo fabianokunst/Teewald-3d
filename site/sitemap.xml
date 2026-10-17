@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- gerado por npm run site (tools/site.mjs); publicado em https://fabianokunst.github.io/Teewald-3d/sitemap.xml -->
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://fabianokunst.github.io/Teewald-3d/</loc>
     <lastmod>2026-10-16</lastmod>
@@ -10,6 +10,11 @@
   <url>
     <loc>https://fabianokunst.github.io/Teewald-3d/site/</loc>
     <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/"/>
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/capa.jpg</image:loc></image:image>
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/cartaz-chupacabras.png</image:loc></image:image>
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg</image:loc></image:image>
@@ -26,8 +31,82 @@
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/pegadas.jpg</image:loc></image:image>
   </url>
   <url>
+    <loc>https://fabianokunst.github.io/Teewald-3d/site/en/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/"/>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/capa.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/cartaz-chupacabras.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mapa.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/conversa.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/pegadas.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://fabianokunst.github.io/Teewald-3d/site/es/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/"/>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/capa.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/es/cartaz-chupacabras.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mapa.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/conversa.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/pegadas.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://fabianokunst.github.io/Teewald-3d/site/de/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/"/>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/capa.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/cartaz-chupacabras.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mapa.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/conversa.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/pegadas.jpg</image:loc></image:image>
+  </url>
+  <url>
     <loc>https://fabianokunst.github.io/Teewald-3d/site/historia.html</loc>
     <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/historia.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/historia.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/historia.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/historia.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/historia.html"/>
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg</image:loc></image:image>
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg</image:loc></image:image>
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/jornal.png</image:loc></image:image>
@@ -40,8 +119,124 @@
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg</image:loc></image:image>
   </url>
   <url>
+    <loc>https://fabianokunst.github.io/Teewald-3d/site/en/historia.html</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/historia.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/historia.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/historia.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/historia.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/historia.html"/>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/jornal.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/oficio.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/programa.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/redacao.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/cartaz-boris.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://fabianokunst.github.io/Teewald-3d/site/es/historia.html</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/historia.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/historia.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/historia.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/historia.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/historia.html"/>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/es/jornal.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/es/oficio.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/es/programa.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/es/redacao.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/es/cartaz-boris.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://fabianokunst.github.io/Teewald-3d/site/de/historia.html</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/historia.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/historia.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/historia.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/historia.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/historia.html"/>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/jornal.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/oficio.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/programa.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/redacao.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/cartaz-boris.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg</image:loc></image:image>
+  </url>
+  <url>
     <loc>https://fabianokunst.github.io/Teewald-3d/site/cidade.html</loc>
     <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/cidade.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/cidade.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/cidade.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/cidade.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/cidade.html"/>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mato.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mapa.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://fabianokunst.github.io/Teewald-3d/site/en/cidade.html</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/cidade.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/cidade.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/cidade.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/cidade.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/cidade.html"/>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mato.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mapa.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://fabianokunst.github.io/Teewald-3d/site/es/cidade.html</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/cidade.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/cidade.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/cidade.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/cidade.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/cidade.html"/>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mato.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mapa.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://fabianokunst.github.io/Teewald-3d/site/de/cidade.html</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/cidade.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/cidade.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/cidade.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/cidade.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/cidade.html"/>
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg</image:loc></image:image>
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg</image:loc></image:image>
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg</image:loc></image:image>
@@ -55,6 +250,197 @@
   <url>
     <loc>https://fabianokunst.github.io/Teewald-3d/site/personagens.html</loc>
     <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/personagens.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/personagens.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/personagens.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/personagens.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/personagens.html"/>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/letreiro.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/heroi.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/heroi.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/arno.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/arno.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/hilda.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/hilda.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lucas.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lucas.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/marlene.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/marlene.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/edgar.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/edgar.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lauro.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lauro.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/katia.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/katia.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bruno.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bruno.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/valdir.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/valdir.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/erna.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/erna.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/joao.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/joao.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ana.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ana.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/alfredo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/alfredo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/wilma.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/wilma.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/paula.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/paula.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/romeu.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/romeu.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bernardo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bernardo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/irma.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/irma.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/rudi.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/rudi.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/otto.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/otto.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ivo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ivo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/gertrud.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/gertrud.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/luana.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/luana.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/tiago.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/tiago.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/silhueta.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://fabianokunst.github.io/Teewald-3d/site/en/personagens.html</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/personagens.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/personagens.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/personagens.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/personagens.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/personagens.html"/>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/letreiro.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/heroi.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/heroi.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/arno.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/arno.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/hilda.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/hilda.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lucas.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lucas.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/marlene.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/marlene.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/edgar.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/edgar.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lauro.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lauro.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/katia.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/katia.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bruno.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bruno.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/valdir.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/valdir.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/erna.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/erna.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/joao.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/joao.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ana.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ana.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/alfredo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/alfredo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/wilma.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/wilma.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/paula.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/paula.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/romeu.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/romeu.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bernardo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bernardo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/irma.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/irma.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/rudi.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/rudi.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/otto.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/otto.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ivo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ivo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/gertrud.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/gertrud.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/luana.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/luana.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/tiago.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/tiago.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/silhueta.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://fabianokunst.github.io/Teewald-3d/site/es/personagens.html</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/personagens.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/personagens.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/personagens.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/personagens.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/personagens.html"/>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/letreiro.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/heroi.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/heroi.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/arno.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/arno.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/hilda.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/hilda.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lucas.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lucas.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/marlene.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/marlene.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/edgar.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/edgar.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lauro.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lauro.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/katia.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/katia.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bruno.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bruno.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/valdir.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/valdir.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/erna.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/erna.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/joao.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/joao.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ana.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ana.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/alfredo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/alfredo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/wilma.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/wilma.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/paula.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/paula.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/romeu.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/romeu.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bernardo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bernardo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/irma.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/irma.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/rudi.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/rudi.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/otto.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/otto.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ivo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ivo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/gertrud.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/gertrud.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/luana.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/luana.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/tiago.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/tiago.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/documentos/silhueta.png</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://fabianokunst.github.io/Teewald-3d/site/de/personagens.html</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/personagens.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/personagens.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/personagens.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/personagens.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/personagens.html"/>
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/letreiro.jpg</image:loc></image:image>
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/heroi.jpg</image:loc></image:image>
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/heroi.jpg</image:loc></image:image>
@@ -112,6 +498,56 @@
   <url>
     <loc>https://fabianokunst.github.io/Teewald-3d/site/jogo.html</loc>
     <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/jogo.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/jogo.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/jogo.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/jogo.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/jogo.html"/>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/inventario.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-limpo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest-portico.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://fabianokunst.github.io/Teewald-3d/site/en/jogo.html</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/jogo.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/jogo.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/jogo.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/jogo.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/jogo.html"/>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/inventario.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-limpo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest-portico.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://fabianokunst.github.io/Teewald-3d/site/es/jogo.html</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/jogo.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/jogo.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/jogo.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/jogo.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/jogo.html"/>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/inventario.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-limpo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest-portico.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://fabianokunst.github.io/Teewald-3d/site/de/jogo.html</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/jogo.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/jogo.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/jogo.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/jogo.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/jogo.html"/>
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg</image:loc></image:image>
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/inventario.jpg</image:loc></image:image>
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-limpo.jpg</image:loc></image:image>
@@ -122,6 +558,110 @@
   <url>
     <loc>https://fabianokunst.github.io/Teewald-3d/site/galeria.html</loc>
     <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/galeria.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/galeria.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/galeria.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/galeria.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/galeria.html"/>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/capa.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/conversa.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest-portico.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/letreiro.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/pegadas.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/inventario.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/titulo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-praca.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-calcadao.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-igreja-dentro.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://fabianokunst.github.io/Teewald-3d/site/en/galeria.html</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/galeria.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/galeria.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/galeria.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/galeria.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/galeria.html"/>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/capa.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/conversa.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest-portico.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/letreiro.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/pegadas.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/inventario.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/titulo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-praca.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-calcadao.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-igreja-dentro.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://fabianokunst.github.io/Teewald-3d/site/es/galeria.html</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/galeria.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/galeria.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/galeria.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/galeria.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/galeria.html"/>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/capa.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/conversa.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest-portico.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/letreiro.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/pegadas.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/inventario.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/titulo.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-praca.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-calcadao.jpg</image:loc></image:image>
+    <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-igreja-dentro.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://fabianokunst.github.io/Teewald-3d/site/de/galeria.html</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://fabianokunst.github.io/Teewald-3d/site/galeria.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fabianokunst.github.io/Teewald-3d/site/en/galeria.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://fabianokunst.github.io/Teewald-3d/site/es/galeria.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://fabianokunst.github.io/Teewald-3d/site/de/galeria.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://fabianokunst.github.io/Teewald-3d/site/en/galeria.html"/>
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg</image:loc></image:image>
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/capa.jpg</image:loc></image:image>
     <image:image><image:loc>https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg</image:loc></image:image>

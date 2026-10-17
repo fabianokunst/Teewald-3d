@@ -19,7 +19,10 @@ const MIX = {
   music: 0,       // tensão das lutas
   fx: 0,          // o resto (corujas, telefones, banda fantasma...): o antigo a.master
   ui: 0,          // menus, avisos e bipes de fala
+  car: -2,        // o carro: motor, pneus, portas, buzina, batidas (game/carAudio.js)
 };
+// dentro do carro com as portas fechadas, o vento, o rio e os sinais ao longe chegam abafados
+const MUFFLED = ['amb', 'omen'];
 const DUCKED = ['amb', 'omen', 'music'];   // abaixam quando a arma dispara
 const db = v => Math.pow(10, v / 20);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -55,9 +58,11 @@ export class Audio {
     this.mix = c.createGain(); this.mix.connect(lim);
     this.duckG = c.createGain(); this.duckG.connect(this.mix);
     this.bus = {};
+    this.muffleF = c.createBiquadFilter(); this.muffleF.type = 'lowpass'; this.muffleF.frequency.value = 20000; this.muffleF.Q.value = 0.5;
+    this.muffleF.connect(this.duckG);
     for (const k in MIX) {
       const g = c.createGain(); g.gain.value = db(MIX[k]);
-      g.connect(DUCKED.includes(k) ? this.duckG : this.mix);
+      g.connect(MUFFLED.includes(k) ? this.muffleF : DUCKED.includes(k) ? this.duckG : this.mix);
       this.bus[k] = g;
     }
     this.master = this.bus.fx;   // quem liga direto em a.master cai no barramento geral
@@ -186,6 +191,13 @@ export class Audio {
     const f = this.ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = lp;
     f.connect(this._route(pan, this.bus[bus]));
     return f;
+  }
+
+  // dentro do carro (k = 0 rua ... 1 portas fechadas): abafa o ambiente
+  setMuffle(k) {
+    if (!this.ctx || this._muffle === k) return;
+    this._muffle = k;
+    this.muffleF.frequency.setTargetAtTime(20000 * Math.pow(1100 / 20000, clamp(k, 0, 1)), this.ctx.currentTime, 0.12);
   }
 
   // tensão da música: k 0..1 (criaturas por perto), boss 0..1 (luta com chefe)

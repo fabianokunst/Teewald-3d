@@ -1,5 +1,6 @@
 import { TEX } from './textures.js';
 import { paint, mul, finish } from './archTextures.js';
+import { makeHeroCarTextures } from './heroCarTextures.js';
 
 // Texturas dos carros em pixel art. A lataria é clara e recebe a cor do carro
 // pela cor do vértice; vidros, faróis, lanternas, placa e rodas não são tingidos.
@@ -89,4 +90,7 @@ export function makeCarTextures() {
     if (r > 6.5 && r < 8.5 && Math.cos(a * 6) > 0.4) return [30, 30, 32];
     return mul([186, 188, 192], k);
   }), false);
+
+  // o carro do protagonista
+  makeHeroCarTextures();
 }

@@ -166,6 +166,15 @@ uniform vec4 uShadowFade;
 uniform sampler2D glowMap;
 uniform float uGlow;
 #endif
+#ifdef USE_GLOSS
+// lataria envernizada, cromado e vidro: x = reflexo do ambiente, y = brilho do sol e das
+// luzes, z = expoente do brilho (maior = mais fino), w = reflexo olhando de frente (fresnel)
+uniform vec4 uGloss;
+uniform vec3 uSunDir;
+uniform vec3 uSunColor;
+uniform vec3 uAmbSky;
+uniform vec3 uAmbGround;
+#endif
 
 varying vec3 vUvAff;
 varying vec2 vUv;
@@ -220,12 +229,42 @@ void main() {
   // na folhagem a sombra pesa menos (as folhas se sombreiam entre si e virariam manchas)
   if (uShadowOn > 0.0 && vSun.r + vSun.g + vSun.b > 0.002) sh = mix(1.0, sunShadow(), uShadowOn * (1.0 - 0.45 * uFoliage));
   vec3 c = min(t.rgb * (vLight + vSun * sh + dyn * vBase), vec3(1.0));
+  float alpha = t.a * uOpacity;
+  #ifdef USE_GLOSS
+  {
+    // reflexo de mentira, sem mapa de ambiente: chão escuro embaixo, a névoa no horizonte
+    // (com uma faixa clara, o "risco" do cromado) e o céu em cima; o sol e as luzes por perto
+    // viram pontos de brilho. A sombra apaga o brilho do sol
+    vec3 N = normalize(vN), V = normalize(cameraPosition - vWP);
+    if (dot(N, V) < 0.0) N = -N;
+    vec3 Rf = reflect(-V, N);
+    float fres = mix(uGloss.w, 1.0, pow(1.0 - max(dot(N, V), 0.0), 4.0));
+    float up = Rf.y;
+    vec3 sky = mix(uFogColor, uAmbSky * 1.3, smoothstep(0.06, 0.75, up));
+    vec3 env = mix(uAmbGround * 0.22, sky, smoothstep(-0.14, 0.03, up));
+    env += (uFogColor * 0.55 + 0.05) * (1.0 - smoothstep(0.0, 0.08, abs(up - 0.02)));
+    vec3 refl = env * uGloss.x * fres + uSunColor * pow(max(dot(Rf, uSunDir), 0.0), uGloss.z) * uGloss.y * sh;
+    for (int i = 0; i < 8; i++) {
+      vec4 Lp = uLights[i];
+      if (Lp.w <= 0.0) continue;
+      vec3 dv = Lp.xyz - vWP;
+      float d = length(dv);
+      if (d >= Lp.w * 1.6) continue;
+      float att = 1.0 - d / (Lp.w * 1.6);
+      if (i == 0 && uSpot.w > -1.5) att *= smoothstep(uSpot.w - 0.2, uSpot.w + 0.1, dot(-dv / max(d, 1e-4), uSpot.xyz));
+      refl += uLightCols[i] * pow(max(dot(Rf, dv / max(d, 1e-4)), 0.0), uGloss.z * 0.6) * att * att * uGloss.y * 0.7;
+    }
+    c = min(c + refl, vec3(1.0));
+    // vidro: de lado ele espelha mais e deixa ver menos o que tem dentro
+    alpha = min(1.0, alpha + fres * uGloss.x * 0.5);
+  }
+  #endif
   c = mix(c, mix(uFogColor, uSunFog, vSunFog), vFog);
   #ifdef USE_GLOW
   // luz própria (janela acesa): somada depois da neblina, que a apaga mais devagar
   if (uGlow > 0.0) c = min(c + texture2D(glowMap, uv).rgb * uGlow * (1.0 - vFog * vFog), vec3(1.0));
   #endif
-  gl_FragColor = vec4(c, t.a * uOpacity);
+  gl_FragColor = vec4(c, alpha);
 }
 `;
 
@@ -281,8 +320,9 @@ export function ps1Material(o = {}) {
       uAffineMat: { value: o.affine === false ? 0 : 1 },
       uOpacity: { value: o.opacity ?? 1 },
       ...(o.glowMap ? { glowMap: { value: o.glowMap }, uGlow: { value: 0 } } : {}),
+      ...(o.gloss ? { uGloss: { value: new THREE.Vector4(...o.gloss) } } : {}),
     },
-    defines: { ...(o.glowMap ? { USE_GLOW: '' } : {}), ...(o.edgeFade ? { EDGE_FADE: '' } : {}) },
+    defines: { ...(o.glowMap ? { USE_GLOW: '' } : {}), ...(o.edgeFade ? { EDGE_FADE: '' } : {}), ...(o.gloss ? { USE_GLOSS: '' } : {}) },
     vertexShader: VERT,
     fragmentShader: FRAG,
     vertexColors: true,

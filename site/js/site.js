@@ -279,14 +279,71 @@
     });
   });
 
+  // ---- idioma (os mesmos do jogo): textos deste arquivo, seletor do topo e aviso de idioma
+  // O aviso aparece uma vez para quem chega numa página em outro idioma que não o seu: o que
+  // escolheu no jogo (mesmo endereço, teewald.settings.v1) ou, sem isso, o do navegador.
+  // Escolher um idioma (no seletor ou no aviso) ou fechar o aviso fica guardado.
+  const TEXTOS = {
+    pt: { foto: 'Foto ampliada', fechar: 'FECHAR ✕', anterior: 'Foto anterior', proxima: 'Próxima foto', fecharAviso: 'Fechar' },
+    en: { foto: 'Enlarged photo', fechar: 'CLOSE ✕', anterior: 'Previous photo', proxima: 'Next photo', fecharAviso: 'Close' },
+    es: { foto: 'Foto ampliada', fechar: 'CERRAR ✕', anterior: 'Foto anterior', proxima: 'Foto siguiente', fecharAviso: 'Cerrar' },
+    de: { foto: 'Vergrößertes Foto', fechar: 'SCHLIESSEN ✕', anterior: 'Vorheriges Foto', proxima: 'Nächstes Foto', fecharAviso: 'Schließen' },
+  };
+  const SUGESTAO = {
+    pt: ['Este site também está em português.', 'Ler em português'],
+    en: ['This site is also in English.', 'Read in English'],
+    es: ['Este sitio también está en español.', 'Leer en español'],
+    de: ['Diese Seite gibt es auch auf Deutsch.', 'Auf Deutsch lesen'],
+  };
+  const lingua = (raiz.lang || 'pt').slice(0, 2).toLowerCase();
+  const textos = TEXTOS[lingua] || TEXTOS.pt;
+  const memoria = {
+    ler() { try { return localStorage.getItem('teewald.site.idioma'); } catch (e) { return null; } },
+    guardar(l) { try { localStorage.setItem('teewald.site.idioma', l); } catch (e) { /* sem armazenamento: o aviso volta */ } },
+  };
+  function idiomaDoVisitante() {
+    try {
+      const jogo = JSON.parse(localStorage.getItem('teewald.settings.v1') || '{}');
+      if (TEXTOS[jogo.lang]) return jogo.lang;
+    } catch (e) { /* sem jogo salvo */ }
+    for (const l of navigator.languages?.length ? navigator.languages : [navigator.language || '']) {
+      const id = String(l).slice(0, 2).toLowerCase();
+      if (TEXTOS[id]) return id;
+    }
+    return 'en';
+  }
+  const seletor = $('.idiomas');
+  $$('a[hreflang]').forEach(a => a.addEventListener('click', () => memoria.guardar(a.hreflang)));
+  if (seletor) {
+    document.addEventListener('click', e => { if (seletor.open && !seletor.contains(e.target)) seletor.open = false; });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && seletor.open) { seletor.open = false; $('summary', seletor).focus(); }
+    });
+  }
+  const sugerido = idiomaDoVisitante();
+  const destino = seletor && $(`a[hreflang="${sugerido}"]`, seletor);
+  if (destino && sugerido !== lingua && !memoria.ler() && !navigator.webdriver) {
+    const [frase, acao] = SUGESTAO[sugerido];
+    const aviso = document.createElement('div');
+    aviso.className = 'aviso-idioma';
+    aviso.setAttribute('role', 'region');
+    aviso.setAttribute('aria-label', 'Idioma / Language');
+    aviso.innerHTML = `<p lang="${destino.lang}">${frase}</p>` +
+      `<a class="botao botao-pequeno" href="${destino.getAttribute('href')}" hreflang="${sugerido}" lang="${destino.lang}">${acao}</a>` +
+      `<button class="fechar-aviso" type="button" aria-label="${textos.fecharAviso}">✕</button>`;
+    document.body.appendChild(aviso);
+    $('a', aviso).addEventListener('click', () => memoria.guardar(sugerido));
+    $('button', aviso).addEventListener('click', () => { memoria.guardar(lingua); aviso.remove(); });
+  }
+
   // ---- caixa de foto
   const caixa = document.createElement('dialog');
   caixa.className = 'caixa-foto';
-  caixa.setAttribute('aria-label', 'Foto ampliada');
+  caixa.setAttribute('aria-label', textos.foto);
   caixa.innerHTML = '<figure><img alt=""><figcaption></figcaption></figure>' +
-    '<button class="fechar" type="button">FECHAR ✕</button>' +
-    '<button class="passar anterior" type="button" aria-label="Foto anterior">◀</button>' +
-    '<button class="passar proxima" type="button" aria-label="Próxima foto">▶</button>';
+    `<button class="fechar" type="button">${textos.fechar}</button>` +
+    `<button class="passar anterior" type="button" aria-label="${textos.anterior}">◀</button>` +
+    `<button class="passar proxima" type="button" aria-label="${textos.proxima}">▶</button>`;
   const cImg = $('img', caixa), cLeg = $('figcaption', caixa);
   let grupo = [], atual = 0;
   const mostrar = i => {
