@@ -1,163 +1,163 @@
-# O jogo — Teewald
+# The game — Teewald
 
-> Como se joga Teewald: combate, inventário, arquivos, estilos visuais 3D LIMPO e PS1 RETRÔ, clima, controles no teclado, no controle e no toque, e perguntas frequentes.
+> How to play Teewald: combat, inventory, files, the CLEAN 3D and RETRO PS1 visual styles, weather, keyboard, controller and touch controls, and frequently asked questions.
 
-Página: https://fabianokunst.github.io/Teewald-3d/site/en/jogo.html  
-Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/?lang=en
+Page: https://fabianokunst.github.io/Teewald-3d/site/en/jogo.html  
+Play free in your browser: https://fabianokunst.github.io/Teewald-3d/?lang=en
 
-*O jogo*
+*The game*
 
-## Como se sobrevive
+## How to survive
 
-Terceira pessoa, câmera por cima do ombro e munição contada. Teewald é um survival horror à moda antiga, que roda direto no navegador.
+Third person, an over-the-shoulder camera and scarce ammo. Teewald is old-school survival horror that runs right in your browser.
 
-*Combate*
+*Combat*
 
-### Com o que tiver à mão
+### With whatever’s at hand
 
-- Soco em combo de três golpes, sempre disponível. O golpe vira sozinho para quem estiver mais perto.
-- Pedaço de pau, cano de ferro, pá, foice e machado. Batem mais forte, mas gastam e quebram.
-- Pedras e tijolos para arremessar. Com a arma na mão, coronhada.
-- Esquiva rápida, com um instante de folga para sair do bote.
-- Uma pistola 9 mm para começar. O resto você conquista pelo caminho.
-- Cada lenda tem o seu ponto fraco. Bala nem sempre resolve.
+- A three-hit punch combo, always available. Your strike turns on its own toward whoever is closest.
+- Stick, iron pipe, shovel, scythe and axe. They hit harder, but wear out and break.
+- Rocks and bricks to throw. With a gun in hand, a pistol whip.
+- A quick dodge, with a split second of grace to get clear of a lunge.
+- A 9 mm pistol to start with. The rest you earn along the way.
+- Every legend has its weak spot. Bullets don’t always do it.
 
-Cada capítulo termina com uma nota, de S a C, pelas criaturas derrotadas, pelas quedas e pelo tempo. Três dificuldades: fácil, normal e difícil.
+Each chapter ends with a rank, from S to C, based on creatures defeated, deaths and time. Three difficulties: easy, normal and hard.
 
-![O protagonista mirando a pistola por cima do ombro](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
-*Mirando, a câmera vai para o ombro*
+![The protagonist aiming his pistol over the shoulder](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
+*When you aim, the camera moves to the shoulder*
 
-![Tela do inventário com os espaços e um item em 3D](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/inventario.jpg)
-*Inventário de 16 espaços*
+![Inventory screen with its slots and an item in 3D](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/en/inventario.jpg)
+*16-slot inventory*
 
-*Inventário e arquivos*
+*Inventory and files*
 
-### Tudo que cabe no bolso
+### Everything that fits in your pockets
 
-Dezesseis espaços no estilo dos survival horror de PS1, com o item girando em 3D. Equipar, carregar, comer, examinar. A vida volta com **cuca** e **chá de marcela**, e criatura derrotada às vezes larga munição.
+Sixteen slots in the style of PS1 survival horror, with the item spinning in 3D. Equip, load, eat, examine. Health comes back with **cuca** (crumb cake) and **marcela tea**, and defeated creatures sometimes drop ammo.
 
-Pela cidade há recortes de jornal, cartas, cartazes e páginas de diário, e cada um fica guardado em ARQUIVOS. As lendas que você vê de perto ganham uma ficha. E tem gente pedindo ajuda: uma gata e um cachorro sumiram.
+Around town there are newspaper clippings, letters, posters and diary pages, and each one is kept in FILES. The legends you see up close get an entry. And some people need help: a cat and a dog have gone missing.
 
-*Estilo visual*
+*Visual style*
 
-### Dois jeitos de ver
+### Two ways to see it
 
-Arraste a divisória. À esquerda, o 3D LIMPO; à direita, o PS1 RETRÔ. Os dois estão em OPÇÕES, junto com a iluminação.
+Drag the divider. On the left, CLEAN 3D; on the right, RETRO PS1. Both are in OPTIONS, along with the lighting.
 
-![A Matriz ao anoitecer no estilo 3D LIMPO](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-limpo.jpg)
+![The parish church at nightfall in CLEAN 3D style](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-limpo.jpg)
 
-![A mesma vista no estilo PS1 RETRÔ, em baixa resolução](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg)
+![The same view in RETRO PS1 style, at low resolution](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg)
 
-#### 3D limpo
+#### Clean 3D
 
-Resolução da própria tela, antisserrilhado e texturas suaves. Os polígonos low poly aparecem nítidos.
+Your screen’s native resolution, anti-aliasing and smooth textures. The low-poly models look crisp.
 
-#### PS1 retrô
+#### Retro PS1
 
-320×240 ampliado sem suavização, dithering e cor de 15 bits. Do jeito que a televisão de tubo mostrava.
+320×240 scaled up without smoothing, dithering and 15-bit color. The way a tube TV showed it.
 
-#### Iluminação
+#### Lighting
 
-AVANÇADA, com sol baixo no fim da tarde, sombras do sol e do luar e halo nos lampiões. Ou CLÁSSICA, encoberta e sem sombra.
+ADVANCED, with a low late-afternoon sun, shadows from the sun and the moonlight, and halos around the street lamps. Or CLASSIC, overcast and shadowless.
 
-*Clima e som*
+*Weather and sound*
 
-### O tempo muda
+### The weather turns
 
-Tarde encoberta, anoitecer, noite fechada, neblina de madrugada, chuva, garoa e tempestade, com o trovão chegando depois do clarão. De noite a lanterna vai na frente, os lampiões da praça acendem e o resto fica no escuro.
+Overcast afternoons, dusk, pitch-black nights, predawn fog, rain, drizzle and storms, with the thunder arriving after the flash. At night your flashlight leads the way, the street lamps in the square come on and everything else stays dark.
 
-Todo som do jogo é feito em código: vento, rio, chuva no telhado, grilos, corvos, quero-quero, a madeira rangendo dentro de casa e o sino da igreja, mais alto perto da torre e abafado entre paredes. Com fone de ouvido, dá para saber de que lado vem o barulho.
+Every sound in the game is made in code: wind, river, rain on the roof, crickets, crows, lapwings, wood creaking inside the house and the church bell, louder near the tower and muffled between walls. With headphones, you can tell which side a noise is coming from.
 
-![Clarão de raio sobre a cidade numa noite de tempestade](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg)
-*Primeiro o clarão, depois o trovão*
+![A lightning flash over the town on a stormy night](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg)
+*First the flash, then the thunder*
 
-*Controles*
+*Controls*
 
-### Teclado, controle ou toque
+### Keyboard, controller or touch
 
-**Teclado e mouse**
+**Keyboard and mouse**
 
-- **Andar:** `W` `A` `S` `D` ou setas
-- **Correr:** `Shift`
-- **Pular · esquivar:** `Espaço` · `C` ou `Ctrl`
-- **Câmera:** mouse (clique na tela para prender) · `Q` `E` · roda aproxima
-- **Conversar, ler, pegar, entrar:** `F` ou `E`
-- **Mirar · atirar:** botão direito (segurar) · botão esquerdo
-- **Golpe:** `V` · botão esquerdo sem arma de fogo
-- **Trocar de arma · recarregar:** `1` a `8` · `R`
-- **Comer, beber (cura):** `H`
-- **Inventário · arquivos:** `I` ou `Tab` · `J`
-- **Minimapa · pausa:** `M` · `Esc` ou `P`
+- **Move:** `W` `A` `S` `D` or arrow keys
+- **Run:** `Shift`
+- **Jump · dodge:** `Space` · `C` or `Ctrl`
+- **Camera:** mouse (click the screen to lock it) · `Q` `E` · wheel zooms
+- **Talk, read, take, enter:** `F` or `E`
+- **Aim · shoot:** right button (hold) · left button
+- **Strike:** `V` · left button without a firearm
+- **Switch weapon · reload:** `1` to `8` · `R`
+- **Eat, drink (heal):** `H`
+- **Inventory · files:** `I` or `Tab` · `J`
+- **Minimap · pause:** `M` · `Esc` or `P`
 
-**Controle**
+**Controller**
 
-- **Andar · câmera:** analógico esquerdo · analógico direito (`R3` centraliza)
-- **Correr:** `B` (segurar) ou `L3`
-- **Pular · esquivar:** `A` · `B` (toque rápido)
-- **Conversar, ler, pegar, entrar:** `A`
-- **Mirar · atirar:** `L2` ou `LB` · `R2`
-- **Golpe:** `RB`
-- **Trocar de arma · recarregar:** direcional ◀ ▶ · `X`
-- **Comer, beber (cura):** direcional ▲
-- **Inventário:** `Y`
-- **Pausa e arquivos · minimapa:** `Start` · `Select`
+- **Move · camera:** left stick · right stick (`R3` recenters)
+- **Run:** `B` (hold) or `L3`
+- **Jump · dodge:** `A` · `B` (quick tap)
+- **Talk, read, take, enter:** `A`
+- **Aim · shoot:** `L2` or `LB` · `R2`
+- **Strike:** `RB`
+- **Switch weapon · reload:** D-pad ◀ ▶ · `X`
+- **Eat, drink (heal):** D-pad ▲
+- **Inventory:** `Y`
+- **Pause and files · minimap:** `Start` · `Select`
 
-**Toque**
+**Touch**
 
-- **Andar:** arrastar no lado esquerdo da tela
-- **Câmera:** arrastar no lado direito (ou no próprio ATIRAR) · toque duplo centraliza · pinça aproxima
-- **Correr · pular · esquivar:** botões CORRER, PULAR e ESQUIVA
-- **Conversar, ler, pegar, entrar:** o botão aparece em cima do morador ou do objeto
-- **Mirar · atirar · golpe:** MIRAR liga e desliga · ATIRAR · GOLPE
-- **Arma · recarregar · cura:** ARMA · REC · CURA (aparece quando você está ferido)
-- **Inventário · pausa:** INV · ❚❚
+- **Move:** drag on the left side of the screen
+- **Camera:** drag on the right side (or on SHOOT itself) · double tap recenters · pinch zooms
+- **Run · jump · dodge:** RUN, JUMP and DODGE buttons
+- **Talk, read, take, enter:** the button appears over the person or object
+- **Aim · shoot · strike:** AIM toggles on and off · SHOOT · STRIKE
+- **Weapon · reload · heal:** WEAPON · REL · HEAL (shows up when you’re hurt)
+- **Inventory · pause:** INV · ❚❚
 
-No controle e no toque há mira assistida (desligada, normal ou forte) e vibração nos tiros e golpes. No celular os botões da tela somem quando um controle Bluetooth é usado.
+With a controller or touch there’s aim assist (off, normal or strong) and vibration on shots and strikes. On phones, the on-screen buttons disappear when a Bluetooth controller is in use.
 
-*Onde jogar*
+*Where to play*
 
-### Sem instalar nada
+### Nothing to install
 
-**Plataformas:** PC, Celular, Tablet, Controle, Toque.
+**Platforms:** PC, Phone, Tablet, Controller, Touch.
 
-Basta um navegador atualizado com WebGL: Chrome, Edge, Firefox ou Safari. No celular fica melhor deitado, e no Android o jogo entra em tela cheia ao tocar na tela inicial.
+All you need is an up-to-date browser with WebGL: Chrome, Edge, Firefox or Safari. On a phone it plays best in landscape, and on Android the game goes full screen when you tap the title screen.
 
-O progresso fica salvo sozinho no próprio navegador: ao trocar de etapa, nos pontos de retorno e a cada vinte segundos. CONTINUAR volta exatamente para onde você parou.
+Your progress saves itself in the browser: whenever you move on to a new stage, at checkpoints and every twenty seconds. CONTINUE takes you back to exactly where you left off.
 
-**Idiomas:** Português, English, Español, Deutsch.
+**Languages:** Português, English, Español, Deutsch.
 
-*Perguntas*
+*Questions*
 
-**Quanto custa?**
+**How much does it cost?**
 
-Nada. É só abrir e jogar.
+Nothing. Just open it and play.
 
-**Onde fica o meu progresso?**
+**Where is my progress saved?**
 
-No navegador do aparelho em que você jogou. Limpar os dados do site apaga o progresso, e outro aparelho começa do zero.
+In the browser of the device you played on. Clearing the site’s data erases your progress, and another device starts from scratch.
 
-**Dá para jogar com controle?**
+**Can I play with a controller?**
 
-Dá, no PC e no celular, com controle USB ou Bluetooth. Os menus também funcionam no controle.
+Yes, on PC and phone, with a USB or Bluetooth controller. The menus work with a controller too.
 
-**É muito assustador?**
+**Is it very scary?**
 
-É um jogo de terror: tem escuro, sangue, criaturas e sustos, no espírito dos survival horror dos anos 90. Jogue de noite, com fone, se tiver coragem.
+It’s a horror game: there’s darkness, blood, creatures and jump scares, in the spirit of ’90s survival horror. Play at night, with headphones, if you dare.
 
-**A cidade é de verdade?**
+**Is the town real?**
 
-O mapa é inspirado em Santa Maria do Herval (RS), com ruas e relevo reais. Os moradores e as histórias são inventados.
+The map is inspired by Santa Maria do Herval (Rio Grande do Sul), with real streets and terrain. The townsfolk and their stories are made up.
 
-**Quantos capítulos são?**
+**How many chapters are there?**
 
-Doze. O que acontece em cada um, o jogo conta.
+Twelve. What happens in each one, the game will tell you.
 
-### Pronto para a primeira noite?
+### Ready for the first night?
 
-Pistola no coldre, pente de doze e uma caixa de balas. O resto você acha pelo caminho.
+Pistol in its holster, a twelve-round magazine and a box of bullets. The rest you’ll find along the way.
 
-[Jogar agora](https://fabianokunst.github.io/Teewald-3d/?lang=en) Grátis · no navegador
+[Play now](https://fabianokunst.github.io/Teewald-3d/?lang=en) Free · in your browser
 
 ---
 
-*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
+*A work of fiction: all names, characters and stories in the game are made up and have no real connection to the town of Santa Maria do Herval or its residents. Only the map (streets, river and terrain) comes from the real town.*

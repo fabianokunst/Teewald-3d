@@ -27,7 +27,7 @@ Tudo tirado do próprio jogo, sem retoque. Clique para ampliar.
 
 ![O cemitério na garoa](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg)
 
-![Conversa com o Seu Valdir](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/conversa.jpg)
+![Conversa com o Seu Valdir](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/es/conversa.jpg)
 
 ![Rua fechada, festa cancelada](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest-portico.jpg)
 
@@ -45,9 +45,9 @@ Tudo tirado do próprio jogo, sem retoque. Clique para ampliar.
 
 ![Praça 10 de Abril, fim de tarde](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca.jpg)
 
-![O inventário](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/inventario.jpg)
+![O inventário](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/es/inventario.jpg)
 
-![A tela título](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/titulo.jpg)
+![A tela título](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/es/titulo.jpg)
 
 ![A Matriz vista do alto](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
 

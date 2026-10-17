@@ -1,101 +1,101 @@
-# A história — Teewald
+# The story — Teewald
 
-> Teewald, o mato do chá: uma colônia de imigrantes do Hunsrück no Vale do Herval, um maio de neblina e criação aparecendo morta sem uma gota de sangue.
+> Teewald, the tea woods: a colony of immigrants from the Hunsrück in the Herval Valley, a foggy May, and livestock turning up dead without a drop of blood.
 
-Página: https://fabianokunst.github.io/Teewald-3d/site/en/historia.html  
-Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/?lang=en
+Page: https://fabianokunst.github.io/Teewald-3d/site/en/historia.html  
+Play free in your browser: https://fabianokunst.github.io/Teewald-3d/?lang=en
 
-*A história*
+*The story*
 
-## Mato do chá
+## The tea woods
 
-Teewald é uma cidade pequena de colonos alemães no Vale do Herval, na serra gaúcha. Tem igreja de torre alta, fábrica de calçados, festa da batata e um mato onde os antigos não entravam depois do sol posto.
+Teewald is a small town of German settlers in the Herval Valley, in the hills of southern Brazil. It has a church with a tall tower, a shoe factory, a potato festival, and woods the old folks never entered after sundown.
 
-*A colônia*
+*The colony*
 
-### Quem abriu picada
+### The ones who cut the trails
 
-Os primeiros colonos vieram do Hunsrück, no século XIX, e abriram picada no meio do mato de araucária. Deram ao lugar o nome do que acharam ali: *Teewald*, o mato do chá, por causa da erva-mate. Em português, ficou Herval.
+The first colonists came from the Hunsrück in the 19th century and cut trails through the araucaria woods. They named the place after what they found there: *Teewald*, the tea woods, for the erva-mate. In Portuguese, it became Herval.
 
-Até hoje se fala hunsrik na cozinha, se toma chimarrão no banco da praça e se come cuca no café colonial. A Igreja Matriz olha a cidade de cima, a fábrica de calçados troca de turno à noite e, todo outono, a Rua Beno Closs vira o pavilhão da Kartoffelfest.
+To this day people speak Hunsrik in the kitchen, sip chimarrão on the benches in the square and eat cuca (crumb cake) at the colonial afternoon coffee. The parish church looks down on the town, the shoe factory changes shifts at night and, every autumn, Rua Beno Closs turns into the Kartoffelfest pavilion.
 
-Os antigos tinham respeito por aquele mato. Nos diários deles aparece uma palavra que ninguém gosta de repetir: *Blutsauger*. O chupador de sangue.
+The old folks respected those woods. In their diaries there’s a word nobody likes to repeat: *Blutsauger*. The bloodsucker.
 
-![A Igreja Matriz no fim da tarde, com neblina](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
-*A Igreja Matriz vista da praça*
+![The parish church in the late afternoon, in the fog](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
+*The parish church seen from the square*
 
-*Maio*
+*May*
 
-### As últimas semanas
+### The last few weeks
 
-Começou longe, no interior. Depois foi chegando perto das casas.
+It started far off, out in the countryside. Then it crept closer to the houses.
 
-Tudo o que está aqui você ouve dos moradores ou lê nos papéis da cidade logo que chega. O resto, o jogo conta.
+Everything here you’ll hear from the townsfolk or read in the town’s papers as soon as you arrive. The rest, the game will tell.
 
-1. **3 de maio:** A Folha de Teewald noticia sete ovelhas mortas na Linha Schmitt. Nenhum ferimento grande, só dois furos no pescoço. Secas.
-2. **Na mesma semana:** Galinha, pato, cabrito, um gato duro atrás do galpão. A Dona Erna perde as doze galinhas numa noite só.
-3. **Domingo à noite:** O Bóris, cachorro do Lucas, arrebenta a corrente latindo para o mato. Depois para de latir. De repente.
-4. **Segunda à noite:** A Mimi, gata da Dona Hilda, sai e não volta. Ela nunca dormiu fora.
-5. **Comunicado nº 41:** A Prefeitura cancela a Kartoffelfest e manda o comércio fechar às seis. Oficialmente, é graxaim.
-6. **Hoje:** Você chega numa tarde de outono, com neblina, pelo calçadão do Rio Cadeia. No mural da praça tem um cartaz novo.
+1. **May 3:** The Folha de Teewald reports seven sheep dead on Linha Schmitt. No large wounds, just two holes in the neck. Drained dry.
+2. **That same week:** Chickens, ducks, a young goat, a cat gone stiff behind the shed. Dona Erna loses all twelve of her hens in a single night.
+3. **Sunday night:** Bóris, Lucas’s dog, breaks his chain barking at the woods. Then he stops barking. All at once.
+4. **Monday night:** Mimi, Dona Hilda’s cat, goes out and doesn’t come back. She’s never stayed out all night.
+5. **Notice No. 41:** City Hall cancels the Kartoffelfest and orders the shops to close at six. Officially, it’s a pampas fox.
+6. **Today:** You arrive on a foggy autumn afternoon, along the Rio Cadeia promenade. There’s a new poster on the bulletin board in the square.
 
-*Do arquivo da cidade*
+*From the town files*
 
-### Papéis pregados
+### Pinned-up papers
 
-Pela cidade há recortes de jornal, cartazes, cartas e páginas de diário. No jogo, cada papel que você lê fica guardado em ARQUIVOS. Estes aqui estão no mural.
+Around town there are newspaper clippings, posters, letters and diary pages. In the game, every paper you read is kept in FILES. These are on the bulletin board.
 
-![Recorte da Folha de Teewald: ovelhas mortas na Linha Schmitt](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/jornal.png)
-*Folha de Teewald, 3 de maio*
+![Clipping from the Folha de Teewald: dead sheep on Linha Schmitt](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/jornal.png)
+*Folha de Teewald, May 3*
 
-![Ofício da Prefeitura cancelando a Kartoffelfest](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/oficio.png)
-*Ofício da Prefeitura*
+![City Hall notice canceling the Kartoffelfest](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/oficio.png)
+*City Hall notice*
 
-![Programa da Kartoffelfest com uma batata de chapéu](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/programa.png)
-*Programa da Kartoffelfest*
+![Kartoffelfest program with a potato wearing a hat](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/programa.png)
+*Kartoffelfest program*
 
-![Redação escolar: o que eu vi da minha janela](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/redacao.png)
-*Redação da escola*
+![School essay: what I saw from my window](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/redacao.png)
+*School essay*
 
-![Cartaz de cachorro perdido, o Bóris](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/cartaz-boris.png)
-*Cartaz na ponte*
+![Lost-dog poster for Bóris](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/cartaz-boris.png)
+*Poster on the bridge*
 
-Agora eu só pesco de dia. E tu devia fazer o mesmo.
+Now I only fish by day. And you ought to do the same.
 
-Antes de escurecer, pra casa.
+Home before dark.
 
-![Seu Valdir sentado no banco da praça](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg)
-*Seu Valdir não larga o chimarrão*
+![Seu Valdir sitting on a bench in the square](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg)
+*Seu Valdir never puts down his chimarrão*
 
-*Já aconteceu antes*
+*It’s happened before*
 
-### Setenta e oito
+### Seventy-eight
 
-> Em setenta e oito aconteceu de novo. Eu era moço. Morreu criação em três linhas. Depois parou, do nada. A cidade preferiu esquecer.
+> In seventy-eight it happened again. I was a young man. Livestock died in three farm districts. Then it stopped, out of nowhere. The town chose to forget.
 >
 > — Professor Edgar
 
-Quem viveu aquele ano não gosta de falar dele. O Seu Valdir toma chimarrão sozinho no banco da praça e tem uma cicatriz antiga na bochecha. Se você tiver paciência, ele conta.
+Those who lived through that year don’t like to talk about it. Seu Valdir drinks his chimarrão alone on a bench in the square and has an old scar on his cheek. If you’re patient, he’ll tell you.
 
-*O forasteiro*
+*The stranger*
 
-### Você
+### You
 
-O protagonista não tem nome. Chegou de fora, de jaqueta de couro, e todo mundo percebe. Decidiu ficar para caçar o que anda no mato.
+The protagonist has no name. He came from outside, in a leather jacket, and everyone notices. He decided to stay and hunt whatever walks in the woods.
 
-Os moradores têm medo, fecham a janela e encaram quem passa. Mas cada um viu, ouviu ou perdeu alguma coisa. Converse com todos: é deles que vêm as pistas.
+The townsfolk are scared: they shut their windows and stare at whoever walks by. But each one has seen, heard or lost something. Talk to everyone: that’s where the clues come from.
 
-Daqui para a frente, a história é sua. Não vamos contar o que acontece depois da primeira noite. Algumas coisas em Teewald só fazem sentido vistas de perto.
+From here on, the story is yours. We won’t tell you what happens after the first night. Some things in Teewald only make sense up close.
 
-![O protagonista mirando a pistola na neblina](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
-*Pistola 9 mm, pente de doze*
+![The protagonist aiming his pistol into the fog](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
+*9 mm pistol, twelve-round magazine*
 
-### A cidade prefere esquecer
+### The town would rather forget
 
-Você não. O cartaz já está no mural da praça.
+Not you. The poster is already up on the bulletin board in the square.
 
-[Jogar agora](https://fabianokunst.github.io/Teewald-3d/?lang=en) Grátis · no navegador
+[Play now](https://fabianokunst.github.io/Teewald-3d/?lang=en) Free · in your browser
 
 ---
 
-*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
+*A work of fiction: all names, characters and stories in the game are made up and have no real connection to the town of Santa Maria do Herval or its residents. Only the map (streets, river and terrain) comes from the real town.*

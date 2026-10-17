@@ -1,401 +1,401 @@
-# Personagens — Teewald
+# Characters — Teewald
 
-> Os personagens de Teewald: o forasteiro e os 24 moradores com fala, com retrato, altura, roupa e jeito de cada um, tirados dos modelos do jogo.
+> The characters of Teewald: the stranger and the 24 townsfolk who talk, with each one’s portrait, height, clothes and manner, taken from the game’s models.
 
-Página: https://fabianokunst.github.io/Teewald-3d/site/en/personagens.html  
-Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/?lang=en
+Page: https://fabianokunst.github.io/Teewald-3d/site/en/personagens.html  
+Play free in your browser: https://fabianokunst.github.io/Teewald-3d/?lang=en
 
-*Personagens*
+*Characters*
 
-## Quem ainda está na rua
+## Who’s still out on the street
 
-Vinte e quatro moradores com fala, cada um com um pedaço da história. Todos com medo. Os retratos foram tirados dos próprios modelos do jogo, e as figuras de corpo inteiro estão na mesma escala.
+Twenty-four townsfolk who talk, each with a piece of the story. All of them scared. The portraits were taken from the game’s own models, and the full-body figures are all to the same scale.
 
-*Protagonista*
+*Protagonist*
 
-### Você
+### You
 
-##### O FORASTEIRO
+##### THE STRANGER
 
-Protagonista, sem nome. Chegou de fora e ficou para caçar o chupacabras.
+The protagonist, no name. Came from outside and stayed to hunt the chupacabra.
 
-- **Idade:** 33 anos
-- **Altura:** 1,75 m
-- **Porte:** médio
-- **Rosto:** Loiro, cabelo penteado para trás, olhos fundos, sobrancelhas retas e barba rala.
-- **Corpo:** Estatura média e ombros largos.
-- **Roupa:** Jaqueta de couro marrom com lapelas, suéter cinza de gola V, camisa escura, calça escura e botas.
-- **Jeito:** Sério e calado. Não é da cidade, e todo mundo percebe.
+- **Age:** 33
+- **Height:** 1.75 m
+- **Build:** average
+- **Face:** Blond, hair combed back, deep-set eyes, straight eyebrows and a thin beard.
+- **Body:** Average height and broad shoulders.
+- **Clothes:** Brown leather jacket with lapels, gray V-neck sweater, dark shirt, dark pants and boots.
+- **Manner:** Serious and quiet. He’s not from town, and everyone notices.
 
-![Rosto de O Forasteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/heroi.jpg) ![O Forasteiro de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/heroi.jpg)
+![Face of the Stranger](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/heroi.jpg) ![The Stranger, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/heroi.jpg)
 
-*Moradores*
+*Townsfolk*
 
-### Quem você vai encontrar
+### Who you’ll meet
 
-24 moradores com fala, espalhados pela cidade. Altura, porte e postura de cada ficha valem no jogo, e os traços do rosto (rugas, olheiras, sardas, barba por fazer, pinta, cicatriz) estão pintados na textura.
+24 townsfolk who talk, scattered around town. The height, build and posture on each card are the ones in the game, and the facial features (wrinkles, dark circles, freckles, stubble, moles, scars) are painted into the texture.
 
-#### Calçadão do Rio Cadeia
+#### Rio Cadeia promenade
 
 ##### SEU ARNO
 
-Ferreiro aposentado; pesca no calçadão do Rio Cadeia
+Retired blacksmith; fishes on the Rio Cadeia promenade
 
-- **Idade:** 68 anos
-- **Altura:** 1,70 m
-- **Porte:** forte
-- **Rosto:** Queimado de sol, barba cheia grisalha e sobrancelhas grossas.
-- **Corpo:** Baixo e atarracado, braços e mãos grossos de quem bateu ferro a vida inteira.
-- **Roupa:** Camisa xadrez vermelha, calça cinza, botas e chapéu de palha. Vara de pescar.
-- **Jeito:** Fala pouco e desconfia de todo mundo. Agora só pesca de dia.
+- **Age:** 68
+- **Height:** 1.70 m
+- **Build:** sturdy
+- **Face:** Sunburned, with a full gray beard and bushy eyebrows.
+- **Body:** Short and stocky, with the thick arms and hands of a man who pounded iron all his life.
+- **Clothes:** Red plaid shirt, gray pants, boots and a straw hat. Fishing rod.
+- **Manner:** Says little and distrusts everyone. Now he only fishes by day.
 
-![Rosto de Seu Arno](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/arno.jpg) ![Seu Arno de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/arno.jpg)
+![Face of Seu Arno](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/arno.jpg) ![Seu Arno, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/arno.jpg)
 
 ##### DONA HILDA
 
-Viúva do calçadão; procura a gata Mimi
+Widow on the promenade; looking for her cat, Mimi
 
-- **Idade:** 74 anos
-- **Altura:** 1,55 m
-- **Porte:** magro, curvado
-- **Rosto:** Rugas fundas, olheiras e óculos; cabelo grisalho sob um lenço roxo.
-- **Corpo:** Miúda e magra, um pouco curvada.
-- **Roupa:** Suéter vinho, saia comprida cinza, meia-calça e sapatos.
-- **Jeito:** Aflita, mas educada. Chama pela Mimi o tempo todo.
+- **Age:** 74
+- **Height:** 1.55 m
+- **Build:** thin, stooped
+- **Face:** Deep wrinkles, dark circles and glasses; gray hair under a purple headscarf.
+- **Body:** Small and thin, a little stooped.
+- **Clothes:** Burgundy sweater, long gray skirt, tights and shoes.
+- **Manner:** Distressed, but polite. Keeps calling for Mimi.
 
-![Rosto de Dona Hilda](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/hilda.jpg) ![Dona Hilda de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/hilda.jpg)
+![Face of Dona Hilda](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/hilda.jpg) ![Dona Hilda, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/hilda.jpg)
 
 ##### LUCAS
 
-Procura o cachorro Bóris; mora na última casa antes da ponte
+Looking for his dog, Bóris; lives in the last house before the bridge
 
-- **Idade:** 19 anos
-- **Altura:** 1,81 m
-- **Porte:** magro
-- **Rosto:** Pele morena, barba rala e olhos castanhos.
-- **Corpo:** Alto e magro, anda depressa.
-- **Roupa:** Jaqueta azul de gola cinza, calça escura, tênis claros e boné vermelho.
-- **Jeito:** Agitado; assobia e grita pelo Bóris.
+- **Age:** 19
+- **Height:** 1.81 m
+- **Build:** thin
+- **Face:** Brown skin, a thin beard and brown eyes.
+- **Body:** Tall and thin, walks fast.
+- **Clothes:** Blue jacket with a gray collar, dark pants, light sneakers and a red cap.
+- **Manner:** Restless; whistles and shouts for Bóris.
 
-![Rosto de Lucas](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lucas.jpg) ![Lucas de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lucas.jpg)
+![Face of Lucas](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lucas.jpg) ![Lucas, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lucas.jpg)
 
 ##### MARLENE
 
-Repórter de um jornal de Porto Alegre
+Reporter for a Porto Alegre newspaper
 
-- **Idade:** 31 anos
-- **Altura:** 1,68 m
-- **Porte:** médio
-- **Rosto:** Pele morena-clara, olhos castanhos e uma pinta na bochecha; cabelo preto em rabo de cavalo.
-- **Corpo:** Estatura média, ágil.
-- **Roupa:** Jaqueta mostarda, calça jeans e tênis. Câmera fotográfica na mão.
-- **Jeito:** Insistente e curiosa. Ninguém na cidade quer falar com ela.
+- **Age:** 31
+- **Height:** 1.68 m
+- **Build:** average
+- **Face:** Light-brown skin, brown eyes and a mole on her cheek; black hair in a ponytail.
+- **Body:** Average height, nimble.
+- **Clothes:** Mustard jacket, jeans and sneakers. Camera in hand.
+- **Manner:** Pushy and curious. Nobody in town wants to talk to her.
 
-![Rosto de Marlene](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/marlene.jpg) ![Marlene de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/marlene.jpg)
+![Face of Marlene](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/marlene.jpg) ![Marlene, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/marlene.jpg)
 
 ##### PROFESSOR EDGAR
 
-Professor de história aposentado; conhece os diários dos colonos
+Retired history teacher; knows the colonists’ diaries
 
-- **Idade:** 79 anos
-- **Altura:** 1,76 m
-- **Porte:** magro, curvado
-- **Rosto:** Cabelo e bigode brancos, óculos de aro claro, sobrancelhas grossas e rugas fundas.
-- **Corpo:** Alto e magro, curvado pela idade.
-- **Roupa:** Terno marrom gasto, camisa clara, gravata azul e boina cinza. Sempre com um livro.
-- **Jeito:** Fala devagar, como em sala de aula. Encara quem passa.
+- **Age:** 79
+- **Height:** 1.76 m
+- **Build:** thin, stooped
+- **Face:** White hair and mustache, light-rimmed glasses, bushy eyebrows and deep wrinkles.
+- **Body:** Tall and thin, stooped with age.
+- **Clothes:** Worn brown suit, light shirt, blue tie and gray beret. Always carrying a book.
+- **Manner:** Speaks slowly, as if in a classroom. Stares at passersby.
 
-![Rosto de Professor Edgar](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/edgar.jpg) ![Professor Edgar de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/edgar.jpg)
+![Face of Professor Edgar](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/edgar.jpg) ![Professor Edgar, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/edgar.jpg)
 
 ##### SEU LAURO
 
-Espera o ônibus para Novo Hamburgo desde o meio-dia
+Has been waiting for the bus to Novo Hamburgo since noon
 
-- **Idade:** 66 anos
-- **Altura:** 1,72 m
-- **Porte:** médio
-- **Rosto:** Grisalho, barba por fazer e olheiras de quem não dorme.
-- **Corpo:** Estatura média, ombros caídos.
-- **Roupa:** Jaqueta verde-oliva, calça cáqui, botas e boné verde. Mala do lado.
-- **Jeito:** Cansado e decidido a ir embora da cidade.
+- **Age:** 66
+- **Height:** 1.72 m
+- **Build:** average
+- **Face:** Graying, unshaven, with the dark circles of a man who doesn’t sleep.
+- **Body:** Average height, drooping shoulders.
+- **Clothes:** Olive-green jacket, khaki pants, boots and a green cap. Suitcase at his side.
+- **Manner:** Tired and set on leaving town.
 
-![Rosto de Seu Lauro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lauro.jpg) ![Seu Lauro de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lauro.jpg)
+![Face of Seu Lauro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lauro.jpg) ![Seu Lauro, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lauro.jpg)
 
 ##### KÁTIA
 
-Operária do turno da noite na fábrica de calçados
+Night-shift worker at the shoe factory
 
-- **Idade:** 27 anos
-- **Altura:** 1,62 m
-- **Porte:** magro
-- **Rosto:** Pele morena, olhos castanhos e olheiras do turno da noite; cabelo preto em rabo de cavalo.
-- **Corpo:** Magra, de estatura mediana.
-- **Roupa:** Camisa azul-clara, calça azul-marinho e sapatos. Sacola de pano.
-- **Jeito:** Assustada; olha para trás enquanto anda.
+- **Age:** 27
+- **Height:** 1.62 m
+- **Build:** thin
+- **Face:** Brown skin, brown eyes and night-shift dark circles; black hair in a ponytail.
+- **Body:** Slim, of medium height.
+- **Clothes:** Light-blue shirt, navy pants and shoes. Cloth bag.
+- **Manner:** Frightened; keeps looking over her shoulder as she walks.
 
-![Rosto de Kátia](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/katia.jpg) ![Kátia de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/katia.jpg)
+![Face of Kátia](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/katia.jpg) ![Kátia, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/katia.jpg)
 
 ##### SEU BRUNO
 
-Dono da floricultura
+Owner of the flower shop
 
-- **Idade:** 56 anos
-- **Altura:** 1,77 m
-- **Porte:** forte
-- **Rosto:** Cabelo castanho, bigode, óculos e olhos verdes.
-- **Corpo:** Encorpado, com a barriga de quem passou dos cinquenta.
-- **Roupa:** Macacão verde sobre camisa clara e botas. Regador na mão.
-- **Jeito:** Calado e observador; encara quem passa.
+- **Age:** 56
+- **Height:** 1.77 m
+- **Build:** sturdy
+- **Face:** Brown hair, mustache, glasses and green eyes.
+- **Body:** Heavyset, with the belly of a man past fifty.
+- **Clothes:** Green overalls over a light shirt, and boots. Watering can in hand.
+- **Manner:** Quiet and watchful; stares at passersby.
 
-![Rosto de Seu Bruno](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bruno.jpg) ![Seu Bruno de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bruno.jpg)
+![Face of Seu Bruno](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bruno.jpg) ![Seu Bruno, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bruno.jpg)
 
 #### Praça 10 de Abril
 
 ##### SEU VALDIR
 
-Gaúcho aposentado; toma chimarrão no banco da praça
+Retired gaúcho; drinks chimarrão on a bench in the square
 
-- **Idade:** 72 anos
-- **Altura:** 1,71 m
-- **Porte:** magro
-- **Rosto:** Pele curtida, bigode grisalho, sobrancelhas grossas e uma cicatriz antiga na bochecha.
-- **Corpo:** Magro e rijo apesar da idade.
-- **Roupa:** Chapéu de aba preto, jaqueta escura, camisa vermelha e calça clara. Cuia e garrafa térmica.
-- **Jeito:** De poucas palavras. Viveu o caso de 1978 e não esqueceu.
+- **Age:** 72
+- **Height:** 1.71 m
+- **Build:** thin
+- **Face:** Weathered skin, gray mustache, bushy eyebrows and an old scar on his cheek.
+- **Body:** Lean and wiry despite his age.
+- **Clothes:** Black brimmed hat, dark jacket, red shirt and light pants. Mate gourd and thermos.
+- **Manner:** A man of few words. He lived through the 1978 events and never forgot.
 
-![Rosto de Seu Valdir](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/valdir.jpg) ![Seu Valdir de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/valdir.jpg)
+![Face of Seu Valdir](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/valdir.jpg) ![Seu Valdir, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/valdir.jpg)
 
 ##### DONA ERNA
 
-Vende cuca na banca da praça
+Sells cuca (crumb cake) at a stall in the square
 
-- **Idade:** 63 anos
-- **Altura:** 1,58 m
-- **Porte:** gordo
-- **Rosto:** Bochechas coradas e cabelo loiro-acinzentado preso em coque.
-- **Corpo:** Baixa e cheinha.
-- **Roupa:** Vestido verde, avental branco, meia-calça e sapatos.
-- **Jeito:** Prática e direta. Perdeu as doze galinhas numa noite só.
+- **Age:** 63
+- **Height:** 1.58 m
+- **Build:** stout
+- **Face:** Rosy cheeks and ash-blond hair pulled up in a bun.
+- **Body:** Short and plump.
+- **Clothes:** Green dress, white apron, tights and shoes.
+- **Manner:** Practical and blunt. Lost all twelve hens in a single night.
 
-![Rosto de Dona Erna](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/erna.jpg) ![Dona Erna de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/erna.jpg)
+![Face of Dona Erna](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/erna.jpg) ![Dona Erna, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/erna.jpg)
 
 ##### JOÃOZINHO
 
-Aluno da 4ª série; o cachorro dele sumiu no mato
+4th grader; his dog disappeared into the woods
 
-- **Idade:** 9 anos
-- **Altura:** 1,30 m
-- **Porte:** magro
-- **Rosto:** Cabelo castanho, olhos verdes e sardas no nariz.
-- **Corpo:** Franzino.
-- **Roupa:** Suéter marrom, bermuda azul-marinho, meias claras e sapatos.
-- **Jeito:** Quieto; fala pouco e fica olhando fixo.
+- **Age:** 9
+- **Height:** 1.30 m
+- **Build:** thin
+- **Face:** Brown hair, green eyes and freckles on his nose.
+- **Body:** Scrawny.
+- **Clothes:** Brown sweater, navy shorts, light socks and shoes.
+- **Manner:** Quiet; says little and just stares.
 
-![Rosto de Joãozinho](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/joao.jpg) ![Joãozinho de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/joao.jpg)
+![Face of Joãozinho](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/joao.jpg) ![Joãozinho, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/joao.jpg)
 
 ##### ANA
 
-Tenta ligar para a tia que mora na beira do mato
+Trying to call her aunt, who lives at the edge of the woods
 
-- **Idade:** 22 anos
-- **Altura:** 1,66 m
-- **Porte:** magro
-- **Rosto:** Cabelo ruivo-escuro comprido, olhos verdes e olheiras de choro.
-- **Corpo:** Magra, de estatura mediana.
-- **Roupa:** Suéter cinza-claro com uma faixa bordada vinho, calça azul-marinho e sapatos.
-- **Jeito:** Ansiosa; não larga o orelhão.
+- **Age:** 22
+- **Height:** 1.66 m
+- **Build:** thin
+- **Face:** Long auburn hair, green eyes and dark circles from crying.
+- **Body:** Slim, of medium height.
+- **Clothes:** Light-gray sweater with an embroidered burgundy band, navy pants and shoes.
+- **Manner:** Anxious; won’t leave the payphone.
 
-![Rosto de Ana](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ana.jpg) ![Ana de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ana.jpg)
+![Face of Ana](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ana.jpg) ![Ana, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ana.jpg)
 
 ##### SEU ALFREDO
 
-Aposentado; dá a volta na praça com a esposa há cinquenta anos
+Retired; has walked around the square with his wife for fifty years
 
-- **Idade:** 81 anos
-- **Altura:** 1,69 m
-- **Porte:** magro, curvado
-- **Rosto:** Cabelo branco, olhos azuis, rosto muito enrugado e olheiras.
-- **Corpo:** Magro e curvado; anda de bengala.
-- **Roupa:** Terno marrom, gravata e chapéu de feltro.
-- **Jeito:** Educado e protetor com a Wilma. Não dorme desde que arranharam a janela.
+- **Age:** 81
+- **Height:** 1.69 m
+- **Build:** thin, stooped
+- **Face:** White hair, blue eyes, a deeply wrinkled face and dark circles.
+- **Body:** Thin and stooped; walks with a cane.
+- **Clothes:** Brown suit, tie and felt hat.
+- **Manner:** Polite and protective of Wilma. Hasn’t slept since something scratched the window.
 
-![Rosto de Seu Alfredo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/alfredo.jpg) ![Seu Alfredo de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/alfredo.jpg)
+![Face of Seu Alfredo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/alfredo.jpg) ![Seu Alfredo, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/alfredo.jpg)
 
 ##### DONA WILMA
 
-Esposa do Seu Alfredo
+Seu Alfredo’s wife
 
-- **Idade:** 78 anos
-- **Altura:** 1,53 m
-- **Porte:** médio, curvado
-- **Rosto:** Cabelo branco em coque, óculos e olhos azuis.
-- **Corpo:** Baixinha e um pouco curvada.
-- **Roupa:** Suéter lilás com faixa bordada, saia comprida roxa e meia-calça. Sacola na mão.
-- **Jeito:** Carinhosa; chama todo mundo de querido.
+- **Age:** 78
+- **Height:** 1.53 m
+- **Build:** average, stooped
+- **Face:** White hair in a bun, glasses and blue eyes.
+- **Body:** Tiny and a little stooped.
+- **Clothes:** Lilac sweater with an embroidered band, long purple skirt and tights. Bag in hand.
+- **Manner:** Affectionate; calls everyone dear.
 
-![Rosto de Dona Wilma](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/wilma.jpg) ![Dona Wilma de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/wilma.jpg)
+![Face of Dona Wilma](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/wilma.jpg) ![Dona Wilma, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/wilma.jpg)
 
 ##### PAULA
 
-Atendente da Teewald Store
+Clerk at the Teewald Store
 
-- **Idade:** 24 anos
-- **Altura:** 1,71 m
-- **Porte:** magro
-- **Rosto:** Ruiva de rabo de cavalo, sardas e olhos verdes.
-- **Corpo:** Alta e magra.
-- **Roupa:** Camisa polo vinho do uniforme, calça preta e sapatos.
-- **Jeito:** Apressada para fechar a loja. Encara quem chega.
+- **Age:** 24
+- **Height:** 1.71 m
+- **Build:** thin
+- **Face:** Redhead with a ponytail, freckles and green eyes.
+- **Body:** Tall and thin.
+- **Clothes:** Burgundy uniform polo shirt, black pants and shoes.
+- **Manner:** In a hurry to close the store. Stares at anyone who comes by.
 
-![Rosto de Paula](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/paula.jpg) ![Paula de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/paula.jpg)
+![Face of Paula](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/paula.jpg) ![Paula, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/paula.jpg)
 
 ##### SEU ROMEU
 
-Funcionário da Prefeitura; tem um potreiro fora da cidade
+City Hall employee; owns a pasture outside town
 
-- **Idade:** 52 anos
-- **Altura:** 1,75 m
-- **Porte:** gordo
-- **Rosto:** Cabelo preto penteado, bigode aparado e sobrancelhas grossas.
-- **Corpo:** Corpulento, com barriga sob o paletó.
-- **Roupa:** Terno cinza, gravata vermelha e sapatos engraxados. Pasta de couro.
-- **Jeito:** Fala como em discurso oficial e diz que está tudo sob controle.
+- **Age:** 52
+- **Height:** 1.75 m
+- **Build:** stout
+- **Face:** Combed black hair, trimmed mustache and bushy eyebrows.
+- **Body:** Portly, with a belly under his suit jacket.
+- **Clothes:** Gray suit, red tie and polished shoes. Leather briefcase.
+- **Manner:** Talks like he’s giving an official speech and says everything is under control.
 
-![Rosto de Seu Romeu](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/romeu.jpg) ![Seu Romeu de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/romeu.jpg)
+![Face of Seu Romeu](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/romeu.jpg) ![Seu Romeu, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/romeu.jpg)
 
-#### Igreja Matriz e cemitério
+#### Parish church and cemetery
 
-##### PADRE BERNARDO
+##### FATHER BERNARDO
 
-Pároco da Igreja Matriz
+Priest of the parish church
 
-- **Idade:** 70 anos
-- **Altura:** 1,78 m
-- **Porte:** magro
-- **Rosto:** Cabelo branco curto, óculos de aro dourado e olheiras de quem reza à noite.
-- **Corpo:** Alto e magro, postura reta.
-- **Roupa:** Batina preta com colarinho clerical e sapatos pretos.
-- **Jeito:** Calmo e firme. Tranca a igreja antes de anoitecer.
+- **Age:** 70
+- **Height:** 1.78 m
+- **Build:** thin
+- **Face:** Short white hair, gold-rimmed glasses and the dark circles of a man who prays at night.
+- **Body:** Tall and thin, upright posture.
+- **Clothes:** Black cassock with a clerical collar, and black shoes.
+- **Manner:** Calm and firm. Locks the church before nightfall.
 
-![Rosto de Padre Bernardo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bernardo.jpg) ![Padre Bernardo de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bernardo.jpg)
+![Face of Father Bernardo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bernardo.jpg) ![Father Bernardo, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bernardo.jpg)
 
 ##### DONA IRMA
 
-Beata; reza o terço todo dia na igreja
+Devout churchgoer; prays the rosary at the church every day
 
-- **Idade:** 76 anos
-- **Altura:** 1,52 m
-- **Porte:** magro, curvado
-- **Rosto:** Cabelo branco sob lenço preto, olhos cinzentos e uma pinta perto da boca.
-- **Corpo:** Pequena, magra e curvada.
-- **Roupa:** Vestido preto de luto, lenço preto, meia-calça e sapatos.
-- **Jeito:** Severa; acha que tudo é castigo de Deus.
+- **Age:** 76
+- **Height:** 1.52 m
+- **Build:** thin, stooped
+- **Face:** White hair under a black headscarf, gray eyes and a mole near her mouth.
+- **Body:** Small, thin and stooped.
+- **Clothes:** Black mourning dress, black headscarf, tights and shoes.
+- **Manner:** Stern; thinks it’s all God’s punishment.
 
-![Rosto de Dona Irma](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/irma.jpg) ![Dona Irma de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/irma.jpg)
+![Face of Dona Irma](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/irma.jpg) ![Dona Irma, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/irma.jpg)
 
-##### RUDI, O CARTEIRO
+##### RUDI, THE MAILMAN
 
-Carteiro da cidade há quinze anos
+The town’s mailman for fifteen years
 
-- **Idade:** 38 anos
-- **Altura:** 1,79 m
-- **Porte:** forte
-- **Rosto:** Pele morena, cabelo preto curto, barba por fazer e olhos castanhos.
-- **Corpo:** Forte, com as pernas de quem anda o dia inteiro.
-- **Roupa:** Camisa polo amarela de gola azul, calça azul, boné azul e sacola de cartas.
-- **Jeito:** Prestativo, mas nervoso esta semana.
+- **Age:** 38
+- **Height:** 1.79 m
+- **Build:** sturdy
+- **Face:** Brown skin, short black hair, stubble and brown eyes.
+- **Body:** Strong, with the legs of a man who walks all day.
+- **Clothes:** Yellow polo shirt with a blue collar, blue pants, blue cap and a mailbag.
+- **Manner:** Helpful, but nervous this week.
 
-![Rosto de Rudi, O Carteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/rudi.jpg) ![Rudi, O Carteiro de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/rudi.jpg)
+![Face of Rudi, the mailman](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/rudi.jpg) ![Rudi, the mailman, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/rudi.jpg)
 
 ##### SEU OTTO
 
-Zelador do cemitério há trinta anos
+Cemetery caretaker for thirty years
 
-- **Idade:** 69 anos
-- **Altura:** 1,74 m
-- **Porte:** forte
-- **Rosto:** Barba cheia grisalha, sobrancelhas grossas e uma cicatriz cortando a sobrancelha.
-- **Corpo:** Largo e forte, mãos calejadas.
-- **Roupa:** Macacão azul-marinho sobre camisa xadrez, botas e boné verde. Rastelo na mão.
-- **Jeito:** Fala pouco; respeita os mortos e não gosta de barulho.
+- **Age:** 69
+- **Height:** 1.74 m
+- **Build:** sturdy
+- **Face:** Full gray beard, bushy eyebrows and a scar cutting through one eyebrow.
+- **Body:** Broad and strong, with calloused hands.
+- **Clothes:** Navy overalls over a plaid shirt, boots and a green cap. Rake in hand.
+- **Manner:** Says little; respects the dead and doesn’t like noise.
 
-![Rosto de Seu Otto](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/otto.jpg) ![Seu Otto de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/otto.jpg)
+![Face of Seu Otto](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/otto.jpg) ![Seu Otto, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/otto.jpg)
 
-#### Kartoffelfest e campo de futebol
+#### Kartoffelfest and soccer field
 
 ##### SEU IVO
 
-Da comissão da Kartoffelfest; vigia o pavilhão de noite
+On the Kartoffelfest committee; guards the pavilion at night
 
-- **Idade:** 58 anos
-- **Altura:** 1,80 m
-- **Porte:** gordo
-- **Rosto:** Ruivo, de bigode ruivo, olhos azuis e rosto corado.
-- **Corpo:** Grande e pesado.
-- **Roupa:** Camisa xadrez vermelha, calça marrom, botas e chapéu. Caneca de chope na mão.
-- **Jeito:** Sério e prestativo; cuida do pavilhão vazio.
+- **Age:** 58
+- **Height:** 1.80 m
+- **Build:** stout
+- **Face:** Red hair, red mustache, blue eyes and a ruddy face.
+- **Body:** Big and heavy.
+- **Clothes:** Red plaid shirt, brown pants, boots and a hat. Beer stein in hand.
+- **Manner:** Serious and helpful; looks after the empty pavilion.
 
-![Rosto de Seu Ivo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ivo.jpg) ![Seu Ivo de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ivo.jpg)
+![Face of Seu Ivo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ivo.jpg) ![Seu Ivo, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ivo.jpg)
 
 ##### DONA GERTRUD
 
-Cozinheira da Kartoffelhaus desde a primeira festa
+Cook at the Kartoffelhaus since the first festival
 
-- **Idade:** 71 anos
-- **Altura:** 1,60 m
-- **Porte:** gordo
-- **Rosto:** Rosto redondo e corado, cabelo grisalho em coque e olhos azuis.
-- **Corpo:** Baixa e robusta.
-- **Roupa:** Vestido vermelho-escuro com avental branco, meia-calça e sapatos. Cesta no braço.
-- **Jeito:** Maternal; dá comida a todo mundo.
+- **Age:** 71
+- **Height:** 1.60 m
+- **Build:** stout
+- **Face:** Round, rosy face, gray hair in a bun and blue eyes.
+- **Body:** Short and sturdy.
+- **Clothes:** Dark-red dress with a white apron, tights and shoes. Basket on her arm.
+- **Manner:** Motherly; feeds everybody.
 
-![Rosto de Dona Gertrud](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/gertrud.jpg) ![Dona Gertrud de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/gertrud.jpg)
+![Face of Dona Gertrud](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/gertrud.jpg) ![Dona Gertrud, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/gertrud.jpg)
 
 ##### LUANA
 
-Rainha da Kartoffelfest deste ano
+This year’s Kartoffelfest queen
 
-- **Idade:** 18 anos
-- **Altura:** 1,67 m
-- **Porte:** magro
-- **Rosto:** Loira de cabelo comprido e olhos azuis.
-- **Corpo:** Magra, de estatura mediana.
-- **Roupa:** Vestido típico verde com avental claro, meia-calça e sapatos.
-- **Jeito:** Tristonha; prometeu à mãe voltar antes de escurecer.
+- **Age:** 18
+- **Height:** 1.67 m
+- **Build:** thin
+- **Face:** Long blond hair and blue eyes.
+- **Body:** Slim, of medium height.
+- **Clothes:** Green traditional dress with a light apron, tights and shoes.
+- **Manner:** Downcast; promised her mother she’d be home before dark.
 
-![Rosto de Luana](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/luana.jpg) ![Luana de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/luana.jpg)
+![Face of Luana](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/luana.jpg) ![Luana, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/luana.jpg)
 
 ##### TIAGO
 
-Centroavante do time de futebol da cidade
+Striker on the town soccer team
 
-- **Idade:** 17 anos
-- **Altura:** 1,78 m
-- **Porte:** médio
-- **Rosto:** Pele morena, cabelo preto curto e olhos castanhos.
-- **Corpo:** Atlético.
-- **Roupa:** Camisa vermelha número 9, calção preto, meias vermelhas e chuteiras.
-- **Jeito:** Fala pouco; ficou sozinho no campo.
+- **Age:** 17
+- **Height:** 1.78 m
+- **Build:** average
+- **Face:** Brown skin, short black hair and brown eyes.
+- **Body:** Athletic.
+- **Clothes:** Red number 9 jersey, black shorts, red socks and cleats.
+- **Manner:** Says little; was left alone on the field.
 
-![Rosto de Tiago](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/tiago.jpg) ![Tiago de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/tiago.jpg)
+![Face of Tiago](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/tiago.jpg) ![Tiago, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/tiago.jpg)
 
-![Silhueta de um bicho corcunda de olhos vermelhos, do cartaz de procura-se](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/silhueta.png)
-*Do cartaz no mural da praça*
+![Silhouette of a hunched creature with red eyes, from the wanted poster](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/silhueta.png)
+*From the poster on the bulletin board in the square*
 
-*O que anda no mato*
+*What walks in the woods*
 
-### Procura-se
+### Wanted
 
-Ninguém viu direito. O Seu Arno viu olhos vermelhos na outra margem do rio. O Joãozinho, da 4ª série, jura que o bicho anda pulando que nem canguru e tem espinho nas costas.
+Nobody got a good look. Seu Arno saw red eyes on the far bank of the river. Joãozinho, from the 4th grade, swears the thing hops around like a kangaroo and has spikes on its back.
 
-No jogo, cada criatura que você vê de perto ganha uma ficha em LENDAS DO HERVAL. Aqui elas ficam trancadas. E não é uma só.
+In the game, every creature you see up close gets an entry in LEGENDS OF HERVAL. Here they stay locked. And there’s more than one.
 
-### Eles têm medo
+### They’re afraid
 
-Você tem uma 9 mm, uma lanterna e a noite inteira pela frente.
+You’ve got a 9 mm, a flashlight and the whole night ahead of you.
 
-[Jogar agora](https://fabianokunst.github.io/Teewald-3d/?lang=en) Grátis · no navegador
+[Play now](https://fabianokunst.github.io/Teewald-3d/?lang=en) Free · in your browser
 
 ---
 
-*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
+*A work of fiction: all names, characters and stories in the game are made up and have no real connection to the town of Santa Maria do Herval or its residents. Only the map (streets, river and terrain) comes from the real town.*

@@ -1,95 +1,95 @@
-# A cidade — Teewald
+# The town — Teewald
 
-> Os lugares de Teewald: o calçadão do Rio Cadeia, a Praça 10 de Abril, a Igreja Matriz, o pavilhão da Kartoffelfest, as casas de enxaimel e o mato. Uma cidade feita de mapas de verdade.
+> The places of Teewald: the Rio Cadeia promenade, Praça 10 de Abril, the parish church, the Kartoffelfest pavilion, the half-timbered houses and the woods. A town made from real maps.
 
-Página: https://fabianokunst.github.io/Teewald-3d/site/en/cidade.html  
-Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/?lang=en
+Page: https://fabianokunst.github.io/Teewald-3d/site/en/cidade.html  
+Play free in your browser: https://fabianokunst.github.io/Teewald-3d/?lang=en
 
-*A cidade*
+*The town*
 
-## Comércio fecha às seis
+## Shops close at six
 
-Ruas, rio, praça e morros de Teewald vêm de mapas de verdade. Dá para andar por tudo: do calçadão do Rio Cadeia ao cemitério atrás da Matriz, passando pela praça, pela Prefeitura e pelo pavilhão da festa.
+Teewald’s streets, river, square and hills come from real maps. You can walk all of it: from the Rio Cadeia promenade to the cemetery behind the parish church, past the square, City Hall and the festival pavilion.
 
-![O calçadão na beira do Rio Cadeia](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
+![The promenade along the Rio Cadeia](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
 
-### Calçadão do Rio Cadeia
+### Rio Cadeia promenade
 
-Onde tudo começa.
+Where it all begins.
 
-Um caminho na beira do rio, entre a água e a avenida, com guarda-corpo, bancos, o letreiro TEEWALD e o Monumento ao Imigrante. Tem estande de tiro ao alvo com latas e garrafas para treinar a mira. O Seu Arno pesca aqui, mas agora só de dia.
+A path along the river, between the water and the avenue, with a railing, benches, the TEEWALD sign and the Immigrant Monument. There’s a target-shooting stand with cans and bottles to practice your aim. Seu Arno fishes here, but only by day now.
 
-![A Praça 10 de Abril à noite, com a fonte e os lampiões](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
+![Praça 10 de Abril at night, with the fountain and the street lamps](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
 
 ### Praça 10 de Abril
 
-Fonte, hortênsias, lampiões e um orelhão.
+A fountain, hydrangeas, street lamps and a payphone.
 
-A banca de cuca da Dona Erna está fechada, o Seu Valdir não larga o chimarrão e a moça do orelhão continua ligando para a tia, que não atende. No mural, perto do fim do calçadão, tem um cartaz novo.
+Dona Erna’s cuca stall is closed, Seu Valdir never puts down his chimarrão, and the girl at the payphone keeps calling her aunt, who doesn’t answer. On the bulletin board, near the end of the promenade, there’s a new poster.
 
-![A nave da Igreja Matriz por dentro, com os bancos e o altar](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg)
+![Inside the nave of the parish church, with the pews and the altar](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg)
 
-### Igreja Matriz
+### Parish Church
 
-Uma torre que se vê de quase toda a cidade.
+A tower you can see from almost anywhere in town.
 
-Rosácea, portal de arquivoltas, janelas ogivais com vitral e campanário com venezianas. Por dentro, abóbada azul com estrelas, púlpito, confessionário, coro com órgão, sacristia e uma escada que sobe até o sino. O Padre Bernardo tranca tudo antes de anoitecer.
+A rose window, a portal with archivolts, pointed stained-glass windows and a belfry with louvers. Inside, a blue vault with stars, a pulpit, a confessional, a choir loft with an organ, a sacristy and a staircase up to the bell. Father Bernardo locks everything up before nightfall.
 
-![O pavilhão da Kartoffelfest vazio, com varais de lâmpadas acesas](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
+![The empty Kartoffelfest pavilion, with strings of lit bulbs](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
 
-### Pavilhão da Kartoffelfest
+### Kartoffelfest pavilion
 
-Estava tudo pronto.
+Everything was ready.
 
-Setenta metros de lona listrada em cima da Rua Beno Closs: pórtico de enxaimel, barraca de tiro, salsichão, chope, a Kartoffelhaus cheia de sacos de batata, mesas compridas de toalha xadrez, pista de dança e o palco das bandinhas. A festa deste ano foi cancelada. As lâmpadas acendem do mesmo jeito.
+Seventy meters of striped canvas over Rua Beno Closs: a half-timbered gateway, a shooting booth, sausages, draft beer, the Kartoffelhaus full of potato sacks, long tables with checkered cloths, a dance floor and the stage for the oompah bands. This year’s festival was canceled. The lights come on all the same.
 
-![O Museu, uma casa de enxaimel](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg)
+![The Museum, a half-timbered house](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg)
 
-### Casas de enxaimel
+### Half-timbered houses
 
-Vigas escuras, reboco branco, tijolo à vista.
+Dark beams, white plaster, exposed brick.
 
-Muro rebocado, cerca de ripa, portão na frente da porta e calçadinha até a entrada. O Museu guarda o que os colonos trouxeram do Hunsrück. Nas fábricas de calçados, o turno da noite volta a pé pelo calçadão. Voltava.
+A plastered wall, a picket fence, a gate in front of the door and a little path up to the entrance. The Museum keeps what the colonists brought from the Hunsrück. At the shoe factories, the night shift walks home along the promenade. Used to.
 
-![O cemitério com neblina](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg)
+![The cemetery in the fog](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg)
 
-### O cemitério
+### The cemetery
 
-Atrás da Matriz, lápides antigas com nomes alemães.
+Behind the parish church, old headstones with German names.
 
-O Seu Otto é zelador há trinta anos. Fala pouco, respeita os mortos e não gosta de barulho.
+Seu Otto has been the caretaker for thirty years. He says little, respects the dead and doesn’t like noise.
 
-![Árvores na neblina, na beira do mato](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mato.jpg)
+![Trees in the fog, at the edge of the woods](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mato.jpg)
 
-### O mato
+### The woods
 
-Começa onde as ruas acabam.
+It begins where the streets end.
 
-Araucárias, plátanos de outono e uma neblina que não levanta. Os antigos não entravam nele depois do sol posto. Você vai ter que entrar.
+Araucarias, autumn plane trees and a fog that won’t lift. The old folks never went in after sundown. You’ll have to.
 
-*Feita de mapas de verdade*
+*Made from real maps*
 
-### Uma cidade que existe
+### A town that exists
 
-Teewald é inspirada em Santa Maria do Herval (RS). O traçado das ruas, o rio, os arroios e o relevo vêm de dados abertos. As pessoas e as histórias são inventadas.
+Teewald is inspired by Santa Maria do Herval (Rio Grande do Sul). The street layout, the river, the creeks and the terrain come from open data. The people and the stories are made up.
 
-![Teewald vista do alto, com o rio, as ruas, o campo de futebol e o cemitério](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mapa.jpg)
-*Vista do alto: o rio, o arroio, o campo e o cemitério*
+![Teewald from above, with the river, the streets, the soccer field and the cemetery](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mapa.jpg)
+*From above: the river, the creek, the soccer field and the cemetery*
 
-**600** construções, mais ou menos, nos contornos reais dos prédios
+**600** buildings, give or take, on their real footprints
 
-**SRTM** relevo com a altitude de verdade
+**SRTM** terrain at its true elevation
 
-**OSM** ruas, rio, praça e campo do OpenStreetMap
+**OSM** streets, river, square and soccer field from OpenStreetMap
 
-**24** moradores com fala, cada um no seu canto
+**24** townsfolk who talk, each in their own spot
 
-### Depois das seis, a rua é sua
+### After six, the streets are yours
 
-Sua e do que mais estiver lá fora.
+Yours, and whatever else is out there.
 
-[Jogar agora](https://fabianokunst.github.io/Teewald-3d/?lang=en) Grátis · no navegador
+[Play now](https://fabianokunst.github.io/Teewald-3d/?lang=en) Free · in your browser
 
 ---
 
-*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
+*A work of fiction: all names, characters and stories in the game are made up and have no real connection to the town of Santa Maria do Herval or its residents. Only the map (streets, river and terrain) comes from the real town.*

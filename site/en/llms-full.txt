@@ -1,0 +1,987 @@
+# Teewald
+
+> Teewald is a free third-person survival horror game with a PlayStation 1 look that runs right in the web browser (PC, phone and tablet). It is set in Teewald, a fictional small town of German settlers in the hills of southern Brazil, inspired by Santa Maria do Herval (Rio Grande do Sul): a foggy May, deep in autumn, when livestock turns up dead with two holes in the neck and not a drop of blood, and a stranger decides to stay and find out what walks in the woods.
+
+- Play: https://fabianokunst.github.io/Teewald-3d/?lang=en (free, nothing to install, no account needed)
+- Official site: https://fabianokunst.github.io/Teewald-3d/site/en/
+- Creator: Fabiano Kunst (indie game)
+- Genre: survival horror / third-person horror, single player, twelve chapters, each built around a legend from the Brazilian countryside
+- Gameplay: over-the-shoulder camera, scarce ammo, punches and melee weapons that wear out and break, 9 mm pistol, dodge, 16-slot inventory, documents to read (FILES), conversations with 24 townsfolk, three difficulty levels and an S-to-C rank for each chapter
+- Visuals: CLEAN 3D (default) or RETRO PS1 (320×240, dithering and 15-bit color); weather with late afternoon, night, fog, rain and storms; all sound generated in code
+- Platforms: any up-to-date browser with WebGL (Chrome, Edge, Firefox, Safari) on PC, phone and tablet
+- Controls: keyboard and mouse, controller (USB or Bluetooth, with aim assist and vibration) or touch screen
+- Languages: Portuguese, English, Spanish and German
+- Progress: saved automatically in the browser itself
+- Setting: streets, river and terrain from open data (OpenStreetMap, Microsoft Global ML Building Footprints and SRTM), with about 600 buildings on their real footprints
+- Technology: Three.js (WebGL) and Vite
+
+A work of fiction: all names, characters and stories in the game are made up and have no real connection to the town of Santa Maria do Herval or its residents. Only the map (streets, river and terrain) comes from the real town.
+
+No spoilers: the site only tells what the player hears and reads right after arriving in town. The creatures of each chapter and what happens after the first night are left for the game.
+
+---
+
+# Teewald — survival horror with a PS1 look
+
+> Third-person survival horror with a PlayStation 1 look, set in a small town of German settlers in the hills of southern Brazil. Free, in your browser.
+
+Page: https://fabianokunst.github.io/Teewald-3d/site/en/  
+Play free in your browser: https://fabianokunst.github.io/Teewald-3d/?lang=en
+
+*Herval Valley · Rio Grande do Sul · May*
+
+## Teewald
+
+Something walks in the woods.
+
+A third-person survival horror game with a PlayStation 1 look, set in a small town of German settlers in the hills of southern Brazil. The fog won’t lift, livestock turns up drained in the pasture, and nobody leaves the house after dark. Except you.
+
+[Play now](https://fabianokunst.github.io/Teewald-3d/?lang=en) [Read the story](https://fabianokunst.github.io/Teewald-3d/site/en/historia.html)
+
+Free · in your browser · nothing to install
+
+**Headlines from the Folha de Teewald:** Dead sheep on Linha Schmitt · City Hall: “it’s a pampas fox” · Kartoffelfest canceled · Shops close at 6 p.m. · Missing: gray cat, answers to Mimi · Lost: black dog with a red collar · Bus to Novo Hamburgo never came · Brigada Militar asks that no one go into the woods armed at night.
+
+*Poster in the square*
+
+### Wanted
+
+Over the last few nights, chickens, ducks and even sheep have turned up dead in Teewald. All with two holes in the neck and not a drop of blood left.
+
+City Hall says it’s a pampas fox. The veterinary office says dogs. The reporter who came up from Porto Alegre has already counted eleven cases in ten days, and nobody will talk to her.
+
+You’re not from here. You arrived on a foggy afternoon, along the Rio Cadeia promenade, and decided to stay and find out what walks in the woods. The town doesn’t like questions, but every resident knows a piece of the story.
+
+> When I turned on my flashlight, its eyes shone red. Then it was gone into the woods, leaping.
+>
+> — Seu Arno, fisherman on the promenade
+
+![Wanted poster with the silhouette of a hunched creature with red eyes](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/cartaz-chupacabras.png)
+*Pinned to the bulletin board in Praça 10 de Abril, beside the end of the promenade.*
+
+*What awaits you*
+
+### Old-school horror
+
+An over-the-shoulder camera, scarce ammo and a whole town to cross in the dark. The way horror games were in the ’90s, only in your browser.
+
+*RETRO PS1 · 320×240*
+
+#### The PlayStation 1 look
+
+Hard-edged polygons, pixel-art textures and characters built like in the first 3D games. Play in CLEAN 3D or RETRO PS1, with real dithering and 15-bit color.
+
+*Real map*
+
+#### A town that exists
+
+Streets, river, square and hills from real maps, with about 600 buildings on their true footprints.
+
+#### Classic survival horror
+
+An inventory that pauses the game, melee weapons that wear out and break, rocks to throw, and cuca (crumb cake) with marcela tea to patch yourself up.
+
+#### Backcountry legends
+
+Twelve chapters, each with a story the old folks only tell in a whisper, by the wood stove. Which is which, you’ll find out inside.
+
+#### Fog, rain and thunder
+
+Your flashlight reaches only a few yards, and sound comes from every side.
+
+#### Plays anywhere
+
+On PC, phone or tablet, with keyboard and mouse, controller or touch. Your progress saves itself in the browser.
+
+**Where and how to play:** PC, Phone, Tablet, Controller, Touch, Português, English, Español, Deutsch.
+
+> Herval comes from erva-mate. Teewald, in Hunsrik: the tea woods. Pretty, isn’t it? But the old folks had a different respect for these woods. Nobody went in there after sundown.
+>
+> — Professor Edgar, who knows the colonists’ diaries
+
+*Gallery*
+
+### Game screenshots
+
+![The parish church in the late afternoon, in the fog](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
+*The parish church in the late afternoon*
+
+![The promenade along the Rio Cadeia](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
+*The Rio Cadeia promenade*
+
+![A town street on a rainy night, the stranger with his flashlight on](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg)
+*Rainy night*
+
+![The empty Kartoffelfest pavilion with its bunting](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
+*The Kartoffelfest that never happened*
+
+![Praça 10 de Abril at night, with the street lamps lit](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
+*The square at night*
+
+![The parish church tower with the full moon behind it](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg)
+*Full moon behind the tower*
+
+[See all screenshots](https://fabianokunst.github.io/Teewald-3d/site/en/galeria.html)
+
+*More of Teewald*
+
+### Before dark
+
+- [The story](https://fabianokunst.github.io/Teewald-3d/site/en/historia.html): The colonists from the Hunsrück, the tea woods and the last few weeks in the Folha de Teewald.
+- [The town](https://fabianokunst.github.io/Teewald-3d/site/en/cidade.html): From the promenade to the cemetery: the places nobody stays after six.
+- [Characters](https://fabianokunst.github.io/Teewald-3d/site/en/personagens.html): Twenty-four frightened townsfolk, and each one knows a piece of the story.
+
+### The fog has rolled in
+
+The bus to Novo Hamburgo hasn’t come by since noon. Since you’re staying, keep an eye on the woods.
+
+[Play now](https://fabianokunst.github.io/Teewald-3d/?lang=en) Free · PC, phone and controller
+
+---
+
+*A work of fiction: all names, characters and stories in the game are made up and have no real connection to the town of Santa Maria do Herval or its residents. Only the map (streets, river and terrain) comes from the real town.*
+
+---
+
+# The story — Teewald
+
+> Teewald, the tea woods: a colony of immigrants from the Hunsrück in the Herval Valley, a foggy May, and livestock turning up dead without a drop of blood.
+
+Page: https://fabianokunst.github.io/Teewald-3d/site/en/historia.html  
+Play free in your browser: https://fabianokunst.github.io/Teewald-3d/?lang=en
+
+*The story*
+
+## The tea woods
+
+Teewald is a small town of German settlers in the Herval Valley, in the hills of southern Brazil. It has a church with a tall tower, a shoe factory, a potato festival, and woods the old folks never entered after sundown.
+
+*The colony*
+
+### The ones who cut the trails
+
+The first colonists came from the Hunsrück in the 19th century and cut trails through the araucaria woods. They named the place after what they found there: *Teewald*, the tea woods, for the erva-mate. In Portuguese, it became Herval.
+
+To this day people speak Hunsrik in the kitchen, sip chimarrão on the benches in the square and eat cuca (crumb cake) at the colonial afternoon coffee. The parish church looks down on the town, the shoe factory changes shifts at night and, every autumn, Rua Beno Closs turns into the Kartoffelfest pavilion.
+
+The old folks respected those woods. In their diaries there’s a word nobody likes to repeat: *Blutsauger*. The bloodsucker.
+
+![The parish church in the late afternoon, in the fog](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
+*The parish church seen from the square*
+
+*May*
+
+### The last few weeks
+
+It started far off, out in the countryside. Then it crept closer to the houses.
+
+Everything here you’ll hear from the townsfolk or read in the town’s papers as soon as you arrive. The rest, the game will tell.
+
+1. **May 3:** The Folha de Teewald reports seven sheep dead on Linha Schmitt. No large wounds, just two holes in the neck. Drained dry.
+2. **That same week:** Chickens, ducks, a young goat, a cat gone stiff behind the shed. Dona Erna loses all twelve of her hens in a single night.
+3. **Sunday night:** Bóris, Lucas’s dog, breaks his chain barking at the woods. Then he stops barking. All at once.
+4. **Monday night:** Mimi, Dona Hilda’s cat, goes out and doesn’t come back. She’s never stayed out all night.
+5. **Notice No. 41:** City Hall cancels the Kartoffelfest and orders the shops to close at six. Officially, it’s a pampas fox.
+6. **Today:** You arrive on a foggy autumn afternoon, along the Rio Cadeia promenade. There’s a new poster on the bulletin board in the square.
+
+*From the town files*
+
+### Pinned-up papers
+
+Around town there are newspaper clippings, posters, letters and diary pages. In the game, every paper you read is kept in FILES. These are on the bulletin board.
+
+![Clipping from the Folha de Teewald: dead sheep on Linha Schmitt](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/jornal.png)
+*Folha de Teewald, May 3*
+
+![City Hall notice canceling the Kartoffelfest](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/oficio.png)
+*City Hall notice*
+
+![Kartoffelfest program with a potato wearing a hat](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/programa.png)
+*Kartoffelfest program*
+
+![School essay: what I saw from my window](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/redacao.png)
+*School essay*
+
+![Lost-dog poster for Bóris](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/cartaz-boris.png)
+*Poster on the bridge*
+
+Now I only fish by day. And you ought to do the same.
+
+Home before dark.
+
+![Seu Valdir sitting on a bench in the square](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg)
+*Seu Valdir never puts down his chimarrão*
+
+*It’s happened before*
+
+### Seventy-eight
+
+> In seventy-eight it happened again. I was a young man. Livestock died in three farm districts. Then it stopped, out of nowhere. The town chose to forget.
+>
+> — Professor Edgar
+
+Those who lived through that year don’t like to talk about it. Seu Valdir drinks his chimarrão alone on a bench in the square and has an old scar on his cheek. If you’re patient, he’ll tell you.
+
+*The stranger*
+
+### You
+
+The protagonist has no name. He came from outside, in a leather jacket, and everyone notices. He decided to stay and hunt whatever walks in the woods.
+
+The townsfolk are scared: they shut their windows and stare at whoever walks by. But each one has seen, heard or lost something. Talk to everyone: that’s where the clues come from.
+
+From here on, the story is yours. We won’t tell you what happens after the first night. Some things in Teewald only make sense up close.
+
+![The protagonist aiming his pistol into the fog](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
+*9 mm pistol, twelve-round magazine*
+
+### The town would rather forget
+
+Not you. The poster is already up on the bulletin board in the square.
+
+[Play now](https://fabianokunst.github.io/Teewald-3d/?lang=en) Free · in your browser
+
+---
+
+*A work of fiction: all names, characters and stories in the game are made up and have no real connection to the town of Santa Maria do Herval or its residents. Only the map (streets, river and terrain) comes from the real town.*
+
+---
+
+# The town — Teewald
+
+> The places of Teewald: the Rio Cadeia promenade, Praça 10 de Abril, the parish church, the Kartoffelfest pavilion, the half-timbered houses and the woods. A town made from real maps.
+
+Page: https://fabianokunst.github.io/Teewald-3d/site/en/cidade.html  
+Play free in your browser: https://fabianokunst.github.io/Teewald-3d/?lang=en
+
+*The town*
+
+## Shops close at six
+
+Teewald’s streets, river, square and hills come from real maps. You can walk all of it: from the Rio Cadeia promenade to the cemetery behind the parish church, past the square, City Hall and the festival pavilion.
+
+![The promenade along the Rio Cadeia](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
+
+### Rio Cadeia promenade
+
+Where it all begins.
+
+A path along the river, between the water and the avenue, with a railing, benches, the TEEWALD sign and the Immigrant Monument. There’s a target-shooting stand with cans and bottles to practice your aim. Seu Arno fishes here, but only by day now.
+
+![Praça 10 de Abril at night, with the fountain and the street lamps](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
+
+### Praça 10 de Abril
+
+A fountain, hydrangeas, street lamps and a payphone.
+
+Dona Erna’s cuca stall is closed, Seu Valdir never puts down his chimarrão, and the girl at the payphone keeps calling her aunt, who doesn’t answer. On the bulletin board, near the end of the promenade, there’s a new poster.
+
+![Inside the nave of the parish church, with the pews and the altar](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg)
+
+### Parish Church
+
+A tower you can see from almost anywhere in town.
+
+A rose window, a portal with archivolts, pointed stained-glass windows and a belfry with louvers. Inside, a blue vault with stars, a pulpit, a confessional, a choir loft with an organ, a sacristy and a staircase up to the bell. Father Bernardo locks everything up before nightfall.
+
+![The empty Kartoffelfest pavilion, with strings of lit bulbs](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
+
+### Kartoffelfest pavilion
+
+Everything was ready.
+
+Seventy meters of striped canvas over Rua Beno Closs: a half-timbered gateway, a shooting booth, sausages, draft beer, the Kartoffelhaus full of potato sacks, long tables with checkered cloths, a dance floor and the stage for the oompah bands. This year’s festival was canceled. The lights come on all the same.
+
+![The Museum, a half-timbered house](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg)
+
+### Half-timbered houses
+
+Dark beams, white plaster, exposed brick.
+
+A plastered wall, a picket fence, a gate in front of the door and a little path up to the entrance. The Museum keeps what the colonists brought from the Hunsrück. At the shoe factories, the night shift walks home along the promenade. Used to.
+
+![The cemetery in the fog](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg)
+
+### The cemetery
+
+Behind the parish church, old headstones with German names.
+
+Seu Otto has been the caretaker for thirty years. He says little, respects the dead and doesn’t like noise.
+
+![Trees in the fog, at the edge of the woods](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mato.jpg)
+
+### The woods
+
+It begins where the streets end.
+
+Araucarias, autumn plane trees and a fog that won’t lift. The old folks never went in after sundown. You’ll have to.
+
+*Made from real maps*
+
+### A town that exists
+
+Teewald is inspired by Santa Maria do Herval (Rio Grande do Sul). The street layout, the river, the creeks and the terrain come from open data. The people and the stories are made up.
+
+![Teewald from above, with the river, the streets, the soccer field and the cemetery](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mapa.jpg)
+*From above: the river, the creek, the soccer field and the cemetery*
+
+**600** buildings, give or take, on their real footprints
+
+**SRTM** terrain at its true elevation
+
+**OSM** streets, river, square and soccer field from OpenStreetMap
+
+**24** townsfolk who talk, each in their own spot
+
+### After six, the streets are yours
+
+Yours, and whatever else is out there.
+
+[Play now](https://fabianokunst.github.io/Teewald-3d/?lang=en) Free · in your browser
+
+---
+
+*A work of fiction: all names, characters and stories in the game are made up and have no real connection to the town of Santa Maria do Herval or its residents. Only the map (streets, river and terrain) comes from the real town.*
+
+---
+
+# Characters — Teewald
+
+> The characters of Teewald: the stranger and the 24 townsfolk who talk, with each one’s portrait, height, clothes and manner, taken from the game’s models.
+
+Page: https://fabianokunst.github.io/Teewald-3d/site/en/personagens.html  
+Play free in your browser: https://fabianokunst.github.io/Teewald-3d/?lang=en
+
+*Characters*
+
+## Who’s still out on the street
+
+Twenty-four townsfolk who talk, each with a piece of the story. All of them scared. The portraits were taken from the game’s own models, and the full-body figures are all to the same scale.
+
+*Protagonist*
+
+### You
+
+##### THE STRANGER
+
+The protagonist, no name. Came from outside and stayed to hunt the chupacabra.
+
+- **Age:** 33
+- **Height:** 1.75 m
+- **Build:** average
+- **Face:** Blond, hair combed back, deep-set eyes, straight eyebrows and a thin beard.
+- **Body:** Average height and broad shoulders.
+- **Clothes:** Brown leather jacket with lapels, gray V-neck sweater, dark shirt, dark pants and boots.
+- **Manner:** Serious and quiet. He’s not from town, and everyone notices.
+
+![Face of the Stranger](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/heroi.jpg) ![The Stranger, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/heroi.jpg)
+
+*Townsfolk*
+
+### Who you’ll meet
+
+24 townsfolk who talk, scattered around town. The height, build and posture on each card are the ones in the game, and the facial features (wrinkles, dark circles, freckles, stubble, moles, scars) are painted into the texture.
+
+#### Rio Cadeia promenade
+
+##### SEU ARNO
+
+Retired blacksmith; fishes on the Rio Cadeia promenade
+
+- **Age:** 68
+- **Height:** 1.70 m
+- **Build:** sturdy
+- **Face:** Sunburned, with a full gray beard and bushy eyebrows.
+- **Body:** Short and stocky, with the thick arms and hands of a man who pounded iron all his life.
+- **Clothes:** Red plaid shirt, gray pants, boots and a straw hat. Fishing rod.
+- **Manner:** Says little and distrusts everyone. Now he only fishes by day.
+
+![Face of Seu Arno](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/arno.jpg) ![Seu Arno, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/arno.jpg)
+
+##### DONA HILDA
+
+Widow on the promenade; looking for her cat, Mimi
+
+- **Age:** 74
+- **Height:** 1.55 m
+- **Build:** thin, stooped
+- **Face:** Deep wrinkles, dark circles and glasses; gray hair under a purple headscarf.
+- **Body:** Small and thin, a little stooped.
+- **Clothes:** Burgundy sweater, long gray skirt, tights and shoes.
+- **Manner:** Distressed, but polite. Keeps calling for Mimi.
+
+![Face of Dona Hilda](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/hilda.jpg) ![Dona Hilda, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/hilda.jpg)
+
+##### LUCAS
+
+Looking for his dog, Bóris; lives in the last house before the bridge
+
+- **Age:** 19
+- **Height:** 1.81 m
+- **Build:** thin
+- **Face:** Brown skin, a thin beard and brown eyes.
+- **Body:** Tall and thin, walks fast.
+- **Clothes:** Blue jacket with a gray collar, dark pants, light sneakers and a red cap.
+- **Manner:** Restless; whistles and shouts for Bóris.
+
+![Face of Lucas](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lucas.jpg) ![Lucas, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lucas.jpg)
+
+##### MARLENE
+
+Reporter for a Porto Alegre newspaper
+
+- **Age:** 31
+- **Height:** 1.68 m
+- **Build:** average
+- **Face:** Light-brown skin, brown eyes and a mole on her cheek; black hair in a ponytail.
+- **Body:** Average height, nimble.
+- **Clothes:** Mustard jacket, jeans and sneakers. Camera in hand.
+- **Manner:** Pushy and curious. Nobody in town wants to talk to her.
+
+![Face of Marlene](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/marlene.jpg) ![Marlene, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/marlene.jpg)
+
+##### PROFESSOR EDGAR
+
+Retired history teacher; knows the colonists’ diaries
+
+- **Age:** 79
+- **Height:** 1.76 m
+- **Build:** thin, stooped
+- **Face:** White hair and mustache, light-rimmed glasses, bushy eyebrows and deep wrinkles.
+- **Body:** Tall and thin, stooped with age.
+- **Clothes:** Worn brown suit, light shirt, blue tie and gray beret. Always carrying a book.
+- **Manner:** Speaks slowly, as if in a classroom. Stares at passersby.
+
+![Face of Professor Edgar](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/edgar.jpg) ![Professor Edgar, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/edgar.jpg)
+
+##### SEU LAURO
+
+Has been waiting for the bus to Novo Hamburgo since noon
+
+- **Age:** 66
+- **Height:** 1.72 m
+- **Build:** average
+- **Face:** Graying, unshaven, with the dark circles of a man who doesn’t sleep.
+- **Body:** Average height, drooping shoulders.
+- **Clothes:** Olive-green jacket, khaki pants, boots and a green cap. Suitcase at his side.
+- **Manner:** Tired and set on leaving town.
+
+![Face of Seu Lauro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lauro.jpg) ![Seu Lauro, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lauro.jpg)
+
+##### KÁTIA
+
+Night-shift worker at the shoe factory
+
+- **Age:** 27
+- **Height:** 1.62 m
+- **Build:** thin
+- **Face:** Brown skin, brown eyes and night-shift dark circles; black hair in a ponytail.
+- **Body:** Slim, of medium height.
+- **Clothes:** Light-blue shirt, navy pants and shoes. Cloth bag.
+- **Manner:** Frightened; keeps looking over her shoulder as she walks.
+
+![Face of Kátia](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/katia.jpg) ![Kátia, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/katia.jpg)
+
+##### SEU BRUNO
+
+Owner of the flower shop
+
+- **Age:** 56
+- **Height:** 1.77 m
+- **Build:** sturdy
+- **Face:** Brown hair, mustache, glasses and green eyes.
+- **Body:** Heavyset, with the belly of a man past fifty.
+- **Clothes:** Green overalls over a light shirt, and boots. Watering can in hand.
+- **Manner:** Quiet and watchful; stares at passersby.
+
+![Face of Seu Bruno](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bruno.jpg) ![Seu Bruno, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bruno.jpg)
+
+#### Praça 10 de Abril
+
+##### SEU VALDIR
+
+Retired gaúcho; drinks chimarrão on a bench in the square
+
+- **Age:** 72
+- **Height:** 1.71 m
+- **Build:** thin
+- **Face:** Weathered skin, gray mustache, bushy eyebrows and an old scar on his cheek.
+- **Body:** Lean and wiry despite his age.
+- **Clothes:** Black brimmed hat, dark jacket, red shirt and light pants. Mate gourd and thermos.
+- **Manner:** A man of few words. He lived through the 1978 events and never forgot.
+
+![Face of Seu Valdir](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/valdir.jpg) ![Seu Valdir, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/valdir.jpg)
+
+##### DONA ERNA
+
+Sells cuca (crumb cake) at a stall in the square
+
+- **Age:** 63
+- **Height:** 1.58 m
+- **Build:** stout
+- **Face:** Rosy cheeks and ash-blond hair pulled up in a bun.
+- **Body:** Short and plump.
+- **Clothes:** Green dress, white apron, tights and shoes.
+- **Manner:** Practical and blunt. Lost all twelve hens in a single night.
+
+![Face of Dona Erna](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/erna.jpg) ![Dona Erna, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/erna.jpg)
+
+##### JOÃOZINHO
+
+4th grader; his dog disappeared into the woods
+
+- **Age:** 9
+- **Height:** 1.30 m
+- **Build:** thin
+- **Face:** Brown hair, green eyes and freckles on his nose.
+- **Body:** Scrawny.
+- **Clothes:** Brown sweater, navy shorts, light socks and shoes.
+- **Manner:** Quiet; says little and just stares.
+
+![Face of Joãozinho](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/joao.jpg) ![Joãozinho, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/joao.jpg)
+
+##### ANA
+
+Trying to call her aunt, who lives at the edge of the woods
+
+- **Age:** 22
+- **Height:** 1.66 m
+- **Build:** thin
+- **Face:** Long auburn hair, green eyes and dark circles from crying.
+- **Body:** Slim, of medium height.
+- **Clothes:** Light-gray sweater with an embroidered burgundy band, navy pants and shoes.
+- **Manner:** Anxious; won’t leave the payphone.
+
+![Face of Ana](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ana.jpg) ![Ana, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ana.jpg)
+
+##### SEU ALFREDO
+
+Retired; has walked around the square with his wife for fifty years
+
+- **Age:** 81
+- **Height:** 1.69 m
+- **Build:** thin, stooped
+- **Face:** White hair, blue eyes, a deeply wrinkled face and dark circles.
+- **Body:** Thin and stooped; walks with a cane.
+- **Clothes:** Brown suit, tie and felt hat.
+- **Manner:** Polite and protective of Wilma. Hasn’t slept since something scratched the window.
+
+![Face of Seu Alfredo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/alfredo.jpg) ![Seu Alfredo, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/alfredo.jpg)
+
+##### DONA WILMA
+
+Seu Alfredo’s wife
+
+- **Age:** 78
+- **Height:** 1.53 m
+- **Build:** average, stooped
+- **Face:** White hair in a bun, glasses and blue eyes.
+- **Body:** Tiny and a little stooped.
+- **Clothes:** Lilac sweater with an embroidered band, long purple skirt and tights. Bag in hand.
+- **Manner:** Affectionate; calls everyone dear.
+
+![Face of Dona Wilma](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/wilma.jpg) ![Dona Wilma, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/wilma.jpg)
+
+##### PAULA
+
+Clerk at the Teewald Store
+
+- **Age:** 24
+- **Height:** 1.71 m
+- **Build:** thin
+- **Face:** Redhead with a ponytail, freckles and green eyes.
+- **Body:** Tall and thin.
+- **Clothes:** Burgundy uniform polo shirt, black pants and shoes.
+- **Manner:** In a hurry to close the store. Stares at anyone who comes by.
+
+![Face of Paula](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/paula.jpg) ![Paula, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/paula.jpg)
+
+##### SEU ROMEU
+
+City Hall employee; owns a pasture outside town
+
+- **Age:** 52
+- **Height:** 1.75 m
+- **Build:** stout
+- **Face:** Combed black hair, trimmed mustache and bushy eyebrows.
+- **Body:** Portly, with a belly under his suit jacket.
+- **Clothes:** Gray suit, red tie and polished shoes. Leather briefcase.
+- **Manner:** Talks like he’s giving an official speech and says everything is under control.
+
+![Face of Seu Romeu](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/romeu.jpg) ![Seu Romeu, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/romeu.jpg)
+
+#### Parish church and cemetery
+
+##### FATHER BERNARDO
+
+Priest of the parish church
+
+- **Age:** 70
+- **Height:** 1.78 m
+- **Build:** thin
+- **Face:** Short white hair, gold-rimmed glasses and the dark circles of a man who prays at night.
+- **Body:** Tall and thin, upright posture.
+- **Clothes:** Black cassock with a clerical collar, and black shoes.
+- **Manner:** Calm and firm. Locks the church before nightfall.
+
+![Face of Father Bernardo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bernardo.jpg) ![Father Bernardo, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bernardo.jpg)
+
+##### DONA IRMA
+
+Devout churchgoer; prays the rosary at the church every day
+
+- **Age:** 76
+- **Height:** 1.52 m
+- **Build:** thin, stooped
+- **Face:** White hair under a black headscarf, gray eyes and a mole near her mouth.
+- **Body:** Small, thin and stooped.
+- **Clothes:** Black mourning dress, black headscarf, tights and shoes.
+- **Manner:** Stern; thinks it’s all God’s punishment.
+
+![Face of Dona Irma](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/irma.jpg) ![Dona Irma, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/irma.jpg)
+
+##### RUDI, THE MAILMAN
+
+The town’s mailman for fifteen years
+
+- **Age:** 38
+- **Height:** 1.79 m
+- **Build:** sturdy
+- **Face:** Brown skin, short black hair, stubble and brown eyes.
+- **Body:** Strong, with the legs of a man who walks all day.
+- **Clothes:** Yellow polo shirt with a blue collar, blue pants, blue cap and a mailbag.
+- **Manner:** Helpful, but nervous this week.
+
+![Face of Rudi, the mailman](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/rudi.jpg) ![Rudi, the mailman, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/rudi.jpg)
+
+##### SEU OTTO
+
+Cemetery caretaker for thirty years
+
+- **Age:** 69
+- **Height:** 1.74 m
+- **Build:** sturdy
+- **Face:** Full gray beard, bushy eyebrows and a scar cutting through one eyebrow.
+- **Body:** Broad and strong, with calloused hands.
+- **Clothes:** Navy overalls over a plaid shirt, boots and a green cap. Rake in hand.
+- **Manner:** Says little; respects the dead and doesn’t like noise.
+
+![Face of Seu Otto](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/otto.jpg) ![Seu Otto, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/otto.jpg)
+
+#### Kartoffelfest and soccer field
+
+##### SEU IVO
+
+On the Kartoffelfest committee; guards the pavilion at night
+
+- **Age:** 58
+- **Height:** 1.80 m
+- **Build:** stout
+- **Face:** Red hair, red mustache, blue eyes and a ruddy face.
+- **Body:** Big and heavy.
+- **Clothes:** Red plaid shirt, brown pants, boots and a hat. Beer stein in hand.
+- **Manner:** Serious and helpful; looks after the empty pavilion.
+
+![Face of Seu Ivo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ivo.jpg) ![Seu Ivo, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ivo.jpg)
+
+##### DONA GERTRUD
+
+Cook at the Kartoffelhaus since the first festival
+
+- **Age:** 71
+- **Height:** 1.60 m
+- **Build:** stout
+- **Face:** Round, rosy face, gray hair in a bun and blue eyes.
+- **Body:** Short and sturdy.
+- **Clothes:** Dark-red dress with a white apron, tights and shoes. Basket on her arm.
+- **Manner:** Motherly; feeds everybody.
+
+![Face of Dona Gertrud](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/gertrud.jpg) ![Dona Gertrud, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/gertrud.jpg)
+
+##### LUANA
+
+This year’s Kartoffelfest queen
+
+- **Age:** 18
+- **Height:** 1.67 m
+- **Build:** thin
+- **Face:** Long blond hair and blue eyes.
+- **Body:** Slim, of medium height.
+- **Clothes:** Green traditional dress with a light apron, tights and shoes.
+- **Manner:** Downcast; promised her mother she’d be home before dark.
+
+![Face of Luana](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/luana.jpg) ![Luana, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/luana.jpg)
+
+##### TIAGO
+
+Striker on the town soccer team
+
+- **Age:** 17
+- **Height:** 1.78 m
+- **Build:** average
+- **Face:** Brown skin, short black hair and brown eyes.
+- **Body:** Athletic.
+- **Clothes:** Red number 9 jersey, black shorts, red socks and cleats.
+- **Manner:** Says little; was left alone on the field.
+
+![Face of Tiago](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/tiago.jpg) ![Tiago, full body](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/tiago.jpg)
+
+![Silhouette of a hunched creature with red eyes, from the wanted poster](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/silhueta.png)
+*From the poster on the bulletin board in the square*
+
+*What walks in the woods*
+
+### Wanted
+
+Nobody got a good look. Seu Arno saw red eyes on the far bank of the river. Joãozinho, from the 4th grade, swears the thing hops around like a kangaroo and has spikes on its back.
+
+In the game, every creature you see up close gets an entry in LEGENDS OF HERVAL. Here they stay locked. And there’s more than one.
+
+### They’re afraid
+
+You’ve got a 9 mm, a flashlight and the whole night ahead of you.
+
+[Play now](https://fabianokunst.github.io/Teewald-3d/?lang=en) Free · in your browser
+
+---
+
+*A work of fiction: all names, characters and stories in the game are made up and have no real connection to the town of Santa Maria do Herval or its residents. Only the map (streets, river and terrain) comes from the real town.*
+
+---
+
+# The game — Teewald
+
+> How to play Teewald: combat, inventory, files, the CLEAN 3D and RETRO PS1 visual styles, weather, keyboard, controller and touch controls, and frequently asked questions.
+
+Page: https://fabianokunst.github.io/Teewald-3d/site/en/jogo.html  
+Play free in your browser: https://fabianokunst.github.io/Teewald-3d/?lang=en
+
+*The game*
+
+## How to survive
+
+Third person, an over-the-shoulder camera and scarce ammo. Teewald is old-school survival horror that runs right in your browser.
+
+*Combat*
+
+### With whatever’s at hand
+
+- A three-hit punch combo, always available. Your strike turns on its own toward whoever is closest.
+- Stick, iron pipe, shovel, scythe and axe. They hit harder, but wear out and break.
+- Rocks and bricks to throw. With a gun in hand, a pistol whip.
+- A quick dodge, with a split second of grace to get clear of a lunge.
+- A 9 mm pistol to start with. The rest you earn along the way.
+- Every legend has its weak spot. Bullets don’t always do it.
+
+Each chapter ends with a rank, from S to C, based on creatures defeated, deaths and time. Three difficulties: easy, normal and hard.
+
+![The protagonist aiming his pistol over the shoulder](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
+*When you aim, the camera moves to the shoulder*
+
+![Inventory screen with its slots and an item in 3D](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/en/inventario.jpg)
+*16-slot inventory*
+
+*Inventory and files*
+
+### Everything that fits in your pockets
+
+Sixteen slots in the style of PS1 survival horror, with the item spinning in 3D. Equip, load, eat, examine. Health comes back with **cuca** (crumb cake) and **marcela tea**, and defeated creatures sometimes drop ammo.
+
+Around town there are newspaper clippings, letters, posters and diary pages, and each one is kept in FILES. The legends you see up close get an entry. And some people need help: a cat and a dog have gone missing.
+
+*Visual style*
+
+### Two ways to see it
+
+Drag the divider. On the left, CLEAN 3D; on the right, RETRO PS1. Both are in OPTIONS, along with the lighting.
+
+![The parish church at nightfall in CLEAN 3D style](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-limpo.jpg)
+
+![The same view in RETRO PS1 style, at low resolution](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg)
+
+#### Clean 3D
+
+Your screen’s native resolution, anti-aliasing and smooth textures. The low-poly models look crisp.
+
+#### Retro PS1
+
+320×240 scaled up without smoothing, dithering and 15-bit color. The way a tube TV showed it.
+
+#### Lighting
+
+ADVANCED, with a low late-afternoon sun, shadows from the sun and the moonlight, and halos around the street lamps. Or CLASSIC, overcast and shadowless.
+
+*Weather and sound*
+
+### The weather turns
+
+Overcast afternoons, dusk, pitch-black nights, predawn fog, rain, drizzle and storms, with the thunder arriving after the flash. At night your flashlight leads the way, the street lamps in the square come on and everything else stays dark.
+
+Every sound in the game is made in code: wind, river, rain on the roof, crickets, crows, lapwings, wood creaking inside the house and the church bell, louder near the tower and muffled between walls. With headphones, you can tell which side a noise is coming from.
+
+![A lightning flash over the town on a stormy night](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg)
+*First the flash, then the thunder*
+
+*Controls*
+
+### Keyboard, controller or touch
+
+**Keyboard and mouse**
+
+- **Move:** `W` `A` `S` `D` or arrow keys
+- **Run:** `Shift`
+- **Jump · dodge:** `Space` · `C` or `Ctrl`
+- **Camera:** mouse (click the screen to lock it) · `Q` `E` · wheel zooms
+- **Talk, read, take, enter:** `F` or `E`
+- **Aim · shoot:** right button (hold) · left button
+- **Strike:** `V` · left button without a firearm
+- **Switch weapon · reload:** `1` to `8` · `R`
+- **Eat, drink (heal):** `H`
+- **Inventory · files:** `I` or `Tab` · `J`
+- **Minimap · pause:** `M` · `Esc` or `P`
+
+**Controller**
+
+- **Move · camera:** left stick · right stick (`R3` recenters)
+- **Run:** `B` (hold) or `L3`
+- **Jump · dodge:** `A` · `B` (quick tap)
+- **Talk, read, take, enter:** `A`
+- **Aim · shoot:** `L2` or `LB` · `R2`
+- **Strike:** `RB`
+- **Switch weapon · reload:** D-pad ◀ ▶ · `X`
+- **Eat, drink (heal):** D-pad ▲
+- **Inventory:** `Y`
+- **Pause and files · minimap:** `Start` · `Select`
+
+**Touch**
+
+- **Move:** drag on the left side of the screen
+- **Camera:** drag on the right side (or on SHOOT itself) · double tap recenters · pinch zooms
+- **Run · jump · dodge:** RUN, JUMP and DODGE buttons
+- **Talk, read, take, enter:** the button appears over the person or object
+- **Aim · shoot · strike:** AIM toggles on and off · SHOOT · STRIKE
+- **Weapon · reload · heal:** WEAPON · REL · HEAL (shows up when you’re hurt)
+- **Inventory · pause:** INV · ❚❚
+
+With a controller or touch there’s aim assist (off, normal or strong) and vibration on shots and strikes. On phones, the on-screen buttons disappear when a Bluetooth controller is in use.
+
+*Where to play*
+
+### Nothing to install
+
+**Platforms:** PC, Phone, Tablet, Controller, Touch.
+
+All you need is an up-to-date browser with WebGL: Chrome, Edge, Firefox or Safari. On a phone it plays best in landscape, and on Android the game goes full screen when you tap the title screen.
+
+Your progress saves itself in the browser: whenever you move on to a new stage, at checkpoints and every twenty seconds. CONTINUE takes you back to exactly where you left off.
+
+**Languages:** Português, English, Español, Deutsch.
+
+*Questions*
+
+**How much does it cost?**
+
+Nothing. Just open it and play.
+
+**Where is my progress saved?**
+
+In the browser of the device you played on. Clearing the site’s data erases your progress, and another device starts from scratch.
+
+**Can I play with a controller?**
+
+Yes, on PC and phone, with a USB or Bluetooth controller. The menus work with a controller too.
+
+**Is it very scary?**
+
+It’s a horror game: there’s darkness, blood, creatures and jump scares, in the spirit of ’90s survival horror. Play at night, with headphones, if you dare.
+
+**Is the town real?**
+
+The map is inspired by Santa Maria do Herval (Rio Grande do Sul), with real streets and terrain. The townsfolk and their stories are made up.
+
+**How many chapters are there?**
+
+Twelve. What happens in each one, the game will tell you.
+
+### Ready for the first night?
+
+Pistol in its holster, a twelve-round magazine and a box of bullets. The rest you’ll find along the way.
+
+[Play now](https://fabianokunst.github.io/Teewald-3d/?lang=en) Free · in your browser
+
+---
+
+*A work of fiction: all names, characters and stories in the game are made up and have no real connection to the town of Santa Maria do Herval or its residents. Only the map (streets, river and terrain) comes from the real town.*
+
+---
+
+# Gallery — Teewald
+
+> Screenshots of Teewald taken from the game itself: the parish church, the square at night, the Rio Cadeia promenade, the Kartoffelfest, rain, fog and the RETRO PS1 look.
+
+Page: https://fabianokunst.github.io/Teewald-3d/site/en/galeria.html  
+Play free in your browser: https://fabianokunst.github.io/Teewald-3d/?lang=en
+
+*Gallery*
+
+## Screenshots
+
+All taken from the game itself, no retouching. Click to enlarge.
+
+![The parish church at nightfall](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/capa.jpg)
+
+![Praça 10 de Abril at night](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
+
+![Rainy night, flashlight on](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg)
+
+![Inside the Kartoffelfest pavilion](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
+
+![Full moon behind the tower](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg)
+
+![The nave of the parish church](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg)
+
+![The Rio Cadeia promenade](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
+
+![The cemetery in the drizzle](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg)
+
+![Talking with Seu Valdir](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/en/conversa.jpg)
+
+![Street closed, festival canceled](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest-portico.jpg)
+
+![The reporter photographs the sign](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/letreiro.jpg)
+
+![Aiming at the edge of the woods](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
+
+![The half-timbered Museum](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg)
+
+![Tracks leading into the woods](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/pegadas.jpg)
+
+![First the flash, then the thunder](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg)
+
+![Seu Valdir and his chimarrão](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg)
+
+![Praça 10 de Abril, late afternoon](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca.jpg)
+
+![The inventory](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/en/inventario.jpg)
+
+![The title screen](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/en/titulo.jpg)
+
+![The parish church from above](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
+
+![RETRO PS1: the parish church at nightfall](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg)
+
+![RETRO PS1: the square at night](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-praca.jpg)
+
+![RETRO PS1: the promenade](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-calcadao.jpg)
+
+![RETRO PS1: inside the parish church](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-igreja-dentro.jpg)
+
+### Now see it up close
+
+The pavilion lights come on every evening, festival or no festival.
+
+[Play now](https://fabianokunst.github.io/Teewald-3d/?lang=en) Free · in your browser
+
+---
+
+*A work of fiction: all names, characters and stories in the game are made up and have no real connection to the town of Santa Maria do Herval or its residents. Only the map (streets, river and terrain) comes from the real town.*

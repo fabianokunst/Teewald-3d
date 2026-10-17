@@ -1,70 +1,70 @@
-# Galeria — Teewald
+# Gallery — Teewald
 
-> Capturas de Teewald tiradas do próprio jogo: a Igreja Matriz, a praça à noite, o calçadão do Rio Cadeia, a Kartoffelfest, chuva, neblina e o visual PS1 RETRÔ.
+> Screenshots of Teewald taken from the game itself: the parish church, the square at night, the Rio Cadeia promenade, the Kartoffelfest, rain, fog and the RETRO PS1 look.
 
-Página: https://fabianokunst.github.io/Teewald-3d/site/en/galeria.html  
-Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/?lang=en
+Page: https://fabianokunst.github.io/Teewald-3d/site/en/galeria.html  
+Play free in your browser: https://fabianokunst.github.io/Teewald-3d/?lang=en
 
-*Galeria*
+*Gallery*
 
-## Capturas
+## Screenshots
 
-Tudo tirado do próprio jogo, sem retoque. Clique para ampliar.
+All taken from the game itself, no retouching. Click to enlarge.
 
-![A Igreja Matriz ao anoitecer](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/capa.jpg)
+![The parish church at nightfall](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/capa.jpg)
 
-![A Praça 10 de Abril à noite](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
+![Praça 10 de Abril at night](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
 
-![Noite de chuva, de lanterna acesa](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg)
+![Rainy night, flashlight on](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg)
 
-![Dentro do pavilhão da Kartoffelfest](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
+![Inside the Kartoffelfest pavilion](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
 
-![Lua cheia atrás da torre](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg)
+![Full moon behind the tower](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg)
 
-![A nave da Igreja Matriz](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg)
+![The nave of the parish church](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg)
 
-![O calçadão do Rio Cadeia](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
+![The Rio Cadeia promenade](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
 
-![O cemitério na garoa](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg)
+![The cemetery in the drizzle](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg)
 
-![Conversa com o Seu Valdir](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/conversa.jpg)
+![Talking with Seu Valdir](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/en/conversa.jpg)
 
-![Rua fechada, festa cancelada](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest-portico.jpg)
+![Street closed, festival canceled](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest-portico.jpg)
 
-![A repórter fotografa o letreiro](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/letreiro.jpg)
+![The reporter photographs the sign](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/letreiro.jpg)
 
-![Mirando na beira do mato](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
+![Aiming at the edge of the woods](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
 
-![O Museu, em enxaimel](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg)
+![The half-timbered Museum](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg)
 
-![Pegadas entrando no mato](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/pegadas.jpg)
+![Tracks leading into the woods](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/pegadas.jpg)
 
-![Primeiro o clarão, depois o trovão](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg)
+![First the flash, then the thunder](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg)
 
-![Seu Valdir e o chimarrão](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg)
+![Seu Valdir and his chimarrão](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg)
 
-![Praça 10 de Abril, fim de tarde](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca.jpg)
+![Praça 10 de Abril, late afternoon](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca.jpg)
 
-![O inventário](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/inventario.jpg)
+![The inventory](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/en/inventario.jpg)
 
-![A tela título](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/titulo.jpg)
+![The title screen](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/en/titulo.jpg)
 
-![A Matriz vista do alto](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
+![The parish church from above](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
 
-![PS1 RETRÔ: a Matriz ao anoitecer](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg)
+![RETRO PS1: the parish church at nightfall](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg)
 
-![PS1 RETRÔ: a praça à noite](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-praca.jpg)
+![RETRO PS1: the square at night](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-praca.jpg)
 
-![PS1 RETRÔ: o calçadão](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-calcadao.jpg)
+![RETRO PS1: the promenade](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-calcadao.jpg)
 
-![PS1 RETRÔ: dentro da Matriz](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-igreja-dentro.jpg)
+![RETRO PS1: inside the parish church](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-igreja-dentro.jpg)
 
-### Agora veja de perto
+### Now see it up close
 
-As lâmpadas do pavilhão acendem todo fim de tarde, com ou sem festa.
+The pavilion lights come on every evening, festival or no festival.
 
-[Jogar agora](https://fabianokunst.github.io/Teewald-3d/?lang=en) Grátis · no navegador
+[Play now](https://fabianokunst.github.io/Teewald-3d/?lang=en) Free · in your browser
 
 ---
 
-*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
+*A work of fiction: all names, characters and stories in the game are made up and have no real connection to the town of Santa Maria do Herval or its residents. Only the map (streets, river and terrain) comes from the real town.*

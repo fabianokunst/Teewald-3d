@@ -27,7 +27,7 @@ Cada capítulo termina com uma nota, de S a C, pelas criaturas derrotadas, pelas
 ![O protagonista mirando a pistola por cima do ombro](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
 *Mirando, a câmera vai para o ombro*
 
-![Tela do inventário com os espaços e um item em 3D](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/inventario.jpg)
+![Tela do inventário com os espaços e um item em 3D](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/de/inventario.jpg)
 *Inventário de 16 espaços*
 
 *Inventário e arquivos*

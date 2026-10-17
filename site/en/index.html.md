@@ -1,119 +1,119 @@
-# Teewald — survival horror com cara de PS1
+# Teewald — survival horror with a PS1 look
 
-> Survival horror em terceira pessoa com visual de PlayStation 1, numa cidadezinha de colonos alemães na serra gaúcha. Grátis, no navegador.
+> Third-person survival horror with a PlayStation 1 look, set in a small town of German settlers in the hills of southern Brazil. Free, in your browser.
 
-Página: https://fabianokunst.github.io/Teewald-3d/site/en/  
-Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/?lang=en
+Page: https://fabianokunst.github.io/Teewald-3d/site/en/  
+Play free in your browser: https://fabianokunst.github.io/Teewald-3d/?lang=en
 
-*Vale do Herval · Rio Grande do Sul · maio*
+*Herval Valley · Rio Grande do Sul · May*
 
 ## Teewald
 
-Alguma coisa anda no mato.
+Something walks in the woods.
 
-Um survival horror em terceira pessoa com cara de PlayStation 1, numa cidadezinha de colonos alemães na serra gaúcha. A neblina não levanta, a criação aparece seca no potreiro e ninguém sai de casa depois que escurece. Menos você.
+A third-person survival horror game with a PlayStation 1 look, set in a small town of German settlers in the hills of southern Brazil. The fog won’t lift, livestock turns up drained in the pasture, and nobody leaves the house after dark. Except you.
 
-[Jogar agora](https://fabianokunst.github.io/Teewald-3d/?lang=en) [Conhecer a história](https://fabianokunst.github.io/Teewald-3d/site/en/historia.html)
+[Play now](https://fabianokunst.github.io/Teewald-3d/?lang=en) [Read the story](https://fabianokunst.github.io/Teewald-3d/site/en/historia.html)
 
-Grátis · no navegador · sem instalar nada
+Free · in your browser · nothing to install
 
-**Manchetes da Folha de Teewald:** Ovelhas mortas na Linha Schmitt · Prefeitura: “é graxaim” · Kartoffelfest cancelada · Comércio fecha às 18 h · Procura-se gata cinza, atende por Mimi · Perdeu-se cachorro preto de coleira vermelha · Ônibus para Novo Hamburgo não passou · Brigada pede que ninguém saia armado pelo mato à noite.
+**Headlines from the Folha de Teewald:** Dead sheep on Linha Schmitt · City Hall: “it’s a pampas fox” · Kartoffelfest canceled · Shops close at 6 p.m. · Missing: gray cat, answers to Mimi · Lost: black dog with a red collar · Bus to Novo Hamburgo never came · Brigada Militar asks that no one go into the woods armed at night.
 
-*Cartaz na praça*
+*Poster in the square*
 
-### Procura-se
+### Wanted
 
-Nas últimas noites, galinhas, patos e até ovelhas apareceram mortos em Teewald. Todos com dois furos no pescoço e sem uma gota de sangue.
+Over the last few nights, chickens, ducks and even sheep have turned up dead in Teewald. All with two holes in the neck and not a drop of blood left.
 
-A Prefeitura diz que é graxaim. A inspetoria veterinária fala em cachorro. A repórter que veio de Porto Alegre já contou onze casos em dez dias, e ninguém quer falar com ela.
+City Hall says it’s a pampas fox. The veterinary office says dogs. The reporter who came up from Porto Alegre has already counted eleven cases in ten days, and nobody will talk to her.
 
-Você não é daqui. Chegou numa tarde de neblina, pelo calçadão do Rio Cadeia, e resolveu ficar para descobrir o que anda no mato. A cidade não gosta de perguntas, mas cada morador sabe um pedaço da história.
+You’re not from here. You arrived on a foggy afternoon, along the Rio Cadeia promenade, and decided to stay and find out what walks in the woods. The town doesn’t like questions, but every resident knows a piece of the story.
 
-> Quando eu acendi a lanterna, os olhos brilharam vermelho. Aí sumiu no mato, aos pulos.
+> When I turned on my flashlight, its eyes shone red. Then it was gone into the woods, leaping.
 >
-> — Seu Arno, pescador do calçadão
+> — Seu Arno, fisherman on the promenade
 
-![Cartaz de procura-se com a silhueta de um bicho corcunda de olhos vermelhos](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/cartaz-chupacabras.png)
-*Pregado no mural da Praça 10 de Abril, ao lado do fim do calçadão.*
+![Wanted poster with the silhouette of a hunched creature with red eyes](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/cartaz-chupacabras.png)
+*Pinned to the bulletin board in Praça 10 de Abril, beside the end of the promenade.*
 
-*O que te espera*
+*What awaits you*
 
-### Terror à moda antiga
+### Old-school horror
 
-Câmera por cima do ombro, munição contada e uma cidade inteira para atravessar no escuro. Do jeito que os jogos de terror eram nos anos 90, só que no navegador.
+An over-the-shoulder camera, scarce ammo and a whole town to cross in the dark. The way horror games were in the ’90s, only in your browser.
 
-*PS1 RETRÔ · 320×240*
+*RETRO PS1 · 320×240*
 
-#### Cara de PlayStation 1
+#### The PlayStation 1 look
 
-Polígonos duros, texturas em pixel art e personagens montados como nos primeiros jogos 3D. Jogue no 3D LIMPO ou no PS1 RETRÔ, com dithering e cor de 15 bits de verdade.
+Hard-edged polygons, pixel-art textures and characters built like in the first 3D games. Play in CLEAN 3D or RETRO PS1, with real dithering and 15-bit color.
 
-*Mapa real*
+*Real map*
 
-#### Uma cidade que existe
+#### A town that exists
 
-Ruas, rio, praça e morros de mapas reais, com cerca de 600 construções nos contornos de verdade.
+Streets, river, square and hills from real maps, with about 600 buildings on their true footprints.
 
-#### Survival horror clássico
+#### Classic survival horror
 
-Inventário que pausa o jogo, armas brancas que gastam e quebram, pedra para arremessar e cuca com chá de marcela para remendar a vida.
+An inventory that pauses the game, melee weapons that wear out and break, rocks to throw, and cuca (crumb cake) with marcela tea to patch yourself up.
 
-#### Lendas do interior
+#### Backcountry legends
 
-Doze capítulos, cada um com uma história que os mais velhos só contam baixinho, perto do fogão. Qual é qual, você descobre lá dentro.
+Twelve chapters, each with a story the old folks only tell in a whisper, by the wood stove. Which is which, you’ll find out inside.
 
-#### Neblina, chuva e trovão
+#### Fog, rain and thunder
 
-A lanterna alcança poucos metros, e o som vem de todos os lados.
+Your flashlight reaches only a few yards, and sound comes from every side.
 
-#### Joga em qualquer lugar
+#### Plays anywhere
 
-No PC, no celular ou no tablet, com teclado e mouse, controle ou toque. O progresso fica salvo sozinho no navegador.
+On PC, phone or tablet, with keyboard and mouse, controller or touch. Your progress saves itself in the browser.
 
-**Onde e como jogar:** PC, Celular, Tablet, Controle, Toque, Português, English, Español, Deutsch.
+**Where and how to play:** PC, Phone, Tablet, Controller, Touch, Português, English, Español, Deutsch.
 
-> Herval vem de erva-mate. Teewald, em hunsrik: mato do chá. Bonito, não é? Mas os antigos tinham outro respeito por esse mato. Ninguém entrava nele depois do sol posto.
+> Herval comes from erva-mate. Teewald, in Hunsrik: the tea woods. Pretty, isn’t it? But the old folks had a different respect for these woods. Nobody went in there after sundown.
 >
-> — Professor Edgar, que conhece os diários dos colonos
+> — Professor Edgar, who knows the colonists’ diaries
 
-*Galeria*
+*Gallery*
 
-### Capturas do jogo
+### Game screenshots
 
-![A Igreja Matriz no fim da tarde, com neblina](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
-*A Igreja Matriz no fim da tarde*
+![The parish church in the late afternoon, in the fog](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
+*The parish church in the late afternoon*
 
-![O calçadão na beira do Rio Cadeia](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
-*O calçadão do Rio Cadeia*
+![The promenade along the Rio Cadeia](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
+*The Rio Cadeia promenade*
 
-![Rua da cidade numa noite de chuva, o forasteiro de lanterna acesa](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg)
-*Noite de chuva*
+![A town street on a rainy night, the stranger with his flashlight on](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg)
+*Rainy night*
 
-![O pavilhão vazio da Kartoffelfest com as bandeirolas](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
-*A Kartoffelfest que não aconteceu*
+![The empty Kartoffelfest pavilion with its bunting](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
+*The Kartoffelfest that never happened*
 
-![A Praça 10 de Abril à noite, com os lampiões acesos](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
-*A praça à noite*
+![Praça 10 de Abril at night, with the street lamps lit](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
+*The square at night*
 
-![A torre da Matriz com a lua cheia atrás](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg)
-*Lua cheia atrás da torre*
+![The parish church tower with the full moon behind it](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg)
+*Full moon behind the tower*
 
-[Ver todas as capturas](https://fabianokunst.github.io/Teewald-3d/site/en/galeria.html)
+[See all screenshots](https://fabianokunst.github.io/Teewald-3d/site/en/galeria.html)
 
-*Mais de Teewald*
+*More of Teewald*
 
-### Antes de escurecer
+### Before dark
 
-- [A história](https://fabianokunst.github.io/Teewald-3d/site/en/historia.html): Os colonos do Hunsrück, o mato do chá e as últimas semanas na Folha de Teewald.
-- [A cidade](https://fabianokunst.github.io/Teewald-3d/site/en/cidade.html): Do calçadão ao cemitério: os lugares onde ninguém fica depois das seis.
-- [Personagens](https://fabianokunst.github.io/Teewald-3d/site/en/personagens.html): Vinte e quatro moradores com medo, e cada um sabe um pedaço da história.
+- [The story](https://fabianokunst.github.io/Teewald-3d/site/en/historia.html): The colonists from the Hunsrück, the tea woods and the last few weeks in the Folha de Teewald.
+- [The town](https://fabianokunst.github.io/Teewald-3d/site/en/cidade.html): From the promenade to the cemetery: the places nobody stays after six.
+- [Characters](https://fabianokunst.github.io/Teewald-3d/site/en/personagens.html): Twenty-four frightened townsfolk, and each one knows a piece of the story.
 
-### A neblina já baixou
+### The fog has rolled in
 
-O ônibus para Novo Hamburgo não passa desde o meio-dia. Já que você vai ficar, fique de olho no mato.
+The bus to Novo Hamburgo hasn’t come by since noon. Since you’re staying, keep an eye on the woods.
 
-[Jogar agora](https://fabianokunst.github.io/Teewald-3d/?lang=en) Grátis · PC, celular e controle
+[Play now](https://fabianokunst.github.io/Teewald-3d/?lang=en) Free · PC, phone and controller
 
 ---
 
-*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
+*A work of fiction: all names, characters and stories in the game are made up and have no real connection to the town of Santa Maria do Herval or its residents. Only the map (streets, river and terrain) comes from the real town.*
