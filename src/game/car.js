@@ -5,6 +5,7 @@ import { roadMatAt } from '../world/roads.js';
 import { pointInPoly } from '../world/geo.js';
 import { ps1Material, G as U } from '../engine/ps1material.js';
 import { drawText, textSprite, panel, FONT_UI } from '../ui/overlay.js';
+import { INTERIOR_MIN } from '../config.js';
 
 // O carro do protagonista (um só, dirigível a qualquer hora, sem combustível).
 // Física de fliperama, sem biblioteca: modelo de bicicleta com derrapagem (a velocidade de
@@ -1110,7 +1111,7 @@ export class Car {
     const near = saved && st && Math.hypot(saved.x - st.x, saved.z - st.z) < 90;
     if (saved && (near || !st) && this.load(saved)) { this.damage = 0; return; }
     this.damage = 0;
-    if (st && !(st.x > 1000)) this.parkNear(st.x, st.z);
+    if (st && !(st.x > INTERIOR_MIN)) this.parkNear(st.x, st.z);
   }
 
   // piloto automático por uma rota [{ x, z, s }] (s = distância acumulada): segue a linha e para no fim

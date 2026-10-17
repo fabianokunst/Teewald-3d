@@ -380,4 +380,94 @@ export function makeArchTextures() {
     if (!board) return mul(base, 0.62);           // travessa (atrás das tábuas)
     return mul(base, bx === 1 ? 1.1 : bx === 5 ? 0.78 : 1);
   }), { alpha: true }), true); // recortada e repetida ao longo da cerca
+
+  makeFarmTextures(plank, conc, woodG);
+}
+
+const hh = (x, y, s = 0) => { let h = Math.imul(x * 374761393 + y * 668265263 + s * 2246822519, 1274126177); h ^= h >>> 13; return ((h >>> 0) % 1000) / 1000; };
+
+// interior: cortina de aviário, porta de galpão, milho seco, fardos, arame farpado e espuma
+function makeFarmTextures(plank, conc, woodG) {
+  // cortina do aviário (a parede inteira, de baixo para cima): viga em cima, a cortina de
+  // lona enrolada no alto, dobras e os cabos que a seguram, e a mureta de concreto embaixo
+  const curtain = col => finish(paint(32, 64, (x, y) => {
+    if (y < 4) return mul(woodG(x, y), y === 3 ? 0.55 : 0.9);
+    if (y >= 54) return mul(conc(x, y), y === 54 ? 1.12 : 0.92 - (hh(x, y) < 0.1 ? 0.12 : 0));
+    if (x === 0 || x === 16) return [58, 54, 48];                       // cabo
+    if (y < 8) return mul(col, [0.62, 0.8, 0.9, 0.7][y - 4]);            // rolo no alto
+    const fold = 0.86 + 0.14 * Math.sin((y - 8) * 0.95 + Math.sin(x * 0.4) * 0.6);
+    const dirt = y > 46 ? 1 - (y - 46) * 0.035 * (0.6 + hh(x, 0, 3)) : 1;
+    return mul(col, fold * dirt * (0.96 + hh(x >> 2, y >> 3, 7) * 0.08));
+  }), false);
+  TEX.aviCurtain = curtain([226, 178, 46]);
+  TEX.aviCurtainB = curtain([58, 112, 170]);
+
+  // porta de galpão: duas folhas de tábuas com travessas e mão-francesa em Z
+  TEX.barnDoor = finish(paint(32, 32, (x, y) => {
+    const leaf = x < 16 ? x : x - 16, c = mul(plank(x * 2, y), 0.82);
+    if (leaf === 0 || leaf === 15) return mul(c, 0.5);
+    if (y <= 1 || y >= 30) return mul(c, 0.62);
+    const rail = (y >= 3 && y <= 4) || (y >= 15 && y <= 16) || (y >= 27 && y <= 28);
+    const brace = Math.abs((leaf - 1) - (y - 4) * 13 / 23) < 1.1 && y > 4 && y < 27;
+    if (rail || brace) return mul(c, rail && (y === 3 || y === 15 || y === 27) ? 1.25 : 1.08);
+    return mul(c, leaf % 4 === 0 ? 0.7 : 0.95);
+  }), false);
+
+  // milho seco (maio: a palha que ficou na roça depois da colheita), recortado
+  const STRAW = [[200, 176, 120], [176, 150, 98], [150, 124, 80], [214, 196, 146]];
+  const corn = makeCanvasPaint(64, 64);
+  for (let k = 0; k < 6; k++) {
+    const x0 = 4 + k * 10.5 + hh(k, 1) * 4, top = 6 + hh(k, 2) * 12, lean = (hh(k, 3) - 0.5) * 6;
+    const at = y => Math.round(x0 + lean * (63 - y) / 63);
+    for (let y = Math.floor(top); y < 64; y++) { corn.px(at(y), y, STRAW[1]); if (y > 40) corn.px(at(y) + 1, y, STRAW[2]); }
+    for (let y = Math.floor(top) - 4; y < top; y++) corn.px(at(y) + ((y & 1) ? 1 : -1), y, STRAW[3]);   // pendão
+    // folhas secas caídas
+    for (let f = 0; f < 6; f++) {
+      const y0 = top + 6 + f * 7 + hh(k, f) * 3, side = (f + k) % 2 ? 1 : -1, L = 6 + hh(f, k) * 6;
+      for (let i = 0; i < L; i++) { const y = Math.round(y0 - 2 + i * i * 0.09), x = at(y0) + side * (i + 1); corn.px(x, y, STRAW[(i + f) % 3]); if (i < L / 2) corn.px(x, y + 1, STRAW[2]); }
+    }
+    // espiga que ficou
+    if (hh(k, 9) < 0.6) { const ye = Math.round(top + 22 + hh(k, 5) * 8), xe = at(ye) + 1; for (let i = 0; i < 6; i++) { corn.px(xe + (i >> 2), ye + i, [128, 98, 58]); corn.px(xe + 1 + (i >> 2), ye + i, [160, 128, 76]); } }
+  }
+  TEX.milho = canvasTex(processPixels(corn.canvas, { alpha: true }), true);
+
+  // fardos: palha enrolada (lado e ponta em espiral) e silagem embrulhada em plástico branco
+  TEX.fardo = finish(paint(32, 32, (x, y) => {
+    const k = 0.72 + 0.28 * hh(x >> 1, y, 11) + (y % 8 === 0 ? -0.18 : 0);
+    return mul([206, 172, 96], k);
+  }), false);
+  TEX.fardoEnd = finish(paint(32, 32, (x, y) => {
+    const dx = x - 15.5, dy = y - 15.5, r = Math.hypot(dx, dy), a = Math.atan2(dy, dx);
+    const ring = 0.8 + 0.2 * Math.sin(r * 1.7 + a * 0.5);
+    return mul([198, 164, 90], ring * (0.85 + 0.15 * hh(x, y, 5)) * (r > 14 ? 0.82 : 1));
+  }), false);
+  TEX.silagem = finish(paint(16, 16, (x, y) => mul([226, 228, 222], 0.9 + 0.1 * hh(x, y, 2) + ((x + y * 2) % 11 === 0 ? 0.06 : 0))), false);
+
+  // arame farpado: quatro fios com farpas, recortado e repetido entre os palanques
+  const wire = makeCanvasPaint(64, 32);
+  for (const wy of [3, 11, 19, 27]) for (let x = 0; x < 64; x++) {
+    wire.px(x, wy, x % 3 ? [70, 68, 64] : [118, 114, 106]);
+    if (x % 9 === 4) { wire.px(x, wy - 1, [90, 86, 80]); wire.px(x, wy + 1, [90, 86, 80]); wire.px(x - 1, wy - 1, [90, 86, 80]); wire.px(x + 1, wy + 1, [90, 86, 80]); }
+  }
+  TEX.arame = canvasTex(processPixels(wire.canvas, { alpha: true }), true);
+
+  // espuma do vertedouro: branco com bolhas cinzentas
+  TEX.foam = finish(paint(32, 32, (x, y) => {
+    const n = hh(x, y, 13), b = hh(x >> 2, y >> 1, 17);
+    return mul([232, 236, 232], 0.78 + 0.18 * b + (n < 0.12 ? -0.25 : 0));
+  }), false);
+}
+
+// tela para desenhar pixel a pixel por cima do transparente
+function makeCanvasPaint(w, h) {
+  const canvas = paint(w, h, () => null), g = canvas.getContext('2d'), img = g.getImageData(0, 0, w, h);
+  return {
+    // a tela pronta (com os pixels gravados)
+    get canvas() { g.putImageData(img, 0, 0); return canvas; },
+    px(x, y, c) {
+      x = Math.round(x); y = Math.round(y);
+      if (x < 0 || y < 0 || x >= w || y >= h) return;
+      const i = (y * w + x) * 4; img.data[i] = c[0]; img.data[i + 1] = c[1]; img.data[i + 2] = c[2]; img.data[i + 3] = 255;
+    },
+  };
 }

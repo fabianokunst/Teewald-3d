@@ -35,8 +35,13 @@ export function saveSettings() {
   try { localStorage.setItem(KEY, JSON.stringify(settings)); } catch (e) { /* ignora */ }
 }
 
-// limites da área jogável (metros, x = leste, z = sul)
-export const PLAY_BOUNDS = { x0: -430, x1: 580, z0: -500, z1: 470 };
+// limites da área jogável (metros, x = leste, z = sul): a cidade e +1 km para cada lado
+export const PLAY_BOUNDS = { x0: -1430, x1: 1580, z0: -1500, z1: 1470 };
+// a área jogável de antes (só a cidade): o mato, os quintais e as casas dela continuam
+// sorteados dentro destes limites, para a cidade não mudar com a área ampliada
+export const TOWN_BOUNDS = { x0: -430, x1: 580, z0: -500, z1: 470 };
+// os interiores (fábrica, cripta, gruta, igreja) ficam longe de tudo, a partir daqui (x e z)
+export const INTERIOR_MIN = 8000;
 
 // ponto inicial: calçadão do Rio Cadeia
 export const START = { x: -322, z: 318, heading: 0.35 };

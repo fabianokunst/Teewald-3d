@@ -36,10 +36,12 @@ export function prepareRoads(mapdata) {
     const pts = resample(chaikin(r.p, 2), 2.5);
     const cx = pts.reduce((a, p) => a + p[0], 0) / pts.length, cz = pts.reduce((a, p) => a + p[1], 0) / pts.length;
     const central = Math.hypot(cx + 80, cz) < 380;
+    // as ruas da área ampliada (depois das da cidade no mapdata) são estrada de interior: sem calçada
+    const town = !mapdata.v1 || id < mapdata.v1.roads;
     const road = {
       id, name: r.n, type: r.t, mat, rank: T.rank, hw: T.w / 2, pts,
       off: MAT_OFF[mat] + T.rank * 0.002,
-      sidewalk: (r.t === 'secondary' || r.t === 'tertiary' || (central && (r.t === 'residential' || r.t === 'unclassified'))) && mat !== 'dirt',
+      sidewalk: town && (r.t === 'secondary' || r.t === 'tertiary' || (central && (r.t === 'residential' || r.t === 'unclassified'))) && mat !== 'dirt',
     };
     list.push(road);
     index.addPolyline(pts, road);

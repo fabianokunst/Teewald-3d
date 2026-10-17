@@ -320,7 +320,9 @@ export class Atmosphere {
     G.uAmbGround.value.setRGB(c.gnd[0] + fl * 0.15, c.gnd[1] + fl * 0.16, c.gnd[2] + fl * 0.2);
     let far = (FOG_FAR[this.drawDistance] ?? 160) * c.fogK * (1 + flash * 0.6);
     // ar limpo: a neblina vai para longe e os morros aparecem (nublado e chuva continuam fechados)
-    if (c.clear > 0 && c.indoor < 0.5 && far < CLEAR_FAR) far *= Math.pow(CLEAR_FAR / far, c.clear);
+    // (na distância de visão CURTA, para aparelhos mais fracos, até 900 m)
+    const clearFar = this.drawDistance === 0 ? 900 : CLEAR_FAR;
+    if (c.clear > 0 && c.indoor < 0.5 && far < clearFar) far *= Math.pow(clearFar / far, c.clear);
     G.uFogFar.value = Math.max(18, far);
     G.uFogNear.value = G.uFogFar.value * (c.indoor > 0.5 ? 0.15 : 0.04);
     G.uFogColor.value.setRGB(c.fog[0] + flash * 0.25, c.fog[1] + flash * 0.27, c.fog[2] + flash * 0.33);

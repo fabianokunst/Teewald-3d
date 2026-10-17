@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import { MeshBuilder, geometryFromBuilder } from '../engine/builder.js';
 import { rng, fbm } from './geo.js';
-import { NEAR } from './terrain.js';
+import { NEAR, RING } from './terrain.js';
 import { inKeepOut } from './props.js';
+import { TOWN_BOUNDS, PLAY_BOUNDS } from '../config.js';
 
 // Árvores instanciadas: araucária, plátano (outono), nativas, pinheiro, cipreste,
 // arbustos e hortênsias. Geometria low poly com folhagem recortada (alpha test).
@@ -72,6 +73,11 @@ function makeTypes() {
     B.cylinder('barkD', 0, 0, 0, 0.3, 0.2, 5, 4, { vRepeat: 2 });
     cluster(B, 'crownAutumn', 0, 7, 0, 3.6, 0);
   }, 0);
+  // nativa de longe (copa verde)
+  mk('farN', B => {
+    B.cylinder('barkD', 0, 0, 0, 0.28, 0.18, 4.6, 4, { vRepeat: 2 });
+    cluster(B, 'crownGreen', 0, 6.2, 0, 3.1, 0);
+  }, 0);
   mk('farA', B => {
     B.cylinder('barkA', 0, 0, 0, 0.3, 0.15, 15, 4, { vRepeat: 4 });
     for (let i = 0; i < 3; i++) {
@@ -82,6 +88,9 @@ function makeTypes() {
   }, 0);
   return T;
 }
+
+// área ampliada: de longe, cada árvore vira a versão simples dela (world.js troca pela distância)
+const LOD = { araucaria: 'farA', platano: 'far', nativa: 'farN' };
 
 const AUTUMN = [[1, 1, 1], [1.12, 0.72, 0.45], [1.08, 0.95, 0.62], [0.92, 0.68, 0.42], [1.15, 0.85, 0.5], [0.8, 0.85, 0.5], [1.18, 0.6, 0.38]];
 const GREEN = [[1, 1, 1], [0.9, 1, 0.85], [1.1, 1.02, 0.7], [1.2, 0.95, 0.55], [0.85, 0.9, 0.95]];
@@ -95,8 +104,9 @@ export function scatterVegetation(ctx) {
     const dx = x - it.x, dz = z - it.z, lx = dx * it.c - dz * it.s, lz = dx * it.s + dz * it.c;
     return Math.abs(lx) < it.hx + r && Math.abs(lz) < it.hz + r;
   });
-  const ok = (x, z, r = 1.5, allowBlocked = false) => {
-    if (!terrain.inBounds(x, z)) return false;
+  // ring: na área ampliada (na cidade vale a grade dela, como sempre: o sorteio não muda)
+  const ok = (x, z, r = 1.5, allowBlocked = false, ring = false) => {
+    if (!(ring ? terrain.inBounds(x, z) : terrain.inNear(x, z))) return false;
     if (!clear(x, z, 0.8)) return false;
     if (roads.index.clearance(x, z).d < r + (roads.index.clearance(x, z).seg?.data.sidewalk ? 2.2 : 0)) return false;
     const rv = rivers.index.nearest(x, z);
@@ -111,7 +121,8 @@ export function scatterVegetation(ctx) {
   // hortênsias e ciprestes podem ficar em canteiros, mas nunca na frente de um banco
   const req = trees.splice(0).filter(t => ok(t.x, t.z, 0.6, true) || ((t.t === 'hortensia' || t.t === 'cipreste') && !inKeepOut(ctx, t.x, t.z, 0.3)));
   trees.push(...req);
-  const play = ctx.playBounds;
+  // a cidade: o mesmo sorteio de sempre, nos limites de antes da área ampliada
+  const play = TOWN_BOUNDS;
   // mata: grade com jitter
   const n = NEAR;
   for (let z = n.z0 + 4; z < n.z1 - 4; z += 9) for (let x = n.x0 + 4; x < n.x1 - 4; x += 9) {
@@ -159,10 +170,58 @@ export function scatterVegetation(ctx) {
     }
   }
   // anel distante (morros)
-  for (let z = -1300; z <= 1300; z += 20) for (let x = -1300; x <= 1300; x += 20) {
-    if (x > n.x0 && x < n.x1 && z > n.z0 && z < n.z1) continue;
-    if (Math.hypot(x, z) > 1350 || !R.chance(0.65)) continue;
-    const px = x + R.range(-8, 8), pz = z + R.range(-8, 8);
+  if (!terrain.ring) {
+    for (let z = -1300; z <= 1300; z += 20) for (let x = -1300; x <= 1300; x += 20) {
+      if (x > n.x0 && x < n.x1 && z > n.z0 && z < n.z1) continue;
+      if (Math.hypot(x, z) > 1350 || !R.chance(0.65)) continue;
+      const px = x + R.range(-8, 8), pz = z + R.range(-8, 8);
+      trees.push({ t: R.chance(0.35) ? 'farA' : 'far', x: px, z: pz, s: R.range(0.9, 1.4), far: true });
+    }
+    return;
+  }
+  scatterRing(ctx, (x, z, r, a) => ok(x, z, r, a, true));
+}
+
+// área ampliada (depois de toda a cidade, com sorteio próprio): mata entre as roças e os
+// pastos, árvores nos quintais das casas do interior e, além dela, os morros ao longe
+function scatterRing(ctx, ok) {
+  const R = rng(2026);
+  const { zones, trees, terrain } = ctx;
+  const n = NEAR, g = RING, play = PLAY_BOUNDS;
+  const inTown = (x, z) => x > n.x0 && x < n.x1 && z > n.z0 && z < n.z1;
+  for (let z = g.z0 + 6; z < g.z1 - 6; z += 11) for (let x = g.x0 + 6; x < g.x1 - 6; x += 11) {
+    if (inTown(x, z)) continue;
+    const inPlay = x > play.x0 - 60 && x < play.x1 + 60 && z > play.z0 - 60 && z < play.z1 + 60;
+    if (!inPlay && ((Math.floor(x / 11) + Math.floor(z / 11)) & 1)) continue;
+    const px = x + R.range(-5, 5), pz = z + R.range(-5, 5);
+    if (inTown(px, pz) || !zones.isForest(px, pz) || !ok(px, pz)) continue;
+    const f = fbm(px * 0.02, pz * 0.02, 2), r = R();
+    let t;
+    if (f > 0.58) t = r < 0.55 ? 'araucaria' : r < 0.8 ? 'pinheiro' : 'nativa';
+    else t = r < 0.3 ? 'platano' : r < 0.68 ? 'nativa' : r < 0.86 ? 'araucaria' : 'pinheiro';
+    trees.push({ t, x: px, z: pz, s: R.range(0.75, 1.3) });
+    if (R.chance(0.22)) {
+      const bx = px + R.range(-3, 3), bz = pz + R.range(-3, 3);
+      if (ok(bx, bz)) trees.push({ t: 'arbusto', x: bx, z: bz, s: R.range(0.8, 1.4) });
+    }
+  }
+  // quintais: uma araucária ou um plátano, frutíferas e hortênsias perto das casas do interior
+  for (const o of zones.obbs) {
+    if (inTown(o.x, o.z) || !terrain.inBounds(o.x, o.z)) continue;
+    const k = R.int(1, 3);
+    for (let i = 0; i < k; i++) {
+      const a = R.range(0, Math.PI * 2), d = Math.max(o.hx, o.hz) + R.range(4, 11);
+      const px = o.x + Math.cos(a) * d, pz = o.z + Math.sin(a) * d;
+      if (!ok(px, pz, 2.5)) continue;
+      const r = R(), t = r < 0.25 ? 'araucaria' : r < 0.45 ? 'platano' : r < 0.7 ? 'nativa' : r < 0.85 ? 'hortensia' : r < 0.93 ? 'cipreste' : 'arbusto';
+      trees.push({ t, x: px, z: pz, s: R.range(0.75, 1.15) });
+    }
+  }
+  // morros ao longe, além da área de detalhe
+  for (let z = -3000; z <= 3000; z += 24) for (let x = -3000; x <= 3000; x += 24) {
+    if (x > g.x0 && x < g.x1 && z > g.z0 && z < g.z1) continue;
+    if (Math.hypot(x, z) > 3050 || !R.chance(0.6)) continue;
+    const px = x + R.range(-10, 10), pz = z + R.range(-10, 10);
     trees.push({ t: R.chance(0.35) ? 'farA' : 'far', x: px, z: pz, s: R.range(0.9, 1.4), far: true });
   }
 }
@@ -175,9 +234,11 @@ export function buildVegetation(ctx, materials) {
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), v = new THREE.Vector3(), sc = new THREE.Vector3();
   for (const t of ctx.trees) {
     const y = t.far ? ctx.terrain.raw(t.x, t.z) : ctx.terrain.heightAt(t.x, t.z);
-    const key = t.t + '|' + Math.floor(t.x / CH) + ',' + Math.floor(t.z / CH);
+    // fora da grade da cidade, pedaços de 400 m (menos chamadas de desenho)
+    const ch = ctx.terrain.inNear(t.x, t.z) ? CH : CH * 2;
+    const key = t.t + '|' + ch + ':' + Math.floor(t.x / ch) + ',' + Math.floor(t.z / ch);
     let g = groups.get(key);
-    if (!g) { g = { type: t.t, list: [] }; groups.set(key, g); }
+    if (!g) { g = { type: t.t, list: [], ring: ch !== CH }; groups.set(key, g); }
     const tint = t.c || (t.t === 'platano' || t.t === 'far' ? R.pick(AUTUMN) : t.t === 'nativa' ? R.pick(GREEN) : t.t === 'araucaria' || t.t === 'farA' ? [R.range(0.85, 1.05), R.range(0.9, 1.05), R.range(0.85, 1)] : [R.range(0.9, 1.05), R.range(0.9, 1.05), R.range(0.85, 1.0)]);
     g.list.push({ x: t.x, y: y - 0.1, z: t.z, s: t.s || 1, r: R.range(0, Math.PI * 2), c: tint });
     // posição exata da instância (as corujas pousam nos galhos das araucárias)
@@ -189,9 +250,11 @@ export function buildVegetation(ctx, materials) {
   const root = new THREE.Group();
   const color = new THREE.Color();
   for (const g of groups.values()) {
-    const type = T[g.type];
-    for (const part of type.parts) {
+    const versions = g.ring && LOD[g.type] ? [[T[g.type], 'near'], [T[LOD[g.type]], 'far']] : [[T[g.type], null]];
+    for (const [type, lod] of versions) for (const part of type.parts) {
       const mesh = new THREE.InstancedMesh(part.geo, materials[part.mat], g.list.length);
+      mesh.name = g.type;
+      if (lod) mesh.userData.lod = lod;
       g.list.forEach((it, i) => {
         e.set(0, it.r, 0); q.setFromEuler(e);
         v.set(it.x, it.y, it.z); sc.set(it.s, it.s * (0.9 + (i % 5) * 0.05), it.s);

@@ -76,19 +76,20 @@ dirigir a qualquer hora. Roda no navegador (Three.js + Vite).
 | Ferramentas e testes | ~1.600 linhas em `tools/` (Node + puppeteer-core) |
 | Dependências | 1 em execução (`three`); 2 de desenvolvimento (`vite`, `puppeteer-core`) |
 | Build | `index.js` 1,79 MB (589 kB gzip); cada dicionário (en, es, de) ~50 kB gzip, carregado só quando escolhido |
-| Área do mapa | dados de 2,6 × 2,6 km; relevo até ±1,6 km do centro; área jogável de ~1 × 1 km |
-| Construções | 594 (678 contornos de satélite, divididos em 854 retângulos) |
-| Árvores | 16.343 instâncias de 9 modelos |
-| Triângulos na cena | 1.016.937 (contando as instâncias) |
-| Colisores | 14.177, numa grade espacial de 8 m |
-| Por quadro, no início do jogo | 1.683 chamadas de desenho e ~694 mil triângulos, a 60 fps¹ |
-| Carregamento | ~5 s até o mundo pronto¹ |
+| Área do mapa | dados de ~4 × 4 km; relevo até ±3,4 km do centro; área jogável de ~3 × 3 km (a cidade e 1 km de interior para cada lado) |
+| Construções | 1.488 (1.328 contornos de satélite, divididos em 1.614 retângulos), entre elas 158 galpões e 9 aviários no interior |
+| Árvores | 69.202 instâncias de 10 modelos |
+| Interior | represa de 1,5 ha com barragem e usina, ~23 km de cerca de arame (5.820 palanques), ~66 mil pedaços de fileira de milho seco, 422 fardos |
+| Triângulos na cena | 4.235.233 (contando as instâncias e as versões simples das árvores de longe) |
+| Colisores | 55.892, numa grade espacial de 8 m |
+| Por quadro, no início do jogo | 1.744 chamadas de desenho e ~977 mil triângulos, a 60 fps¹ |
+| Carregamento | ~6 s até o mundo pronto¹ |
 | Protagonista | 1.201 triângulos, 18 ossos, textura pintada no carregamento |
 | Moradores | 24, no mesmo esqueleto do protagonista, com 27 gestos |
 | Criaturas | 8 espécies (chupacabras, cão de fogo, morcego, fantasma, ET, Fera, lobisomem, bruxa) e 9 chefes |
 | Sons | ~120 funções de síntese; 105 deles medidos pelo `npm run sons` |
 | Carro do protagonista | ~3.000 triângulos (porta, volante e rodas soltos), 12 sons sintetizados |
-| Texto | 1.589 textos em cada dicionário (en, es, de) |
+| Texto | 1.601 textos em cada dicionário (en, es, de) |
 | Arquivos do jogo | 20 documentos, 11 fichas de lenda, 9 ligações de orelhão |
 
 ¹ Build de produção, Chrome 155 sem janela, NVIDIA T1000, 1600×900, estilo 3D limpo e iluminação avançada.
@@ -302,8 +303,8 @@ Um `ShaderMaterial` próprio (não um remendo dos materiais do three), com os tr
   um gradiente com a textura de nuvens.
 - **Estrelas**: 1.700 pelo céu e 1.600 ao longo da Via Láctea, piscando num shader próprio.
   **Lua** pintada num canvas de 256 px com mares, 46 crateras e os raios de Tycho.
-- **Neblina**: 110, 160 ou 230 m (DISTÂNCIA DE VISÃO); nos dias limpos chega a 1,6 km e as
-  montanhas aparecem.
+- **Neblina**: 110, 160 ou 230 m (DISTÂNCIA DE VISÃO); nos dias limpos chega a 1,6 km (900 m
+  na CURTA) e as montanhas aparecem.
 - **Raios**: um a cada 5 a 19 s, em três pulsos; o clarão acende o céu, a neblina e o ambiente, e
   o trovão chega 0,15 s depois (perto) ou de 0,8 a 2,6 s depois (longe).
 - **Chuva**: até 1.100 riscos num `InstancedMesh` que acompanha a câmera, caindo a 15–21 m/s
@@ -323,15 +324,19 @@ Um `ShaderMaterial` próprio (não um remendo dos materiais do three), com os tr
 ### Desempenho
 
 - **Malhas mescladas**: o `MeshBuilder` (`src/engine/builder.js`) junta todos os triângulos
-  fixos por material e por pedaço de 200 m do mapa, com `matrixAutoUpdate = false`; o *frustum
-  culling* do three descarta os pedaços fora da tela.
-- **Instanciamento**: árvores (um `InstancedMesh` por tipo × pedaço de 200 m × parte), chuva
+  fixos por material e por pedaço de 200 m do mapa (400 m no interior), com
+  `matrixAutoUpdate = false`; o *frustum culling* do three descarta os pedaços fora da tela.
+- **Distância** (`ctx.cull`, a cada quadro): pedaço além da neblina não é desenhado; miudezas
+  (janelas, portas, placas, milho, arame, fardos, arbustos) somem a partir de 260 a 700 m, e as
+  árvores do interior trocam pela versão simples a ~330 m da borda do pedaço.
+- **Instanciamento**: árvores (um `InstancedMesh` por tipo × pedaço de 200 m na cidade ou de
+  400 m no interior × parte), chuva
   (1.100), folhas caindo (260), partículas (640), marcas de bala (60), ondas na água (48),
   sangue, latas e garrafas.
-- **Relevo em dois níveis**: grade de 5 m perto, 40 m até ±1,6 km; um anel de árvores
-  simplificadas até 1.350 m no lugar de LOD.
-- **Celular**: mapa de sombra menor e limite de 60 fps. F3 mostra os quadros por segundo e os
-  triângulos.
+- **Relevo em três níveis**: grade de 5 m na cidade, de 10 m no interior e de 40 m até ±3,4 km;
+  além do interior, morros com árvores simplificadas até 3 km.
+- **Celular**: mapa de sombra menor e limite de 60 fps. Na DISTÂNCIA DE VISÃO CURTA os dias
+  limpos vão até 900 m (1,6 km nas outras). F3 mostra os quadros por segundo e os triângulos.
 - Opções que pesam: ESTILO VISUAL, RESOLUÇÃO, PROPORÇÃO, ILUMINAÇÃO, DISTÂNCIA DE VISÃO e
   QUADROS POR SEGUNDO.
 
@@ -343,19 +348,26 @@ Um `ShaderMaterial` próprio (não um remendo dos materiais do three), com os tr
 
 | Fonte | Como chega | O que vira |
 |---|---|---|
-| OpenStreetMap | Overpass API, quadrado de ±1.300 m: `highway`, `waterway`, `building`, `leisure`, `landuse`, `natural`, `amenity` e pontos com nome | 82 ruas (38 nomes), 9 rios e arroios, 14 áreas, 28 pontos |
-| SRTM 30 m | OpenTopoData, interpolação bilinear, lotes de 100 pontos | grade larga de 33×33 (100 m, ±1,6 km) e fina de 27×28 (50 m) |
-| Microsoft Global ML Building Footprints | arquivo do quadkey `210312133`, filtrado pelo centro de cada polígono | 678 contornos de prédio |
+| OpenStreetMap | Overpass API, em duas camadas: a cidade (quadrado de ±1.300 m) e o interior (±2 km): `highway`, `waterway`, `building`, `leisure`, `landuse`, `natural`, `amenity` e pontos com nome | 145 ruas, 9 rios e arroios, 22 áreas, 32 pontos (na cidade: 82, 9, 14 e 28) |
+| SRTM 30 m | OpenTopoData, interpolação bilinear, lotes de 100 pontos | cidade: grade larga de 33×33 (100 m, ±1,6 km) e fina de 27×28 (50 m); interior: 50 m em 4 × 4 km e 100 m até ±3,6 km |
+| Microsoft Global ML Building Footprints | arquivo do quadkey `210312133`, filtrado pelo centro de cada polígono | 1.328 contornos de prédio (678 na cidade) |
 
 - Origem em −29,4977° / −50,9919° (centro de Santa Maria do Herval), projeção equirretangular
   para metros: x para leste, z para sul, y para cima, arredondado a 0,1 m.
-- Tudo fica em cache em `tools/cache/` (`osm.json`, `elev.json`, `buildings-ms.json`); só o
-  `--refresh` baixa de novo. A saída `src/world/mapdata.json` tem 81 kB.
+- Tudo fica em cache em `tools/cache/`. O da cidade (`osm.json`, `elev.json`,
+  `buildings-ms.json`) fica congelado: a cidade não muda nem com `--refresh`, que só baixa de
+  novo o do interior (`*-amplo.json`). Em `mapdata.json`, a parte da cidade vem primeiro em cada
+  lista (`v1` guarda quantos são), e o interior vem depois. A saída tem 198 kB.
 
 ### Relevo e água (`terrain.js`, `water.js`)
 
-- 380 m de altitude viram y = 0. Perto: grade de 5 m (253 × 245 vértices, ~1,26 × 1,22 km),
-  com interpolação bicúbica do SRTM. Longe: grade de 40 m até ±1,6 km.
+- 380 m de altitude viram y = 0. Cidade: grade de 5 m (253 × 245 vértices, ~1,26 × 1,22 km),
+  com interpolação bicúbica do SRTM. Interior: grade de 10 m (3,54 × 3,48 km) em volta, com o
+  relevo do interior entrando nos 150 m de fora da cidade e as ruas passando para ele nos 40 m
+  de dentro. Longe: grade de 40 m até ±3,4 km, afundada embaixo das grades de detalhe.
+- **A cidade não muda com o interior**: dentro da grade dela o relevo, as ruas, o nível dos rios,
+  as casas e as árvores saem iguais aos de antes (o interior tem sorteios próprios e fica longe
+  da borda). Conferido amostra por amostra contra a versão anterior.
 - **Ruas aplainadas**: até 7,5 m da borda o chão segue uma versão suavizada do relevo (média
   de 20 m, 3 passadas) e volta ao normal até 18 m. Praça, igreja, cemitério, campo e posto
   ficam em patamares (`addPad`) que acompanham a altura da rua.
@@ -383,7 +395,9 @@ Um `ShaderMaterial` próprio (não um remendo dos materiais do three), com os tr
 2. O retângulo gira de 90 em 90° até a frente dar para a rua mais próxima e encolhe ou recua
    até sair da rua, da calçada e do rio.
 3. O estilo sai do tamanho e do lugar: fábrica (> 750 m²), comércio na rua principal do centro,
-   alvenaria, madeira, enxaimel e galpão em proporções diferentes no centro e na periferia.
+   alvenaria, madeira, enxaimel e galpão em proporções diferentes no centro e na periferia. No
+   interior, mais madeira, galpões de tábua (alguns pintados de vermelho, com portão de duas
+   folhas) e **aviários**: os prédios compridos e estreitos, com cortina de lona amarela ou azul.
 4. Telhados de quatro águas, duas águas (cumeeira em x ou com a empena para a rua), uma água ou
    laje com platibanda; inclinação, telha, reboco e chaminé por sorteio com semente fixa.
 5. **Enxaimel**: a textura é repetida uma vez por vão de janela por andar, então as vigas
@@ -401,7 +415,9 @@ perto do ponto do OSM. A **Igreja Matriz** tem 18 × 34 m, paredes de 9,5 m e ag
 - 9 modelos: araucária, plátano de outono, nativa, pinheiro, cipreste, arbusto, hortênsia e
   duas árvores simplificadas para longe, com folhagem recortada.
 - Mata numa grade de 9 m com sorteio (araucária e pinheiro onde o ruído é alto), quintais numa
-  grade de 17 m, plátanos ao longo das ruas do centro e um anel distante até 1.350 m.
+  grade de 17 m e plátanos ao longo das ruas do centro. No interior, mata numa grade de 11 m
+  entre as roças e os pastos (que ficam onde o ruído deixa, mais perto das estradas; a mata
+  ciliar fica), árvores nos quintais das casas e morros com árvores simplificadas até 3 km.
 - Uma árvore só entra longe de colisores, ruas, rios, prédios, muros e das frentes reservadas.
   Araucárias e plátanos têm tronco com colisão e barram a câmera.
 - **Mobiliário organizado** (`spotFree`/`benchFits`): nenhuma peça entra encaixada em outra nem em
@@ -409,6 +425,25 @@ perto do ponto do OSM. A **Igreja Matriz** tem 18 × 34 m, paredes de 9,5 m e ag
   grade no meio), e a frente dos bancos, das mesas, da parada e do letreiro fica reservada:
   árvores, postes e placas posteriores desviam dela.
 - Postes de 8,5 m a cada 32 m nas ruas do centro, com dois fios em catenária.
+
+### Interior (`countryside.js`)
+
+O campo em volta da cidade, todo com sorteio próprio:
+
+- **Represa da Usina Herval**: o contorno do OSM vira margens ao longo do Rio Cadeia (largura
+  medida de cada lado, suavizada, afinando até o rio antes da cidade). O terreno é escavado lá
+  dentro (até 3,5 m), a margem desce até a água em 22 m e a represa conta como água funda (nado,
+  carro, cães de fogo). O rio por baixo dela não é desenhado.
+- **Barragem** de concreto na ponta de baixo, com vertedouro (água e espuma descendo 5 m),
+  passarela, guarda-corpo, crista caminhável e a casinha da tomada d'água.
+- **Tubulação forçada** de aço enferrujado até a **casa de força** (`USINA HERVAL`, ~100 m
+  abaixo): sempre descendo, enterrada onde o morro sobe (sai por uma boca de concreto) e em selas
+  e pilares onde o chão afunda.
+- **Cercas de arame farpado** (palanque a cada 4 m) na beira das estradas onde há roça ou pasto,
+  abrindo nas entradas das casas; **milharais secos** (é maio: a palha ficou na roça) em lotes
+  de 48 m com fileiras na mesma direção; **fardos** de palha e de silagem nos pastos.
+- Nomes no mapa: REPRESA DA USINA HERVAL, USINA HIDRELÉTRICA HERVAL, VILA AMIZADE e CTG AMIGOS
+  DA TRADIÇÃO. O minimapa mostra a represa e os milharais (a 2 m por pixel).
 
 ### Interiores (`interiors.js`, `interiors/`)
 
@@ -1325,13 +1360,14 @@ src/engine/             motor
 
 src/world/              cidade
   world.js              buildWorld(): monta tudo e cria o ctx (groundAt, surfaceAt...)
-  terrain.js, water.js  relevo SRTM (5 m; 1,25 m perto da água), rio e arroios
+  terrain.js, water.js  relevo SRTM (5 m na cidade, 10 m no interior; mais fino perto da água), rio e arroios
   roads.js              ruas, calçadas e pontes
   footprints.js         contornos de satélite → retângulos
   buildings.js          casas, telhados, janelas, muros e escadas
   landmarks.js, church.js   igreja, praça, calçadão, Kartoffelfest, prédios conhecidos
   props.js, vehicles.js     mobiliário urbano e carros
   vegetation.js, leaves.js  árvores instanciadas e folhas caindo
+  countryside.js            interior: represa, barragem, usina, cercas, milharais e fardos
   sky.js, atmosphere.js     céu, lua e estrelas; hora, clima e luzes
   zones.js, geo.js          áreas especiais; geometria 2D e aleatoriedade com semente
   targets.js, chupaSites.js estandes de tiro; cenário da missão 1

@@ -5,8 +5,8 @@ import { GLOW } from './archTextures.js';
 import { makeHeroTexture } from '../game/heroTexture.js';
 
 // Um material PS1 para cada textura carregada, com ajustes por tipo
-const CUTOUT = ['araucaria', 'araucariaBranch', 'crownAutumn', 'crownGreen', 'bush', 'hortensia', 'pine', 'cypress', 'mapleLeaf', 'flags', 'awnValance', 'chLancet', 'chRose', 'chPortal', 'chTowerWin', 'picket'];
-const FOLIAGE = ['araucaria', 'araucariaBranch', 'crownAutumn', 'crownGreen', 'bush', 'hortensia', 'pine', 'cypress', 'hedge'];
+const CUTOUT = ['araucaria', 'araucariaBranch', 'crownAutumn', 'crownGreen', 'bush', 'hortensia', 'pine', 'cypress', 'mapleLeaf', 'flags', 'awnValance', 'chLancet', 'chRose', 'chPortal', 'chTowerWin', 'picket', 'milho', 'arame'];
+const FOLIAGE = ['araucaria', 'araucariaBranch', 'crownAutumn', 'crownGreen', 'bush', 'hortensia', 'pine', 'cypress', 'hedge', 'milho'];
 const NO_AFFINE = ['paint'];
 
 export const M = {};
@@ -26,6 +26,9 @@ export function makeMaterials() {
   M.water = ps1Material({ map: TEX.water, scroll: [0.02, -0.18], wave: 0.04, shadow: false });
   // água parada (fonte da praça): mesma textura, sem correnteza nem ondulação
   M.waterStill = ps1Material({ map: TEX.water, shadow: false });
+  // represa: quase parada, com uma ondulação leve; espuma do vertedouro descendo
+  M.waterLake = ps1Material({ map: TEX.water, scroll: [0.006, -0.014], wave: 0.03, shadow: false });
+  M.foam = ps1Material({ map: TEX.foam, scroll: [0, -0.9], shadow: false });
   M.sky = ps1Material({ map: TEX.sky, lit: false, fog: false, side: THREE.BackSide, depthWrite: false, affine: false });
   M.lamp = ps1Material({ map: TEX.lamp, lit: false, emissive: 0x222018 });
   M.farForest = ps1Material({ map: TEX.grassDry, color: 0xd0c098, edgeFade: true });

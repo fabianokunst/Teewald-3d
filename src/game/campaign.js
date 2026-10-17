@@ -16,6 +16,7 @@ import { build as buildFactory } from '../world/interiors/factory.js';
 import { build as buildCrypt } from '../world/interiors/crypt.js';
 import { build as buildCave } from '../world/interiors/cave.js';
 import { build as buildChurch } from '../world/interiors/igreja.js';
+import { migrateInteriorPos } from '../world/interiors.js';
 import { SFX } from './creatures/sfx.js';
 import { GunAudio } from './gunAudio.js';
 import { ITEMS } from './items.js';
@@ -40,8 +41,15 @@ const SAVE_KEY = 'teewald.save.v1';
 export function loadSave() {
   try { const s = localStorage.getItem(SAVE_KEY); return s ? migrate(JSON.parse(s)) : null; } catch (e) { return null; }
 }
-// save de quando eram dez capítulos (sem version): renumera capítulo, liberados, notas e etapa
+// save de quando eram dez capítulos (sem version): renumera capítulo, liberados, notas e etapa;
+// save de antes da área ampliada (sem mapv): os interiores mudaram de lugar
 function migrate(sv) {
+  if (sv && !sv.mapv) {
+    if (sv.run?.pos) sv.run.pos = migrateInteriorPos(sv.run.pos);
+    if (sv.run?.cp) sv.run.cp = migrateInteriorPos(sv.run.cp);
+    sv.mapv = 2;
+    writeSave(sv);
+  }
   if (!sv || sv.version >= 2) return sv;
   const m = n => OLD_TO_NEW[n] || n;
   if (sv.chapter) sv.chapter = m(sv.chapter);
@@ -58,7 +66,7 @@ export function writeSave(o) {
 export function eraseSave() {
   try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* sem armazenamento */ }
 }
-const freshSave = () => ({ version: 2, chapter: 1, unlocked: 1, ranks: {}, totals: { kills: 0, deaths: 0, time: 0 }, run: null });
+const freshSave = () => ({ version: 2, mapv: 2, chapter: 1, unlocked: 1, ranks: {}, totals: { kills: 0, deaths: 0, time: 0 }, run: null });
 
 // tipos de criatura (os arquivos são carregados no começo; faltando um, vira cão de fogo)
 export const TYPES = { dog: FireDog, chupa: ChupaCapture };

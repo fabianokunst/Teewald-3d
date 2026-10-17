@@ -10,13 +10,14 @@ import { prepareFootprints } from './footprints.js';
 import { scatterVegetation, buildVegetation } from './vegetation.js';
 import { utilityLines } from './props.js';
 import { buildChupaSites } from './chupaSites.js';
+import { defineCountryside, buildCountryside } from './countryside.js';
 import { makeSky } from './sky.js';
 import { FallingLeaves } from './leaves.js';
 import { MeshBuilder } from '../engine/builder.js';
 import { CollisionWorld } from '../engine/collision.js';
 import { M } from '../engine/materials.js';
 import { pointInPoly, SegmentIndex, distSeg } from './geo.js';
-import { PLAY_BOUNDS } from '../config.js';
+import { PLAY_BOUNDS, INTERIOR_MIN } from '../config.js';
 
 const frame = () => new Promise(r => requestAnimationFrame(() => r()));
 
@@ -43,11 +44,22 @@ function walkwayLift(index, x, z) {
   return best;
 }
 
+// miudezas que nem aparecem de longe: somem a partir desta distância (m) da borda do pedaço
+const LOD_NEAR = 330;
+// (janelas, portas e placas da cidade também: de longe são um ou dois pixels)
+const DETAIL = {
+  milho: 380, arame: 260, fardo: 300, fardoEnd: 300, silagem: 300, barnDoor: 500, arbusto: 420, hortensia: 300,
+  door: 450, window1: 450, window2: 450, window3: 450, window1Lit: 700, window2Lit: 700, window3Lit: 700, shutter: 350,
+  stonePath: 400, pavers: 450, herring: 400, picket: 300, fenceGrid: 300, lampLens: 400, grating: 300, awnRed: 450,
+  awnBlue: 450, awnCream: 450, rollDoor: 500, winFactory: 600, shop: 500, shopLit: 700,
+};
+const detailFar = name => DETAIL[name] ?? (name.startsWith('sign:') ? 400 : Infinity);
+
 // Monta a cidade inteira. onStep(fração, texto) atualiza a tela de carregamento.
 export async function buildWorld(scene, onStep) {
   // perches: onde as corujas pousam (postes, lampiões, chaminés, cumeeiras)
   const ctx = { mapdata, trees: [], floors: [], lights: [], perches: [], playBounds: PLAY_BOUNDS };
-  const step = async (f, t) => { console.info("TEMPO", t, Math.round(performance.now())); onStep?.(f, t); await frame(); };
+  const step = async (f, t) => { onStep?.(f, t); await frame(); };
 
   await step(0.05, 'relevo');
   ctx.terrain = new Terrain(mapdata);
@@ -57,6 +69,8 @@ export async function buildWorld(scene, onStep) {
   ctx.collision = new CollisionWorld(8);
   ctx.walkways = new SegmentIndex(10, 3);
   defineLandmarks(ctx);
+  // interior da área ampliada: represa, usina (reserva as áreas e escava o terreno)
+  defineCountryside(ctx);
   ctx.terrain.finalize(ctx.roads.index, ctx.rivers.index);
   // superfície onde um objeto se apoia: terreno, rua, calçada, caminho ou piso
   // (praça, adro, campo, pátio). Tudo que é desenhado acima do terreno e se pisa
@@ -74,6 +88,9 @@ export async function buildWorld(scene, onStep) {
 
   await step(0.25, 'ruas e rio');
   const B = new MeshBuilder(200);
+  // no interior, pedaços de 400 m (menos chamadas de desenho); miudezas do campo ficam
+  // em 200 m, que somem antes (DETAIL)
+  if (ctx.terrain.ring) B.chunkFor = (mat, x, z) => (DETAIL[mat] || ctx.terrain.inNear(x, z) ? 200 : 400);
   const terrainMesh = ctx.terrain.buildMesh(M, ctx.zones);
   // o chão recebe sombra mas não projeta (o relevo já escurece pela inclinação)
   terrainMesh.userData.noShadow = true;
@@ -91,6 +108,8 @@ export async function buildWorld(scene, onStep) {
   placeStopSigns(B, ctx);
   // missão do chupacabras: galinheiro, trilha, clareira e mural (antes das árvores)
   buildChupaSites(B, ctx);
+  // interior: represa e barragem, usina, cercas, milharais e fardos (antes das árvores)
+  buildCountryside(B, ctx);
 
   await step(0.7, 'postes e fios');
   const wires = utilityLines(ctx, B);
@@ -109,6 +128,22 @@ export async function buildWorld(scene, onStep) {
   veg.userData.shadowStatic = true;
   scene.add(veg);
 
+  // pedaços de 200 m do chão, da cidade e das árvores inteiros além da neblina nem são
+  // desenhados (a câmera vê até 2,6 km; com a área ampliada seria o mapa quase todo)
+  const cull = [];
+  for (const root of [terrainMesh, statics, veg]) root.traverse(o => {
+    if (!o.isMesh) return;
+    const s = (o.isInstancedMesh && o.boundingSphere) || o.geometry.boundingSphere;
+    if (s && s.radius < 1500) cull.push({ o, x: s.center.x, z: s.center.z, r: s.radius, max: detailFar(o.name), lod: o.userData.lod });
+  });
+  // árvores do interior: a versão completa até LOD_NEAR metros da borda do pedaço, depois a simples
+  ctx.cull = (cx, cz, far) => {
+    for (const c of cull) {
+      const d = Math.hypot(c.x - cx, c.z - cz) - c.r;
+      c.o.visible = d < Math.min(far, c.max) && (c.lod === 'near' ? d < LOD_NEAR : c.lod !== 'far' || d >= LOD_NEAR);
+    }
+  };
+
   await step(0.95, 'céu');
   ctx.sky = makeSky(M);
   scene.add(ctx.sky);
@@ -118,8 +153,8 @@ export async function buildWorld(scene, onStep) {
 
   // altura do chão para o jogador: terreno, ruas, calçadas, pisos e plataformas
   ctx.indoor = null;   // interior atual (world/interiors.js)
-  // interior que contém o ponto (os interiores ficam longe da cidade, x >= 1200)
-  const interiorAt = (x, z) => x > 1000 && ctx.interiorList?.find(d => x >= d.bounds.x0 && x <= d.bounds.x1 && z >= d.bounds.z0 && z <= d.bounds.z1);
+  // interior que contém o ponto (os interiores ficam longe de tudo, x >= INTERIOR_MIN)
+  const interiorAt = (x, z) => x > INTERIOR_MIN && ctx.interiorList?.find(d => x >= d.bounds.x0 && x <= d.bounds.x1 && z >= d.bounds.z0 && z <= d.bounds.z1);
   ctx.groundAt = (x, z, feetY) => {
     // o interior atual, ou o de um bicho que ficou lá dentro com o jogador fora
     const ind = ctx.indoor || interiorAt(x, z);

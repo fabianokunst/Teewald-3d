@@ -16,9 +16,11 @@ export class MeshBuilder {
     this.col = [1, 1, 1];
   }
 
+  // chunkFor(mat, x, z): tamanho do pedaço conforme o material e o lugar (opcional)
   _group(mat, x, z) {
     let key = mat;
-    if (this.chunk) key += '|' + Math.floor(x / this.chunk) + ',' + Math.floor(z / this.chunk);
+    const c = this.chunkFor ? this.chunkFor(mat, x, z) : this.chunk;
+    if (c) key += '|' + c + ':' + Math.floor(x / c) + ',' + Math.floor(z / c);
     let g = this.groups.get(key);
     if (!g) { g = { mat, pos: [], uv: [], nor: [], col: [] }; this.groups.set(key, g); }
     return g;

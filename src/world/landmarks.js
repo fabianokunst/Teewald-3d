@@ -1117,7 +1117,7 @@ function buildSpecials(B, ctx) {
     }
   }
   // fábricas de calçados
-  for (const p of poiK(md, 'works')) {
+  for (const p of poiK(md, 'works').filter(p => md.pois.indexOf(p) < (md.v1?.pois ?? Infinity))) {
     const s = add(placeAtPOI(ctx, R, p.x, p.z, R.range(20, 26), R.range(28, 36), 'factory', { setback: 3, minArea: 250 }));
     if (s) s.sign = sign('INDÚSTRIA DE CALÇADOS', { bg: '#1f3f6b', fg: '#f0f0e0' });
   }
@@ -1141,7 +1141,8 @@ function buildSpecials(B, ctx) {
     const s = add(placeAtPOI(ctx, R, p.x, p.z, w, d, style, { ...extra, setback: style === 'commercial' ? 0.6 : 4 }));
     if (s) { Object.assign(s, extra); s.sign = sign(text, { bg: color === '#a01818' ? '#f4f0e8' : color, fg: color === '#a01818' ? '#a01818' : '#f6eed8' }); }
   }
-  for (const p of md.pois.filter(x => x.k === 'place_of_worship' && !x.n.startsWith('Igreja Matriz'))) {
+  // (só as da cidade: as capelas da área ampliada entram com o interior, no sorteio de lá)
+  for (const p of md.pois.slice(0, md.v1?.pois ?? md.pois.length).filter(x => x.k === 'place_of_worship' && !x.n.startsWith('Igreja Matriz'))) {
     const s = add(placeAtPOI(ctx, R, p.x, p.z, 10, 16, 'masonry', { floors: 2, setback: 4 }));
     if (s) Object.assign(s, { wall: 'plWhite', roof: 'roofRed', roofType: 'gableFront', pitch: 38, win: 'window2', sign: sign('IGREJA', { bg: '#f4f0e8', fg: '#3a3a3a' }), shutters: null });
   }

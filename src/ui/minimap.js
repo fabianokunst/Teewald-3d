@@ -4,12 +4,13 @@ import { CHURCH } from '../world/church.js';
 import { VISUAL } from '../engine/ps1material.js';
 
 // Minimapa no canto inferior direito: o mapa da cidade é desenhado uma vez
-// (1 px = 1 m) e depois recortado/girado em volta do jogador a cada quadro.
+// (1 px = 1 m; com a área ampliada, 1 px = 2 m) e depois recortado/girado em volta do
+// jogador a cada quadro.
 const COLORS = {
   ground: '#6e6538', forest: ['#4a4520', '#53461d', '#45482a'], water: '#3d6a78',
   asphalt: '#3b3a3a', sett: '#8a8274', concrete: '#9a968c', dirt: '#8c6c44', sidewalk: '#b4ab98',
   building: '#5e3b2c', buildingEdge: '#2e1c14', church: '#efe4c8', praca: '#a8704e', calcadao: '#b8aa90',
-  field: '#4f7a2f', cemetery: '#8d8a7c', pavilion: '#7c7a74',
+  field: '#4f7a2f', cemetery: '#8d8a7c', pavilion: '#7c7a74', plowed: '#6e5434',
 };
 
 export class Minimap {
@@ -17,18 +18,24 @@ export class Minimap {
     const m = 160;
     this.x0 = PLAY_BOUNDS.x0 - m; this.z0 = PLAY_BOUNDS.z0 - m;
     this.x1 = PLAY_BOUNDS.x1 + m; this.z1 = PLAY_BOUNDS.z1 + m;
-    const W = Math.ceil(this.x1 - this.x0), H = Math.ceil(this.z1 - this.z0);
+    // pixels por metro: a área ampliada inteira a 1 px/m passaria de 40 MB (e do limite do iPhone)
+    this.k = this.x1 - this.x0 > 2000 ? 0.5 : 1;
+    const W = Math.ceil((this.x1 - this.x0) * this.k), H = Math.ceil((this.z1 - this.z0) * this.k);
     const c = this.canvas = document.createElement('canvas');
     c.width = W; c.height = H;
     const g = c.getContext('2d');
+    g.scale(this.k, this.k);
     const X = x => x - this.x0, Z = z => z - this.z0;
-    g.fillStyle = COLORS.ground; g.fillRect(0, 0, W, H);
-    // mata
-    const step = 4;
-    for (let z = this.z0; z < this.z1; z += step) for (let x = this.x0; x < this.x1; x += step) {
-      if (!ctx.zones.isForest(x + step / 2, z + step / 2)) continue;
-      g.fillStyle = COLORS.forest[(Math.floor(x / 12) * 7 + Math.floor(z / 12) * 3) % 3];
-      g.fillRect(X(x), Z(z), step, step);
+    g.fillStyle = COLORS.ground; g.fillRect(0, 0, W / this.k, H / this.k);
+    // mata e roças: o tipo de chão que o terreno já calculou para cada célula
+    if (ctx.terrain.eachCell) {
+      ctx.terrain.eachCell((x, z, s, cls) => {
+        if (x + s < this.x0 || x > this.x1 || z + s < this.z0 || z > this.z1) return;
+        if (cls === 'leaves') g.fillStyle = COLORS.forest[(Math.floor(x / 12) * 7 + Math.floor(z / 12) * 3) % 3];
+        else if (cls === 'mud') g.fillStyle = COLORS.plowed;
+        else return;
+        g.fillRect(X(x), Z(z), s + 0.3, s + 0.3);
+      });
     }
     const poly = (pts, fill, stroke) => {
       g.beginPath(); pts.forEach(([x, z], i) => (i ? g.lineTo(X(x), Z(z)) : g.moveTo(X(x), Z(z)))); g.closePath();
@@ -44,6 +51,10 @@ export class Minimap {
     poly(L.field.poly, COLORS.field);
     poly(L.cemetery.poly, COLORS.cemetery);
     poly(L.calcadao.strip, '#7a7040');
+    // milharais (fileiras secas) e a represa
+    g.fillStyle = COLORS.plowed;
+    for (const [x, z] of ctx.countryside?.cornSpots || []) g.fillRect(X(x) - 2, Z(z) - 2, 4, 4);
+    if (ctx.countryside?.lake) poly(ctx.countryside.lake.poly, COLORS.water);
     // rios
     for (const r of ctx.rivers.list) line(r.pts, r.width, COLORS.water);
     // ruas: calçada por baixo, depois o leito
@@ -90,7 +101,7 @@ export class Minimap {
     g.translate(cx, cy);
     g.rotate(camYaw);
     g.scale(zoom, zoom);
-    g.drawImage(this.canvas, -(player.pos.x - this.x0), -(player.pos.z - this.z0));
+    g.drawImage(this.canvas, -(player.pos.x - this.x0), -(player.pos.z - this.z0), this.canvas.width / this.k, this.canvas.height / this.k);
     // cruz da igreja (sempre de pé)
     g.restore();
     g.save();

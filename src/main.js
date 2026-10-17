@@ -445,6 +445,8 @@ function frame(now) {
   if (noRender) { input.endFrame(); return; }
   // sombras em volta do jogador (na tela título e no fim, em volta da igreja)
   shadows.update(scene, state === 'title' || state === 'ending' ? churchFocus() : player.pos, atmo.shadowStrength);
+  // além da neblina não desenha (pedaços de 200 m da cidade, do campo e das árvores)
+  ctx.cull?.(camera.position.x, camera.position.z, G.uFogFar.value + 40);
   R.render(scene, camera);
   drawUI();
   // controles de toque só no jogo; nos menus e na abertura um toque vale um clique

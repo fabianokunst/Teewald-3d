@@ -134,8 +134,8 @@ void main() {
   float d = length(vp.xyz);
   vFog = clamp((d - uFogNear) / (uFogFar - uFogNear), 0.0, 1.0) * uFogMul;
   #ifdef EDGE_FADE
-    // relevo distante: o mapa acaba a 1,6 km; nos dias limpos a borda some na neblina
-    vFog = max(vFog, smoothstep(1360.0, 1590.0, max(abs(wp.x), abs(wp.z))) * uFogMul);
+    // relevo distante: o mapa acaba a 3,4 km; nos dias limpos a borda some na neblina
+    vFog = max(vFog, smoothstep(2900.0, 3380.0, max(abs(wp.x), abs(wp.z))) * uFogMul);
   #endif
   vSunFog = 0.0;
   if (uSunFogK > 0.0) vSunFog = pow(max(dot(normalize(wp.xyz - cameraPosition), uSunDir), 0.0), 5.0) * uSunFogK;

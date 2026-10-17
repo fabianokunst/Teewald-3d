@@ -1,9 +1,10 @@
 import * as THREE from 'three';
 import { MeshBuilder } from '../engine/builder.js';
 import { M } from '../engine/materials.js';
+import { INTERIOR_MIN } from '../config.js';
 
 // Interiores (fábrica de calçados, cripta do cemitério, gruta do chupacabras).
-// Cada interior é montado longe da cidade (x, z >= 1200), numa altura fixa, com
+// Cada interior é montado longe da cidade (x, z >= INTERIOR_MIN), numa altura fixa, com
 // colisão própria no mesmo mundo de colisão; entrar/sair troca o jogador de lugar
 // com uma passagem em preto, liga o clima de interior e as luzes do lugar.
 //
@@ -24,7 +25,14 @@ import { M } from '../engine/materials.js';
 //   }
 
 export const INTERIOR_Y = 400;
-const ORIGINS = { fabrica: [1300, 1300], cripta: [1700, 1300], gruta: [1300, 1700], torre: [1700, 1700], igreja: [2100, 1700] };
+// antes da área ampliada ficavam 8 km mais perto (x, z de 1300 a 2100): o campo novo passa ali
+const O = INTERIOR_MIN + 1300;
+const ORIGINS = { fabrica: [O, O], cripta: [O + 400, O], gruta: [O, O + 400], torre: [O + 400, O + 400], igreja: [O + 800, O + 400] };
+// posição salva lá dentro antes da mudança (save antigo): leva para o lugar novo
+export function migrateInteriorPos(p) {
+  if (!p || !(p.x > 1000 && p.x < 3000 && p.z > 1000 && p.z < 3000)) return p;
+  return { ...p, x: p.x + INTERIOR_MIN, z: p.z + INTERIOR_MIN };
+}
 
 export class Interiors {
   // o: { ctx, scene, atmo, player, tpc, hud }
@@ -40,7 +48,7 @@ export class Interiors {
   // monta um interior com o construtor dado (uma vez)
   add(name, builder) {
     if (this.defs[name]) return this.defs[name];
-    const [x, z] = ORIGINS[name] || [2100, 1300 + Object.keys(this.defs).length * 400];
+    const [x, z] = ORIGINS[name] || [O + 800, O + Object.keys(this.defs).length * 400];
     const B = new MeshBuilder(0);
     const def = builder(this.ctx, B, { x, y: INTERIOR_Y, z });
     const group = B.build(M);

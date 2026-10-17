@@ -2,12 +2,20 @@ import * as THREE from 'three';
 import { clamp, smooth, fbm, distToPoly, pointInPoly, distSeg } from './geo.js';
 
 // Relevo real (SRTM 30m) da região, com as ruas aplainadas e o leito do rio escavado.
+// Duas grades de detalhe: a da cidade (NEAR, 5 m) e a da área ampliada em volta (RING, 10 m,
+// costurada na borda da cidade); além delas, o relevo distante (FAR, 40 m) até o horizonte.
+// A cidade não muda com a área ampliada: dentro da grade dela o relevo, as ruas e as áreas
+// planas são calculados como sempre (o relevo novo só entra do lado de fora).
 const BASE = 380;               // altitude (m) que vira y = 0
 export const NEAR = { x0: -560, x1: 700, z0: -620, z1: 600, step: 5 };
-const FAR = { x0: -1600, x1: 1600, z0: -1600, z1: 1600, step: 40 };
-// perto dos rios cada célula de 5 m vira 4x4 (1,25 m): o arroio tem 3 m de largura
-// e na grade de 5 m o leito e a margem viravam dentes de serra
+export const RING = { x0: -1700, x1: 1840, z0: -1760, z1: 1720, step: 10 };
+const FAR = { x0: -3400, x1: 3400, z0: -3400, z1: 3400, step: 40 };
+// perto dos rios cada célula vira 4x4 (1,25 m na cidade, 2,5 m no anel): o arroio tem 3 m de
+// largura e na grade de 5 m o leito e a margem viravam dentes de serra
 const SUB = 4;
+// faixa de costura: a cidade passa para o relevo novo nos 150 m de fora da grade dela, e as
+// ruas, nos últimos 40 m de dentro (fora da área jogável antiga), para o campo das ruas do anel
+const BLEND_OUT = 150, SEAM_IN = 40;
 
 // largura da margem escavada: a normal do rio, ou mais se o desnível for grande
 function bankWidth(rv, rise) {
@@ -26,33 +34,23 @@ function sampleGrid(g, x, z) {
   return cubic(row(j - 1), row(j), row(j + 1), row(j + 2), tz);
 }
 
-export class Terrain {
-  constructor(mapdata) {
-    this.fine = mapdata.elev.fine;
-    this.wide = mapdata.elev.wide;
-    const n = NEAR;
-    this.nx = Math.round((n.x1 - n.x0) / n.step) + 1;
-    this.nz = Math.round((n.z1 - n.z0) / n.step) + 1;
-    this.H0 = new Float32Array(this.nx * this.nz);
-    for (let j = 0; j < this.nz; j++) for (let i = 0; i < this.nx; i++) {
-      this.H0[j * this.nx + i] = this.raw(n.x0 + i * n.step, n.z0 + j * n.step);
-    }
-    // campo suavizado usado pelas ruas (cruzamentos ficam na mesma altura)
-    this.HR = this._blur(this.H0, 4, 3);
-    this.H = Float32Array.from(this.H0);
-    this.pads = [];
-  }
+// distância (m) de um ponto até fora de um retângulo (0 dentro)
+const outside = (r, x, z) => Math.hypot(Math.max(r.x0 - x, 0, x - r.x1), Math.max(r.z0 - z, 0, z - r.z1));
 
-  raw(x, z) {
-    const f = this.fine;
-    const inFine = x > f.x0 + f.step && x < f.x1 - f.step && z > f.z0 + f.step && z < f.z1 - f.step;
-    const hw = sampleGrid(this.wide, x, z);
-    if (!inFine) return hw - BASE;
-    const hf = sampleGrid(f, x, z);
-    // transição suave perto da borda da grade fina
-    const e = Math.min(x - f.x0, f.x1 - x, z - f.z0, f.z1 - z);
-    const k = smooth((e - f.step) / (f.step * 2));
-    return hf * k + hw * (1 - k) - BASE;
+// uma grade de detalhe: alturas brutas (H0), campo suavizado das ruas (HR), final (H) e as
+// células refinadas perto dos rios
+class Grid {
+  constructor(def, raw, blur) {
+    Object.assign(this, def);
+    this.def = def;
+    this.nx = Math.round((def.x1 - def.x0) / def.step) + 1;
+    this.nz = Math.round((def.z1 - def.z0) / def.step) + 1;
+    this.H0 = new Float32Array(this.nx * this.nz);
+    for (let j = 0; j < this.nz; j++) for (let i = 0; i < this.nx; i++) this.H0[j * this.nx + i] = raw(def.x0 + i * def.step, def.z0 + j * def.step);
+    // campo suavizado usado pelas ruas (cruzamentos ficam na mesma altura)
+    this.HR = this._blur(this.H0, blur, 3);
+    this.H = Float32Array.from(this.H0);
+    this.refined = null; this.fineH = null;
   }
 
   _blur(src, r, passes) {
@@ -73,16 +71,127 @@ export class Terrain {
     return a;
   }
 
-  _bilinear(arr, x, z, fallback) {
-    const n = NEAR;
-    const fx = (x - n.x0) / n.step, fz = (z - n.z0) / n.step;
-    if (fx < 0 || fz < 0 || fx >= this.nx - 1 || fz >= this.nz - 1) return fallback(x, z);
+  // dentro da área onde a grade interpola
+  has(x, z) {
+    const fx = (x - this.x0) / this.step, fz = (z - this.z0) / this.step;
+    return !(fx < 0 || fz < 0 || fx >= this.nx - 1 || fz >= this.nz - 1);
+  }
+
+  bilinear(arr, x, z) {
+    const fx = (x - this.x0) / this.step, fz = (z - this.z0) / this.step;
     const i = Math.floor(fx), j = Math.floor(fz), tx = fx - i, tz = fz - j;
     const a = arr[j * this.nx + i], b = arr[j * this.nx + i + 1], c = arr[(j + 1) * this.nx + i], d = arr[(j + 1) * this.nx + i + 1];
     return a + (b - a) * tx + (c - a) * tz + (a - b - c + d) * tx * tz;
   }
 
-  roadHeight(x, z) { return this._bilinear(this.HR, x, z, (a, b) => this.raw(a, b)); }
+  // altura exata da malha (mesma triangulação do desenho)
+  heightAt(x, z) {
+    const fx = (x - this.x0) / this.step, fz = (z - this.z0) / this.step;
+    const i = Math.floor(fx), j = Math.floor(fz);
+    let tx = fx - i, tz = fz - j;
+    const H = this.H, nx = this.nx;
+    let a, b, c, d;
+    const fine = this.fineH && this.fineH.get(j * (nx - 1) + i);
+    if (fine) {
+      const V = SUB + 1, sx = Math.min(Math.floor(tx * SUB), SUB - 1), sz = Math.min(Math.floor(tz * SUB), SUB - 1);
+      tx = tx * SUB - sx; tz = tz * SUB - sz;
+      a = fine[sz * V + sx]; b = fine[sz * V + sx + 1]; c = fine[(sz + 1) * V + sx]; d = fine[(sz + 1) * V + sx + 1];
+    } else {
+      a = H[j * nx + i]; b = H[j * nx + i + 1]; c = H[(j + 1) * nx + i]; d = H[(j + 1) * nx + i + 1];
+    }
+    // diagonal de a (i,j) até d (i+1,j+1)
+    if (tx >= tz) return a + (b - a) * tx + (d - b) * tz;
+    return a + (d - c) * tx + (c - a) * tz;
+  }
+
+  normals() {
+    const { nx, nz, H } = this, s = this.step;
+    const out = new Float32Array(nx * nz * 3);
+    for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) {
+      const hl = H[j * nx + Math.max(i - 1, 0)], hr = H[j * nx + Math.min(i + 1, nx - 1)];
+      const hd = H[Math.max(j - 1, 0) * nx + i], hu = H[Math.min(j + 1, nz - 1) * nx + i];
+      const x = hl - hr, y = 2 * s, z = hd - hu;
+      const l = Math.hypot(x, y, z);
+      out[(j * nx + i) * 3] = x / l; out[(j * nx + i) * 3 + 1] = y / l; out[(j * nx + i) * 3 + 2] = z / l;
+    }
+    return out;
+  }
+}
+
+export class Terrain {
+  constructor(mapdata) {
+    this.fine = mapdata.elev.fine;
+    this.wide = mapdata.elev.wide;
+    this.mid = mapdata.elev.mid || null;
+    this.far = mapdata.elev.far || null;
+    this.pads = [];
+    this.lakes = [];   // { poly, level, depth, margin } (world/countryside.js)
+    this.near = new Grid(NEAR, (x, z) => this.raw(x, z), 4);
+    // o anel só existe com o relevo da área ampliada
+    this.ring = this.mid ? new Grid(RING, (x, z) => this.raw(x, z), 2) : null;
+    this.grids = this.ring ? [this.near, this.ring] : [this.near];
+  }
+
+  // nomes antigos (outros módulos leem a grade da cidade)
+  get nx() { return this.near.nx; }
+  get nz() { return this.near.nz; }
+  get H() { return this.near.H; }
+
+  // relevo da cidade, como sempre: grade fina (50 m) com a larga (100 m) em volta
+  raw1(x, z) {
+    const f = this.fine;
+    const inFine = x > f.x0 + f.step && x < f.x1 - f.step && z > f.z0 + f.step && z < f.z1 - f.step;
+    const hw = sampleGrid(this.wide, x, z);
+    if (!inFine) return hw - BASE;
+    const hf = sampleGrid(f, x, z);
+    // transição suave perto da borda da grade fina
+    const e = Math.min(x - f.x0, f.x1 - x, z - f.z0, f.z1 - z);
+    const k = smooth((e - f.step) / (f.step * 2));
+    return hf * k + hw * (1 - k) - BASE;
+  }
+
+  // relevo da área ampliada: grade média (50 m) com a distante (100 m) em volta
+  raw2(x, z) {
+    const m = this.mid, hf = sampleGrid(this.far, x, z);
+    const e = Math.min(x - m.x0, m.x1 - x, z - m.z0, m.z1 - z);
+    if (e <= m.step) return hf - BASE;
+    const k = smooth((e - m.step) / (m.step * 2));
+    return sampleGrid(m, x, z) * k + hf * (1 - k) - BASE;
+  }
+
+  // relevo bruto: o da cidade dentro da grade dela; fora, passa para o da área ampliada
+  raw(x, z) {
+    if (!this.mid) return this.raw1(x, z);
+    const e = outside(NEAR, x, z);
+    if (e <= 0) return this.raw1(x, z);
+    if (e >= BLEND_OUT) return this.raw2(x, z);
+    const t = smooth(e / BLEND_OUT);
+    return this.raw1(x, z) * (1 - t) + this.raw2(x, z) * t;
+  }
+
+  // costura das ruas na borda de dentro da cidade (0 no miolo, 1 na borda)
+  _seam(x, z) {
+    if (!this.ring) return 0;
+    const n = NEAR, e = Math.min(x - n.x0, n.x1 - x, z - n.z0, n.z1 - z);
+    return e >= SEAM_IN ? 0 : 1 - smooth(Math.max(0, e) / SEAM_IN);
+  }
+
+  // campo das ruas: o suavizado da cidade, o do anel, ou o relevo bruto mais longe
+  roadHeight(x, z) {
+    const N = this.near, R = this.ring;
+    if (N.has(x, z)) {
+      const h = N.bilinear(N.HR, x, z), t = this._seam(x, z);
+      return t > 0 && R.has(x, z) ? h + (R.bilinear(R.HR, x, z) - h) * t : h;
+    }
+    if (R && R.has(x, z)) return R.bilinear(R.HR, x, z);
+    return this.raw(x, z);
+  }
+
+  // como era antes da área ampliada (o nível dos rios da cidade continua o mesmo)
+  roadHeight1(x, z) {
+    const N = this.near;
+    return N.has(x, z) ? N.bilinear(N.HR, x, z) : this.raw1(x, z);
+  }
 
   // pad = { poly, h, margin } aplaina uma área (praça, igreja, campo...)
   // floor: altura de um piso desenhado em cima; o terreno em volta (até uma
@@ -92,15 +201,36 @@ export class Terrain {
     this.pads.push({ poly, h, margin, floor, bb: [Math.min(...xs), Math.min(...zs), Math.max(...xs), Math.max(...zs)] });
   }
 
-  // aplica ruas, áreas planas e rios na grade final
-  finalize(roadIndex, riverIndex) {
-    const n = NEAR, { nx, nz } = this;
-    this.roadIndex = roadIndex; this.riverIndex = riverIndex;
-    for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) {
-      const k = j * nx + i;
-      this.H[k] = this._shape(n.x0 + i * n.step, n.z0 + j * n.step, this.H0[k], this.HR[k], n.step);
+  // represa (lago parado): água em level, fundo até depth abaixo, margem de margin metros
+  addLake(lake) {
+    const xs = lake.poly.map(p => p[0]), zs = lake.poly.map(p => p[1]);
+    lake.box = [Math.min(...xs), Math.min(...zs), Math.max(...xs), Math.max(...zs)];
+    this.lakes.push(lake);
+  }
+
+  // represa que contém o ponto
+  lakeAt(x, z) {
+    for (const L of this.lakes) {
+      const q = L.box;
+      if (x >= q[0] && x <= q[2] && z >= q[1] && z <= q[3] && pointInPoly(x, z, L.poly)) return L;
     }
-    this._refine();
+    return null;
+  }
+
+  // aplica ruas, áreas planas e rios nas grades finais
+  finalize(roadIndex, riverIndex) {
+    this.roadIndex = roadIndex; this.riverIndex = riverIndex;
+    const N = this.near, R = this.ring;
+    for (const g of this.grids) {
+      for (let j = 0; j < g.nz; j++) for (let i = 0; i < g.nx; i++) {
+        const k = j * g.nx + i, x = g.x0 + i * g.step, z = g.z0 + j * g.step;
+        let hr = g.HR[k];
+        // borda de dentro da cidade: as ruas passam para o campo do anel (igual ao roadHeight)
+        if (g === N && R) { const t = this._seam(x, z); if (t > 0) hr += (R.bilinear(R.HR, x, z) - hr) * t; }
+        g.H[k] = this._shape(x, z, g.H0[k], hr, g.step);
+      }
+      this._refine(g);
+    }
   }
 
   // altura final num ponto: relevo bruto h, rua (hr), áreas planas, pisos e rios.
@@ -127,6 +257,15 @@ export class Terrain {
     for (const fy of floors) h = Math.min(h, fy - 0.04);
     // uma área aplainada não pode erguer o terreno por cima de rua ou calçada
     if (r.seg && r.d < (r.seg.data.sidewalk ? 2 : 0) + step * 0.8) h = Math.min(h, hr);
+    // represa: fundo escavado dentro do contorno e margem descendo até a beira d'água
+    // (antes dos rios: o leito do rio que chega nela continua aberto)
+    for (const L of this.lakes) {
+      const m = L.margin, q = L.box;
+      if (x < q[0] - m || x > q[2] + m || z < q[1] - m || z > q[3] + m) continue;
+      const d = distToPoly(x, z, L.poly);
+      if (d < 0) h = Math.min(h, L.level - Math.min(L.depth, 0.5 - d * 0.22));
+      else if (d < m) { const s = L.level + 0.25; h = s + (h - s) * smooth(d / m); }
+    }
     // cada rio por perto escava (não só o mais próximo: na confluência a troca de
     // um para o outro fazia um paredão)
     const onRoad = r.seg && r.d < (r.seg.data.sidewalk ? 2 : 0) + 1;
@@ -159,22 +298,24 @@ export class Terrain {
 
   // grade fina nas células perto dos rios. Cantos = grade normal; na borda com uma
   // célula comum os pontos ficam sobre a reta entre os cantos (sem rachaduras)
-  _refine() {
-    const n = NEAR, { nx, nz } = this, cx = nx - 1, cz = nz - 1, V = SUB + 1;
-    this.refined = new Uint8Array(cx * cz);
-    this.fineH = new Map();
+  _refine(g) {
+    const { nx, nz } = g, cx = nx - 1, cz = nz - 1, V = SUB + 1;
+    g.refined = new Uint8Array(cx * cz);
+    g.fineH = new Map();
     for (let j = 0; j < cz; j++) for (let i = 0; i < cx; i++) {
-      const x = n.x0 + (i + 0.5) * n.step, z = n.z0 + (j + 0.5) * n.step;
+      const x = g.x0 + (i + 0.5) * g.step, z = g.z0 + (j + 0.5) * g.step;
+      // o anel por baixo da cidade não é desenhado
+      if (g !== this.near && this.near.has(x, z)) continue;
       const w = this.riverIndex.nearest(x, z);
       if (!w.seg) continue;
       const rv = w.seg.data, base = rv.levelAt(w.seg, w.t) - rv.depth * 0.25;
-      if (w.d < rv.width / 2 + bankWidth(rv, this.raw(x, z) - base) + 5) this.refined[j * cx + i] = 1;
+      if (w.d < rv.width / 2 + bankWidth(rv, this.raw(x, z) - base) + g.step) g.refined[j * cx + i] = 1;
     }
-    const isRef = (i, j) => i >= 0 && j >= 0 && i < cx && j < cz && this.refined[j * cx + i] === 1;
-    const fstep = n.step / SUB;
+    const isRef = (i, j) => i >= 0 && j >= 0 && i < cx && j < cz && g.refined[j * cx + i] === 1;
+    const fstep = g.step / SUB;
     for (let j = 0; j < cz; j++) for (let i = 0; i < cx; i++) {
-      if (!this.refined[j * cx + i]) continue;
-      const c00 = this.H[j * nx + i], c10 = this.H[j * nx + i + 1], c01 = this.H[(j + 1) * nx + i], c11 = this.H[(j + 1) * nx + i + 1];
+      if (!g.refined[j * cx + i]) continue;
+      const c00 = g.H[j * nx + i], c10 = g.H[j * nx + i + 1], c01 = g.H[(j + 1) * nx + i], c11 = g.H[(j + 1) * nx + i + 1];
       const arr = new Float32Array(V * V);
       for (let b = 0; b <= SUB; b++) for (let a = 0; a <= SUB; a++) {
         const u = a / SUB, v = b / SUB;
@@ -185,35 +326,26 @@ export class Terrain {
         else if (b === 0 && !isRef(i, j - 1)) h = c00 + (c10 - c00) * u;
         else if (b === SUB && !isRef(i, j + 1)) h = c01 + (c11 - c01) * u;
         else {
-          const x = n.x0 + (i + u) * n.step, z = n.z0 + (j + v) * n.step;
+          const x = g.x0 + (i + u) * g.step, z = g.z0 + (j + v) * g.step;
           h = this._shape(x, z, this.raw(x, z), this.roadHeight(x, z), fstep);
         }
         arr[b * V + a] = h;
       }
-      this.fineH.set(j * cx + i, arr);
+      g.fineH.set(j * cx + i, arr);
     }
+  }
+
+  // grade de detalhe que cobre o ponto (a cidade tem prioridade sobre o anel)
+  gridAt(x, z) {
+    if (this.near.has(x, z)) return this.near;
+    if (this.ring && this.ring.has(x, z)) return this.ring;
+    return null;
   }
 
   // altura exata da malha (mesma triangulação do desenho)
   heightAt(x, z) {
-    const n = NEAR;
-    const fx = (x - n.x0) / n.step, fz = (z - n.z0) / n.step;
-    if (fx < 0 || fz < 0 || fx >= this.nx - 1 || fz >= this.nz - 1) return this.raw(x, z);
-    const i = Math.floor(fx), j = Math.floor(fz);
-    let tx = fx - i, tz = fz - j;
-    const H = this.H, nx = this.nx;
-    let a, b, c, d;
-    const fine = this.fineH && this.fineH.get(j * (nx - 1) + i);
-    if (fine) {
-      const V = SUB + 1, sx = Math.min(Math.floor(tx * SUB), SUB - 1), sz = Math.min(Math.floor(tz * SUB), SUB - 1);
-      tx = tx * SUB - sx; tz = tz * SUB - sz;
-      a = fine[sz * V + sx]; b = fine[sz * V + sx + 1]; c = fine[(sz + 1) * V + sx]; d = fine[(sz + 1) * V + sx + 1];
-    } else {
-      a = H[j * nx + i]; b = H[j * nx + i + 1]; c = H[(j + 1) * nx + i]; d = H[(j + 1) * nx + i + 1];
-    }
-    // diagonal de a (i,j) até d (i+1,j+1)
-    if (tx >= tz) return a + (b - a) * tx + (d - b) * tz;
-    return a + (d - c) * tx + (c - a) * tz;
+    const g = this.gridAt(x, z);
+    return g ? g.heightAt(x, z) : this.raw(x, z);
   }
 
   // piso colado no relevo: os triângulos da malha do terreno (a mesma triangulação
@@ -221,7 +353,9 @@ export class Terrain {
   // Um quadrado plano por cima do relevo flutua onde o chão desce e some onde sobe.
   // emit(a, b, c) recebe pontos [x, y, z] na altura exata do terreno, virados para cima
   drape(poly, emit) {
-    const n = NEAR, cx = this.nx - 1, cz = this.nz - 1;
+    const xs = poly.map(p => p[0]), zs = poly.map(p => p[1]);
+    const g = this.gridAt((Math.min(...xs) + Math.max(...xs)) / 2, (Math.min(...zs) + Math.max(...zs)) / 2) || this.near;
+    const cx = g.nx - 1, cz = g.nz - 1;
     let area = 0;
     for (let k = 0; k < poly.length; k++) { const p = poly[k], q = poly[(k + 1) % poly.length]; area += p[0] * q[1] - q[0] * p[1]; }
     const sg = area > 0 ? 1 : -1;
@@ -240,18 +374,17 @@ export class Terrain {
       }
       return pts;
     };
-    const xs = poly.map(p => p[0]), zs = poly.map(p => p[1]);
-    const i0 = Math.max(0, Math.floor((Math.min(...xs) - n.x0) / n.step)), i1 = Math.min(cx - 1, Math.floor((Math.max(...xs) - n.x0) / n.step));
-    const j0 = Math.max(0, Math.floor((Math.min(...zs) - n.z0) / n.step)), j1 = Math.min(cz - 1, Math.floor((Math.max(...zs) - n.z0) / n.step));
+    const i0 = Math.max(0, Math.floor((Math.min(...xs) - g.x0) / g.step)), i1 = Math.min(cx - 1, Math.floor((Math.max(...xs) - g.x0) / g.step));
+    const j0 = Math.max(0, Math.floor((Math.min(...zs) - g.z0) / g.step)), j1 = Math.min(cz - 1, Math.floor((Math.max(...zs) - g.z0) / g.step));
     for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
-      const k = this.refined && this.refined[j * cx + i] ? SUB : 1, s = n.step / k;
+      const k = g.refined && g.refined[j * cx + i] ? SUB : 1, s = g.step / k;
       for (let b = 0; b < k; b++) for (let a = 0; a < k; a++) {
-        const x0 = n.x0 + i * n.step + a * s, z0 = n.z0 + j * n.step + b * s, x1 = x0 + s, z1 = z0 + s;
+        const x0 = g.x0 + i * g.step + a * s, z0 = g.z0 + j * g.step + b * s, x1 = x0 + s, z1 = z0 + s;
         // mesma diagonal da malha: de (x0, z0) a (x1, z1)
         for (const t of [[[x0, z0], [x1, z0], [x1, z1]], [[x0, z0], [x1, z1], [x0, z1]]]) {
           const c = clip(t);
           if (c.length < 3) continue;
-          const P = c.map(([x, z]) => [x, this.heightAt(x, z), z]);
+          const P = c.map(([x, z]) => [x, g.heightAt(x, z), z]);
           for (let m = 1; m < P.length - 1; m++) {
             const A = P[0], B = P[m], C = P[m + 1];
             const ny = (B[2] - A[2]) * (C[0] - A[0]) - (B[0] - A[0]) * (C[2] - A[2]);
@@ -264,6 +397,8 @@ export class Terrain {
   }
 
   waterAt(x, z) {
+    const L = this.lakeAt(x, z);
+    if (L) return { level: L.level, river: L.water };
     const w = this.riverIndex?.nearest(x, z);
     if (!w || !w.seg) return null;
     const rv = w.seg.data;
@@ -275,7 +410,7 @@ export class Terrain {
   // Onde o barranco sobe acima desse nível o chão está seco
   waterLevel(x, z) {
     if (!this.riverIndex) return null;
-    let lv = null;
+    let lv = this.lakeAt(x, z)?.level ?? null;
     for (const w of this._riversNear(x, z)) {
       const rv = w.seg.data;
       if (w.d > rv.width / 2 + rv.bank * 0.5) continue;
@@ -288,9 +423,14 @@ export class Terrain {
   // margem molhada: escurece a cor do vértice perto da água (degradê contínuo, sem
   // a escada de quadradinhos que uma textura de barro por célula fazia no talude)
   wetTint(x, z) {
+    let k = 0;
+    for (const L of this.lakes) {
+      const q = L.box;
+      if (x < q[0] - 6 || x > q[2] + 6 || z < q[1] - 6 || z > q[3] + 6) continue;
+      k = Math.max(k, 1 - smooth(clamp(distToPoly(x, z, L.poly) / 6, 0, 1)));
+    }
     const w = this.riverIndex.nearest(x, z);
-    if (!w.seg) return 1;
-    const rv = w.seg.data, k = 1 - smooth(clamp((w.d - rv.width / 2) / (rv.bank * 0.8), 0, 1));
+    if (w.seg) { const rv = w.seg.data; k = Math.max(k, 1 - smooth(clamp((w.d - rv.width / 2) / (rv.bank * 0.8), 0, 1))); }
     return 1 - k * 0.42;
   }
 
@@ -298,28 +438,48 @@ export class Terrain {
   groundClass(x, z, zones) {
     if (zones.isForest(x, z)) return 'leaves';
     const r = this.roadIndex.clearance(x, z);
+    // roça ou pasto da área ampliada: em maio quase tudo seco, com manchas verdes grandes
+    // (nas células de 10 m, manchas pequenas viravam um tabuleiro)
+    if (zones.field?.(x, z, r.d)) return fbm(x * 0.004 + 3, z * 0.004 - 2, 2) > 0.6 ? 'grass' : 'grassDry';
+    if (this.ring && outside(NEAR, x, z) > 0) {
+      if (r.d < 22) return fbm(x * 0.012, z * 0.012, 2) > 0.62 ? 'grassDry' : 'lawn';
+      return fbm(x * 0.01 + 7, z * 0.01, 2) > 0.55 ? 'grassDry' : 'grass';
+    }
     if (r.d < 22) return fbm(x * 0.05, z * 0.05, 2) > 0.62 ? 'grassDry' : 'lawn';
     return fbm(x * 0.03 + 7, z * 0.03, 2) > 0.55 ? 'grassDry' : 'grass';
   }
 
   buildMesh(materials, zones) {
     const group = new THREE.Group();
-    const n = NEAR, CH = 40; // células por pedaço
     const classes = ['grass', 'grassDry', 'lawn', 'leaves', 'mud'];
-    const cellClass = new Uint8Array((this.nx - 1) * (this.nz - 1));
-    for (let j = 0; j < this.nz - 1; j++) for (let i = 0; i < this.nx - 1; i++) {
-      const x = n.x0 + (i + 0.5) * n.step, z = n.z0 + (j + 0.5) * n.step;
-      cellClass[j * (this.nx - 1) + i] = classes.indexOf(this.groundClass(x, z, zones));
+    for (const g of this.grids) this._gridMesh(group, g, materials, zones, classes);
+    if (this.ring) group.add(this._seamSkirt(materials));
+    group.add(this._farMesh(materials));
+    return group;
+  }
+
+  // malha de uma grade em pedaços de 200 m; no anel, as células por baixo da cidade ficam de fora
+  _gridMesh(group, g, materials, zones, classes) {
+    // pedaços de 200 m na cidade e de 400 m no anel (menos chamadas de desenho)
+    const N = this.near, under = g !== N, CH = Math.round((under ? 400 : 200) / g.step), cw = g.nx - 1;
+    const cellClass = g.cellClass = new Uint8Array(cw * (g.nz - 1));
+    g.classes = classes;
+    for (let j = 0; j < g.nz - 1; j++) for (let i = 0; i < cw; i++) {
+      const x = g.x0 + (i + 0.5) * g.step, z = g.z0 + (j + 0.5) * g.step;
+      cellClass[j * cw + i] = under && N.has(x, z) ? 255 : classes.indexOf(this.groundClass(x, z, zones));
     }
-    const normals = this._normals();
-    for (let cj = 0; cj < this.nz - 1; cj += CH) for (let ci = 0; ci < this.nx - 1; ci += CH) {
-      const ni = Math.min(CH, this.nx - 1 - ci), nj = Math.min(CH, this.nz - 1 - cj);
+    const normals = g.normals();
+    for (let cj = 0; cj < g.nz - 1; cj += CH) for (let ci = 0; ci < cw; ci += CH) {
+      const ni = Math.min(CH, cw - ci), nj = Math.min(CH, g.nz - 1 - cj);
+      let any = false;
+      for (let j = 0; j < nj && !any; j++) for (let i = 0; i < ni; i++) if (cellClass[(cj + j) * cw + ci + i] !== 255) { any = true; break; }
+      if (!any) continue;
       const vx = ni + 1, vz = nj + 1;
       const pos = new Float32Array(vx * vz * 3), nor = new Float32Array(vx * vz * 3), uv = new Float32Array(vx * vz * 2), col = new Float32Array(vx * vz * 3);
       for (let j = 0; j < vz; j++) for (let i = 0; i < vx; i++) {
-        const gi = ci + i, gj = cj + j, k = gj * this.nx + gi, v = j * vx + i;
-        const x = n.x0 + gi * n.step, z = n.z0 + gj * n.step;
-        pos[v * 3] = x; pos[v * 3 + 1] = this.H[k]; pos[v * 3 + 2] = z;
+        const gi = ci + i, gj = cj + j, k = gj * g.nx + gi, v = j * vx + i;
+        const x = g.x0 + gi * g.step, z = g.z0 + gj * g.step;
+        pos[v * 3] = x; pos[v * 3 + 1] = g.H[k]; pos[v * 3 + 2] = z;
         nor[v * 3] = normals[k * 3]; nor[v * 3 + 1] = normals[k * 3 + 1]; nor[v * 3 + 2] = normals[k * 3 + 2];
         uv[v * 2] = x / 6; uv[v * 2 + 1] = z / 6;
         const tint = 0.9 + fbm(x * 0.02, z * 0.02, 2) * 0.2, wet = this.wetTint(x, z);
@@ -335,8 +495,8 @@ export class Terrain {
       for (let c = 0; c < classes.length; c++) {
         const start = idx.length;
         for (let j = 0; j < nj; j++) for (let i = 0; i < ni; i++) {
-          if (this.refined[(cj + j) * (this.nx - 1) + ci + i]) continue;
-          if (cellClass[(cj + j) * (this.nx - 1) + ci + i] !== c) continue;
+          if (g.refined[(cj + j) * cw + ci + i]) continue;
+          if (cellClass[(cj + j) * cw + ci + i] !== c) continue;
           const a = j * vx + i, b = a + 1, cc = a + vx, d = cc + 1;
           idx.push(a, d, b, a, cc, d);
         }
@@ -347,27 +507,25 @@ export class Terrain {
       const mesh = new THREE.Mesh(geo, mats);
       mesh.matrixAutoUpdate = false;
       group.add(mesh);
-      const fineMesh = this._fineMesh(materials, zones, classes, ci, cj, ni, nj);
+      const fineMesh = this._fineMesh(g, materials, zones, classes, ci, cj, ni, nj);
       if (fineMesh) group.add(fineMesh);
     }
-    group.add(this._farMesh(materials));
-    return group;
   }
 
-  _fineMesh(materials, zones, classes, ci, cj, ni, nj) {
-    const n = NEAR, cx = this.nx - 1, V = SUB + 1, fs = n.step / SUB;
+  _fineMesh(g, materials, zones, classes, ci, cj, ni, nj) {
+    const cx = g.nx - 1, V = SUB + 1, fs = g.step / SUB;
     const cells = [];
-    for (let j = cj; j < cj + nj; j++) for (let i = ci; i < ci + ni; i++) if (this.refined[j * cx + i]) cells.push([i, j]);
+    for (let j = cj; j < cj + nj; j++) for (let i = ci; i < ci + ni; i++) if (g.refined[j * cx + i]) cells.push([i, j]);
     if (!cells.length) return null;
     const nv = cells.length * V * V;
     const pos = new Float32Array(nv * 3), nor = new Float32Array(nv * 3), uv = new Float32Array(nv * 2), col = new Float32Array(nv * 3);
     const byClass = classes.map(() => []);
     cells.forEach(([i, j], q) => {
-      const arr = this.fineH.get(j * cx + i), base = q * V * V;
+      const arr = g.fineH.get(j * cx + i), base = q * V * V;
       for (let b = 0; b <= SUB; b++) for (let a = 0; a <= SUB; a++) {
-        const v = base + b * V + a, x = n.x0 + i * n.step + a * fs, z = n.z0 + j * n.step + b * fs;
+        const v = base + b * V + a, x = g.x0 + i * g.step + a * fs, z = g.z0 + j * g.step + b * fs;
         pos[v * 3] = x; pos[v * 3 + 1] = arr[b * V + a]; pos[v * 3 + 2] = z;
-        const hl = this.heightAt(x - fs, z), hr = this.heightAt(x + fs, z), hd = this.heightAt(x, z - fs), hu = this.heightAt(x, z + fs);
+        const hl = g.heightAt(x - fs, z), hr = g.heightAt(x + fs, z), hd = g.heightAt(x, z - fs), hu = g.heightAt(x, z + fs);
         const nxv = hl - hr, nyv = 2 * fs, nzv = hd - hu, l = Math.hypot(nxv, nyv, nzv);
         nor[v * 3] = nxv / l; nor[v * 3 + 1] = nyv / l; nor[v * 3 + 2] = nzv / l;
         uv[v * 2] = x / 6; uv[v * 2 + 1] = z / 6;
@@ -375,7 +533,7 @@ export class Terrain {
         col[v * 3] = tint * wet; col[v * 3 + 1] = tint * wet * (0.88 + wet * 0.12); col[v * 3 + 2] = tint * 0.97 * wet * (0.8 + wet * 0.2);
       }
       for (let b = 0; b < SUB; b++) for (let a = 0; a < SUB; a++) {
-        const cls = classes.indexOf(this.groundClass(n.x0 + i * n.step + (a + 0.5) * fs, n.z0 + j * n.step + (b + 0.5) * fs, zones));
+        const cls = classes.indexOf(this.groundClass(g.x0 + i * g.step + (a + 0.5) * fs, g.z0 + j * g.step + (b + 0.5) * fs, zones));
         const p = base + b * V + a, pb = p + 1, pc = p + V, pd = pc + 1;
         byClass[cls].push(p, pd, pb, p, pc, pd);
       }
@@ -398,28 +556,44 @@ export class Terrain {
     return mesh;
   }
 
-  _normals() {
-    const { nx, nz, H } = this, s = NEAR.step;
-    const out = new Float32Array(nx * nz * 3);
-    for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) {
-      const hl = H[j * nx + Math.max(i - 1, 0)], hr = H[j * nx + Math.min(i + 1, nx - 1)];
-      const hd = H[Math.max(j - 1, 0) * nx + i], hu = H[Math.min(j + 1, nz - 1) * nx + i];
-      let x = hl - hr, y = 2 * s, z = hd - hu;
-      const l = Math.hypot(x, y, z);
-      out[(j * nx + i) * 3] = x / l; out[(j * nx + i) * 3 + 1] = y / l; out[(j * nx + i) * 3 + 2] = z / l;
-    }
-    return out;
+  // saia na borda da cidade: o anel tem um vértice a cada 10 m e a cidade a cada 5; nos
+  // vértices do meio ficaria uma fresta entre as duas malhas. Uma tira descendo 1,5 m tapa
+  _seamSkirt(materials) {
+    const N = this.near, pos = [], uv = [], col = [], nor = [];
+    const edge = (x0, z0, x1, z1, nx, nz) => {
+      const ha = N.heightAt(clamp(x0, N.x0, N.x1 - 0.01), clamp(z0, N.z0, N.z1 - 0.01)), hb = N.heightAt(clamp(x1, N.x0, N.x1 - 0.01), clamp(z1, N.z0, N.z1 - 0.01));
+      const q = [[x0, ha, z0], [x1, hb, z1], [x1, hb - 1.5, z1], [x0, ha - 1.5, z0]];
+      for (const k of [0, 1, 2, 0, 2, 3]) { pos.push(...q[k]); uv.push(q[k][0] / 6, q[k][1] / 6); col.push(0.75, 0.72, 0.66); nor.push(nx, 0.5, nz); }
+    };
+    const s = N.step;
+    for (let x = N.x0; x < N.x1 - 1e-6; x += s) { edge(x, N.z0, x + s, N.z0, 0, -1); edge(x + s, N.z1, x, N.z1, 0, 1); }
+    for (let z = N.z0; z < N.z1 - 1e-6; z += s) { edge(N.x0, z + s, N.x0, z, -1, 0); edge(N.x1, z, N.x1, z + s, 1, 0); }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+    geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+    geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+    geo.computeBoundingSphere();
+    const m = new THREE.Mesh(geo, materials.grass);
+    m.matrixAutoUpdate = false;
+    return m;
   }
 
-  // relevo distante (grade grossa), afundado sob a área detalhada
+  // relevo distante (grade grossa), afundado sob as grades de detalhe. Com a área ampliada
+  // ele passa por baixo de tudo (bem fundo no miolo): os pedaços além da neblina deixam de ser
+  // desenhados e, sem ele embaixo, ficaria um buraco preto no lugar da cidade
   _farMesh(materials) {
-    const f = FAR, n = NEAR;
+    const f = this.ring ? FAR : { x0: -1600, x1: 1600, z0: -1600, z1: 1600, step: 40 };
+    const n = this.ring ? RING : NEAR;
     const vx = Math.round((f.x1 - f.x0) / f.step) + 1, vz = Math.round((f.z1 - f.z0) / f.step) + 1;
     const pos = new Float32Array(vx * vz * 3), uv = new Float32Array(vx * vz * 2), col = new Float32Array(vx * vz * 3);
     for (let j = 0; j < vz; j++) for (let i = 0; i < vx; i++) {
       const x = f.x0 + i * f.step, z = f.z0 + j * f.step, v = j * vx + i;
       let h = this.raw(x, z);
-      if (x > n.x0 && x < n.x1 && z > n.z0 && z < n.z1) h -= 8;
+      if (x > n.x0 && x < n.x1 && z > n.z0 && z < n.z1) {
+        const e = Math.min(x - n.x0, n.x1 - x, z - n.z0, n.z1 - z);
+        h -= this.ring ? 8 + 32 * smooth((e - 40) / 80) : 8;
+      }
       pos[v * 3] = x; pos[v * 3 + 1] = h; pos[v * 3 + 2] = z;
       uv[v * 2] = x / 24; uv[v * 2 + 1] = z / 24;
       col[v * 3] = col[v * 3 + 1] = col[v * 3 + 2] = 0.95;
@@ -429,7 +603,7 @@ export class Terrain {
       // célula toda dentro da área detalhada: a malha de perto já cobre, e este
       // relevo grosso (40 m) ficava acima do fundo dos vales estreitos (leito do rio)
       const x0 = f.x0 + i * f.step, z0 = f.z0 + j * f.step;
-      if (x0 >= n.x0 && x0 + f.step <= n.x1 && z0 >= n.z0 && z0 + f.step <= n.z1) continue;
+      if (!this.ring && x0 >= n.x0 && x0 + f.step <= n.x1 && z0 >= n.z0 && z0 + f.step <= n.z1) continue;
       const a = j * vx + i, b = a + 1, c = a + vx, d = c + 1;
       idx.push(a, d, b, a, c, d);
     }
@@ -444,7 +618,27 @@ export class Terrain {
     return mesh;
   }
 
+  // tipo de chão de cada célula já calculado ao montar a malha: cb(x, z, tamanho, classe)
+  // (o minimapa pinta o mato e as roças sem perguntar de novo célula por célula)
+  eachCell(cb) {
+    for (const g of this.grids) {
+      if (!g.cellClass) continue;
+      const cw = g.nx - 1;
+      for (let j = 0; j < g.nz - 1; j++) for (let i = 0; i < cw; i++) {
+        const c = g.cellClass[j * cw + i];
+        if (c !== 255) cb(g.x0 + i * g.step, g.z0 + j * g.step, g.step, g.classes[c]);
+      }
+    }
+  }
+
+  // dentro da área de detalhe (cidade ou anel)
   inBounds(x, z) {
+    for (const g of this.grids) if (x > g.x0 + 5 && x < g.x1 - 5 && z > g.z0 + 5 && z < g.z1 - 5) return true;
+    return false;
+  }
+
+  // dentro da grade da cidade (o que era inBounds antes da área ampliada)
+  inNear(x, z) {
     const n = NEAR; return x > n.x0 + 5 && x < n.x1 - 5 && z > n.z0 + 5 && z < n.z1 - 5;
   }
 }

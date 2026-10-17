@@ -29,7 +29,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // caixas [x0, z0, x1, z1]: ruas e o resto (áreas, pontos, prédios) de cada camada
 const V1 = { ROAD_BOX: [-1100, -1100, 1200, 1100], AREA_BOX: [-800, -800, 900, 800] };
-const V2 = { ROAD_BOX: [-1670, -1730, 1810, 1690], AREA_BOX: [-1660, -1720, 1800, 1680], OSM: 2000 };
+const V2 = { ROAD_BOX: [-1670, -1730, 1810, 1690], AREA_BOX: [-1660, -1720, 1800, 1680], RIVER_BOX: [-1760, -1820, 1900, 1780], OSM: 2000 };
 
 async function fetchOSM(R) {
   const [s, w] = toLatLon(-R, R), [n, e] = toLatLon(R, -R);
@@ -37,8 +37,14 @@ async function fetchOSM(R) {
   const q = `[out:json][timeout:180];(way["highway"](${bb});way["waterway"](${bb});way["building"](${bb});
     way["leisure"](${bb});way["landuse"](${bb});way["natural"](${bb});way["amenity"](${bb});
     node["name"](${bb});node["amenity"](${bb});node["tourism"](${bb}););out body;>;out skel qt;`;
-  const r = await fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: 'data=' + encodeURIComponent(q) });
-  return r.json();
+  // o Overpass recusa (406) pedido sem identificação
+  const headers = { 'User-Agent': 'Teewald-mapdata/1.0 (github.com/fabianokunst/Teewald-3d)', 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' };
+  for (const url of ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter', 'https://overpass.private.coffee/api/interpreter']) {
+    const r = await fetch(url, { method: 'POST', headers, body: 'data=' + encodeURIComponent(q) });
+    if (r.ok) return r.json();
+    console.log('  ' + url + ': ' + r.status);
+  }
+  throw new Error('Overpass indisponível');
 }
 
 async function fetchElevation(grids) {
@@ -153,9 +159,9 @@ function layer(osm, B, keep) {
     if (t.highway && t.highway !== 'dummy') {
       for (const p of keep.road(pts, B)) roads.push({ n: t.name || '', t: t.highway, s: t.surface || '', b: t.bridge === 'yes' ? 1 : 0, p });
     } else if (t.waterway === 'river' || t.waterway === 'stream') {
-      if (keep.rivers) for (const p of clipPolyline(pts, [-1700, -1700, 1700, 1700])) rivers.push({ n: t.name || '', k: t.waterway, p });
+      if (keep.river(w)) for (const p of clipPolyline(pts, B.RIVER_BOX || [-1700, -1700, 1700, 1700])) rivers.push({ n: t.name || '', k: t.waterway, p });
     } else if (t.natural === 'water') {
-      if (keep.area(centroid(pts))) areas.push({ k: 'water', n: t.name || '', p: pts });
+      if (keep.water(w)) areas.push({ k: 'water', n: t.name || '', p: pts });
     } else {
       const k = t.leisure || t.landuse || (t.amenity === 'fuel' ? 'fuel' : null) || (t.building ? 'building' : null) || t.natural;
       if (!k) continue;
@@ -178,7 +184,9 @@ function layer(osm, B, keep) {
   return { roads, rivers, areas, pois };
 }
 
-const A = layer(osm, V1, { road: (pts, B) => clipPolyline(pts, B.ROAD_BOX), area: () => true, rivers: true });
+const A = layer(osm, V1, { road: (pts, B) => clipPolyline(pts, B.ROAD_BOX), area: () => true, river: () => true, water: () => true });
+// ids que a cidade já tem (rios e lagos de lá não entram de novo)
+const oldIds = new Set(osm.elements.filter(e => e.type === 'way').map(e => e.id));
 const buildingsA = msb.filter(b => b.p.every(([x, z]) => x > V1.AREA_BOX[0] && x < V1.AREA_BOX[2] && z > V1.AREA_BOX[1] && z < V1.AREA_BOX[3])).map(b => b.p);
 
 // ---------- camada 2: a área ampliada ----------
@@ -194,7 +202,8 @@ const msb2 = await cached('buildings-ms-amplo.json', () => fetchBuildings([-2000
 const B2 = layer(osm2, V2, {
   road: (pts, B) => outerParts(pts, V1.ROAD_BOX, B.ROAD_BOX),
   area: c => !inBox(c, V1.AREA_BOX),
-  rivers: false,
+  river: w => !oldIds.has(w.id),
+  water: w => !oldIds.has(w.id),
 });
 const inside1 = b => b.every(([x, z]) => x > V1.AREA_BOX[0] && x < V1.AREA_BOX[2] && z > V1.AREA_BOX[1] && z < V1.AREA_BOX[3]);
 const inside2 = b => b.every(([x, z]) => x > V2.AREA_BOX[0] && x < V2.AREA_BOX[2] && z > V2.AREA_BOX[1] && z < V2.AREA_BOX[3]);
@@ -204,9 +213,9 @@ const data = {
   attribution: 'Dados de mapa © colaboradores do OpenStreetMap (ODbL). Prédios: Microsoft Global ML Building Footprints (ODbL). Relevo: SRTM 30m (NASA) via OpenTopoData.',
   origin: { lat: LAT0, lon: LON0 },
   // quantos itens de cada lista são da cidade (camada 1); o resto é a área ampliada
-  v1: { roads: A.roads.length, areas: A.areas.length, pois: A.pois.length, buildings: buildingsA.length },
+  v1: { roads: A.roads.length, rivers: A.rivers.length, areas: A.areas.length, pois: A.pois.length, buildings: buildingsA.length },
   roads: [...A.roads, ...B2.roads],
-  rivers: A.rivers,
+  rivers: [...A.rivers, ...B2.rivers],
   areas: [...A.areas, ...B2.areas],
   pois: [...A.pois, ...B2.pois],
   buildings: [...buildingsA, ...buildingsB],

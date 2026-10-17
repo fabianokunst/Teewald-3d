@@ -1,9 +1,10 @@
 import { rng, obbCorners, clamp, SegmentIndex } from './geo.js';
 import { signMaterial } from '../engine/materials.js';
 import { roadSurfaceAt } from './roads.js';
+import { NEAR as NEAR_BOX } from './terrain.js';
 
 // Gerador de construções: casas de alvenaria, de madeira, enxaimel, comércio,
-// galpões e fábricas de calçados.
+// galpões e fábricas de calçados; no interior, aviários e galpões de madeira.
 
 export const FLOOR = 2.9;
 
@@ -54,6 +55,11 @@ export function groundFor(ctx, s) {
   const cs = obbCorners({ x: s.x, z: s.z, hx: s.w / 2, hz: s.d / 2, rot: s.rot });
   const hs = cs.map(([x, z]) => ctx.terrain.heightAt(x, z));
   hs.push(ctx.terrain.heightAt(s.x, s.z));
+  // aviário e galpão do interior são compridos: o morro pode subir no meio, entre os cantos
+  if (s.style === 'aviario' || s.style === 'galpao') {
+    const { P } = frame(s), nx = Math.ceil(s.w / 8), nz = Math.ceil(s.d / 8);
+    for (let i = 0; i <= nx; i++) for (let j = 0; j <= nz; j++) { const p = P(-s.w / 2 + s.w * i / nx, 0, -s.d / 2 + s.d * j / nz); hs.push(ctx.terrain.heightAt(p[0], p[2])); }
+  }
   return { yMin: Math.min(...hs), yMax: Math.max(...hs) };
 }
 
@@ -62,7 +68,7 @@ export function buildHouse(B, ctx, s) {
   const { yMin, yMax } = groundFor(ctx, s);
   const y0 = s.y0 ?? yMax + (s.plinth ?? 0.25);
   const hw = s.w / 2, hd = s.d / 2;
-  const top = y0 + s.floors * FLOOR + 0.2;
+  const top = y0 + (s.wallH ?? s.floors * FLOOR + 0.2);
   B.col = s.tint || [1, 1, 1];
 
   // alicerce (aparece em terreno inclinado); nas casas rebocadas, o mesmo reboco do barrado
@@ -78,7 +84,9 @@ export function buildHouse(B, ctx, s) {
     const pa = P(corners[a][0], 0, corners[a][1]), pb = P(corners[b][0], 0, corners[b][1]);
     const mat = (name === 'front' && s.frontWall) || s.wall;
     const len = name === 'front' || name === 'back' ? s.w : s.d;
-    B.wall(mat, pa[0], pa[2], pb[0], pb[2], y0, top, s.bays ? { uv: bayUV(name, len, 0, (top - y0) / FLOOR), ao: 0.8 } : { uvScale: s.wallUV || 3, ao: 0.8 });
+    // wallFit: a textura cobre a parede inteira na altura e repete a cada wallFit metros
+    const uv = s.bays ? bayUV(name, len, 0, (top - y0) / FLOOR) : s.wallFit ? [[0, 0], [len / s.wallFit, 0], [len / s.wallFit, 1], [0, 1]] : null;
+    B.wall(mat, pa[0], pa[2], pb[0], pb[2], y0, top, uv ? { uv, ao: 0.8 } : { uvScale: s.wallUV || 3, ao: 0.8 });
   }
   // barrado: faixa mais escura na base das paredes rebocadas
   if (s.style === 'masonry' || s.style === 'commercial') {
@@ -96,6 +104,7 @@ export function buildHouse(B, ctx, s) {
 
   // aberturas
   if (s.style === 'factory') addFactoryOpenings(B, ctx, s, P, y0, top);
+  else if (s.style === 'aviario' || s.style === 'galpao') addFarmOpenings(B, s, P, y0, top);
   else if (s.style !== 'pavilion') addOpenings(B, s, P, y0, ctx);
   if (s.sign) addSign(B, s, P, y0, top, ctx);
   if (s.chimney) {
@@ -367,6 +376,35 @@ function addFactoryOpenings(B, ctx, s, P, y0, top) {
   }
 }
 
+// aviário: porta de tábuas no meio de cada oitão (as paredes compridas são cortina);
+// galpão: portão de duas folhas na frente e janelinhas altas nos lados
+function addFarmOpenings(B, s, P, y0, top) {
+  const hw = s.w / 2, hd = s.d / 2, out = 0.05;
+  const faces = [
+    { name: 'front', a: [-hw, hd + out], b: [hw, hd + out], len: s.w, end: s.roofType === 'gableFront' },
+    { name: 'right', a: [hw + out, hd], b: [hw + out, -hd], len: s.d, end: s.roofType !== 'gableFront' },
+    { name: 'back', a: [hw, -hd - out], b: [-hw, -hd - out], len: s.w, end: s.roofType === 'gableFront' },
+    { name: 'left', a: [-hw - out, -hd], b: [-hw - out, hd], len: s.d, end: s.roofType !== 'gableFront' },
+  ];
+  for (const f of faces) {
+    const at = (t, y) => P(f.a[0] + (f.b[0] - f.a[0]) * t, y, f.a[1] + (f.b[1] - f.a[1]) * t);
+    const quadOn = (mat, t0, t1, ya, yb, uv) => B.quad(mat, at(t0, ya), at(t1, ya), at(t1, yb), at(t0, yb), uv);
+    if (s.style === 'aviario') {
+      if (!f.end) continue;
+      const dw = Math.min(1.4, f.len * 0.2) / f.len;
+      quadOn('barnDoor', 0.5 - dw, 0.5 + dw, y0, y0 + 2.3);
+      continue;
+    }
+    if (f.name === 'front') {
+      const gw = Math.min(4.2, f.len * 0.42) / f.len / 2, gh = Math.min(3.2, top - y0 - 0.35);
+      quadOn('barnDoor', s.doorAt - gw, s.doorAt + gw, y0, y0 + gh);
+    } else if (f.name !== 'back' && f.len > 5) {
+      const n = Math.max(1, Math.floor(f.len / 6));
+      for (let i = 0; i < n; i++) { const t = (i + 0.5) / n, ww = 0.45 / f.len; quadOn('window2', t - ww, t + ww, top - 1.5, top - 0.6); }
+    }
+  }
+}
+
 function addSign(B, s, P, y0, top, ctx) {
   const hd = s.d / 2 + 0.06;
   const sw = Math.min(s.w * 0.8, 7), sh = s.signH || 0.8;
@@ -620,6 +658,24 @@ export function makeSpec(R, style, x, z, rot, w, d, o = {}) {
     s.win = 'window2';
     s.found = 'concrete';
     s.plinth = 0.1;
+  } else if (style === 'aviario') {
+    // aviário: comprido e baixo, cortina de lona nas laterais, telhado de fibrocimento
+    s.wall = R.chance(0.7) ? 'aviCurtain' : 'aviCurtainB';
+    s.wallFit = 3; s.wallH = 2.7;
+    s.gableWall = R.pick(['woodPlank', 'plWhite', 'woodGray']);
+    s.roof = R.pick(['metalWhite', 'metalRoof', 'metalRoof']);
+    s.roofType = w >= d ? 'gable' : 'gableFront';
+    s.pitch = 16; s.ov = 0.9;
+    s.found = 'concrete'; s.plinth = 0.15;
+  } else if (style === 'galpao') {
+    // galpão de tábuas (às vezes pintado de vermelho), pé-direito alto, chapa ou telha velha
+    s.wall = R.pick(['woodPlank', 'woodGray', 'woodSiding', 'woodPlank']);
+    if (R.chance(0.3)) s.tint = [R.range(1.05, 1.15), R.range(0.62, 0.72), R.range(0.55, 0.62)];
+    s.roof = R.pick(['metalRust', 'roofOld', 'metalRoof', 'metalRust']);
+    s.roofType = w >= d ? 'gable' : 'gableFront';
+    s.pitch = R.range(22, 30); s.wallH = R.range(3.4, 4.4); s.ov = 0.6;
+    s.doorAt = R.pick([0.5, 0.3, 0.7]);
+    s.found = 'stoneBase'; s.plinth = 0.12;
   } else if (style === 'factory') {
     s.wall = R.pick(['plGray', 'brick', 'plWhite', 'metalWall']);
     s.roof = 'metalRoof';
@@ -725,13 +781,35 @@ export function fitBox(ctx, o) {
 
 // construções nos contornos reais (Microsoft Building Footprints)
 export function placeFootprintBuildings(ctx, B) {
-  const R = rng(1853);
-  const { zones } = ctx;
+  const { zones, terrain } = ctx;
   const core = [-110, -10];
   const placed = [];
-  for (const f of ctx.footprints) {
+  // a cidade: os contornos de sempre, na grade de sempre e no mesmo sorteio (a área ampliada
+  // não pode mudar o estilo de nenhuma casa); depois o interior, com sorteio próprio, longe
+  // da borda da grade da cidade (muro, cerca e colisão de lá mudariam o sorteio das árvores)
+  const v1 = ctx.mapdata.v1?.buildings ?? Infinity;
+  const town = f => f.id < v1 && terrain.inNear(f.x, f.z);
+  const nb = NEAR_BOX, clearOfTown = f => Math.hypot(Math.max(nb.x0 - f.x, 0, f.x - nb.x1), Math.max(nb.z0 - f.z, 0, f.z - nb.z1)) > Math.hypot(f.hx, f.hz) + 12;
+  placeFootprints(ctx, ctx.footprints.filter(town), rng(1853), placed, core);
+  placeFootprints(ctx, ctx.footprints.filter(f => !town(f) && terrain.inBounds(f.x, f.z) && clearOfTown(f)), rng(2026), placed, core, true);
+  // letreiros sem repetir (cidade pequena não tem quatro brechós), começando pela floricultura
+  // do Seu Bruno; só troca o texto, o sorteio do resto da cidade continua o mesmo
+  const shops = placed.filter(s => s.signText).sort((a, b) => Math.hypot(a.x - core[0], a.z - core[1]) - Math.hypot(b.x - core[0], b.z - core[1]));
+  const spare = ['FLORICULTURA', ...SHOPS].filter(t => !shops.some(s => s.signText === t)), seen = new Set();
+  for (const s of shops) {
+    if (seen.has(s.signText) && spare.length) { s.signText = spare.shift(); s.sign = signMaterial(s.signText, s.signStyle); }
+    seen.add(s.signText);
+  }
+  for (const s of placed) buildHouse(B, ctx, s);
+  return placed;
+}
+
+// rural: no interior, mais casas de madeira, galpões e os aviários compridos
+function placeFootprints(ctx, list, R, placed, core, rural = false) {
+  const { zones } = ctx;
+  for (const f of list) {
     if (f.used) continue;
-    if (!ctx.terrain.inBounds(f.x, f.z) || zones.isBlocked(f.x, f.z)) continue;
+    if (zones.isBlocked(f.x, f.z)) continue;
     let o = fitBox(ctx, orientToRoad(ctx, f));
     if (!o || o.hx < 1.25 || o.hz < 1.25) continue;
     if (zones.overlapsBuilding(o, -0.4) || zones.obbBlocked(o)) continue;
@@ -743,7 +821,15 @@ export function placeFootprintBuildings(ctx, B) {
     const front = road ? fr.d - o.hz - road.hw - (road.sidewalk ? 2 : 0) : 99;
     const r = R();
     let style, extra = {};
-    if (A > 750) style = 'factory';
+    const long = Math.max(w, d), short = Math.min(w, d);
+    if (rural) {
+      if (long >= 28 && long / short >= 2.6) style = 'aviario';
+      else if (A > 750) style = 'factory';
+      else if (A > 320) style = r < 0.6 ? 'galpao' : 'factory';
+      else if (A < 30) { style = 'shed'; extra.floors = 1; }
+      else if (A < 70) style = r < 0.35 ? 'galpao' : r < 0.75 ? 'wood' : 'masonry';
+      else style = r < 0.45 ? 'masonry' : r < 0.75 ? 'wood' : r < 0.87 ? 'enxaimel' : 'galpao';
+    } else if (A > 750) style = 'factory';
     else if (A > 320) style = main && dc < 320 ? 'commercial' : r < 0.45 ? 'factory' : 'masonry';
     else if (A < 30) { style = 'shed'; extra.floors = 1; }
     else if (main && dc < 300 && front < 4) style = r < 0.6 ? 'commercial' : r < 0.85 ? 'masonry' : 'enxaimel';
@@ -755,22 +841,12 @@ export function placeFootprintBuildings(ctx, B) {
     const s = makeSpec(R, style, o.x, o.z, o.rot, w, d, extra);
     s.w = Math.min(s.w, w); s.d = Math.min(s.d, d);
     if (style === 'shed') { s.floors = 1; s.roof = R.pick(['metalRoof', 'metalRust', 'roofOld']); }
-    if (style !== 'commercial' && style !== 'factory' && front > 2.2 && R.chance(0.5)) {
+    if (!['commercial', 'factory', 'aviario', 'galpao'].includes(style) && front > 2.2 && R.chance(0.5)) {
       s.fence = pickFence(R, s, Math.min(front - 0.6, 7));
     }
     zones.addBuilding({ x: s.x, z: s.z, hx: s.w / 2, hz: s.d / 2, rot: s.rot });
     f.used = true;
     placed.push(s);
   }
-  // letreiros sem repetir (cidade pequena não tem quatro brechós), começando pela floricultura
-  // do Seu Bruno; só troca o texto, o sorteio do resto da cidade continua o mesmo
-  const shops = placed.filter(s => s.signText).sort((a, b) => Math.hypot(a.x - core[0], a.z - core[1]) - Math.hypot(b.x - core[0], b.z - core[1]));
-  const spare = ['FLORICULTURA', ...SHOPS].filter(t => !shops.some(s => s.signText === t)), seen = new Set();
-  for (const s of shops) {
-    if (seen.has(s.signText) && spare.length) { s.signText = spare.shift(); s.sign = signMaterial(s.signText, s.signStyle); }
-    seen.add(s.signText);
-  }
-  for (const s of placed) buildHouse(B, ctx, s);
-  return placed;
 }
 

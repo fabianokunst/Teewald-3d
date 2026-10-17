@@ -1513,6 +1513,17 @@ export default {
   'Rua Professor Laurindo Vier': 'Rua Professor Laurindo Vier',
   // ── src/world/chupaSites.js
   'MISSA': 'MASS',
+  // ── src/world/countryside.js
+  'Rio Cadeia': 'Rio Cadeia',
+  'REPRESA DA USINA HERVAL': 'HERVAL POWER PLANT RESERVOIR',
+  'Usina Hidrelétrica Herval': 'Usina Hidrelétrica Herval',
+  'USINA HIDRELÉTRICA HERVAL': 'HERVAL HYDROELECTRIC PLANT',
+  'Vila Amizade': 'Vila Amizade',
+  'VILA AMIZADE': 'VILA AMIZADE',
+  'CTG Amigos da Tradição': 'CTG Amigos da Tradição',
+  'CTG AMIGOS DA TRADIÇÃO': 'CTG AMIGOS DA TRADIÇÃO',
+  'Represa': 'Reservoir',
+  'USINA HERVAL': 'HERVAL POWER PLANT',
   // ── src/world/interiors/cave.js
   'GRUTA DO CHUPACABRAS': 'CHUPACABRA CAVE',
   // ── src/world/interiors/crypt.js
@@ -1587,7 +1598,6 @@ export default {
   'CEMITÉRIO CATÓLICO': 'CATHOLIC CEMETERY',
   'Praça 10 de Abril': 'Praça 10 de Abril',
   'PRAÇA 10 DE ABRIL': 'PRAÇA 10 DE ABRIL',
-  'Rio Cadeia': 'Rio Cadeia',
   'CAMPO DA SOCIEDADE': 'SOCIEDADE FIELD',
   'Rua Benno Closs': 'Rua Benno Closs',
   'PAVILHÃO DA KARTOFFELFEST': 'KARTOFFELFEST PAVILION',
@@ -1645,6 +1655,7 @@ export default {
   'Rio': 'River',
   'Arroio': 'Creek',
   // ── src/world/world.js
+  'sign:': 'sign:',
   'ruas e rio': 'streets and river',
   'igreja, praça e calçadão': 'church, square and promenade',
   'postes e fios': 'poles and wires',
