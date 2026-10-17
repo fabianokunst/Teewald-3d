@@ -74,6 +74,8 @@ function criaContexto(arq, raiz) {
   for (const n of todos(raiz, n => n.attrs.id)) ids[n.attrs.id] = n;
   return { base: urlDaPagina(arq), ids, nivel: 1, grande: null };
 }
+// a miniatura img/capturas/p/x.jpg (960x540) tem a mesma foto grande em img/capturas/x.jpg
+export const grandeDe = src => src.replace(/(^|\/)capturas\/p\//, '$1capturas/');
 const absoluto = (href, ctx) => (!href || href.startsWith('#')) ? null : new URL(href, ctx.base).href;
 
 function inline(n, ctx) {
@@ -95,6 +97,7 @@ function inline(n, ctx) {
     case 'span':
       if (tem(n, 'tecla')) return '`' + limpo(texto(n)) + '`';
       if (tem(n, 'quando')) return `**${limpo(texto(n))}:**`;
+      if (tem(n, 'selo')) return `*${limpo(texto(n))}*`;
       return dentro();
     default: return dentro();
   }
@@ -114,7 +117,7 @@ function juntaInline(filhos, ctx) {
 function imagem(n, ctx) {
   const alt = limpo(n.attrs.alt || '');
   if (!alt) return '';
-  return `![${escapa(alt)}](${absoluto(ctx.grande || n.attrs.src, ctx)})`;
+  return `![${escapa(alt)}](${absoluto(grandeDe(ctx.grande || n.attrs.src), ctx)})`;
 }
 const paragrafo = s => s.split('\n').map(l => l.replace(/[ \t]+/g, ' ').trim()).filter(Boolean).join('\n');
 
@@ -132,7 +135,13 @@ function blocos(n, ctx) {
     if (!pula(f)) saida.push(...bloco(f, ctx));
   }
   fecha();
-  return saida;
+  // listas vizinhas (dados da ficha, cartões de link) viram uma lista só
+  const lista = b => b.split('\n').every(l => l.startsWith('- '));
+  return saida.reduce((r, b) => {
+    if (r.length && lista(b) && lista(r[r.length - 1])) r[r.length - 1] += '\n' + b;
+    else r.push(b);
+    return r;
+  }, []);
 }
 
 function bloco(n, ctx) {
@@ -210,7 +219,12 @@ function bloco(n, ctx) {
     const rotulo = ctx.ids[n.attrs['aria-labelledby']];
     return [...(rotulo ? [`**${limpo(texto(rotulo))}**`] : []), ...blocos(n, ctx)];
   }
-  if (tem(n, 'ficha')) return blocos(n, { ...ctx, nivel: ctx.nivel + 1 });
+  // ficha de personagem: o nome e os dados antes das fotos
+  if (tem(n, 'ficha')) {
+    const c = { ...ctx, nivel: ctx.nivel + 1 };
+    const fotos = n.filhos.filter(f => f.tag && tem(f, 'fotos'));
+    return [...blocos({ filhos: n.filhos.filter(f => !fotos.includes(f)) }, c), ...fotos.flatMap(f => blocos(f, c))];
+  }
   return blocos(n, ctx);
 }
 

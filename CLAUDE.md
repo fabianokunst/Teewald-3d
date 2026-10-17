@@ -34,6 +34,15 @@ vêm de `tools/site/` (`npm run site`): mude lá, nunca entre os marcadores das 
 tokens e componentes de `site/css/site.css` (a vitrine fica em `site/design.html`) em vez de
 cores e tamanhos soltos.
 
+## Site (pasta `site/`): buscadores e LLMs
+
+Depois de mudar o texto de uma página do site, rode `npm run site`. Ele refaz o `<head>`
+(título, prévia nas redes, JSON-LD), o `site/sitemap.xml` e as versões para LLMs
+(`site/*.html.md`, `llms.txt`, `llms-full.txt`), além do `<head>` da página do jogo
+(`index.html` da raiz, entre `<!-- seo:... -->`). Títulos e descrições ficam em
+`tools/site/paginas.mjs` e o resumo do `llms.txt` em `tools/site/llms.md`. Nada disso
+pode ter spoiler. O build publica `sitemap.xml` e `llms*.txt` também na raiz (`/Teewald-3d/`).
+
 ## Sincronização entre computadores (GitHub)
 
 O projeto é editado em dois computadores. A fonte da verdade é a branch `main` de

@@ -2,8 +2,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{titulo}}</title>
   <meta name="description" content="{{descricao}}">
-  <meta name="theme-color" content="#0b0908">
-  <link rel="canonical" href="{{url}}">
+  <meta name="robots" content="{{robots}}">
+  <meta name="author" content="{{autor}}">
+  <meta name="theme-color" content="#0b0908">{{verificacao}}
+  <link rel="canonical" href="{{url}}">{{markdown}}
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Teewald">
   <meta property="og:locale" content="pt_BR">
@@ -11,11 +13,21 @@
   <meta property="og:title" content="{{titulo-social}}">
   <meta property="og:description" content="{{descricao}}">
   <meta property="og:image" content="{{imagem}}">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1920">
+  <meta property="og:image:height" content="1080">
+  <meta property="og:image:alt" content="{{imagem-alt}}">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23201510'/%3E%3Cpath d='M8 1 L11 7 H9 V15 H7 V7 H5 Z' fill='%23d8a050'/%3E%3C/svg%3E">
+  <meta name="twitter:image:alt" content="{{imagem-alt}}">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="img/icone-180.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Grenze+Gotisch:wght@600&family=Special+Elite&family=Spectral:ital,wght@0,400;0,600;1,400&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/site.css">
   <!-- com JavaScript, o que anima começa escondido; se o site.js não rodar em 3 s, tudo aparece -->
   <script>document.documentElement.classList.add('js');setTimeout(function(){if(!window.__siteOk)document.documentElement.classList.remove('js')},3000)</script>
+  <!-- dados estruturados (schema.org) para buscadores e LLMs: montados por tools/site.mjs -->
+  <script type="application/ld+json">
+{{jsonld}}
+  </script>

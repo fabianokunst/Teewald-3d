@@ -1,0 +1,989 @@
+# Teewald
+
+> Teewald é um survival horror em terceira pessoa com visual de PlayStation 1, gratuito, que roda direto no navegador (PC, celular e tablet). Se passa em Teewald, uma cidadezinha fictícia de colonos alemães na serra gaúcha, inspirada em Santa Maria do Herval (RS): um outubro de neblina em que a criação aparece morta, com dois furos no pescoço e sem uma gota de sangue, e um forasteiro decide ficar para descobrir o que anda no mato.
+
+- Jogar: https://fabianokunst.github.io/Teewald-3d/ (grátis, sem instalar nem criar conta)
+- Site oficial: https://fabianokunst.github.io/Teewald-3d/site/
+- Criador: Fabiano Kunst (jogo independente)
+- Gênero: survival horror / terror em terceira pessoa, um jogador, doze capítulos, cada um com uma lenda do interior
+- Jogabilidade: câmera por cima do ombro, munição contada, soco e armas brancas que gastam e quebram, pistola 9 mm, esquiva, inventário de 16 espaços, documentos para ler (ARQUIVOS), conversa com 24 moradores, três dificuldades e nota de S a C por capítulo
+- Visual: 3D LIMPO (padrão) ou PS1 RETRÔ (320×240, dithering e cor de 15 bits); clima com tarde, noite, neblina, chuva e tempestade; som todo gerado em código
+- Plataformas: qualquer navegador atualizado com WebGL (Chrome, Edge, Firefox, Safari) no PC, no celular e no tablet
+- Controles: teclado e mouse, controle (USB ou Bluetooth, com mira assistida e vibração) ou toque na tela
+- Idiomas: português, inglês, espanhol e alemão
+- Progresso: salvo automaticamente no próprio navegador
+- Cenário: ruas, rio e relevo de dados abertos (OpenStreetMap, Microsoft Global ML Building Footprints e SRTM), com cerca de 600 construções nos contornos reais
+- Tecnologia: Three.js (WebGL) e Vite
+
+Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.
+
+Sem spoilers: o site conta só o que o jogador ouve e lê logo que chega na cidade. As criaturas de cada capítulo e o que acontece depois da primeira noite ficam para o jogo.
+
+In English: Teewald is a free third-person survival horror game with a PlayStation 1 look that runs in the web browser on PC, phones and tablets (keyboard and mouse, gamepad or touch). It is set in a fictional small town of German immigrants in the hills of southern Brazil, inspired by the map of Santa Maria do Herval (Rio Grande do Sul), where livestock keeps turning up drained of blood. Twelve chapters, each built around a rural legend. Available in Portuguese, English, Spanish and German. Play at https://fabianokunst.github.io/Teewald-3d/
+
+---
+
+# Teewald — survival horror com cara de PS1
+
+> Survival horror em terceira pessoa com visual de PlayStation 1, numa cidadezinha de colonos alemães na serra gaúcha. Grátis, no navegador.
+
+Página: https://fabianokunst.github.io/Teewald-3d/site/  
+Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/
+
+*Vale do Herval · Rio Grande do Sul · outubro*
+
+## Teewald
+
+Alguma coisa anda no mato.
+
+Um survival horror em terceira pessoa com cara de PlayStation 1, numa cidadezinha de colonos alemães na serra gaúcha. A neblina não levanta, a criação aparece seca no potreiro e ninguém sai de casa depois que escurece. Menos você.
+
+[Jogar agora](https://fabianokunst.github.io/Teewald-3d/) [Conhecer a história](https://fabianokunst.github.io/Teewald-3d/site/historia.html)
+
+Grátis · no navegador · sem instalar nada
+
+**Manchetes da Folha de Teewald:** Ovelhas mortas na Linha Schmitt · Prefeitura: “é graxaim” · Kartoffelfest cancelada · Comércio fecha às 18 h · Procura-se gata cinza, atende por Mimi · Perdeu-se cachorro preto de coleira vermelha · Ônibus para Novo Hamburgo não passou · Brigada pede que ninguém saia armado pelo mato à noite.
+
+*Cartaz na praça*
+
+### Procura-se
+
+Nas últimas noites, galinhas, patos e até ovelhas apareceram mortos em Teewald. Todos com dois furos no pescoço e sem uma gota de sangue.
+
+A Prefeitura diz que é graxaim. A inspetoria veterinária fala em cachorro. A repórter que veio de Porto Alegre já contou onze casos em dez dias, e ninguém quer falar com ela.
+
+Você não é daqui. Chegou numa tarde de neblina, pelo calçadão do Rio Cadeia, e resolveu ficar para descobrir o que anda no mato. A cidade não gosta de perguntas, mas cada morador sabe um pedaço da história.
+
+> Quando eu acendi a lanterna, os olhos brilharam vermelho. Aí sumiu no mato, aos pulos.
+>
+> — Seu Arno, pescador do calçadão
+
+![Cartaz de procura-se com a silhueta de um bicho corcunda de olhos vermelhos](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/cartaz-chupacabras.png)
+*Pregado no mural da Praça 10 de Abril, ao lado do fim do calçadão.*
+
+*O que te espera*
+
+### Terror à moda antiga
+
+Câmera por cima do ombro, munição contada e uma cidade inteira para atravessar no escuro. Do jeito que os jogos de terror eram nos anos 90, só que no navegador.
+
+*PS1 RETRÔ · 320×240*
+
+#### Cara de PlayStation 1
+
+Polígonos duros, texturas em pixel art e personagens montados como nos primeiros jogos 3D. Jogue no 3D LIMPO ou no PS1 RETRÔ, com dithering e cor de 15 bits de verdade.
+
+*Mapa real*
+
+#### Uma cidade que existe
+
+Ruas, rio, praça e morros de mapas reais, com cerca de 600 construções nos contornos de verdade.
+
+#### Survival horror clássico
+
+Inventário que pausa o jogo, armas brancas que gastam e quebram, pedra para arremessar e cuca com chá de marcela para remendar a vida.
+
+#### Lendas do interior
+
+Doze capítulos, cada um com uma história que os mais velhos só contam baixinho, perto do fogão. Qual é qual, você descobre lá dentro.
+
+#### Neblina, chuva e trovão
+
+A lanterna alcança poucos metros, e o som vem de todos os lados.
+
+#### Joga em qualquer lugar
+
+No PC, no celular ou no tablet, com teclado e mouse, controle ou toque. O progresso fica salvo sozinho no navegador.
+
+**Onde e como jogar:** PC, Celular, Tablet, Controle, Toque, Português, English, Español, Deutsch.
+
+> Herval vem de erva-mate. Teewald, em hunsrik: mato do chá. Bonito, não é? Mas os antigos tinham outro respeito por esse mato. Ninguém entrava nele depois do sol posto.
+>
+> — Professor Edgar, que conhece os diários dos colonos
+
+*Galeria*
+
+### Capturas do jogo
+
+![A Igreja Matriz no fim da tarde, com neblina](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
+*A Igreja Matriz no fim da tarde*
+
+![O calçadão na beira do Rio Cadeia](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
+*O calçadão do Rio Cadeia*
+
+![Rua da cidade numa noite de chuva, o forasteiro de lanterna acesa](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg)
+*Noite de chuva*
+
+![O pavilhão vazio da Kartoffelfest com as bandeirolas](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
+*A Kartoffelfest que não aconteceu*
+
+![A Praça 10 de Abril à noite, com os lampiões acesos](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
+*A praça à noite*
+
+![A torre da Matriz com a lua cheia atrás](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg)
+*Lua cheia atrás da torre*
+
+[Ver todas as capturas](https://fabianokunst.github.io/Teewald-3d/site/galeria.html)
+
+*Mais de Teewald*
+
+### Antes de escurecer
+
+- [A história](https://fabianokunst.github.io/Teewald-3d/site/historia.html): Os colonos do Hunsrück, o mato do chá e as últimas semanas na Folha de Teewald.
+- [A cidade](https://fabianokunst.github.io/Teewald-3d/site/cidade.html): Do calçadão ao cemitério: os lugares onde ninguém fica depois das seis.
+- [Personagens](https://fabianokunst.github.io/Teewald-3d/site/personagens.html): Vinte e quatro moradores com medo, e cada um sabe um pedaço da história.
+
+### A neblina já baixou
+
+O ônibus para Novo Hamburgo não passa desde o meio-dia. Já que você vai ficar, fique de olho no mato.
+
+[Jogar agora](https://fabianokunst.github.io/Teewald-3d/) Grátis · PC, celular e controle
+
+---
+
+*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
+
+---
+
+# A história — Teewald
+
+> Teewald, o mato do chá: uma colônia de imigrantes do Hunsrück no Vale do Herval, um outubro de neblina e criação aparecendo morta sem uma gota de sangue.
+
+Página: https://fabianokunst.github.io/Teewald-3d/site/historia.html  
+Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/
+
+*A história*
+
+## Mato do chá
+
+Teewald é uma cidade pequena de colonos alemães no Vale do Herval, na serra gaúcha. Tem igreja de torre alta, fábrica de calçados, festa da batata e um mato onde os antigos não entravam depois do sol posto.
+
+*A colônia*
+
+### Quem abriu picada
+
+Os primeiros colonos vieram do Hunsrück, no século XIX, e abriram picada no meio do mato de araucária. Deram ao lugar o nome do que acharam ali: *Teewald*, o mato do chá, por causa da erva-mate. Em português, ficou Herval.
+
+Até hoje se fala hunsrik na cozinha, se toma chimarrão no banco da praça e se come cuca no café colonial. A Igreja Matriz olha a cidade de cima, a fábrica de calçados troca de turno à noite e, todo outono, a Rua Beno Closs vira o pavilhão da Kartoffelfest.
+
+Os antigos tinham respeito por aquele mato. Nos diários deles aparece uma palavra que ninguém gosta de repetir: *Blutsauger*. O chupador de sangue.
+
+![A Igreja Matriz no fim da tarde, com neblina](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
+*A Igreja Matriz vista da praça*
+
+*Outubro*
+
+### As últimas semanas
+
+Começou longe, no interior. Depois foi chegando perto das casas.
+
+Tudo o que está aqui você ouve dos moradores ou lê nos papéis da cidade logo que chega. O resto, o jogo conta.
+
+1. **3 de outubro:** A Folha de Teewald noticia sete ovelhas mortas na Linha Schmitt. Nenhum ferimento grande, só dois furos no pescoço. Secas.
+2. **Na mesma semana:** Galinha, pato, cabrito, um gato duro atrás do galpão. A Dona Erna perde as doze galinhas numa noite só.
+3. **Domingo à noite:** O Bóris, cachorro do Lucas, arrebenta a corrente latindo para o mato. Depois para de latir. De repente.
+4. **Segunda à noite:** A Mimi, gata da Dona Hilda, sai e não volta. Ela nunca dormiu fora.
+5. **Comunicado nº 41:** A Prefeitura cancela a Kartoffelfest e manda o comércio fechar às seis. Oficialmente, é graxaim.
+6. **Hoje:** Você chega numa tarde de neblina, pelo calçadão do Rio Cadeia. No mural da praça tem um cartaz novo.
+
+*Do arquivo da cidade*
+
+### Papéis pregados
+
+Pela cidade há recortes de jornal, cartazes, cartas e páginas de diário. No jogo, cada papel que você lê fica guardado em ARQUIVOS. Estes aqui estão no mural.
+
+![Recorte da Folha de Teewald: ovelhas mortas na Linha Schmitt](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/jornal.png)
+*Folha de Teewald, 3 de outubro*
+
+![Ofício da Prefeitura cancelando a Kartoffelfest](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/oficio.png)
+*Ofício da Prefeitura*
+
+![Programa da Kartoffelfest com uma batata de chapéu](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/programa.png)
+*Programa da Kartoffelfest*
+
+![Redação escolar: o que eu vi da minha janela](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/redacao.png)
+*Redação da escola*
+
+![Cartaz de cachorro perdido, o Bóris](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/cartaz-boris.png)
+*Cartaz na ponte*
+
+Agora eu só pesco de dia. E tu devia fazer o mesmo.
+
+Antes de escurecer, pra casa.
+
+![Seu Valdir sentado no banco da praça](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg)
+*Seu Valdir não larga o chimarrão*
+
+*Já aconteceu antes*
+
+### Setenta e oito
+
+> Em setenta e oito aconteceu de novo. Eu era moço. Morreu criação em três linhas. Depois parou, do nada. A cidade preferiu esquecer.
+>
+> — Professor Edgar
+
+Quem viveu aquele ano não gosta de falar dele. O Seu Valdir toma chimarrão sozinho no banco da praça e tem uma cicatriz antiga na bochecha. Se você tiver paciência, ele conta.
+
+*O forasteiro*
+
+### Você
+
+O protagonista não tem nome. Chegou de fora, de jaqueta de couro, e todo mundo percebe. Decidiu ficar para caçar o que anda no mato.
+
+Os moradores têm medo, fecham a janela e encaram quem passa. Mas cada um viu, ouviu ou perdeu alguma coisa. Converse com todos: é deles que vêm as pistas.
+
+Daqui para a frente, a história é sua. Não vamos contar o que acontece depois da primeira noite. Algumas coisas em Teewald só fazem sentido vistas de perto.
+
+![O protagonista mirando a pistola na neblina](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
+*Pistola 9 mm, pente de doze*
+
+### A cidade prefere esquecer
+
+Você não. O cartaz já está no mural da praça.
+
+[Jogar agora](https://fabianokunst.github.io/Teewald-3d/) Grátis · no navegador
+
+---
+
+*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
+
+---
+
+# A cidade — Teewald
+
+> Os lugares de Teewald: o calçadão do Rio Cadeia, a Praça 10 de Abril, a Igreja Matriz, o pavilhão da Kartoffelfest, as casas de enxaimel e o mato. Uma cidade feita de mapas de verdade.
+
+Página: https://fabianokunst.github.io/Teewald-3d/site/cidade.html  
+Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/
+
+*A cidade*
+
+## Comércio fecha às seis
+
+Ruas, rio, praça e morros de Teewald vêm de mapas de verdade. Dá para andar por tudo: do calçadão do Rio Cadeia ao cemitério atrás da Matriz, passando pela praça, pela Prefeitura e pelo pavilhão da festa.
+
+![O calçadão na beira do Rio Cadeia](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
+
+### Calçadão do Rio Cadeia
+
+Onde tudo começa.
+
+Um caminho na beira do rio, entre a água e a avenida, com guarda-corpo, bancos, o letreiro TEEWALD e o Monumento ao Imigrante. Tem estande de tiro ao alvo com latas e garrafas para treinar a mira. O Seu Arno pesca aqui, mas agora só de dia.
+
+![A Praça 10 de Abril à noite, com a fonte e os lampiões](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
+
+### Praça 10 de Abril
+
+Fonte, hortênsias, lampiões e um orelhão.
+
+A banca de cuca da Dona Erna está fechada, o Seu Valdir não larga o chimarrão e a moça do orelhão continua ligando para a tia, que não atende. No mural, perto do fim do calçadão, tem um cartaz novo.
+
+![A nave da Igreja Matriz por dentro, com os bancos e o altar](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg)
+
+### Igreja Matriz
+
+Uma torre que se vê de quase toda a cidade.
+
+Rosácea, portal de arquivoltas, janelas ogivais com vitral e campanário com venezianas. Por dentro, abóbada azul com estrelas, púlpito, confessionário, coro com órgão, sacristia e uma escada que sobe até o sino. O Padre Bernardo tranca tudo antes de anoitecer.
+
+![O pavilhão da Kartoffelfest vazio, com varais de lâmpadas acesas](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
+
+### Pavilhão da Kartoffelfest
+
+Estava tudo pronto.
+
+Setenta metros de lona listrada em cima da Rua Beno Closs: pórtico de enxaimel, barraca de tiro, salsichão, chope, a Kartoffelhaus cheia de sacos de batata, mesas compridas de toalha xadrez, pista de dança e o palco das bandinhas. A festa deste ano foi cancelada. As lâmpadas acendem do mesmo jeito.
+
+![O Museu, uma casa de enxaimel](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg)
+
+### Casas de enxaimel
+
+Vigas escuras, reboco branco, tijolo à vista.
+
+Muro rebocado, cerca de ripa, portão na frente da porta e calçadinha até a entrada. O Museu guarda o que os colonos trouxeram do Hunsrück. Nas fábricas de calçados, o turno da noite volta a pé pelo calçadão. Voltava.
+
+![O cemitério com neblina](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg)
+
+### O cemitério
+
+Atrás da Matriz, lápides antigas com nomes alemães.
+
+O Seu Otto é zelador há trinta anos. Fala pouco, respeita os mortos e não gosta de barulho.
+
+![Árvores na neblina, na beira do mato](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mato.jpg)
+
+### O mato
+
+Começa onde as ruas acabam.
+
+Araucárias, plátanos de outono e uma neblina que não levanta. Os antigos não entravam nele depois do sol posto. Você vai ter que entrar.
+
+*Feita de mapas de verdade*
+
+### Uma cidade que existe
+
+Teewald é inspirada em Santa Maria do Herval (RS). O traçado das ruas, o rio, os arroios e o relevo vêm de dados abertos. As pessoas e as histórias são inventadas.
+
+![Teewald vista do alto, com o rio, as ruas, o campo de futebol e o cemitério](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mapa.jpg)
+*Vista do alto: o rio, o arroio, o campo e o cemitério*
+
+**600** construções, mais ou menos, nos contornos reais dos prédios
+
+**SRTM** relevo com a altitude de verdade
+
+**OSM** ruas, rio, praça e campo do OpenStreetMap
+
+**24** moradores com fala, cada um no seu canto
+
+### Depois das seis, a rua é sua
+
+Sua e do que mais estiver lá fora.
+
+[Jogar agora](https://fabianokunst.github.io/Teewald-3d/) Grátis · no navegador
+
+---
+
+*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
+
+---
+
+# Personagens — Teewald
+
+> Os personagens de Teewald: o forasteiro e os 24 moradores com fala, com retrato, altura, roupa e jeito de cada um, tirados dos modelos do jogo.
+
+Página: https://fabianokunst.github.io/Teewald-3d/site/personagens.html  
+Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/
+
+*Personagens*
+
+## Quem ainda está na rua
+
+Vinte e quatro moradores com fala, cada um com um pedaço da história. Todos com medo. Os retratos foram tirados dos próprios modelos do jogo, e as figuras de corpo inteiro estão na mesma escala.
+
+*Protagonista*
+
+### Você
+
+##### O FORASTEIRO
+
+Protagonista, sem nome. Chegou de fora e ficou para caçar o chupacabras.
+
+- **Idade:** 33 anos
+- **Altura:** 1,75 m
+- **Porte:** médio
+- **Rosto:** Loiro, cabelo penteado para trás, olhos fundos, sobrancelhas retas e barba rala.
+- **Corpo:** Estatura média e ombros largos.
+- **Roupa:** Jaqueta de couro marrom com lapelas, suéter cinza de gola V, camisa escura, calça escura e botas.
+- **Jeito:** Sério e calado. Não é da cidade, e todo mundo percebe.
+
+![Rosto de O Forasteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/heroi.jpg) ![O Forasteiro de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/heroi.jpg)
+
+*Moradores*
+
+### Quem você vai encontrar
+
+24 moradores com fala, espalhados pela cidade. Altura, porte e postura de cada ficha valem no jogo, e os traços do rosto (rugas, olheiras, sardas, barba por fazer, pinta, cicatriz) estão pintados na textura.
+
+#### Calçadão do Rio Cadeia
+
+##### SEU ARNO
+
+Ferreiro aposentado; pesca no calçadão do Rio Cadeia
+
+- **Idade:** 68 anos
+- **Altura:** 1,70 m
+- **Porte:** forte
+- **Rosto:** Queimado de sol, barba cheia grisalha e sobrancelhas grossas.
+- **Corpo:** Baixo e atarracado, braços e mãos grossos de quem bateu ferro a vida inteira.
+- **Roupa:** Camisa xadrez vermelha, calça cinza, botas e chapéu de palha. Vara de pescar.
+- **Jeito:** Fala pouco e desconfia de todo mundo. Agora só pesca de dia.
+
+![Rosto de Seu Arno](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/arno.jpg) ![Seu Arno de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/arno.jpg)
+
+##### DONA HILDA
+
+Viúva do calçadão; procura a gata Mimi
+
+- **Idade:** 74 anos
+- **Altura:** 1,55 m
+- **Porte:** magro, curvado
+- **Rosto:** Rugas fundas, olheiras e óculos; cabelo grisalho sob um lenço roxo.
+- **Corpo:** Miúda e magra, um pouco curvada.
+- **Roupa:** Suéter vinho, saia comprida cinza, meia-calça e sapatos.
+- **Jeito:** Aflita, mas educada. Chama pela Mimi o tempo todo.
+
+![Rosto de Dona Hilda](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/hilda.jpg) ![Dona Hilda de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/hilda.jpg)
+
+##### LUCAS
+
+Procura o cachorro Bóris; mora na última casa antes da ponte
+
+- **Idade:** 19 anos
+- **Altura:** 1,81 m
+- **Porte:** magro
+- **Rosto:** Pele morena, barba rala e olhos castanhos.
+- **Corpo:** Alto e magro, anda depressa.
+- **Roupa:** Jaqueta azul de gola cinza, calça escura, tênis claros e boné vermelho.
+- **Jeito:** Agitado; assobia e grita pelo Bóris.
+
+![Rosto de Lucas](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lucas.jpg) ![Lucas de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lucas.jpg)
+
+##### MARLENE
+
+Repórter de um jornal de Porto Alegre
+
+- **Idade:** 31 anos
+- **Altura:** 1,68 m
+- **Porte:** médio
+- **Rosto:** Pele morena-clara, olhos castanhos e uma pinta na bochecha; cabelo preto em rabo de cavalo.
+- **Corpo:** Estatura média, ágil.
+- **Roupa:** Jaqueta mostarda, calça jeans e tênis. Câmera fotográfica na mão.
+- **Jeito:** Insistente e curiosa. Ninguém na cidade quer falar com ela.
+
+![Rosto de Marlene](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/marlene.jpg) ![Marlene de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/marlene.jpg)
+
+##### PROFESSOR EDGAR
+
+Professor de história aposentado; conhece os diários dos colonos
+
+- **Idade:** 79 anos
+- **Altura:** 1,76 m
+- **Porte:** magro, curvado
+- **Rosto:** Cabelo e bigode brancos, óculos de aro claro, sobrancelhas grossas e rugas fundas.
+- **Corpo:** Alto e magro, curvado pela idade.
+- **Roupa:** Terno marrom gasto, camisa clara, gravata azul e boina cinza. Sempre com um livro.
+- **Jeito:** Fala devagar, como em sala de aula. Encara quem passa.
+
+![Rosto de Professor Edgar](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/edgar.jpg) ![Professor Edgar de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/edgar.jpg)
+
+##### SEU LAURO
+
+Espera o ônibus para Novo Hamburgo desde o meio-dia
+
+- **Idade:** 66 anos
+- **Altura:** 1,72 m
+- **Porte:** médio
+- **Rosto:** Grisalho, barba por fazer e olheiras de quem não dorme.
+- **Corpo:** Estatura média, ombros caídos.
+- **Roupa:** Jaqueta verde-oliva, calça cáqui, botas e boné verde. Mala do lado.
+- **Jeito:** Cansado e decidido a ir embora da cidade.
+
+![Rosto de Seu Lauro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/lauro.jpg) ![Seu Lauro de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/lauro.jpg)
+
+##### KÁTIA
+
+Operária do turno da noite na fábrica de calçados
+
+- **Idade:** 27 anos
+- **Altura:** 1,62 m
+- **Porte:** magro
+- **Rosto:** Pele morena, olhos castanhos e olheiras do turno da noite; cabelo preto em rabo de cavalo.
+- **Corpo:** Magra, de estatura mediana.
+- **Roupa:** Camisa azul-clara, calça azul-marinho e sapatos. Sacola de pano.
+- **Jeito:** Assustada; olha para trás enquanto anda.
+
+![Rosto de Kátia](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/katia.jpg) ![Kátia de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/katia.jpg)
+
+##### SEU BRUNO
+
+Dono da floricultura
+
+- **Idade:** 56 anos
+- **Altura:** 1,77 m
+- **Porte:** forte
+- **Rosto:** Cabelo castanho, bigode, óculos e olhos verdes.
+- **Corpo:** Encorpado, com a barriga de quem passou dos cinquenta.
+- **Roupa:** Macacão verde sobre camisa clara e botas. Regador na mão.
+- **Jeito:** Calado e observador; encara quem passa.
+
+![Rosto de Seu Bruno](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bruno.jpg) ![Seu Bruno de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bruno.jpg)
+
+#### Praça 10 de Abril
+
+##### SEU VALDIR
+
+Gaúcho aposentado; toma chimarrão no banco da praça
+
+- **Idade:** 72 anos
+- **Altura:** 1,71 m
+- **Porte:** magro
+- **Rosto:** Pele curtida, bigode grisalho, sobrancelhas grossas e uma cicatriz antiga na bochecha.
+- **Corpo:** Magro e rijo apesar da idade.
+- **Roupa:** Chapéu de aba preto, jaqueta escura, camisa vermelha e calça clara. Cuia e garrafa térmica.
+- **Jeito:** De poucas palavras. Viveu o caso de 1978 e não esqueceu.
+
+![Rosto de Seu Valdir](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/valdir.jpg) ![Seu Valdir de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/valdir.jpg)
+
+##### DONA ERNA
+
+Vende cuca na banca da praça
+
+- **Idade:** 63 anos
+- **Altura:** 1,58 m
+- **Porte:** gordo
+- **Rosto:** Bochechas coradas e cabelo loiro-acinzentado preso em coque.
+- **Corpo:** Baixa e cheinha.
+- **Roupa:** Vestido verde, avental branco, meia-calça e sapatos.
+- **Jeito:** Prática e direta. Perdeu as doze galinhas numa noite só.
+
+![Rosto de Dona Erna](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/erna.jpg) ![Dona Erna de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/erna.jpg)
+
+##### JOÃOZINHO
+
+Aluno da 4ª série; o cachorro dele sumiu no mato
+
+- **Idade:** 9 anos
+- **Altura:** 1,30 m
+- **Porte:** magro
+- **Rosto:** Cabelo castanho, olhos verdes e sardas no nariz.
+- **Corpo:** Franzino.
+- **Roupa:** Suéter marrom, bermuda azul-marinho, meias claras e sapatos.
+- **Jeito:** Quieto; fala pouco e fica olhando fixo.
+
+![Rosto de Joãozinho](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/joao.jpg) ![Joãozinho de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/joao.jpg)
+
+##### ANA
+
+Tenta ligar para a tia que mora na beira do mato
+
+- **Idade:** 22 anos
+- **Altura:** 1,66 m
+- **Porte:** magro
+- **Rosto:** Cabelo ruivo-escuro comprido, olhos verdes e olheiras de choro.
+- **Corpo:** Magra, de estatura mediana.
+- **Roupa:** Suéter cinza-claro com uma faixa bordada vinho, calça azul-marinho e sapatos.
+- **Jeito:** Ansiosa; não larga o orelhão.
+
+![Rosto de Ana](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ana.jpg) ![Ana de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ana.jpg)
+
+##### SEU ALFREDO
+
+Aposentado; dá a volta na praça com a esposa há cinquenta anos
+
+- **Idade:** 81 anos
+- **Altura:** 1,69 m
+- **Porte:** magro, curvado
+- **Rosto:** Cabelo branco, olhos azuis, rosto muito enrugado e olheiras.
+- **Corpo:** Magro e curvado; anda de bengala.
+- **Roupa:** Terno marrom, gravata e chapéu de feltro.
+- **Jeito:** Educado e protetor com a Wilma. Não dorme desde que arranharam a janela.
+
+![Rosto de Seu Alfredo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/alfredo.jpg) ![Seu Alfredo de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/alfredo.jpg)
+
+##### DONA WILMA
+
+Esposa do Seu Alfredo
+
+- **Idade:** 78 anos
+- **Altura:** 1,53 m
+- **Porte:** médio, curvado
+- **Rosto:** Cabelo branco em coque, óculos e olhos azuis.
+- **Corpo:** Baixinha e um pouco curvada.
+- **Roupa:** Suéter lilás com faixa bordada, saia comprida roxa e meia-calça. Sacola na mão.
+- **Jeito:** Carinhosa; chama todo mundo de querido.
+
+![Rosto de Dona Wilma](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/wilma.jpg) ![Dona Wilma de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/wilma.jpg)
+
+##### PAULA
+
+Atendente da Teewald Store
+
+- **Idade:** 24 anos
+- **Altura:** 1,71 m
+- **Porte:** magro
+- **Rosto:** Ruiva de rabo de cavalo, sardas e olhos verdes.
+- **Corpo:** Alta e magra.
+- **Roupa:** Camisa polo vinho do uniforme, calça preta e sapatos.
+- **Jeito:** Apressada para fechar a loja. Encara quem chega.
+
+![Rosto de Paula](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/paula.jpg) ![Paula de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/paula.jpg)
+
+##### SEU ROMEU
+
+Funcionário da Prefeitura; tem um potreiro fora da cidade
+
+- **Idade:** 52 anos
+- **Altura:** 1,75 m
+- **Porte:** gordo
+- **Rosto:** Cabelo preto penteado, bigode aparado e sobrancelhas grossas.
+- **Corpo:** Corpulento, com barriga sob o paletó.
+- **Roupa:** Terno cinza, gravata vermelha e sapatos engraxados. Pasta de couro.
+- **Jeito:** Fala como em discurso oficial e diz que está tudo sob controle.
+
+![Rosto de Seu Romeu](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/romeu.jpg) ![Seu Romeu de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/romeu.jpg)
+
+#### Igreja Matriz e cemitério
+
+##### PADRE BERNARDO
+
+Pároco da Igreja Matriz
+
+- **Idade:** 70 anos
+- **Altura:** 1,78 m
+- **Porte:** magro
+- **Rosto:** Cabelo branco curto, óculos de aro dourado e olheiras de quem reza à noite.
+- **Corpo:** Alto e magro, postura reta.
+- **Roupa:** Batina preta com colarinho clerical e sapatos pretos.
+- **Jeito:** Calmo e firme. Tranca a igreja antes de anoitecer.
+
+![Rosto de Padre Bernardo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/bernardo.jpg) ![Padre Bernardo de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/bernardo.jpg)
+
+##### DONA IRMA
+
+Beata; reza o terço todo dia na igreja
+
+- **Idade:** 76 anos
+- **Altura:** 1,52 m
+- **Porte:** magro, curvado
+- **Rosto:** Cabelo branco sob lenço preto, olhos cinzentos e uma pinta perto da boca.
+- **Corpo:** Pequena, magra e curvada.
+- **Roupa:** Vestido preto de luto, lenço preto, meia-calça e sapatos.
+- **Jeito:** Severa; acha que tudo é castigo de Deus.
+
+![Rosto de Dona Irma](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/irma.jpg) ![Dona Irma de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/irma.jpg)
+
+##### RUDI, O CARTEIRO
+
+Carteiro da cidade há quinze anos
+
+- **Idade:** 38 anos
+- **Altura:** 1,79 m
+- **Porte:** forte
+- **Rosto:** Pele morena, cabelo preto curto, barba por fazer e olhos castanhos.
+- **Corpo:** Forte, com as pernas de quem anda o dia inteiro.
+- **Roupa:** Camisa polo amarela de gola azul, calça azul, boné azul e sacola de cartas.
+- **Jeito:** Prestativo, mas nervoso esta semana.
+
+![Rosto de Rudi, O Carteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/rudi.jpg) ![Rudi, O Carteiro de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/rudi.jpg)
+
+##### SEU OTTO
+
+Zelador do cemitério há trinta anos
+
+- **Idade:** 69 anos
+- **Altura:** 1,74 m
+- **Porte:** forte
+- **Rosto:** Barba cheia grisalha, sobrancelhas grossas e uma cicatriz cortando a sobrancelha.
+- **Corpo:** Largo e forte, mãos calejadas.
+- **Roupa:** Macacão azul-marinho sobre camisa xadrez, botas e boné verde. Rastelo na mão.
+- **Jeito:** Fala pouco; respeita os mortos e não gosta de barulho.
+
+![Rosto de Seu Otto](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/otto.jpg) ![Seu Otto de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/otto.jpg)
+
+#### Kartoffelfest e campo de futebol
+
+##### SEU IVO
+
+Da comissão da Kartoffelfest; vigia o pavilhão de noite
+
+- **Idade:** 58 anos
+- **Altura:** 1,80 m
+- **Porte:** gordo
+- **Rosto:** Ruivo, de bigode ruivo, olhos azuis e rosto corado.
+- **Corpo:** Grande e pesado.
+- **Roupa:** Camisa xadrez vermelha, calça marrom, botas e chapéu. Caneca de chope na mão.
+- **Jeito:** Sério e prestativo; cuida do pavilhão vazio.
+
+![Rosto de Seu Ivo](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/ivo.jpg) ![Seu Ivo de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/ivo.jpg)
+
+##### DONA GERTRUD
+
+Cozinheira da Kartoffelhaus desde a primeira festa
+
+- **Idade:** 71 anos
+- **Altura:** 1,60 m
+- **Porte:** gordo
+- **Rosto:** Rosto redondo e corado, cabelo grisalho em coque e olhos azuis.
+- **Corpo:** Baixa e robusta.
+- **Roupa:** Vestido vermelho-escuro com avental branco, meia-calça e sapatos. Cesta no braço.
+- **Jeito:** Maternal; dá comida a todo mundo.
+
+![Rosto de Dona Gertrud](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/gertrud.jpg) ![Dona Gertrud de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/gertrud.jpg)
+
+##### LUANA
+
+Rainha da Kartoffelfest deste ano
+
+- **Idade:** 18 anos
+- **Altura:** 1,67 m
+- **Porte:** magro
+- **Rosto:** Loira de cabelo comprido e olhos azuis.
+- **Corpo:** Magra, de estatura mediana.
+- **Roupa:** Vestido típico verde com avental claro, meia-calça e sapatos.
+- **Jeito:** Tristonha; prometeu à mãe voltar antes de escurecer.
+
+![Rosto de Luana](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/luana.jpg) ![Luana de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/luana.jpg)
+
+##### TIAGO
+
+Centroavante do time de futebol da cidade
+
+- **Idade:** 17 anos
+- **Altura:** 1,78 m
+- **Porte:** médio
+- **Rosto:** Pele morena, cabelo preto curto e olhos castanhos.
+- **Corpo:** Atlético.
+- **Roupa:** Camisa vermelha número 9, calção preto, meias vermelhas e chuteiras.
+- **Jeito:** Fala pouco; ficou sozinho no campo.
+
+![Rosto de Tiago](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/rostos/tiago.jpg) ![Tiago de corpo inteiro](https://fabianokunst.github.io/Teewald-3d/site/img/personagens/corpo/tiago.jpg)
+
+![Silhueta de um bicho corcunda de olhos vermelhos, do cartaz de procura-se](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/silhueta.png)
+*Do cartaz no mural da praça*
+
+*O que anda no mato*
+
+### Procura-se
+
+Ninguém viu direito. O Seu Arno viu olhos vermelhos na outra margem do rio. O Joãozinho, da 4ª série, jura que o bicho anda pulando que nem canguru e tem espinho nas costas.
+
+No jogo, cada criatura que você vê de perto ganha uma ficha em LENDAS DO HERVAL. Aqui elas ficam trancadas. E não é uma só.
+
+### Eles têm medo
+
+Você tem uma 9 mm, uma lanterna e a noite inteira pela frente.
+
+[Jogar agora](https://fabianokunst.github.io/Teewald-3d/) Grátis · no navegador
+
+---
+
+*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
+
+---
+
+# O jogo — Teewald
+
+> Como se joga Teewald: combate, inventário, arquivos, estilos visuais 3D LIMPO e PS1 RETRÔ, clima, controles no teclado, no controle e no toque, e perguntas frequentes.
+
+Página: https://fabianokunst.github.io/Teewald-3d/site/jogo.html  
+Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/
+
+*O jogo*
+
+## Como se sobrevive
+
+Terceira pessoa, câmera por cima do ombro e munição contada. Teewald é um survival horror à moda antiga, que roda direto no navegador.
+
+*Combate*
+
+### Com o que tiver à mão
+
+- Soco em combo de três golpes, sempre disponível. O golpe vira sozinho para quem estiver mais perto.
+- Pedaço de pau, cano de ferro, pá, foice e machado. Batem mais forte, mas gastam e quebram.
+- Pedras e tijolos para arremessar. Com a arma na mão, coronhada.
+- Esquiva rápida, com um instante de folga para sair do bote.
+- Uma pistola 9 mm para começar. O resto você conquista pelo caminho.
+- Cada lenda tem o seu ponto fraco. Bala nem sempre resolve.
+
+Cada capítulo termina com uma nota, de S a C, pelas criaturas derrotadas, pelas quedas e pelo tempo. Três dificuldades: fácil, normal e difícil.
+
+![O protagonista mirando a pistola por cima do ombro](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
+*Mirando, a câmera vai para o ombro*
+
+![Tela do inventário com os espaços e um item em 3D](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/inventario.jpg)
+*Inventário de 16 espaços*
+
+*Inventário e arquivos*
+
+### Tudo que cabe no bolso
+
+Dezesseis espaços no estilo dos survival horror de PS1, com o item girando em 3D. Equipar, carregar, comer, examinar. A vida volta com **cuca** e **chá de marcela**, e criatura derrotada às vezes larga munição.
+
+Pela cidade há recortes de jornal, cartas, cartazes e páginas de diário, e cada um fica guardado em ARQUIVOS. As lendas que você vê de perto ganham uma ficha. E tem gente pedindo ajuda: uma gata e um cachorro sumiram.
+
+*Estilo visual*
+
+### Dois jeitos de ver
+
+Arraste a divisória. À esquerda, o 3D LIMPO; à direita, o PS1 RETRÔ. Os dois estão em OPÇÕES, junto com a iluminação.
+
+![A Matriz ao anoitecer no estilo 3D LIMPO](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-limpo.jpg)
+
+![A mesma vista no estilo PS1 RETRÔ, em baixa resolução](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg)
+
+#### 3D limpo
+
+Resolução da própria tela, antisserrilhado e texturas suaves. Os polígonos low poly aparecem nítidos.
+
+#### PS1 retrô
+
+320×240 ampliado sem suavização, dithering e cor de 15 bits. Do jeito que a televisão de tubo mostrava.
+
+#### Iluminação
+
+AVANÇADA, com sol baixo no fim da tarde, sombras do sol e do luar e halo nos lampiões. Ou CLÁSSICA, encoberta e sem sombra.
+
+*Clima e som*
+
+### O tempo muda
+
+Tarde encoberta, anoitecer, noite fechada, neblina de madrugada, chuva, garoa e tempestade, com o trovão chegando depois do clarão. De noite a lanterna vai na frente, os lampiões da praça acendem e o resto fica no escuro.
+
+Todo som do jogo é feito em código: vento, rio, chuva no telhado, grilos, corvos, quero-quero, a madeira rangendo dentro de casa e o sino da igreja, mais alto perto da torre e abafado entre paredes. Com fone de ouvido, dá para saber de que lado vem o barulho.
+
+![Clarão de raio sobre a cidade numa noite de tempestade](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg)
+*Primeiro o clarão, depois o trovão*
+
+*Controles*
+
+### Teclado, controle ou toque
+
+**Teclado e mouse**
+
+- **Andar:** `W` `A` `S` `D` ou setas
+- **Correr:** `Shift`
+- **Pular · esquivar:** `Espaço` · `C` ou `Ctrl`
+- **Câmera:** mouse (clique na tela para prender) · `Q` `E` · roda aproxima
+- **Conversar, ler, pegar, entrar:** `F` ou `E`
+- **Mirar · atirar:** botão direito (segurar) · botão esquerdo
+- **Golpe:** `V` · botão esquerdo sem arma de fogo
+- **Trocar de arma · recarregar:** `1` a `8` · `R`
+- **Comer, beber (cura):** `H`
+- **Inventário · arquivos:** `I` ou `Tab` · `J`
+- **Minimapa · pausa:** `M` · `Esc` ou `P`
+
+**Controle**
+
+- **Andar · câmera:** analógico esquerdo · analógico direito (`R3` centraliza)
+- **Correr:** `B` (segurar) ou `L3`
+- **Pular · esquivar:** `A` · `B` (toque rápido)
+- **Conversar, ler, pegar, entrar:** `A`
+- **Mirar · atirar:** `L2` ou `LB` · `R2`
+- **Golpe:** `RB`
+- **Trocar de arma · recarregar:** direcional ◀ ▶ · `X`
+- **Comer, beber (cura):** direcional ▲
+- **Inventário:** `Y`
+- **Pausa e arquivos · minimapa:** `Start` · `Select`
+
+**Toque**
+
+- **Andar:** arrastar no lado esquerdo da tela
+- **Câmera:** arrastar no lado direito (ou no próprio ATIRAR) · toque duplo centraliza · pinça aproxima
+- **Correr · pular · esquivar:** botões CORRER, PULAR e ESQUIVA
+- **Conversar, ler, pegar, entrar:** o botão aparece em cima do morador ou do objeto
+- **Mirar · atirar · golpe:** MIRAR liga e desliga · ATIRAR · GOLPE
+- **Arma · recarregar · cura:** ARMA · REC · CURA (aparece quando você está ferido)
+- **Inventário · pausa:** INV · ❚❚
+
+No controle e no toque há mira assistida (desligada, normal ou forte) e vibração nos tiros e golpes. No celular os botões da tela somem quando um controle Bluetooth é usado.
+
+*Onde jogar*
+
+### Sem instalar nada
+
+**Plataformas:** PC, Celular, Tablet, Controle, Toque.
+
+Basta um navegador atualizado com WebGL: Chrome, Edge, Firefox ou Safari. No celular fica melhor deitado, e no Android o jogo entra em tela cheia ao tocar na tela inicial.
+
+O progresso fica salvo sozinho no próprio navegador: ao trocar de etapa, nos pontos de retorno e a cada vinte segundos. CONTINUAR volta exatamente para onde você parou.
+
+**Idiomas:** Português, English, Español, Deutsch.
+
+*Perguntas*
+
+**Quanto custa?**
+
+Nada. É só abrir e jogar.
+
+**Onde fica o meu progresso?**
+
+No navegador do aparelho em que você jogou. Limpar os dados do site apaga o progresso, e outro aparelho começa do zero.
+
+**Dá para jogar com controle?**
+
+Dá, no PC e no celular, com controle USB ou Bluetooth. Os menus também funcionam no controle.
+
+**É muito assustador?**
+
+É um jogo de terror: tem escuro, sangue, criaturas e sustos, no espírito dos survival horror dos anos 90. Jogue de noite, com fone, se tiver coragem.
+
+**A cidade é de verdade?**
+
+O mapa é inspirado em Santa Maria do Herval (RS), com ruas e relevo reais. Os moradores e as histórias são inventados.
+
+**Quantos capítulos são?**
+
+Doze. O que acontece em cada um, o jogo conta.
+
+### Pronto para a primeira noite?
+
+Pistola no coldre, pente de doze e uma caixa de balas. O resto você acha pelo caminho.
+
+[Jogar agora](https://fabianokunst.github.io/Teewald-3d/) Grátis · no navegador
+
+---
+
+*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
+
+---
+
+# Galeria — Teewald
+
+> Capturas de Teewald tiradas do próprio jogo: a Igreja Matriz, a praça à noite, o calçadão do Rio Cadeia, a Kartoffelfest, chuva, neblina e o visual PS1 RETRÔ.
+
+Página: https://fabianokunst.github.io/Teewald-3d/site/galeria.html  
+Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/
+
+*Galeria*
+
+## Capturas
+
+Tudo tirado do próprio jogo, sem retoque. Clique para ampliar.
+
+![A Igreja Matriz ao anoitecer](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/capa.jpg)
+
+![A Praça 10 de Abril à noite](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca-noite.jpg)
+
+![Noite de chuva, de lanterna acesa](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/chuva.jpg)
+
+![Dentro do pavilhão da Kartoffelfest](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest.jpg)
+
+![Lua cheia atrás da torre](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/lua.jpg)
+
+![A nave da Igreja Matriz](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja-dentro.jpg)
+
+![O calçadão do Rio Cadeia](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/calcadao.jpg)
+
+![O cemitério na garoa](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/cemiterio.jpg)
+
+![Conversa com o Seu Valdir](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/conversa.jpg)
+
+![Rua fechada, festa cancelada](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/kartoffelfest-portico.jpg)
+
+![A repórter fotografa o letreiro](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/letreiro.jpg)
+
+![Mirando na beira do mato](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/mira.jpg)
+
+![O Museu, em enxaimel](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/enxaimel.jpg)
+
+![Pegadas entrando no mato](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/pegadas.jpg)
+
+![Primeiro o clarão, depois o trovão](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/tempestade.jpg)
+
+![Seu Valdir e o chimarrão](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/valdir.jpg)
+
+![Praça 10 de Abril, fim de tarde](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/praca.jpg)
+
+![O inventário](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/inventario.jpg)
+
+![A tela título](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/titulo.jpg)
+
+![A Matriz vista do alto](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
+
+![PS1 RETRÔ: a Matriz ao anoitecer](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/estilo-ps1.jpg)
+
+![PS1 RETRÔ: a praça à noite](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-praca.jpg)
+
+![PS1 RETRÔ: o calçadão](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-calcadao.jpg)
+
+![PS1 RETRÔ: dentro da Matriz](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/ps1-igreja-dentro.jpg)
+
+### Agora veja de perto
+
+As lâmpadas do pavilhão acendem todo fim de tarde, com ou sem festa.
+
+[Jogar agora](https://fabianokunst.github.io/Teewald-3d/) Grátis · no navegador
+
+---
+
+*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
