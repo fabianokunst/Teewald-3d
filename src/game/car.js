@@ -693,6 +693,9 @@ export class Car {
     this._step(dt, ctl);
     this._animate(dt);
     this._sync();
+    // acabou de descer (_finishExit já o pôs em pé do lado de fora): posar de novo no banco
+    // copiava a inclinação do carro para a raiz e ele ficava torto (ou virado para o lado errado)
+    if (P.vehicle !== this) return { moving: false };
     // o corpo: parado sentado, depois a pose do banco por cima
     ch.update(dt, 0, true, false, { still: true, seated: true });
     this._pose();
