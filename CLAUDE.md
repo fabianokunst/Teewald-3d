@@ -43,6 +43,14 @@ Depois de mudar o texto de uma página do site, rode `npm run site`. Ele refaz o
 `tools/site/paginas.mjs` e o resumo do `llms.txt` em `tools/site/llms.md`. Nada disso
 pode ter spoiler. O build publica `sitemap.xml` e `llms*.txt` também na raiz (`/Teewald-3d/`).
 
+O site tem os mesmos idiomas do jogo. As páginas de `site/` (português) são a fonte;
+`site/en/`, `site/es/` e `site/de/` são geradas pelo `npm run site` a partir dos dicionários
+`tools/site/i18n/<idioma>.json` (chave = o trecho em português, com as marcas HTML de dentro).
+Nunca edite as páginas geradas. Ao mudar texto do site, rode `npm run site` e preencha nos três
+dicionários o que ficou `""` (ele diz quanto falta; `-- --falta en` lista; `-- --confere`
+confere as marcas HTML), seguindo `src/i18n/GUIA.md` e os nomes de menu/botão de
+`src/i18n/<idioma>.js`. O resumo do llms.txt traduzido fica em `tools/site/llms.<idioma>.md`.
+
 ## Sincronização entre computadores (GitHub)
 
 O projeto é editado em dois computadores. A fonte da verdade é a branch `main` de

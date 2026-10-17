@@ -134,7 +134,8 @@ O navegador abre em `http://localhost:5173`.
 | `npm run shot` | uma captura do jogo (`node tools/screenshot.mjs saida.png "?skip=1"`) |
 | `npm run capturas` | refaz as fotos do site |
 | `npm run retratos` | refaz as fichas e retratos de `site/personagens.html` |
-| `npm run site` | refaz a cabeça, o topo e o rodapé das páginas do site, o SEO, o sitemap e as versões para LLMs |
+| `npm run site` | refaz a cabeça, o topo e o rodapé das páginas do site, as páginas em inglês, espanhol e alemão, o SEO, o sitemap e as versões para LLMs |
+| `npm run documentos` | recorta os papéis do site das imagens dos documentos do jogo, nos quatro idiomas |
 
 ## Arquitetura
 
@@ -1169,10 +1170,28 @@ que leva a https://fabianokunst.github.io/Teewald-3d/.
   e entram entre os marcadores `<!-- cabeca:... -->`, `<!-- topo:... -->` e `<!-- rodape:... -->`
   com `npm run site` (`tools/site.mjs`). O título, a descrição e a imagem de cada página ficam em
   `tools/site/paginas.mjs`.
+- **Idiomas** (os mesmos do jogo: português, inglês, espanhol e alemão): as páginas de `site/`
+  são a fonte, em português, e o `npm run site` gera `site/en/`, `site/es/` e `site/de/` trocando
+  cada trecho (o conteúdo de cada `<p>`, `<h2>`, `<li>`, `<td>`... e os atributos `alt`,
+  `aria-label`, `data-legenda`) pelo dicionário `tools/site/i18n/<idioma>.json` (chave = o
+  trecho em português, com as marcas `<em>`, `<a>`, `<span class="tecla">` de dentro; `""` =
+  falta, aparece em português). Ele avisa quantos trechos faltam; `npm run site -- --falta en`
+  lista quais e `npm run site -- --confere` confere se as marcas HTML das traduções batem com o
+  original. Tom e glossário: `src/i18n/GUIA.md` (o espanhol fala de "vos", o alemão de "du"), com
+  os nomes de menu e botão iguais aos do jogo. O que fica dentro de `translate="no"` não é
+  traduzido. Não edite as páginas de `site/en|es|de/`: mude o português ou o dicionário. Nelas,
+  as imagens com texto usam a versão do idioma quando existe (`img/documentos/<idioma>/`,
+  `img/capturas/<idioma>/`) e o botão JOGAR abre o jogo no mesmo idioma (`?lang=en`). Cada
+  página tem o seletor de idioma no topo e no rodapé e os links `hreflang` (o `x-default` é o
+  inglês, como no jogo para quem fala outra língua). Na primeira visita, quem está numa página em
+  outro idioma que não o seu (o escolhido no jogo ou, sem isso, o do navegador) vê um aviso no pé
+  da tela com o link para a sua versão; a escolha fica guardada (`teewald.site.idioma`).
+  `design.html` fica só em português.
 - **Buscadores e LLMs**: o `npm run site` também monta o JSON-LD (schema.org: `VideoGame`,
   `WebSite`, migalhas, `FAQPage` em `jogo.html`, `ImageGallery` na galeria), o `site/sitemap.xml`
-  (páginas e imagens), as versões para LLMs (`site/*.html.md`, `site/llms.txt`,
-  `site/llms-full.txt`; o resumo do llms.txt fica em `tools/site/llms.md` e o conversor
+  (as páginas nos quatro idiomas, com os alternativos `hreflang`, e as imagens), as versões para
+  LLMs em cada idioma (`*.html.md`, `llms.txt`, `llms-full.txt`; o resumo do llms.txt fica em
+  `tools/site/llms.md`, `llms.en.md`, `llms.es.md` e `llms.de.md`, e o conversor
   HTML → markdown é `tools/site/markdown.mjs`) e o `<head>` da página do jogo (`index.html` da
   raiz, entre `<!-- seo:inicio -->` e `<!-- seo:fim -->`: título, descrição e prévia nas redes).
   `design.html` fica fora dos buscadores (`noindex`), do sitemap e do llms.txt.
@@ -1191,12 +1210,17 @@ que leva a https://fabianokunst.github.io/Teewald-3d/.
   abre o jogo num Chrome sem janela, monta cada cena com a câmera livre e grava
   `site/img/capturas/<nome>.jpg` (1920×1080) e `site/img/capturas/p/<nome>.jpg` (960×540).
   `npm run capturas -- igreja praca` refaz só essas. Precisa da placa de vídeo
-  (`CHROME_SW=1` usa o SwiftShader, bem mais lento).
+  (`CHROME_SW=1` usa o SwiftShader, bem mais lento). `npm run capturas -- --idioma=en,es,de titulo
+  conversa inventario` tira as fotos que mostram texto do jogo nos outros idiomas
+  (`site/img/capturas/<idioma>/`).
 - `npm run retratos` refaz as fichas de `site/personagens.html` (só o trecho entre
   `<!-- fichas:inicio -->` e `<!-- fichas:fim -->`) e os retratos em `site/img/personagens/`:
   o protagonista e os moradores. Os personagens da campanha e as criaturas ficam de fora, e
   `SEM_SPOILER` (em `tools/retratos.mjs`) troca o que a ficha de um morador entrega da história.
-- Os papéis em `site/img/documentos/` são recortes das imagens de `shots/pt/` (`node shots.mjs`).
+- Os papéis em `site/img/documentos/` são recortes das imagens dos documentos do jogo
+  (`node shots.mjs`, em `shots/<idioma>/`): `npm run documentos` (`tools/documentos-site.mjs`)
+  recorta os quatro idiomas, o português em `site/img/documentos/` e os outros em
+  `site/img/documentos/<idioma>/`.
 
 ## Estrutura
 

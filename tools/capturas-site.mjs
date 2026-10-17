@@ -19,10 +19,10 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'site', 'img', 'capturas');
 const W = 1920, H = 1080;
-const args = process.argv.slice(2);
-const opIdioma = args.find(a => a.startsWith('--idioma='));
+const argv = process.argv.slice(2);
+const opIdioma = argv.find(a => a.startsWith('--idioma='));
 const IDIOMAS = opIdioma ? opIdioma.slice(9).split(',').filter(Boolean) : ['pt'];
-const so = args.filter(a => !a.startsWith('--'));
+const so = argv.filter(a => !a.startsWith('--'));
 
 // cena: clima, câmera e alvo em [x, altura acima do chão, z] (interior: coordenadas absolutas),
 // jogador [x, z, heading] (sem ele, fica 3 m atrás da câmera, fora da foto), fov, lanterna.
