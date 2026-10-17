@@ -31,6 +31,8 @@ import { Mission } from './game/mission.js';
 import { Campaign, loadCreatureTypes, loadInteriors } from './game/campaign.js';
 import { CHAPTERS, LAST_CHAPTER } from './game/chapters/index.js';
 import { Extras } from './game/extras.js';
+import { Car } from './game/car.js';
+import { CarIntro, introRoute } from './game/carIntro.js';
 import { Journal } from './ui/journal.js';
 import { loadFonts, drawText, FONT_TITLE } from './ui/overlay.js';
 import { LANGS, detectLang, setLang, getLang, tr, missing } from './i18n/index.js';
@@ -64,7 +66,7 @@ G.uSunDir.value.set(-0.62, 0.4, -0.68).normalize();
 
 let ctx, character, player, tpc, menu, minimap, touchMenu;
 let inventory, pistol, effects, targets, invScreen, combat;
-let npcs, mission, atmo, interiors, campaign, owls, extras, journal;
+let npcs, mission, atmo, interiors, campaign, owls, extras, journal, car, carIntro;
 let journalFrom = 'pause';
 let endingT = 0;
 let state = 'loading';
@@ -185,10 +187,16 @@ async function boot() {
   campaign = new Campaign({ ctx, scene, audio, input, player, character, tpc, camera, inventory, pistol, targets, effects, hud, R, npcs, combat, atmo, interiors, mission,
     fadeTo: (cb, speed = 1.6) => fadeTo(() => { cb(); fadeTarget = 0; fadeSpeed = 1.2; }, speed) });
   campaign.onEnding = () => { setState('ending'); endingT = 0; atmo.set('amanhecer', 0); fadeTarget = 0; };
+  // o carro do protagonista (F / A / toque em ENTRAR perto dele)
+  car = new Car({ ctx, scene, audio, effects, atmo, input, player, character, combat, npcs, hud, camera, tpc, R });
+  campaign.car = car;
+  minimap.car = car;
   // documentos, lendas, orelhões, portas da igreja, pedidos, a presença e a bandinha
   extras = new Extras({ ctx, scene, audio, input, player, camera, tpc, hud, R, npcs, combat, campaign, mission, interiors, inventory, atmo, effects, pistol });
   menu = new Menu(input, audio, settings, applySettings);
   menu.extras = extras;
+  // ENTRAR no carro só quando nada mais está oferecendo interação
+  car.blocked = () => !!(npcs.focus || combat.pickFocus || campaign.focus || mission.focus || extras.focus);
   campaign.extras = extras;   // capítulos que usam os orelhões e os documentos
   journal = new Journal(input, audio, extras);
   menu.campaign = campaign; menu.chapterTitles = CHAPTERS.map(c => c?.title);
@@ -197,7 +205,7 @@ async function boot() {
   // dedo num botão do jogo sobre a imagem (PEGAR, FALAR, LER...) não gira a câmera nem anda
   input.touch.uiHit = (x, y) => {
     const [ix, iy] = R.toInternal(x, y), pad = 6 * (R.H / 240);
-    return [combat.chip, npcs.chip, campaign.chip, mission.chip, extras.chip].some(c => c && ix >= c.x - pad && ix <= c.x + c.w + pad && iy >= c.y - pad && iy <= c.y + c.h + pad);
+    return [combat.chip, npcs.chip, campaign.chip, mission.chip, extras.chip, car.chip].some(c => c && ix >= c.x - pad && ix <= c.x + c.w + pad && iy >= c.y - pad && iy <= c.y + c.h + pad);
   };
   setupStart();
   exposeDebug();
@@ -216,6 +224,19 @@ function setupStart() {
   introPath = seg;
   const [x, z] = seg[0], [x1, z1] = seg[2];
   START.x = x; START.z = z; START.heading = Math.atan2(x1 - x, z1 - z);
+  // a chegada de carro: a vaga na VRS-873 do lado do calçadão; dali ele vai a pé, por trás do
+  // carro, até o caminho do calçadão
+  const route = introRoute(ctx, [x, z]);
+  if (route) {
+    car.place(route.park.x, route.park.z, route.park.h);
+    carIntro = new CarIntro({ car, player, tpc, camera, ctx, R, route, walk: () => {
+      const pts = [[player.pos.x, player.pos.z], car.world(1.45, -3.7), car.world(-1.6, -3.9), car.world(-3.6, -4.6)];
+      const last = pts[pts.length - 1];
+      let j = 0, bd = Infinity;
+      introPath.forEach((p, i) => { const d = Math.hypot(p[0] - last[0], p[1] - last[1]) - i * 0.6; if (d < bd) { bd = d; j = i; } });
+      return [...pts, ...introPath.slice(Math.min(j, introPath.length - 2))];
+    } });
+  }
 }
 
 function setState(s) { state = s; stateT = 0; }
@@ -243,11 +264,17 @@ function startGame(o = {}) {
   player.place(START.x, START.z, START.heading);
   tpc.snap(player);
   hud.place = null; hud.card = null;
-  if (withIntro) {
+  if (withIntro && carIntro) {
+    carIntro.start();
+    setState('intro');
+    R.bars = 0.12;
+  } else if (withIntro) {
     player.auto = { path: introPath, i: 1 };
     setState('intro');
     R.bars = 0.12;
   } else {
+    // sem a abertura: o carro estacionado na vaga dela (retomando, onde ficou)
+    if (carIntro && !r1.resume) carIntro.skip();
     player.auto = null;
     setState('play');
     hud.showHints();
@@ -301,14 +328,17 @@ function frame(now) {
   } else if (state === 'intro') {
     playIntro(dt);
   } else if (state === 'play') {
+    // dirigindo: sem conversa, leitura, telefone nem pegar coisas (F / A saem do carro)
+    const driving = !!player.vehicle;
+    input.inCar = driving;
     if (input.pause()) pauseGame();
     else if (input.inventory()) { invScreen.open(); setState('inventory'); input.unlock(); }
-    else if (npcs.talkHit(input)) { npcs.startTalk(); setState('talk'); }
-    else if (campaign.interactHit(input)) { campaign.startRead(); setState('read'); }
-    else if (extras.interactHit(input)) setState('extra');
+    else if (!driving && npcs.talkHit(input)) { npcs.startTalk(); setState('talk'); }
+    else if (!driving && campaign.interactHit(input)) { campaign.startRead(); setState('read'); }
+    else if (!driving && extras.interactHit(input)) setState('extra');
     else if (input.hit('KeyJ')) { journalFrom = 'play'; journal.open(); setState('journal'); input.unlock(); }
     else {
-      combat.pickHit(input);
+      if (!driving) { combat.pickHit(input); car.enterHit(input); }
       if (input.mouse.clicked && !input.locked && input.lastDevice === 'keyboard') input.lock();
       pistol.pre(dt, input);
       combat.pre(dt, input);
@@ -374,7 +404,7 @@ function frame(now) {
   }
 
   // mundo
-  const focus = state === 'title' || state === 'ending' ? camera.position : player.pos;
+  const focus = state === 'title' || state === 'ending' ? camera.position : state === 'intro' && carIntro?.listener ? carIntro.listener : player.pos;
   audio.listen(focus, camera, ctx.landmarks?.church, ctx.indoor ? (ctx.indoor === interiors.defs.igreja ? 'igreja' : 'casa') : null);
   if (state !== 'title' && state !== 'ending') {
     hud.setPlace(state === 'intro' ? hud.place : ctx.placeName(player.pos.x, player.pos.z), dt);
@@ -395,6 +425,7 @@ function frame(now) {
     combat.update(dt, state, state === 'talk' || state === 'read' || state === 'extra' || (state === 'cutscene' && campaign.narrating));
     pistol.lights(dt);
     npcs.update(dt, state);
+    car.update(dt, state);
     owls.update(dt, state === 'title' || state === 'ending' || state === 'debug' ? null : player, camera);
     const ev = state === 'ending' ? null : campaign.update(dt, state);
     extras.update(dt, state);
@@ -418,7 +449,8 @@ function frame(now) {
   drawUI();
   // controles de toque só no jogo; nos menus e na abertura um toque vale um clique
   input.touch.setMode(state === 'play' ? 'play' : 'menu');
-  input.touch.weapon = pistol.equipped;
+  input.touch.weapon = pistol.equipped && !player.vehicle;
+  input.touch.driving = state === 'play' && !!player.vehicle && car.mode === 'drive';
   // botão CURA: ferido e com comida ou chá no inventário
   input.touch.heal = combat.hp < combat.maxHp && !combat.dead ? inventory.count('cuca') + inventory.count('cha') : 0;
   const menuOnTouch = touchUI() && (state === 'title' || state === 'pause');
@@ -444,9 +476,33 @@ function titleCamera(dt) {
   camera.lookAt(c.x, c.y + 13, c.z);
 }
 
+// fim da abertura: o jogador assume
+function finishIntro() {
+  R.bars = 0;
+  player.auto = null;
+  tpc.dist = 4.6;
+  setState('play');
+  hud.showHints();
+  campaign.begin();
+}
+
 function playIntro(dt) {
   const T = stateT, dur = 8.5;
   const skip = T > 1.2 && (Math.hypot(input.move().x, input.move().y) > 0.3 || input.confirm() || input.mouse.clicked || input.pause());
+  // a chegada de carro (game/carIntro.js): a abertura move a câmera nos três primeiros planos
+  if (carIntro && !carIntro.done) {
+    player.update(dt, tpc.yaw, null);
+    const end = carIntro.update(dt, input);
+    if (carIntro.shot === 'D') tpc.update(dt, player, null, settings, false);
+    R.bars = 0.12 * (carIntro.shot !== 'D' ? 1 : Math.max(0, 1 - (carIntro.t - carIntro.tDD - 5.6) / 0.9));
+    if (skip && !end) {
+      carIntro.skip();
+      player.place(START.x, START.z, START.heading);
+      tpc.snap(player);
+    }
+    if (end || skip) finishIntro();
+    return;
+  }
   player.update(dt, tpc.yaw, null);
   // câmera: começa de frente para o personagem e gira até ficar atrás
   const e = Math.min(1, T / (dur - 1.5)), ease = e * e * (3 - 2 * e);
@@ -505,6 +561,7 @@ function drawUI() {
     });
     campaign.drawHud(g, W, H, device);
     extras.drawHud(g, W, H, device);
+    car.drawHud(g, W, H, device);
   }
 }
 
@@ -539,7 +596,7 @@ function drawEnding(g, W, H) {
 
 function exposeDebug() {
   window.__teewald = {
-    ctx, player, camera, tpc, settings, atmo, shadows, combat, interiors, audio, character, scene, renderer: R, G, input, menu, touchMenu, inventory, pistol, targets, effects, invScreen, npcs, mission, owls, extras, journal,
+    ctx, player, camera, tpc, settings, car, carIntro, atmo, shadows, combat, interiors, audio, character, scene, renderer: R, G, input, menu, touchMenu, inventory, pistol, targets, effects, invScreen, npcs, mission, owls, extras, journal,
     get state() { return state; },
     i18n: { tr, missing, setLang, getLang },
     // desenha só a interface (o npm run teste num idioma anota o texto que ficou sem tradução)

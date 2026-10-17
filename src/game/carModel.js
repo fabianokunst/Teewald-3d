@@ -16,8 +16,8 @@ export const CAR = {
   len: 5.44, hl: 2.72, hw: 1.0, height: 1.38,
   axleF: AXLE_F, axleR: AXLE_R, base: AXLE_F - AXLE_R, track: 0.79, wheelR: WHEEL_R,
   // raiz do motorista sentado (no assoalho, embaixo do quadril) e o volante
-  seat: [0.4, 0.4, -0.36],
-  wheel: { c: [0.4, 0.95, 0.02], r: 0.2, tilt: 0.55 },
+  seat: [0.4, 0.3, -0.4],
+  wheel: { c: [0.4, 0.86, 0.04], r: 0.2, tilt: 0.62 },
   // dobradiça da porta e onde o motorista fica em pé do lado de fora
   hinge: [0.99, DOOR_F - 0.02], doorOpen: -1.08,
   outside: [1.62, -0.12],
@@ -172,7 +172,7 @@ function materials() {
     rear: ps1Material({ map: TEX.hcRear, gloss: [0.5, 1.3, 50, 0.12], affine: false }),
     headLens: ps1Material({ map: TEX.hcHeadLens, gloss: [0.5, 1.6, 90, 0.12], affine: false }),
     tailLens: ps1Material({ map: TEX.hcTailLens, gloss: [0.4, 1.4, 80, 0.1], affine: false }),
-    glass: ps1Material({ color: 0x161b20, transparent: true, opacity: 0.58, gloss: [1.25, 2.4, 160, 0.16], side: THREE.DoubleSide, affine: false }),
+    glass: ps1Material({ color: 0x182026, transparent: true, opacity: 0.36, gloss: [1.0, 2.4, 160, 0.16], side: THREE.DoubleSide, affine: false }),
     wheel: ps1Material({ map: TEX.hcWheel, color: 0xa8a8ac, gloss: [0.55, 1.6, 40, 0.3], affine: false }),
     tire: ps1Material({ map: TEX.hcTire }),
     seat: ps1Material({ map: TEX.hcSeat, gloss: [0.18, 0.45, 18, 0.04] }),
@@ -361,7 +361,7 @@ export function buildHeroCar() {
     loft(A, 'top', sill, p => [p[2] * 0.9, p[0] * 0.9], {
       out: () => [0, 1, 0], route: s > 0 ? ctr => (inDoor(ctr, 0.45) ? 'door' : 'body') : null, doorOrigin: hinge,
     });
-    const rows = CAB.map(z => [[GX * s, GB, z], [0.81 * s, 0.93, z], [0.79 * s, 0.5, z], [0.4 * s, 0.4, z], [0, 0.4, z]]);
+    const rows = CAB.map(z => [[GX * s, GB, z], [0.81 * s, 0.93, z], [0.79 * s, 0.45, z], [0.4 * s, 0.3, z], [0, 0.3, z]]);
     loft(A, 'cloth', rows, p => [p[2] * 2, p[1] * 2], {
       out: p => [-Math.sign(p[0]) || -1, 0.6, 0], creases: [1, 2],
       route: s > 0 ? (ctr, j) => (j <= 1 && inDoor(ctr, 0.45) ? 'door' : 'body') : null, doorOrigin: hinge,
@@ -369,13 +369,13 @@ export function buildHeroCar() {
   }
   // painel: almofada de cima, frente com os relógios e a parede de baixo
   {
-    const y0 = 0.6, y1 = 0.93, zf = 0.36, zt = 0.5;
+    const y0 = 0.58, y1 = 0.92, zf = 0.36, zt = 0.5;
     A.poly('body', 'black', [[-0.84, y1, zf], [0.84, y1, zf], [0.84, 0.975, zt + 0.08], [-0.84, 0.975, zt + 0.08]], [[0, 0], [1, 0], [1, 1], [0, 1]], [0, 1, -0.3]);
     A.poly('body', 'dash', [[0.84, y0, zf + 0.04], [-0.84, y0, zf + 0.04], [-0.84, y1, zf], [0.84, y1, zf]], [[0, 0], [1, 0], [1, 1], [0, 1]], [0, 0, -1]);
-    A.poly('body', 'cloth', [[0.84, 0.4, 0.62], [-0.84, 0.4, 0.62], [-0.84, y0, zf + 0.04], [0.84, y0, zf + 0.04]], [[0, 0], [1, 0], [1, 1], [0, 1]], [0, 0.5, -1]);
+    A.poly('body', 'cloth', [[0.84, 0.3, 0.62], [-0.84, 0.3, 0.62], [-0.84, y0, zf + 0.04], [0.84, y0, zf + 0.04]], [[0, 0], [1, 0], [1, 1], [0, 1]], [0, 0.5, -1]);
     // coluna da direção
     const [wx, wy, wz] = CAR.wheel.c;
-    A.poly('body', 'black', [[wx - 0.03, 0.78, zf + 0.02], [wx + 0.03, 0.78, zf + 0.02], [wx + 0.025, wy - 0.02, wz + 0.04], [wx - 0.025, wy - 0.02, wz + 0.04]], [[0, 0], [1, 0], [1, 1], [0, 1]], [0, 1, -1]);
+    A.poly('body', 'black', [[wx - 0.03, 0.72, zf + 0.02], [wx + 0.03, 0.72, zf + 0.02], [wx + 0.025, wy - 0.02, wz + 0.04], [wx - 0.025, wy - 0.02, wz + 0.04]], [[0, 0], [1, 0], [1, 1], [0, 1]], [0, 1, -1]);
     // retrovisor interno
     A.poly('body', 'chrome', [[-0.12, 1.25, -0.06], [0.12, 1.25, -0.06], [0.12, 1.31, -0.08], [-0.12, 1.31, -0.08]], [[0, 0], [1, 0], [1, 1], [0, 1]], [0, 0, -1]);
   }
@@ -383,7 +383,7 @@ export function buildHeroCar() {
   const bench = (zFront, zBack, top, backTop, backLean) => {
     const xs = [-0.78, 0.78], u = [[0, 0], [1, 0], [1, 1], [0, 1]];
     const [xa, xb] = xs;
-    const f = zFront, b = zBack, y0 = 0.4;
+    const f = zFront, b = zBack, y0 = 0.3;
     A.poly('body', 'seat', [[xa, top, f], [xb, top, f], [xb, top - 0.02, b], [xa, top - 0.02, b]], u, [0, 1, 0]);
     A.poly('body', 'seat', [[xa, y0, f + 0.03], [xb, y0, f + 0.03], [xb, top, f], [xa, top, f]], u, [0, 0, 1]);
     const bt = b - backLean;
@@ -396,8 +396,8 @@ export function buildHeroCar() {
       A.poly('body', 'seat', [[x, y0, b], [x, top - 0.02, b], [x, backTop, bt], [x, backTop - 0.02, bt - 0.12], [x, y0, b - 0.1]], [[0, 0], [0.4, 0], [1, 0.5], [1, 0.6], [0, 0.6]], [Math.sign(x), 0, 0]);
     }
   };
-  bench(-0.06, -0.58, 0.62, 1.12, 0.16);
-  bench(-1.08, -1.5, 0.6, 0.94, 0.12);
+  bench(-0.1, -0.64, 0.5, 1.06, 0.22);
+  bench(-1.08, -1.52, 0.48, 0.94, 0.14);
   // prateleira de trás, embaixo do vidro
   A.poly('body', 'cloth', [[-0.8, 0.94, -1.5], [0.8, 0.94, -1.5], [0.8, 0.96, -1.8], [-0.8, 0.96, -1.8]], [[0, 0], [1, 0], [1, 1], [0, 1]], [0, 1, 0]);
 

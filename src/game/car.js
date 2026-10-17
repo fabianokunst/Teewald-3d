@@ -29,14 +29,14 @@ const seg = (t, a, b) => clamp((t - a) / (b - a), 0, 1);
 const wrapA = a => a - Math.round(a / (Math.PI * 2)) * Math.PI * 2;
 
 // desempenho e pisos
-const ACCEL = 5.6, VMAX = 34, REV_MAX = 8, BRAKE = 10.5, DRAG = 0.0027, ROLL = 0.3;
+const ACCEL = 5.6, VMAX = 34, REV_MAX = 8, BRAKE = 7.8, DRAG = 0.0027, ROLL = 0.3;
 const GRIP = { asphalt: 1, concrete: 0.95, walk: 0.9, sett: 0.8, dirt: 0.64, grass: 0.55, leaves: 0.5, water: 0.4 };
 const RESIST = { asphalt: 0, concrete: 0, walk: 0.1, sett: 0.12, dirt: 0.45, grass: 1.0, leaves: 1.7, water: 2.5 };
 const GEARS = [290, 172, 118];          // rpm por m/s em cada marcha
 const IDLE = 720, SHIFT_UP = 4100, SHIFT_DOWN = 1500;
 const HL = 2.74, HW = 1.02, INERTIA = 2.9;
 const SUBSTEP = 0.22;                   // passo máximo (m) por iteração: não atravessa poste nem parede fina
-const FLOOR = 0.4;                      // assoalho (altura no carro)
+const FLOOR = CAR.seat[1];              // assoalho (altura no carro)
 const OUT = { x: 1.38, z: -0.7 };       // onde o motorista fica em pé do lado de fora (fora do arco da porta)
 const SEAT = { x: CAR.seat[0], z: CAR.seat[2] };
 
@@ -129,7 +129,7 @@ export class Car {
     const gm = c => new THREE.SpriteMaterial({ map: glowTex(), color: c, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false });
     this.headGlow = CAR.heads.map(([x, y]) => { const s = new THREE.Sprite(gm(0xfff2d8)); s.position.set(x, y, 2.72); s.scale.setScalar(0.01); this.bodyG.add(s); return s; });
     this.tailGlow = CAR.tails.map(([x, y]) => { const s = new THREE.Sprite(gm(0xff2a18)); s.position.set(x, y, -2.68); s.scale.setScalar(0.01); this.bodyG.add(s); return s; });
-    this.beams = [0.69, -0.69].map(x => { const b = beamMesh(15, 3.4); b.position.set(x, 0.62, 2.7); b.rotation.x = 0.06; this.bodyG.add(b); return b; });
+    this.beams = [0.69, -0.69].map(x => { const b = beamMesh(22, 4.2); b.position.set(x, 0.62, 2.72); b.rotation.x = 0.07; this.bodyG.add(b); return b; });
     addEventListener('touchstart', e => {
       const c = this.chip;
       if (!c) return;
@@ -286,6 +286,7 @@ export class Car {
   // ---------- física ----------
   _step(dt, ctl) {
     if (dt <= 0) return;
+    this.time = (this.time || 0) + dt;
     const P = this.pos, h0 = this.heading;
     let fx = Math.sin(h0), fz = Math.cos(h0), lx = Math.cos(h0), lz = -Math.sin(h0);
     let vL = this.vx * fx + this.vz * fz, vS = this.vx * lx + this.vz * lz;
@@ -302,6 +303,8 @@ export class Car {
     else if (this.reverse && sp < 0.6 && thr > 0.3 && brk < 0.1) { this.revT += dt; if (this.revT > 0.12) this.reverse = false; }
     else this.revT = 0;
     if (this.reverse) [thr, brk] = [running ? brk : 0, thr];
+    // alguém parado na frente que não vai sair: o carro freia sozinho (ninguém é atropelado)
+    if (this._assist > 0) { this._assist -= dt; thr = 0; brk = 1; }
     this.throttle = thr; this.brake = brk; this.hand = !!c.hand;
     // direção: mais curta com velocidade; volta ao centro sozinha
     const maxSt = 0.62 / (1 + sp / 9);
@@ -469,9 +472,8 @@ export class Car {
 
   _crash(s, cx, cz) {
     if (s < 1.2) return;
-    const T = this._crashT || 0, now = performance.now();
-    if (now - T < 120) return;
-    this._crashT = now;
+    if (this.time - (this._crashT ?? -9) < 0.12) return;
+    this._crashT = this.time;
     if (s < 3) { this.sound.bump(s / 3); return; }
     const k = clamp((s - 3) / 12, 0, 1.3);
     this.sound.crash(k);
@@ -502,7 +504,9 @@ export class Car {
         if (ahead > -0.6 && tti < 1.7 && Math.abs(ds) < HW + 1.3) {
           const side = Math.abs(ds) > 0.15 ? Math.sign(ds) : (n.id.charCodeAt(0) % 2 ? 1 : -1);
           const ax = lx * side, az = lz * side;
-          n.dodgeCar?.(this.npcs, Math.atan2(ax, az), sp > 6);
+          const ok = n.dodgeCar?.(this.npcs, Math.atan2(ax, az), sp > 6);
+          // não saiu (sentado, conversando, já pulou e voltou): freia
+          if (!ok && n.fear <= 0.2 && tti < 1.1 && Math.abs(ds) < HW + 0.5) this._assist = 0.25;
         }
       }
       const r = 0.34 * Math.min(1.1, n.scale / 0.9 || 1) + (n.mode === 'sit' ? 0.15 : 0);
@@ -690,8 +694,8 @@ export class Car {
   }
 
   _honk() {
-    if ((this._honkT = (this._honkT || 0) - 1) > 0) return;
-    this._honkT = 30;
+    if (this.time - (this._honkT ?? -9) < 0.5) return;
+    this._honkT = this.time;
     const h = this.heading, fx = Math.sin(h), fz = Math.cos(h), lx = Math.cos(h), lz = -Math.sin(h);
     for (const n of this.npcs.list) {
       if (n.hidden || !n.visible) continue;
@@ -792,7 +796,7 @@ export class Car {
     const lift = Math.sin(Math.PI * legs) * 0.32;
     const feet = [-1, 1].map(s => {
       const out = [OUT.x + s * 0.11, gOut + 0.07, OUT.z + 0.04];
-      const inn = [SEAT.x + s * 0.15, FLOOR + 0.08, SEAT.z + 0.62];
+      const inn = [SEAT.x + s * 0.15, FLOOR + 0.1, SEAT.z + 0.66];
       const px = lerp(out[0], inn[0], legs), py = lerp(out[1], inn[1], legs) + lift, pz = lerp(out[2], inn[2], legs);
       // para o espaço da raiz (posição e rumo)
       const dx = px - x, dz = pz - z, c = Math.cos(yaw), sn = Math.sin(yaw);
@@ -822,7 +826,7 @@ export class Car {
       if (K > 0.01) { const wk = handK[1]; hands[1] = wk > 0.01 ? _hand[3].copy(_hand[1]).lerp(_hand[2], K) : _hand[2]; handK[1] = Math.max(wk, K); }
     }
     if (k > 0.002 || legs > 0.002) {
-      ch.seatPose({ k: Math.max(k, 0.0001), hips: [0.3, 0.02], lean: 0.12, duck, feet, pole: [0, 0.75, 1], hands, handK, look: this._look() });
+      ch.seatPose({ k: Math.max(k, 0.0001), hips: [0.27, 0.03], lean: 0.28, duck, feet, pole: [0, 0.75, 1], hands, handK, look: this._look() });
     } else {
       // em pé do lado de fora: só a mão na porta
       ch.root.updateMatrixWorld(true);
@@ -901,9 +905,9 @@ export class Car {
     // brilho e facho: mais fortes no escuro e na neblina
     const fogK = clamp(1 - U.uFogFar.value / 260, 0, 1);
     const night = clamp(dark, 0, 1);
-    for (const s of this.headGlow) { s.scale.setScalar(0.25 + 1.0 * L * (0.4 + night)); s.material.opacity = L * (0.35 + 0.6 * night) * flick; s.visible = L > 0.01; }
-    for (const s of this.tailGlow) { s.scale.setScalar(0.12 + 0.45 * tail * (0.4 + night)); s.material.opacity = Math.min(1, tail) * (0.3 + 0.6 * night); s.visible = tail > 0.01; }
-    const bk = L * (0.05 + 0.12 * night + 0.1 * fogK) * flick;
+    for (const s of this.headGlow) { s.scale.setScalar(0.18 + 0.62 * L * (0.35 + 0.65 * night)); s.material.opacity = L * (0.3 + 0.45 * night) * flick; s.visible = L > 0.01; }
+    for (const s of this.tailGlow) { s.scale.setScalar(0.1 + 0.32 * tail * (0.4 + 0.6 * night)); s.material.opacity = Math.min(1, tail) * (0.25 + 0.5 * night); s.visible = tail > 0.01; }
+    const bk = L * (0.015 + 0.035 * night + 0.06 * fogK) * flick;
     for (const b of this.beams) { b.material.color.setRGB(bk, bk * 0.95, bk * 0.8); b.visible = bk > 0.004; }
     // luz no chão: foco à frente (a luz 0 do shader, a mesma da lanterna) e o vermelho atrás
     if (this.atmo) {
@@ -1058,7 +1062,9 @@ export class Car {
       const ang = Math.atan(2 * CAR.base * Math.sin(a) / dl), maxSt = 0.62 / (1 + Math.abs(v) / 9);
       const want = Math.min(vmax, Math.sqrt(2 * dec * Math.max(0, left - 0.4)));
       const err = want - v;
-      const done = left < 0.6 && Math.abs(v) < 0.4;
+      // parou um pouco antes do fim (a freada é suave): chegou
+      this._aiStall = Math.abs(v) < 0.3 && left < 3 ? (this._aiStall || 0) + dt : 0;
+      const done = (left < 0.6 && Math.abs(v) < 0.4) || this._aiStall > 0.7;
       if (done && !this._aiDone) { this._aiDone = true; o.onArrive?.(); }
       return { throttle: done ? 0 : clamp(err * 0.35, 0, 1), brake: done ? 1 : clamp(-err * 0.6, 0, 1), steer: clamp(ang / maxSt, -1, 1), hand: false };
     };

@@ -106,6 +106,21 @@ export class Minimap {
       g.fillRect(Math.round(chx - k), Math.round(chy - 3 * k), Math.max(2, Math.round(2 * k)), Math.round(6 * k));
       g.fillRect(Math.round(chx - 2.5 * k), Math.round(chy - 1.5 * k), Math.round(5 * k), Math.max(2, Math.round(1.6 * k)));
     }
+    // o carro (a pé): retângulo escuro com a frente clara; longe, na borda
+    const car = this.car;
+    if (car && !player.vehicle && !car.hidden) {
+      let [px, py] = rot(car.pos.x, car.pos.z);
+      const ex = px - cx, ey = py - cy, e = Math.hypot(ex, ey), lim = r - 5 * k;
+      if (e > lim) { px = cx + ex / e * lim; py = cy + ey / e * lim; }
+      g.save();
+      g.translate(px, py);
+      g.rotate(-(car.heading - camYaw));
+      const w = Math.max(3, 2.6 * k), l = Math.max(5, 5 * k);
+      g.fillStyle = '#140c08'; g.fillRect(-w / 2 - 1, -l / 2 - 1, w + 2, l + 2);
+      g.fillStyle = '#5a6068'; g.fillRect(-w / 2, -l / 2, w, l);
+      g.fillStyle = '#e8dcc0'; g.fillRect(-w / 2, l / 2 - Math.max(1, k), w, Math.max(1, k));
+      g.restore();
+    }
     // objetivo da missão
     if (marker) {
       let [mx, my] = rot(marker.x, marker.z);
