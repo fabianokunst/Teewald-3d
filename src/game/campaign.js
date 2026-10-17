@@ -200,6 +200,8 @@ export class Campaign {
       // a missão 1 retoma depois do begin() (main.js chama begin sem a abertura)
       this._resume1 = run;
       if (!run) this._writeSave(1);
+      // o carro: retomando, onde ficou; começo novo, a abertura estaciona (main.js)
+      if (run) this.car?.chapterStart(1, null, true, this.save.car);
       return { mission: true, resume: !!run };
     }
     // capítulos da noite: o chupacabras da missão 1 some, os moradores ficam em casa
@@ -218,6 +220,8 @@ export class Campaign {
     this.player.place(st.x, st.z, st.h ?? 0);
     this.tpc.snap(this.player);
     S.checkpoint = { x: st.x, z: st.z, h: st.h ?? 0 };
+    // o carro fica onde foi deixado; longe demais da partida, aparece estacionado perto dela
+    this.car?.chapterStart(n, st, !!run, this.save.car);
     def.setup?.(this, S);
     if (run) { this._resume(S, run); return { mission: false, resume: true }; }
     this._writeSave(n);
@@ -232,6 +236,7 @@ export class Campaign {
     this.save.inv = n > 1 ? this.inventory.serialize() : null;
     this.save.melee = this.combat.melee ? { ...this.combat.melee } : null;
     this.save.run = null;
+    if (this.car) this.save.car = this.car.serialize();
     writeSave(this.save);
   }
 
@@ -282,8 +287,11 @@ export class Campaign {
     if (C.dead) return false;
     // posição segura: a atual se não houver perigo; senão, o último ponto de retorno
     const safe = !C.inFight && P.grounded && !P.swimming && !(C.boss && !C.boss.dead);
-    const here = { x: +P.pos.x.toFixed(2), z: +P.pos.z.toFixed(2), h: +P.heading.toFixed(3), y: +P.pos.y.toFixed(2) };
+    // no carro: volta em pé do lado da porta
+    const ex = P.vehicle?._exitSpot();
+    const here = ex ? { x: +ex[0].toFixed(2), z: +ex[1].toFixed(2), h: +P.heading.toFixed(3) } : { x: +P.pos.x.toFixed(2), z: +P.pos.z.toFixed(2), h: +P.heading.toFixed(3), y: +P.pos.y.toFixed(2) };
     sv.inv = this.inventory.serialize();
+    if (this.car) sv.car = this.car.serialize();
     sv.melee = C.melee ? { ...C.melee } : null;
     if (this.index === 1) {
       const M = this.mission;
@@ -617,7 +625,7 @@ export class Campaign {
   _findFocus() {
     const S = this.S;
     this.focus = null;
-    if (!S || this.npcs.focus || this.combat.pickFocus) return;
+    if (!S || this.npcs.focus || this.combat.pickFocus || this.player.vehicle) return;
     const P = this.player, fx = Math.sin(P.heading), fz = Math.cos(P.heading);
     let bd = Infinity;
     const pts = [...S.points];

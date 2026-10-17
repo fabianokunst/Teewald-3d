@@ -363,6 +363,30 @@ export class NPC {
     this.fleeAng = this._openDir(sys, base);
   }
 
+  // o carro vindo: pula para o lado (ang) na hora, sem o susto parado antes
+  dodgeCar(sys, ang, bark = false) {
+    if (this.talking || this.trance || this.mode === 'sit' || this.carDodge > 0) return false;
+    this.carDodge = 1.4;
+    this.flinch = 0; this.fear = Math.max(this.fear, 1.15); this.pause = 0; this.wait = 0;
+    this.wary = Math.max(this.wary, 20);
+    this.stopAct();
+    if (this.mode === 'stand') this.returnTo = this.homePos;
+    this.fleeAng = this._openDir(sys, ang);
+    if (bark && sys.barkCool <= 0 && !this.bark) { this.say(pick(GENERIC.car), sys, 2.2); sys.barkCool = 1.5; }
+    return true;
+  }
+
+  // o carro encostou nele (o carro para; ele não se machuca): leva um susto e reclama
+  bumpedByCar(sys, speed) {
+    if (this.talking || this.trance) return;
+    if ((this.bumpT || 0) > 0) return;
+    this.bumpT = 2.5;
+    this.flinch = Math.max(this.flinch, 0.5 + Math.min(0.6, speed * 0.1));
+    this.wary = Math.max(this.wary, 40);
+    this.stopAct();
+    if (sys.barkCool <= 0 || speed > 2) { this.say(pick(GENERIC.carHit), sys, 2.6); sys.barkCool = 1.5; }
+  }
+
   // direção mais aberta perto de `base` (raio na altura do peito)
   _openDir(sys, base) {
     const col = sys.ctx.collision, y = this.pos.y + 1.0;
@@ -401,6 +425,8 @@ export class NPC {
     if (this.dist > SIM_R && this.mode !== 'follow') { this._show(false); return; }
     const wasFear = this.fear > 0;
     for (const k of ['flinch', 'fear', 'aimedT', 'afterTalk', 'wary', 'gunSeen', 'nodT']) this[k] = Math.max(0, this[k] - dt);
+    if (this.carDodge > 0) this.carDodge -= dt;
+    if (this.bumpT > 0) this.bumpT -= dt;
     if (this.aimedT > 0) this.handsT = Math.max(this.handsT, 0.9); else this.handsT = Math.max(0, this.handsT - dt);
     if (this.handsT <= 0) this.aimBarked = false;
     const play = sys.mode === 'play';
@@ -950,7 +976,7 @@ export class NPCs {
     this._separate();
     // quem está ao alcance para conversar
     this.focus = null;
-    if (mode === 'play') {
+    if (mode === 'play' && !this.player.vehicle) {
       let bd = Infinity;
       const P = this.player, fx = Math.sin(P.heading), fz = Math.cos(P.heading);
       for (const n of this.list) {
@@ -1058,6 +1084,7 @@ export class NPCs {
   // empurra o jogador para fora dos moradores (depois do movimento dele)
   pushPlayer() {
     const P = this.player, p = P.pos;
+    if (P.vehicle) return;
     for (const n of this.list) {
       if (n.dist > 1.5 || !n.visible) continue;
       const ex = p.x - n.pos.x, ez = p.z - n.pos.z, e = Math.hypot(ex, ez), m = 0.6 * Math.min(1, n.scale / 0.9) + (n.mode === 'sit' ? 0.15 : 0);

@@ -8,6 +8,8 @@ import { settings } from '../config.js';
 // ATIRAR, MIRAR (liga/desliga) e REC. Arrastar o dedo no ATIRAR também gira a
 // câmera (mira e tiro com o mesmo polegar, como nos jogos de tiro de celular).
 // Nos menus e na abertura um toque vale um clique do mouse.
+// Dirigindo, o analógico da esquerda é o volante e os botões viram ACELERAR, FREIO / RÉ,
+// FREIO DE MÃO e BUZINA; no alto, SAIR e FAROL.
 
 const doc = document, root = doc.documentElement;
 
@@ -69,6 +71,8 @@ export class TouchControls {
     this.invHit = false; this.fireHit = false; this.reloadHit = false; this.aimOn = false;
     this.meleeHit = false; this.dodgeHit = false; this.weaponHit = false; this.healHit = false;
     this.weapon = false;            // o jogo liga quando uma arma de fogo está na mão
+    this.driving = false;           // o jogo liga dirigindo (botões do carro)
+    this.exitHit = false; this.lightsHit = false;
     this.heal = 0;                  // itens de cura (o botão CURA só aparece ferido e com algum)
     this.uiHit = null;              // (x, y) → true se o dedo caiu num botão do jogo (PEGAR, FALAR...)
     this.lastTap = { t: -1e9, x: 0, y: 0 };
@@ -157,6 +161,7 @@ export class TouchControls {
         if (!this.tap || this.tap.id === t.identifier || !this.touches.has(this.tap.id)) this.tap = { id: t.identifier, x, y, x0: x, y0: y, moved: false };
         continue;
       }
+      if (this.driving && !inRect(L.pause, x, y, 2 * L.u) && !inRect(L.inv, x, y, 2 * L.u) && this._driveStart(T, x, y)) continue;
       if (inRect(L.pause, x, y, 2 * L.u)) { T.role = 'pause'; this.pauseHit = true; buzz(); }
       else if (inRect(L.inv, x, y, 2 * L.u)) { T.role = 'inv'; this.invHit = true; buzz(); }
       else if (inRect(L.weap, x, y, 2 * L.u)) { T.role = 'weap'; this.weaponHit = true; buzz(); }
@@ -246,6 +251,24 @@ export class TouchControls {
     if (!cancel) I.onGesture?.('touch');
   }
 
+  // dirigindo: acelerador, freio, freio de mão, buzina, sair e farol (o resto da tela gira a câmera)
+  _driveStart(T, x, y) {
+    const L = this.L;
+    if (near(L.jump, x, y, L.Rj * 1.35)) { T.role = 'gas'; buzz(10); return true; }
+    if (near(L.run, x, y, L.Rr * 1.35)) { T.role = 'brakeT'; buzz(10); return true; }
+    if (near(L.dodge, x, y, L.Rr * 1.15)) { T.role = 'hand'; buzz(10); return true; }
+    if (near(L.fire, x, y, L.Rj * 1.1)) { T.role = 'horn'; buzz(8); return true; }
+    if (inRect(L.weap, x, y, 2 * L.u)) { T.role = 'exit'; this.exitHit = true; buzz(); return true; }
+    if (inRect(L.heal, x, y, 2 * L.u)) { T.role = 'lights'; this.lightsHit = true; buzz(); return true; }
+    return false;
+  }
+
+  _held(role) { for (const T of this.touches.values()) if (T.role === role) return true; return false; }
+  get gasHeld() { return this.driving && this._held('gas'); }
+  get brakeHeld() { return this.driving && this._held('brakeT'); }
+  get handHeld() { return this.driving && this._held('hand'); }
+  get hornHeld() { return this.driving && this._held('horn'); }
+
   _stickTo(x, y) {
     const s = this.stick, R = this.L.Rs;
     let dx = x - s.cx, dy = y - s.cy, d = Math.hypot(dx, dy);
@@ -273,7 +296,8 @@ export class TouchControls {
     this.jumpHit = false; this.pauseHit = false; this.recenterHit = false;
     this.invHit = false; this.fireHit = false; this.reloadHit = false;
     this.meleeHit = false; this.dodgeHit = false; this.weaponHit = false; this.healHit = false;
-    if (!this.weapon) this.aimOn = false;
+    this.exitHit = false; this.lightsHit = false;
+    if (!this.weapon || this.driving) this.aimOn = false;
     this.tapUp = null; this.tapDX = 0; this.tapDY = 0;
   }
 
@@ -336,6 +360,8 @@ export class TouchControls {
     let kx = st.cx, ky = st.cy;
     if (on) { const dx = st.x - st.cx, dy = st.y - st.cy, d = Math.hypot(dx, dy), k = d > L.Rs ? L.Rs / d : 1; kx += dx * k; ky += dy * k; }
     ring(kx, ky, L.Rs * 0.45, '#e9dcc0', on ? 0.6 : 0.3, '#140c08', on ? 0.6 : 0.3);
+
+    if (this.driving) { this._drawDrive(L, ring, label, P, lw); return; }
 
     // pular
     let held = false;
@@ -413,5 +439,37 @@ export class TouchControls {
       }
     }
     g.globalAlpha = 1;
+  }
+
+  // botões do carro (mesmos lugares dos de andar: o polegar já sabe onde ficam)
+  _drawDrive(L, ring, label, P, lw) {
+    const g = this.g, on = r => this._held(r);
+    const btn = (p, r, role, text, fill, size) => {
+      const h = on(role);
+      ring(p.x, p.y, r, h ? '#f2c879' : fill, h ? 0.7 : 0.38, h ? '#140c08' : '#d8c8a0');
+      label(text, p.x, p.y, r * size, h ? '#140c08' : '#efe2c4');
+    };
+    btn(L.jump, L.Rj, 'gas', 'ACELERAR', '#173a12', 0.32);
+    btn(L.run, L.Rr, 'brakeT', 'FREIO', '#3a1208', 0.4);
+    btn(L.dodge, L.Rr * 0.85, 'hand', 'FREIO DE MÃO', '#0d0907', 0.22);
+    btn(L.fire, L.Rj * 0.75, 'horn', 'BUZINA', '#0d0907', 0.36);
+    const box = (r, text, color = '#efe2c4') => {
+      g.globalAlpha = 0.35; g.fillStyle = '#0d0907'; g.fillRect(Math.round(P(r.x)), Math.round(P(r.y)), Math.round(P(r.w)), Math.round(P(r.h)));
+      g.globalAlpha = 0.6; g.strokeStyle = '#d8c8a0'; g.lineWidth = lw;
+      g.strokeRect(Math.round(P(r.x)) + 0.5, Math.round(P(r.y)) + 0.5, Math.round(P(r.w)) - 1, Math.round(P(r.h)) - 1);
+      g.globalAlpha = 1;
+      label(text, r.x + r.w / 2, r.y + r.h / 2, r.h * 0.42, color);
+    };
+    box(L.weap, 'SAIR', '#f2c879');
+    box(L.heal, 'FAROL');
+    // pausa e inventário continuam
+    const pr = L.pause, a = P(pr.w);
+    box(pr, '');
+    g.globalAlpha = 0.9; g.fillStyle = '#efe2c4';
+    const bw = Math.max(1, Math.round(a * 0.16)), bh = Math.round(a * 0.5), by = Math.round(P(pr.y) + a * 0.25);
+    g.fillRect(Math.round(P(pr.x) + a * 0.3), by, bw, bh);
+    g.fillRect(Math.round(P(pr.x) + a * 0.7) - bw, by, bw, bh);
+    g.globalAlpha = 1;
+    box(L.inv, 'INV');
   }
 }

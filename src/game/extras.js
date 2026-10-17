@@ -347,7 +347,7 @@ export class Extras {
   _findFocus() {
     this.focus = null;
     const C = this.campaign;
-    if (this.npcs.focus || this.combat.pickFocus || (C.index === 1 ? this.mission.focus : C.focus)) return;
+    if (this.player.vehicle || this.npcs.focus || this.combat.pickFocus || (C.index === 1 ? this.mission.focus : C.focus)) return;
     const P = this.player, fx = Math.sin(P.heading), fz = Math.cos(P.heading);
     let bd = Infinity;
     for (const it of this._points()) {

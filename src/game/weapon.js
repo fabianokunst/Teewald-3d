@@ -314,7 +314,7 @@ export class Guns {
   // antes do jogador: decide se está mirando (o jogador vira para a mira e anda devagar)
   pre(dt, input) {
     // nadando, a arma fica guardada (as duas mãos vão na braçada)
-    const id = this.player.swimming ? null : this.id, c = this.cfg, A = this.assist;
+    const id = this.player.holstered ? null : this.id, c = this.cfg, A = this.assist;
     for (const k in this.models) this.models[k].visible = k === id;
     if (!id) {
       this.aiming = false; this.queued = false; this.autoAim = 0; this.beamOn = false; this.hipLock = null;
@@ -380,7 +380,7 @@ export class Guns {
     this.hitMark = Math.max(0, this.hitMark - dt);
     this.aim += ((this.aiming ? 1 : 0) - this.aim) * Math.min(1, dt * 12);
     if (this.flashT > 0) { this.flashT -= dt; if (this.flashT <= 0) for (const f of Object.values(this.flashes)) f.visible = false; }
-    const c = this.player.swimming ? null : this.cfg;
+    const c = this.player.holstered ? null : this.cfg;
     // pistola de raios: a carga volta sozinha
     for (const s of this.inventory.slots) {
       if (s?.id === 'raygun') { (s.data ||= {}); s.data.mag = Math.min(GUNS.raygun.mag, (s.data.mag ?? GUNS.raygun.mag) + dt * GUNS.raygun.energy * (this.cool > 0 ? 0.3 : 1)); }

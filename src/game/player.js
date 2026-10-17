@@ -31,6 +31,7 @@ export class Player {
     this.waterY = null;   // superfície da água sobre o jogador (null = seco)
     this.rippleT = 0;
     this.effects = null;  // main.js liga (respingos e marolas)
+    this.vehicle = null;  // no carro (entrando, dirigindo, saindo): o carro move e posa o corpo
     character.onStep = run => this._footstep(run);
     character.onStroke = k => this._stroke(k);
   }
@@ -38,6 +39,8 @@ export class Player {
   // feetY: altura aproximada dos pés (prédio de vários andares, como a torre da igreja);
   // sem ela, o piso mais alto no ponto
   place(x, z, heading, feetY = null) {
+    // cena, morte, capítulo novo ou interior: sai do carro na hora (o carro fica onde está)
+    if (this.vehicle) this.vehicle.eject(false);
     this.pos.set(x, this.ctx.groundAt(x, z, feetY == null ? 1000 : feetY + 0.6), z);
     this.heading = heading;
     this.vel.set(0, 0, 0);
@@ -45,6 +48,9 @@ export class Player {
     this.swimming = false; this.wade = 0; this.waterY = null;
     this.sync();
   }
+
+  // sem arma na mão: nadando ou no carro
+  get holstered() { return this.swimming || !!this.vehicle; }
 
   surface() {
     const { x, z } = this.pos;
@@ -56,6 +62,7 @@ export class Player {
   }
 
   update(dt, camYaw, input) {
+    if (this.vehicle) return this.vehicle.ride(dt, camYaw, input);
     let ix = 0, iy = 0, run = false;
     if (this.auto) {
       // segue a trilha da abertura

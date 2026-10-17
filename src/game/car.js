@@ -1026,6 +1026,45 @@ export class Car {
     drawText(g, label, cx + kw + 3 * k, cy + 1 * k, size, { color: '#f4ead2' });
   }
 
+  // começo de capítulo: retomando, onde ficou; capítulo novo, onde foi deixado se for perto da
+  // partida (senão, estacionado perto dela) e consertado (o protagonista cuida dele entre as noites)
+  chapterStart(n, st, resume, saved) {
+    this.mode = 'parked'; this.anim = null; this.ai = null; this.introLights = false;
+    this.engine = false; this.crankT = 0; this.flooded = false;
+    if (resume && saved && this.load(saved)) return;
+    const near = saved && st && Math.hypot(saved.x - st.x, saved.z - st.z) < 90;
+    if (saved && (near || !st) && this.load(saved)) { this.damage = 0; return; }
+    this.damage = 0;
+    if (st && !(st.x > 1000)) this.parkNear(st.x, st.z);
+  }
+
+  // piloto automático por uma rota [{ x, z, s }] (s = distância acumulada): segue a linha e para no fim
+  drive(route, o = {}) {
+    const R = route, end = R[R.length - 1].s, vmax = o.speed ?? 12.5, dec = o.decel ?? 2.4;
+    let k = 0;
+    this.ai = (dt, car) => {
+      // ponto da rota mais perto (procura para a frente)
+      let best = Infinity;
+      for (let i = k; i < Math.min(R.length, k + 25); i++) {
+        const d = Math.hypot(R[i].x - car.pos.x, R[i].z - car.pos.z);
+        if (d < best) { best = d; k = i; }
+      }
+      const s = R[k].s, left = end - s, v = car.vLong;
+      const ld = Math.max(4.5, Math.abs(v) * 0.85);
+      let j = k;
+      while (j < R.length - 1 && R[j].s < s + ld) j++;
+      const tx = R[j].x - car.pos.x, tz = R[j].z - car.pos.z;
+      const a = wrapA(Math.atan2(tx, tz) - car.heading), dl = Math.hypot(tx, tz) || 1;
+      const ang = Math.atan(2 * CAR.base * Math.sin(a) / dl), maxSt = 0.62 / (1 + Math.abs(v) / 9);
+      const want = Math.min(vmax, Math.sqrt(2 * dec * Math.max(0, left - 0.4)));
+      const err = want - v;
+      const done = left < 0.6 && Math.abs(v) < 0.4;
+      if (done && !this._aiDone) { this._aiDone = true; o.onArrive?.(); }
+      return { throttle: done ? 0 : clamp(err * 0.35, 0, 1), brake: done ? 1 : clamp(-err * 0.6, 0, 1), steer: clamp(ang / maxSt, -1, 1), hand: false };
+    };
+    this._aiDone = false;
+  }
+
   // ---------- salvar ----------
   serialize() { return { x: +this.pos.x.toFixed(2), z: +this.pos.z.toFixed(2), h: +this.heading.toFixed(3), dmg: Math.round(this.damage) }; }
 

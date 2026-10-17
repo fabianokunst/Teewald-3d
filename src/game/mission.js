@@ -133,7 +133,7 @@ export class Mission {
 
   _findFocus() {
     this.focus = null;
-    if (!this.step || this.step === 'fight' || this.npcs?.focus) return;
+    if (!this.step || this.step === 'fight' || this.npcs?.focus || this.player.vehicle) return;
     const P = this.player, fx = Math.sin(P.heading), fz = Math.cos(P.heading);
     let bd = Infinity;
     for (const it of this._points()) {

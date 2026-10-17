@@ -471,6 +471,9 @@ export const GENERIC = {
   gunOut: ['Cuidado com isso aí.', 'Pra que essa arma?', 'Guarda isso, guri.'],
   // o sino tocou (todo mundo olha para a torre)
   bell: ['O sino...', 'Quem tá tocando o sino?', 'Credo... o sino de novo.', 'Mein Gott, o sino!'],
+  // o carro vindo para cima (pula fora) e encostando nele
+  car: ['Olha o carro!', 'Ei! Devagar!', 'Cuidado!', 'Tá louco?!'],
+  carHit: ['Ai! Olha por onde anda!', 'Quase me atropela!', 'Tá cego?!', 'Mas que coisa!'],
 };
 
 // Fichas dos moradores. Vão para o modelo e para a página de personagens do site (npm run retratos):

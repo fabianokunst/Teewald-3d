@@ -5,6 +5,8 @@ import * as THREE from 'three';
 // de cima para o personagem e, sem isso, a mira apontava para o chão.
 export const AIM_DROP = 0.3;            // quanto a câmera desce (rad) com a mira ligada
 const DISTS = [2.8, 4.6, 6.8];          // direcional ▼: perto, normal, longe
+const CAR_DISTS = [5.4, 7.0, 9.4];      // o mesmo, dirigindo
+const clamp01 = v => Math.max(0, Math.min(1, v));
 
 export class ThirdPersonCamera {
   constructor(camera, ctx) {
@@ -38,6 +40,7 @@ export class ThirdPersonCamera {
   kick(p, y = 0) { this.kickP += p; this.kickY += y; }
 
   update(dt, player, input, settings, moving) {
+    if (player.vehicle?.camActive) return this._vehicle(dt, player.vehicle, input, settings);
     this.aim += ((this.aimWant ? 1 : 0) - this.aim) * Math.min(1, dt * 10);
     // mirando: mais precisa (menos sensível) e com zoom
     const base = (settings.sensitivity || 5) / 5, fr = this.lookScale;
@@ -103,6 +106,49 @@ export class ThirdPersonCamera {
     this.target.y += (ty - this.target.y) * Math.min(1, dt * 8);
     this.target.z += (tz - this.target.z) * Math.min(1, dt * 14);
     this._place(dt);
+  }
+
+  // dirigindo: atrás e acima do carro, olhando um pouco à frente; com velocidade se afasta e o
+  // campo de visão abre. Mexeu na câmera: ela volta sozinha para trás do carro quando ele anda.
+  // C / LB: olha para trás. Direcional ▼: perto, normal, longe
+  _vehicle(dt, car, input, settings) {
+    this.aim += (0 - this.aim) * Math.min(1, dt * 10);
+    const sp = Math.abs(car.vLong), base = (settings.sensitivity || 5) / 5, inv = settings.invertY ? -1 : 1;
+    this.cam.fov += (58 + clamp01((sp - 8) / 24) * 10 - this.cam.fov) * Math.min(1, dt * 2.5);
+    this.kickP = 0; this.kickY = 0;
+    let looked = false;
+    if (input) {
+      const l = input.look();
+      if (l.mx || l.my) { this.yaw -= l.mx * 0.0032 * base; this.pitch += l.my * 0.0026 * base * inv; looked = true; }
+      if (l.px || l.py) { this.yaw -= l.px * dt * 3.2 * base; this.pitch += l.py * dt * 2.0 * base * inv; looked = true; }
+      const zd = input.zoom(dt);
+      if (zd) this.carDist = Math.max(4, Math.min(12, (this.carDist ?? CAR_DISTS[1]) + zd));
+      if (input.camDist()) this.carDist = CAR_DISTS.find(v => v > (this.carDist ?? CAR_DISTS[1]) + 0.2) ?? CAR_DISTS[0];
+      if (input.recenter()) this.idle = 99;
+    }
+    this.idle = looked ? 0 : this.idle + dt;
+    const back = input?.driveLookBack?.();
+    if (back || this.idle > 1.1 || car.mode !== 'drive') {
+      // atrás do carro (yaw = rumo + π); olhando para trás, na frente dele
+      const want = car.heading + (back ? 0 : Math.PI);
+      let d = want - this.yaw;
+      while (d > Math.PI) d -= Math.PI * 2;
+      while (d < -Math.PI) d += Math.PI * 2;
+      const k = back ? 14 : car.mode !== 'drive' ? 1.6 : 0.6 + clamp01(sp / 7) * 2.8;
+      this.yaw += d * Math.min(1, dt * k);
+      this.pitch += (0.25 - this.pitch) * Math.min(1, dt * 1.5);
+    }
+    this.pitch = Math.max(-0.1, Math.min(1.1, this.pitch));
+    // alvo: o meio do carro, adiantado na direção do movimento
+    const ahead = Math.max(-2, Math.min(2.6, car.vLong * 0.11));
+    const tx = car.pos.x + Math.sin(car.heading) * ahead, tz = car.pos.z + Math.cos(car.heading) * ahead, ty = car.body.y + 1.3;
+    const kk = Math.min(1, dt * 10);
+    this.target.x += (tx - this.target.x) * kk; this.target.z += (tz - this.target.z) * kk;
+    this.target.y += (ty - this.target.y) * Math.min(1, dt * 6);
+    const saved = this.dist;
+    this.dist = (this.carDist ?? CAR_DISTS[1]) + sp * 0.04;
+    this._place(dt);
+    this.dist = saved;
   }
 
   // chão para a câmera: o terreno ou a superfície da água (nadando, a câmera não afunda)

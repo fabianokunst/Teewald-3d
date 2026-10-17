@@ -145,6 +145,9 @@ export class Combat {
   hurt(dmg, dx = 0, dz = 0, o = {}) {
     if (this.dead || this.calm || this.invuln > 0 || this.dodge?.iframes > 0) return false;
     dmg *= difficulty().hurt;
+    // dentro do carro a lataria segura parte do golpe (e amassa), e ninguém é jogado longe
+    const car = this.player.vehicle;
+    if (car) { dmg *= 0.55; o = { ...o, knock: 0 }; car.damage = Math.min(100, car.damage + dmg * 0.4); car.sound?.bump(0.7); }
     this.hp = Math.max(0, this.hp - dmg);
     this.hurtT = 0; this.flash = Math.min(1, 0.5 + dmg / 30); this.shake = Math.max(this.shake, 0.25 + dmg / 60); this.hpShow = 4;
     this.invuln = o.invuln ?? 0.55;
@@ -233,7 +236,7 @@ export class Combat {
     if (input.healHit()) this.quickHeal();
     // ataque: V / RB / GOLPE sempre; o clique/R2/ATIRAR também, se não houver arma de fogo
     // nadando: sem golpe nem esquiva (um golpe começado na margem acaba ao entrar)
-    const swim = P.swimming;
+    const swim = P.holstered;
     if (swim && this.atk) { this.atk = null; this.queued = false; }
     const wantAtk = !swim && (input.meleeHit() || (!gun && input.fireHit()));
     if (wantAtk) {
@@ -307,7 +310,7 @@ export class Combat {
   // ---------- depois do jogador (personagem animado): pose do golpe e acertos ----------
   post(dt) {
     const gunOn = !!this.guns?.cfg;
-    for (const id of MELEE_IDS) this.handModels[id].visible = !gunOn && this.melee?.id === id;
+    for (const id of MELEE_IDS) this.handModels[id].visible = !gunOn && !this.player.holstered && this.melee?.id === id;
     const A = this.atk;
     if (A) {
       A.t += dt;
@@ -682,7 +685,7 @@ export class Combat {
   _updatePickups(dt, state) {
     const P = this.player;
     this.pickFocus = null;
-    let bd = 1.8;
+    let bd = P.vehicle ? -1 : 1.8;   // de dentro do carro não se pega nada
     for (let i = this.pickups.length - 1; i >= 0; i--) {
       const pk = this.pickups[i];
       pk.t += dt;
