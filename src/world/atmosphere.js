@@ -480,10 +480,17 @@ export class Atmosphere {
         else this.light(l[0], l[1] - 0.3, l[2], [1.25 * k, 0.95 * k, 0.6 * k], 13, 1);
       }
     }
-    // lanterna (luz 0, em foco) + luz fraca em volta do jogador
+    // lanterna (luz 0, em foco) + luz fraca em volta do jogador; no carro, a luz 0 é o farol
     let slot = 0;
-    const lantern = c.flashlight > 0.05 && this.flashlightOn && player;
-    if (lantern) {
+    const car = this.carLight;
+    const lantern = c.flashlight > 0.05 && this.flashlightOn && player && !player.vehicle;
+    if (car && car.k > 0.05) {
+      const l = Math.hypot(car.dx, car.dy, car.dz) || 1;
+      L[0].set(car.x, car.y, car.z, 36);
+      LC[0].set(2.1 * car.k, 1.95 * car.k, 1.6 * car.k);
+      spot.set(car.dx / l, car.dy / l, car.dz / l, 0.83);
+      slot = 1;
+    } else if (lantern) {
       const P = player.pos, h = player.heading;
       let dx, dy, dz;
       if (aimDir) { dx = aimDir.x; dy = aimDir.y; dz = aimDir.z; }

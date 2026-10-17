@@ -23,6 +23,7 @@ export class Input {
     this.padIndex = -1;              // controle em uso (só troca quando outro é mexido)
     this.padRumble = false;          // algum controle com vibração já apareceu
     this.aimLock = false;            // a arma avisa que está mirando (B esquiva na hora)
+    this.inCar = false;              // dirigindo (main.js liga): ▲ vira farol, B freio de mão
     this.sprint = false;             // L3: corre até o analógico esquerdo voltar ao centro
     this.sprintIdle = 0; this.lastPoll = 0;
     this.padState = {};
@@ -210,8 +211,36 @@ export class Input {
   aimHeld() { return !!(this.mouse.buttons & 2) || this.trig.lOn || this.padHeld.has('lb') || !!this.touch.aimOn; }
   fireHit() { return (this.mouse.leftHit && this.locked) || this.trig.rHit || !!this.touch.fireHit; }
   fireHeld() { return (!!(this.mouse.buttons & 1) && this.locked) || this.trig.rOn || !!this.touch.fireHeld; }
-  // cura rápida: H, direcional ▲, botão CURA no toque
-  healHit() { return this.hit('KeyH') || this.padHit('up') || !!this.touch.healHit; }
+  // cura rápida: H, direcional ▲ (no carro ▲ é o farol), botão CURA no toque
+  healHit() { return this.hit('KeyH') || (!this.inCar && this.padHit('up')) || !!this.touch.healHit; }
+
+  // ---------- carro ----------
+  // acelerador e freio de 0 a 1: W/S ou setas, R2/L2 pela pressão, ACELERAR / FREIO no toque
+  driveThrottle() {
+    let v = this.down('KeyW', 'ArrowUp') ? 1 : 0;
+    if (this.trig.r > 0.05) v = Math.max(v, Math.min(1, (this.trig.r - 0.05) / 0.85));
+    return this.touch.gasHeld ? 1 : v;
+  }
+  driveBrake() {
+    let v = this.down('KeyS', 'ArrowDown') ? 1 : 0;
+    if (this.trig.l > 0.05) v = Math.max(v, Math.min(1, (this.trig.l - 0.05) / 0.85));
+    return this.touch.brakeHeld ? 1 : v;
+  }
+  // volante: + = para a esquerda. Analógico com zona morta e curva (pouco inclinado = fino)
+  driveSteer() {
+    let s = (this.down('KeyA', 'ArrowLeft') ? 1 : 0) - (this.down('KeyD', 'ArrowRight') ? 1 : 0);
+    if (this.pad) {
+      const x = this.pad.axes[0] || 0, m = Math.abs(x);
+      if (m > 0.12) s = -Math.sign(x) * Math.pow(Math.min(1, (m - 0.12) / 0.83), 1.35);
+    }
+    if (this.touch.stickActive) s = -Math.max(-1, Math.min(1, this.touch.vec.x * 1.2));
+    return s;
+  }
+  driveHandbrake() { return this.down('Space') || this.padHeld.has('b') || !!this.touch.handHeld; }
+  driveHorn() { return this.down('KeyG') || this.padHeld.has('x') || !!this.touch.hornHeld; }
+  driveLights() { return this.hit('KeyL') || this.padHit('up') || !!this.touch.lightsHit; }
+  driveExit() { return this.hit('KeyF', 'KeyE') || this.padHit('a') || !!this.touch.exitHit; }
+  driveLookBack() { return this.down('KeyC') || this.padHeld.has('lb'); }
   meleeHit() { return this.hit('KeyV') || this.padHit('rb') || !!this.touch.meleeHit; }
   dodgeHit() { return this.hit('KeyC', 'ControlLeft') || this.bTap || !!this.touch.dodgeHit; }
   // troca de arma: ◀▶ no direcional, ARMA no toque (1) · teclas 1-8 escolhem direto (weaponKey)

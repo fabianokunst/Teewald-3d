@@ -833,11 +833,15 @@ export class Character {
     this.root.updateMatrixWorld(true);
     for (let i = 0; i < 2; i++) {
       const t = s.hands[i], hk = s.handK ? s.handK[i] : 1;
-      if (!t || hk <= 0.002) continue;
-      const A = this.arms[i], l = S.worldToLocal(_tg.copy(t));
-      // cotovelos para baixo e um pouco para fora; o punho dobra segurando o aro
-      armIK(A, l.x, l.y, l.z, A.side * 0.7, -1, -0.15, hk, -0.15);
+      if (t && hk > 0.002) this.reach(i, t, hk);
     }
+  }
+
+  // punho do braço i (0 = direito, 1 = esquerdo) num ponto do mundo; cotovelo para baixo e
+  // um pouco para fora, o punho dobra segurando (a raiz precisa estar com a matriz em dia)
+  reach(i, target, k) {
+    const A = this.arms[i], l = this.spine.worldToLocal(_tg.copy(target));
+    armIK(A, l.x, l.y, l.z, A.side * 0.7, -1, -0.15, k, -0.15);
   }
 
   // novo ponto para onde olhar quando parado
