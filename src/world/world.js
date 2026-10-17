@@ -47,7 +47,7 @@ function walkwayLift(index, x, z) {
 export async function buildWorld(scene, onStep) {
   // perches: onde as corujas pousam (postes, lampiões, chaminés, cumeeiras)
   const ctx = { mapdata, trees: [], floors: [], lights: [], perches: [], playBounds: PLAY_BOUNDS };
-  const step = async (f, t) => { onStep?.(f, t); await frame(); };
+  const step = async (f, t) => { console.info("TEMPO", t, Math.round(performance.now())); onStep?.(f, t); await frame(); };
 
   await step(0.05, 'relevo');
   ctx.terrain = new Terrain(mapdata);
