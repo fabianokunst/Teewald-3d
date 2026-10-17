@@ -4,7 +4,8 @@ import { frame } from './buildings.js';
 // salmão, torre central com agulha. Modelada a partir de texture/igreja.png.
 // Local: fachada em +z, nave estendida para -z.
 
-export const CHURCH = { W: 18, L: 34, wallH: 9.5, ridge: 17.5, towerW: 6, towerD: 5, towerH: 24, spire: 40, floor: 0.9 };
+// landing: fundo do patamar diante do portal (da frente da torre até o primeiro degrau)
+export const CHURCH = { W: 18, L: 34, wallH: 9.5, ridge: 17.5, towerW: 6, towerD: 5, towerH: 24, spire: 40, floor: 0.9, landing: 1.5 };
 // porta da sacristia na lateral (z local da igreja; o interior fica em interiors/igreja.js)
 export const SACRISTY_DOOR_Z = -13.3;
 
@@ -155,13 +156,20 @@ export function buildChurch(B, ctx, s) {
   B.box('iron', ct[0], fy + C.spire - 0.2, ct[2], 0.14, 2.4, 0.14, s.rot, { uvScale: 1 });
   B.box('iron', ct[0], fy + C.spire + 1.3, ct[2], 1.2, 0.14, 0.14, s.rot, { uvScale: 1 });
 
-  // escadaria
+  // escadaria: patamar no piso da igreja, encostado na fachada dos dois lados da torre
+  // (antes o degrau de cima parava a 40 cm da torre e sobrava uma fresta no chão do
+  // adro, entre a escada e o portal, onde o padre ficava afundado), e quatro degraus
   B.col = [0.95, 0.95, 0.95];
-  const steps = 5, sd = 0.45;
+  const steps = 4, sd = 0.45, rise = C.floor / (steps + 1), zl = tz1 + C.landing;
+  {
+    const p = P(0, 0, (hl + zl) / 2);
+    B.box('granite', p[0], y0 - 0.4, p[2], 11, C.floor + 0.4, zl - hl, s.rot, { uvScale: 2 });
+    ctx.collision.addBox(p[0], p[2], 5.5, (zl - hl) / 2, s.rot, y0 - 1, fy, { walk: true, cam: false });
+  }
   for (let i = 0; i < steps; i++) {
-    const lz = tz1 + 0.4 + (steps - i) * sd - sd / 2;
+    const lz = zl + (steps - i) * sd - sd / 2;
     const p = P(0, 0, lz);
-    const h = ((i + 1) / steps) * C.floor;
+    const h = (i + 1) * rise;
     B.box('granite', p[0], y0 - 0.4, p[2], 11, h + 0.4, sd, s.rot, { uvScale: 2 });
     // cada degrau é um piso (sobe-se um de cada vez; pelos lados, os altos bloqueiam)
     ctx.collision.addBox(p[0], p[2], 5.5, sd / 2, s.rot, y0 - 1, y0 + h, { walk: true, cam: false });
@@ -194,7 +202,7 @@ export function buildChurch(B, ctx, s) {
     const back = P(0, 0, -hl - 3);
     col.addBox(back[0], back[2], 5.5, 3, s.rot, y0, fy + 9);
   }
-  return { fy, front: P(0, y0, tz1 + 0.4 + steps * sd) };
+  return { fy, front: P(0, y0, zl + steps * sd) };
 }
 
 // pirâmide/agulha com n lados

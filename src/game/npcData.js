@@ -312,7 +312,7 @@ export const NPC_DEFS = [
     idle: ['back', 'pray', 'sign', 'glance'], talkStyle: 'stiff', devout: true, greet: 'nod',
     look: { seed: 111, top: 'cassock', old: true, glasses: [160, 150, 120], feet: 'shoe', colors: { jacket: [28, 26, 28], pants: [28, 26, 28], hair: HAIR.white, skin: SKIN.fair, button: [64, 62, 64], boot: [24, 22, 22] } },
     skirt: { color: [28, 26, 28], len: -0.8 },
-    spawn: S => { const [x, z] = S.free(...S.church(-1.5, 21.5)); return { mode: 'stand', x, z, h: S.L.church.rot }; },
+    spawn: S => { const [x, z] = S.free(...S.church(-1.5, 22.2)); return { mode: 'stand', x, z, h: S.L.church.rot }; },
     hi: 'Deus te guarde, meu filho.',
     barks: ['Deus tenha piedade.', 'Pai nosso, que estais no céu...'],
     talks: [

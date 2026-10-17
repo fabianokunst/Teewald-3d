@@ -315,8 +315,8 @@ function buildChurchArea(B, ctx, ch) {
     const t2 = W(side * 13.5, hl - 6); tree(ctx, 'araucaria', t2[0], t2[1], 1.0);
     const l = W(side * 6.5, z1 - 1.2); lantern(B, ctx, l[0], l[1]);
     const b = W(side * 9.5, z0 + 1.5); bench(B, ctx, b[0], b[1], ch.rot + side * Math.PI / 2);
-    const h = W(side * 3.2, z0 + 3.4); tree(ctx, 'hortensia', h[0], h[1], 1.1);
-    const h2 = W(side * 4.6, z0 + 3.4); tree(ctx, 'hortensia', h2[0], h2[1], 1.0);
+    const h = W(side * 3.2, z0 + 4.4); tree(ctx, 'hortensia', h[0], h[1], 1.1);
+    const h2 = W(side * 4.6, z0 + 4.4); tree(ctx, 'hortensia', h2[0], h2[1], 1.0);
   }
   // plátanos ao lado
   for (let i = 0; i < 4; i++) for (const side of [1, -1]) {

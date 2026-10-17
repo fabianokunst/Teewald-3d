@@ -33,8 +33,9 @@ export function places(G) {
   const L = G.L, ch = L.church;
   const cf = frame(ch.x, ch.z, ch.rot);
   const hl = CHURCH.L / 2;
+  // door: no patamar da escadaria, a 70 cm do portal da torre
   // side: diante da porta da sacristia (lateral, perto dos fundos)
-  const door = cf(0, hl + 1.5), yard = cf(0, hl + 9), side = cf(CHURCH.W / 2 + 1.7, SACRISTY_DOOR_Z);
+  const door = cf(0, hl + 1.9), yard = cf(0, hl + 9), side = cf(CHURCH.W / 2 + 1.7, SACRISTY_DOOR_Z);
   const tower = cf(0, hl - CHURCH.towerD / 2 + 1.2), gable = cf(0, hl + 0.6);
   const fab = building(G, /INDÚSTRIA DE CALÇADOS/, [6, -46]);
   const soc = building(G, /SOCIEDADE CULTURAL/);

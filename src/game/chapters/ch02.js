@@ -19,7 +19,7 @@ export default {
     // o resto da luz do dia vai embora devagar
     G.after(0.5, () => G.weather('noite', 40));
     const P = places(G), d = P.churchDoor;
-    G.npcs.stage('bernardo', { x: d.x + Math.sin(d.h + Math.PI) * 1.2, z: d.z + Math.cos(d.h + Math.PI) * 1.2, h: d.h + Math.PI, talks: [[
+    G.npcs.stage('bernardo', { x: d.x + Math.sin(d.h + Math.PI) * 0.5, z: d.z + Math.cos(d.h + Math.PI) * 0.5, h: d.h + Math.PI, talks: [[
       'Tu ouviu? O sino tocou sozinho. Três vezes. E ninguém subiu na torre.',
     ]] });
     // armas brancas e munição pelo caminho
