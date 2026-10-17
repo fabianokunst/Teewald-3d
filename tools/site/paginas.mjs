@@ -27,7 +27,7 @@ export const PAGINAS = {
   'historia.html': {
     nome: 'A história',
     titulo: 'A história — Teewald',
-    descricao: 'Teewald, o mato do chá: uma colônia de imigrantes do Hunsrück no Vale do Herval, um outubro de neblina e criação aparecendo morta sem uma gota de sangue.',
+    descricao: 'Teewald, o mato do chá: uma colônia de imigrantes do Hunsrück no Vale do Herval, um maio de neblina e criação aparecendo morta sem uma gota de sangue.',
     imagem: 'enxaimel',
     alt: 'O Museu de Teewald, uma casa de enxaimel',
     tipo: 'WebPage',

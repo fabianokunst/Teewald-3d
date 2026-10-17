@@ -181,7 +181,7 @@ function makeMats() {
       for (const [t0, s] of lines) { const t = tr(t0); fitFont(g, t, w - 4, s, n => `${n}px ${FONT_UI}`, 5); g.fillText(t, 0, ly); ly += s + 1; }
       g.restore();
     };
-    note(6, 6, 56, 40, -0.03, [['MISSA DE FINADOS', 9], ['2 DE NOVEMBRO', 8], ['19 HORAS', 8], ['NO CEMITÉRIO', 8]]);
+    note(6, 6, 56, 40, -0.03, [['MISSA DAS ALMAS', 9], ['SEGUNDA-FEIRA', 8], ['19 HORAS', 8], ['NO CEMITÉRIO', 8]]);
     note(66, 8, 56, 36, 0.04, [['KARTOFFELFEST', 9], ['CANCELADA', 10], ['A COMISSÃO', 7]], '#f0e2b8');
     note(10, 52, 54, 38, 0.02, [['TERÇO PELAS', 8], ['ALMAS', 9], ['TODA NOITE', 8], ['20 HORAS', 8]]);
     note(68, 50, 52, 40, -0.05, [['NÃO SAIAM', 9], ['DE CASA', 9], ['DEPOIS QUE', 8], ['ESCURECER', 8]], '#e8d8d0');

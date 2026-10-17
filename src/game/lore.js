@@ -11,7 +11,7 @@
 
 export const DOCS = [
   {
-    id: 'jornal1', kind: 'RECORTE DE JORNAL', title: 'Folha de Teewald, 3 de outubro', paper: 'news',
+    id: 'jornal1', kind: 'RECORTE DE JORNAL', title: 'Folha de Teewald, 3 de maio', paper: 'news',
     pages: [[
       { t: 'Folha de Teewald', s: 'mast', align: 'center' },
       { rule: true },

@@ -5,7 +5,7 @@ import { ipt } from './ch03.js';
 import { SFX } from '../creatures/sfx.js';
 import { DOCS } from '../lore.js';
 
-// Capítulo 8 — Finados. Garoa e neblina. O diário do Pastor Wendt diz que a cruz de
+// Capítulo 8 — Noite das Almas (segunda-feira é o dia das almas). Garoa e neblina. O diário do Pastor Wendt diz que a cruz de
 // ferro que selava a bruxa foi guardada na cripta dos fundadores, embaixo do cemitério.
 // A cripta só abre com as quatro velas dos fundadores acesas, e o cemitério está cheio
 // de mortos que não descansam. Lá embaixo, a cruz, o diário e o coveiro.
@@ -14,7 +14,7 @@ const PADRE = 'PADRE BERNARDO', OTTO = 'SEU OTTO';
 const FOUNDERS = ['WENDT 1851', 'SCHMITT 1853', 'KLEIN 1856', 'HOFFMANN 1858'];
 
 export default {
-  n: 8, key: 'finados', title: 'Finados', sub: 'Os mortos de Teewald não estão dormindo.',
+  n: 8, key: 'finados', title: 'Noite das Almas', sub: 'Os mortos de Teewald não estão dormindo.',
   weather: 'garoa',
   deathText: 'OS MORTOS TE LEVARAM',
   start(G) { const d = places(G).churchDoor; return { x: d.x + Math.sin(d.h + Math.PI) * 3, z: d.z + Math.cos(d.h + Math.PI) * 3, h: d.h }; },
@@ -47,7 +47,7 @@ export default {
     const gate = spot(16, 30);
     S.gate = { x: gate[0], z: gate[1] };
     G.npcs.stage('otto', { x: gate[0], z: gate[1], h: Math.atan2(C.x - gate[0], C.z - gate[1]), talks: [[
-      'Acendi as velas de finados nos túmulos dos fundadores e elas apagaram todas, de uma vez. Sem vento.',
+      'Acendi as velas das almas nos túmulos dos fundadores e elas apagaram todas, de uma vez. Sem vento.',
       'Tem gente andando entre os túmulos. Gente que eu mesmo enterrei. A dona Elfrida, o velho Klein...',
       'A cripta dos fundadores só abre com as quatro velas acesas. Coisa dos antigos, ninguém sabe explicar.',
       'Toma a minha pá. Bala não adianta com eles. A luz do teu lampião, sim.',
@@ -74,7 +74,7 @@ export default {
         G.after(0.8, () => G.talk([[PADRE, [
           'Achei o diário do Pastor Wendt, o que enterrou a Otília. Está em alemão antigo, mas dá pra entender o principal.',
           'Em 1950 tiraram a cruz de ferro de cima do túmulo dela e guardaram na cripta dos fundadores, embaixo do cemitério. Alguém achou que cruz no meio do mato não ficava bem.',
-          'Sem a cruz não tem como selar a bruxa de novo. Mas hoje é noite de finados, e o Seu Otto diz que os mortos estão inquietos.',
+          'Sem a cruz não tem como selar a bruxa de novo. Mas hoje é segunda-feira, noite das almas, e o Seu Otto diz que os mortos estão inquietos.',
           'Fala com ele no cemitério. E leva o lampião aceso.',
         ], 150]], () => G.next()));
       },
