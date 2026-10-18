@@ -5,7 +5,7 @@
 
 ## The game
 Third-person horror game with a PS1 look, set in **Teewald**, a fictional version of Santa Maria do
-Herval, a small town of German immigrants in Rio Grande do Sul (south Brazil). May, which is autumn
+Herval, a small town of German immigrants in Rio Grande do Sul (south Brazil). May 1997, which is autumn
 in the southern hemisphere (never October or November), fog, a town
 afraid of what walks in the woods. Twelve chapters, each one a Brazilian/German-colonial legend:
 the chupacabra, fire dogs, the factory girl ghost (Lúcia), the Varginha aliens, the Beast of the
@@ -16,7 +16,7 @@ colonists: they speak rural gaúcho Portuguese ("tu", "guri", "piá", "cusco", "
 drop phrases in **Hunsrik** (a German dialect) or German.
 
 Tone: rural, terse, creepy, sometimes dryly funny. Old people talk plainly. Keep it that way:
-no modern slang, no purple prose.
+no modern slang, no purple prose. The story happens in 1997: no cell phones or internet (payphones, letters, film cameras), so no modern words or references either.
 
 ## How to translate
 Small changes: run `npm run traduzir` and fill the `''` entries of src/i18n/en.js, es.js and de.js directly

@@ -5,7 +5,7 @@
 Page: https://fabianokunst.github.io/Teewald-3d/site/en/  
 Play free in your browser: https://fabianokunst.github.io/Teewald-3d/?lang=en
 
-*Vale do Herval · Rio Grande do Sul · maio de 1997*
+*Herval Valley · Rio Grande do Sul · May 1997*
 
 ## Teewald
 

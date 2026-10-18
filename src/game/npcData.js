@@ -102,7 +102,7 @@ export const NPC_DEFS = [
     barks: ['Já aconteceu antes...', 'Os antigos sabiam.'],
     talks: [
       ['Os primeiros colonos vieram do Hunsrück e abriram picada nesse mato.', 'Nos diários deles tem uma coisa que ninguém gosta de lembrar.', 'Criação morta na beira da roça, sem sangue. Eles chamavam de Blutsauger. O chupador de sangue.'],
-      ['Em setenta e oito aconteceu de novo. Eu era moço.', 'Morreu criação em três linhas. Depois parou, do nada.', 'Os jornais nem chegaram a saber. A cidade preferiu esquecer.'],
+      ['Em setenta e oito aconteceu de novo. Eu ainda dava aula.', 'Morreu criação em três linhas. Depois parou, do nada.', 'Os jornais nem chegaram a saber. A cidade preferiu esquecer.'],
       ['Herval vem de erva-mate. Teewald, em hunsrik: mato do chá.', 'Bonito, não é? Mas os antigos tinham outro respeito por esse mato.', 'Ninguém entrava nele depois do sol posto.'],
     ],
     scared: 'Isso não vai resolver nada, rapaz!',
@@ -170,7 +170,7 @@ export const NPC_DEFS = [
     barks: ['Vai escurecer cedo hoje.', 'Hmm...', 'Shhhlurrp...'],
     talks: [
       ['Senta aí. Não tem mais ninguém na praça mesmo.', 'Antes, a essa hora, tava cheia. Hoje o povo se tranca às cinco.'],
-      ['Em setenta e oito foi igual. Eu tinha a tua idade.', 'Morria criação, sumia cachorro, e os velhos não deixavam a gente sair de noite.', 'Um dia parou. Ninguém nunca explicou.'],
+      ['Em setenta e oito foi igual. Faz quase vinte anos, e parece que foi ontem.', 'Morria criação, sumia cachorro, e ninguém deixava os guris sair de noite.', 'Um dia parou. Ninguém nunca explicou.'],
       ['Tá vendo a beira do mato, lá pros lados da igreja?', 'Eu não chego perto. Nem de dia.'],
     ],
     scared: 'Barbaridade! Que foi isso?',
@@ -373,7 +373,7 @@ export const NPC_DEFS = [
     talks: [
       ['Trinta anos cuidando desse cemitério.', 'Nunca precisei trancar o portão. Agora tranco.'],
       ['Lá no fundo, perto do muro da mata, a terra amanheceu mexida.', 'Nenhuma cova aberta, graças a Deus. Mas cavaram. E desistiram.'],
-      ['Tem uma cova sem nome lá no canto, de setenta e oito.', 'Ninguém sabe quem tá ali. Ou ninguém quer dizer.'],
+      ['Tem uma cova sem nome lá no canto, de setenta e oito.', 'Fui eu que fechei. Trouxeram o caixão de noite e nunca me disseram quem era.'],
     ],
     scared: 'Aqui não, rapaz! Respeita os mortos!',
     aimed: 'Rapaz... guarda isso. Aqui já tem gente demais.',

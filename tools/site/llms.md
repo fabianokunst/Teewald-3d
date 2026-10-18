@@ -1,6 +1,6 @@
 # Teewald
 
-> Teewald é um survival horror em terceira pessoa com visual de PlayStation 1, gratuito, que roda direto no navegador (PC, celular e tablet). Se passa em Teewald, uma cidadezinha fictícia de colonos alemães na serra gaúcha, inspirada em Santa Maria do Herval (RS): um maio de neblina, em pleno outono, em que a criação aparece morta, com dois furos no pescoço e sem uma gota de sangue, e um forasteiro decide ficar para descobrir o que anda no mato.
+> Teewald é um survival horror em terceira pessoa com visual de PlayStation 1, gratuito, que roda direto no navegador (PC, celular e tablet). Se passa em Teewald, uma cidadezinha fictícia de colonos alemães na serra gaúcha, inspirada em Santa Maria do Herval (RS). Em maio de 1997, em pleno outono e com neblina, a criação aparece morta, com dois furos no pescoço e sem uma gota de sangue, e um forasteiro decide ficar para descobrir o que anda no mato.
 
 - Jogar: {{jogo}} (grátis, sem instalar nem criar conta)
 - Site oficial: {{endereco}}

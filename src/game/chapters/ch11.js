@@ -130,7 +130,7 @@ export default {
           G.narrate([
             'Amarrei o bicho com a corda da agropecuária: pés, mãos e o focinho. Ele respirava devagar, os olhos vermelhos meio fechados.',
             'No pescoço, uma coleira de couro velho, quase podre. Gravadas a fogo, duas letras: O.K.',
-            'Otília Kranz. Cento e quarenta e oito anos esperando a dona no mato.',
+            'Otília Kranz. Cento e dezenove anos esperando a dona no mato.',
           ], () => G.next(), { title: 'CAPTURADO' });
         });
       },

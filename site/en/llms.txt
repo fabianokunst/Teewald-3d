@@ -22,7 +22,7 @@ No spoilers: the site only tells what the player hears and reads right after arr
 ## Site pages
 
 - [Home](https://fabianokunst.github.io/Teewald-3d/site/en/index.html.md): Third-person survival horror with a PlayStation 1 look, set in a small town of German settlers in the hills of southern Brazil. Free, in your browser.
-- [The story](https://fabianokunst.github.io/Teewald-3d/site/en/historia.html.md): Teewald, o mato do chá: uma colônia de imigrantes do Hunsrück no Vale do Herval. Maio de 1997, neblina, e a criação aparecendo morta sem uma gota de sangue.
+- [The story](https://fabianokunst.github.io/Teewald-3d/site/en/historia.html.md): Teewald, the tea woods: a colony of immigrants from the Hunsrück in the Herval Valley. May 1997, fog, and livestock turning up dead without a drop of blood.
 - [The town](https://fabianokunst.github.io/Teewald-3d/site/en/cidade.html.md): The places of Teewald: the Rio Cadeia promenade, Praça 10 de Abril, the parish church, the Kartoffelfest pavilion, the half-timbered houses and the woods. A town made from real maps.
 - [Characters](https://fabianokunst.github.io/Teewald-3d/site/en/personagens.html.md): The characters of Teewald: the stranger and the 24 townsfolk who talk, with each one’s portrait, height, clothes and manner, taken from the game’s models.
 - [The game](https://fabianokunst.github.io/Teewald-3d/site/en/jogo.html.md): How to play Teewald: combat, inventory, files, the CLEAN 3D and RETRO PS1 visual styles, weather, keyboard, controller and touch controls, and frequently asked questions.

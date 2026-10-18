@@ -1,6 +1,6 @@
 # Die Geschichte — Teewald
 
-> Teewald, o mato do chá: uma colônia de imigrantes do Hunsrück no Vale do Herval. Maio de 1997, neblina, e a criação aparecendo morta sem uma gota de sangue.
+> Teewald, der Wald vom Tee: eine Kolonie von Einwanderern aus dem Hunsrück im Vale do Herval. Mai 1997, Nebel, und Vieh, das tot aufgefunden wird, ohne einen Tropfen Blut.
 
 Seite: https://fabianokunst.github.io/Teewald-3d/site/de/historia.html  
 Kostenlos im Browser spielen: https://fabianokunst.github.io/Teewald-3d/?lang=de
@@ -24,7 +24,7 @@ Die Alten hatten Respekt vor diesem Wald. In ihren Tagebüchern steht ein Wort, 
 ![Die Pfarrkirche am späten Nachmittag, im Nebel](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
 *Die Pfarrkirche vom Platz aus gesehen*
 
-*Maio de 1997*
+*Mai 1997*
 
 ### Die letzten Wochen
 
@@ -46,7 +46,7 @@ Alles, was hier steht, hörst du von den Einwohnern oder liest es in den Papiere
 In der Stadt gibt es Zeitungsausschnitte, Aushänge, Briefe und Tagebuchseiten. Im Spiel landet jedes Papier, das du liest, in den AKTEN. Diese hier hängen am Schwarzen Brett.
 
 ![Ausschnitt aus der Folha de Teewald: tote Schafe in der Linha Schmitt](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/jornal.png)
-*Folha de Teewald, 3 de maio de 1997*
+*Folha de Teewald, 3. Mai 1997*
 
 ![Schreiben des Rathauses, das das Kartoffelfest absagt](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/oficio.png)
 *Schreiben des Rathauses*

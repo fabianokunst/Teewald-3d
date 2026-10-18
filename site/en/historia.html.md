@@ -1,6 +1,6 @@
 # The story — Teewald
 
-> Teewald, o mato do chá: uma colônia de imigrantes do Hunsrück no Vale do Herval. Maio de 1997, neblina, e a criação aparecendo morta sem uma gota de sangue.
+> Teewald, the tea woods: a colony of immigrants from the Hunsrück in the Herval Valley. May 1997, fog, and livestock turning up dead without a drop of blood.
 
 Page: https://fabianokunst.github.io/Teewald-3d/site/en/historia.html  
 Play free in your browser: https://fabianokunst.github.io/Teewald-3d/?lang=en
@@ -24,7 +24,7 @@ The old folks respected those woods. In their diaries there’s a word nobody li
 ![The parish church in the late afternoon, in the fog](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
 *The parish church seen from the square*
 
-*Maio de 1997*
+*May 1997*
 
 ### The last few weeks
 
@@ -46,7 +46,7 @@ Everything here you’ll hear from the townsfolk or read in the town’s papers 
 Around town there are newspaper clippings, posters, letters and diary pages. In the game, every paper you read is kept in FILES. These are on the bulletin board.
 
 ![Clipping from the Folha de Teewald: dead sheep on Linha Schmitt](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/jornal.png)
-*Folha de Teewald, 3 de maio de 1997*
+*Folha de Teewald, May 3, 1997*
 
 ![City Hall notice canceling the Kartoffelfest](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/en/oficio.png)
 *City Hall notice*

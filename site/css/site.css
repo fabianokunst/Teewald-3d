@@ -264,12 +264,21 @@
       position: fixed; inset: var(--topo) 0 auto; flex-direction: column; gap: 0; padding: var(--e-2) var(--margem) var(--e-5);
       background: var(--cor-fundo); border-bottom: 1px solid var(--cor-borda); box-shadow: var(--sombra-3);
       clip-path: inset(0 0 100% 0); visibility: hidden; transition: clip-path var(--dur-3) var(--ease-sai), visibility var(--dur-3);
+      /* nunca passa do fim da tela (celular deitado): o que não cabe rola dentro do menu */
+      max-height: calc(100vh - var(--topo)); max-height: calc(100dvh - var(--topo));
+      overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
     }
     .topo.aberto .menu { clip-path: inset(0 0 -60px 0); visibility: visible; }
-    .menu a { font-size: var(--ui-4); min-height: 56px; border-bottom: 1px solid var(--cor-borda); opacity: 0; transform: translateX(-12px); transition: opacity var(--dur-2), transform var(--dur-3) var(--ease-sai), color var(--dur-1); }
+    .menu a { flex-shrink: 0; font-size: var(--ui-4); min-height: 56px; border-bottom: 1px solid var(--cor-borda); opacity: 0; transform: translateX(-12px); transition: opacity var(--dur-2), transform var(--dur-3) var(--ease-sai), color var(--dur-1); }
     .topo.aberto .menu a { opacity: 1; transform: none; transition-delay: calc(var(--i, 0) * 40ms + 80ms); }
     .menu a.botao { display: inline-flex; align-self: flex-start; margin-top: var(--e-5); border: 0; font-size: var(--ui-3); padding: var(--e-1) var(--e-5) 2px; color: var(--cor-fundo); }
     .menu a.botao::before { content: none; }
+  }
+  /* tela baixa (celular deitado): páginas em duas colunas, para caber sem rolar */
+  @media (max-width: 1180px) and (max-height: 560px) and (orientation: landscape) {
+    .menu { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--e-6); align-content: start; padding-bottom: var(--e-4); }
+    .menu a { min-height: 48px; font-size: var(--ui-3); }
+    .menu a.botao { grid-column: 1 / -1; justify-self: start; min-height: 44px; margin-top: var(--e-3); }
   }
 
   /* ---- seletor de idioma (os mesmos do jogo) e aviso de idioma ---- */
@@ -287,6 +296,7 @@
   .idiomas ul {
     position: absolute; right: 0; top: calc(100% + var(--e-2)); min-width: 12rem; margin: 0; padding: var(--e-2) 0; list-style: none;
     background: var(--cor-fundo); border: 1px solid var(--cor-borda); box-shadow: var(--sombra-3);
+    max-height: calc(100vh - var(--topo) - var(--e-4)); max-height: calc(100dvh - var(--topo) - var(--e-4)); overflow-y: auto; overscroll-behavior: contain;
   }
   .idiomas li a {
     display: flex; align-items: center; gap: var(--e-3); min-height: 44px; padding: 0 var(--e-4);
@@ -504,11 +514,11 @@
   .galeria .item:hover figcaption { transform: none; }
 
   /* ---- caixa de foto (foto ampliada) ---- */
-  .caixa-foto { width: 100vw; height: 100vh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: rgb(6 5 4 / .96); color: var(--cor-texto); }
+  .caixa-foto { width: 100vw; height: 100vh; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: rgb(6 5 4 / .96); color: var(--cor-texto); }
   .caixa-foto::backdrop { background: rgb(0 0 0 / .7); }
   .caixa-foto[open] { display: grid; place-items: center; animation: aparecer var(--dur-2) ease-out; }
   .caixa-foto figure { display: grid; place-items: center; gap: var(--e-3); width: 100%; height: 100%; min-height: 0; padding: var(--e-8) var(--e-4) var(--e-3); }
-  .caixa-foto img { max-width: min(100%, 1600px); max-height: calc(100vh - 150px); object-fit: contain; box-shadow: var(--sombra-3); animation: surgir-zoom var(--dur-3) var(--ease-sai); }
+  .caixa-foto img { max-width: min(100%, 1600px); max-height: calc(100vh - 150px); max-height: calc(100dvh - 150px); object-fit: contain; box-shadow: var(--sombra-3); animation: surgir-zoom var(--dur-3) var(--ease-sai); }
   .caixa-foto figcaption { padding: 0 var(--e-4); text-align: center; font: var(--ui-3) / 1.2 var(--fonte-ui); letter-spacing: .04em; color: var(--cor-texto); }
   .caixa-foto .fechar, .caixa-foto .passar { position: absolute; min-width: 48px; min-height: 48px; display: grid; place-items: center; cursor: pointer; background: rgb(20 16 13 / .85); border: 1px solid var(--cor-borda-viva); color: var(--cor-texto); font: var(--ui-4) / 1 var(--fonte-ui); transition: color var(--dur-1), border-color var(--dur-1); }
   .caixa-foto .fechar { top: var(--e-3); right: var(--e-3); padding: 0 var(--e-4); font-size: var(--ui-2); letter-spacing: .06em; }

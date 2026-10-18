@@ -664,7 +664,7 @@ function buildCalcadao(B, ctx, cd) {
     }
     const rotTo = s => { const n = nearestOnPolyline(path, s.x, s.z); return Math.atan2(n.x - s.x, n.z - s.z); };
     const s = pick(sc, s => { const pts = boxPts(s.x, s.z, 0.95, 0.15, rotTo(s)); return inStrip(pts) && offPath(pts, 0.4) && spotFree(ctx, pts, 0.25); });
-    if (s) signPost(B, ctx, s.x, s.z, rotTo(s), signMaterial('MONUMENTO AO IMIGRANTE', { bg: '#3a2a1a', fg: '#f0e0c0', w: 128, h: 24, sub: '1847 - 2017' }));
+    if (s) signPost(B, ctx, s.x, s.z, rotTo(s), signMaterial('MONUMENTO AO IMIGRANTE', { bg: '#3a2a1a', fg: '#f0e0c0', w: 128, h: 24, sub: '1847 - 1997' }));
   }
   // placa do calçadão no começo do caminho
   {

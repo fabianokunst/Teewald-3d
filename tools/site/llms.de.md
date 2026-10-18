@@ -1,6 +1,6 @@
 # Teewald
 
-> Teewald ist ein kostenloser Survival-Horror in der dritten Person im Look der PlayStation 1, der direkt im Browser läuft (PC, Handy und Tablet). Er spielt in Teewald, einem erfundenen Städtchen deutscher Kolonisten im Bergland von Rio Grande do Sul in Südbrasilien, nach dem Vorbild von Santa Maria do Herval (RS): ein nebliger Mai mitten im Herbst, in dem das Vieh tot aufgefunden wird, mit zwei Löchern im Hals und ohne einen Tropfen Blut, und ein Fremder beschließt zu bleiben, um herauszufinden, was im Wald umgeht.
+> Teewald ist ein kostenloser Survival-Horror in der dritten Person im Look der PlayStation 1, der direkt im Browser läuft (PC, Handy und Tablet). Er spielt in Teewald, einem erfundenen Städtchen deutscher Kolonisten im Bergland von Rio Grande do Sul in Südbrasilien, nach dem Vorbild von Santa Maria do Herval (RS). Im Mai 1997, mitten im Herbst und im Nebel, wird das Vieh tot aufgefunden, mit zwei Löchern im Hals und ohne einen Tropfen Blut, und ein Fremder beschließt zu bleiben, um herauszufinden, was im Wald umgeht.
 
 - Spielen: {{jogo}} (kostenlos, ohne Installation und ohne Konto)
 - Offizielle Website: {{endereco}}

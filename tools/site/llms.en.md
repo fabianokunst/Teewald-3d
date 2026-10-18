@@ -1,6 +1,6 @@
 # Teewald
 
-> Teewald is a free third-person survival horror game with a PlayStation 1 look that runs right in the web browser (PC, phone and tablet). It is set in Teewald, a fictional small town of German settlers in the hills of southern Brazil, inspired by Santa Maria do Herval (Rio Grande do Sul): a foggy May, deep in autumn, when livestock turns up dead with two holes in the neck and not a drop of blood, and a stranger decides to stay and find out what walks in the woods.
+> Teewald is a free third-person survival horror game with a PlayStation 1 look that runs right in the web browser (PC, phone and tablet). It is set in Teewald, a fictional small town of German settlers in the hills of southern Brazil, inspired by Santa Maria do Herval (Rio Grande do Sul). In May 1997, deep in autumn and fog, livestock turns up dead with two holes in the neck and not a drop of blood, and a stranger decides to stay and find out what walks in the woods.
 
 - Play: {{jogo}} (free, nothing to install, no account needed)
 - Official site: {{endereco}}

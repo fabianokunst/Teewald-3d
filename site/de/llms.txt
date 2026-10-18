@@ -24,7 +24,7 @@ In English: Teewald is a free third-person survival horror game with a PlayStati
 ## Seiten der Website
 
 - [Start](https://fabianokunst.github.io/Teewald-3d/site/de/index.html.md): Survival-Horror in der dritten Person im Look der PlayStation 1, in einem Städtchen deutscher Kolonisten im Bergland Südbrasiliens. Kostenlos, im Browser.
-- [Die Geschichte](https://fabianokunst.github.io/Teewald-3d/site/de/historia.html.md): Teewald, o mato do chá: uma colônia de imigrantes do Hunsrück no Vale do Herval. Maio de 1997, neblina, e a criação aparecendo morta sem uma gota de sangue.
+- [Die Geschichte](https://fabianokunst.github.io/Teewald-3d/site/de/historia.html.md): Teewald, der Wald vom Tee: eine Kolonie von Einwanderern aus dem Hunsrück im Vale do Herval. Mai 1997, Nebel, und Vieh, das tot aufgefunden wird, ohne einen Tropfen Blut.
 - [Die Stadt](https://fabianokunst.github.io/Teewald-3d/site/de/cidade.html.md): Die Orte von Teewald: die Promenade am Rio Cadeia, die Praça 10 de Abril, die Pfarrkirche, das Festzelt des Kartoffelfests, die Fachwerkhäuser und der Wald. Eine Stadt aus echten Karten.
 - [Figuren](https://fabianokunst.github.io/Teewald-3d/site/de/personagens.html.md): Die Figuren von Teewald: der Fremde und die 24 Einwohner, die reden, mit Porträt, Größe, Kleidung und Wesen von jedem, direkt aus den Modellen des Spiels.
 - [Das Spiel](https://fabianokunst.github.io/Teewald-3d/site/de/jogo.html.md): So spielt man Teewald: Kampf, Inventar, Akten, die Grafikstile KLARES 3D und PS1 RETRO, Wetter, Steuerung mit Tastatur, Controller und Touch, und häufige Fragen.

@@ -24,7 +24,7 @@ export default {
       'Tu é o moço que anda caçando essas coisas? Então escuta.',
       'Hoje de madrugada uma coisa arrombou o meu potreiro. Grande. Maior que um touro.',
       'Urrava feito boi e andava apoiada nas mãos, feito gente. Levou duas vacas inteiras, arrastando pela estrada.',
-      'O meu pai contava de uma fera assim na Linha Nova, nos anos setenta. Ninguém acreditava. Eu dei um tiro de espingarda nela e a bala voltou.',
+      'O meu pai contava de uma fera assim na Linha Nova, nos anos quarenta. Ninguém acreditava. Eu dei um tiro de espingarda nela e a bala voltou.',
       'O rastro vai pelo lado da Prefeitura. Vai com Deus.',
     ]], onTalkEnd: () => { if (G.S.def.steps[G.S.i]?.id === 'romeu') G.next(); } });
     // rastro: da Benno Closs até os fundos da Prefeitura, com pegadas enormes, sangue e tábuas quebradas

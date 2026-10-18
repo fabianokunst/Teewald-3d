@@ -1,4 +1,4 @@
-import { drawText, FONT_TITLE } from './overlay.js';
+import { drawText, textSprite, FONT_TITLE } from './overlay.js';
 
 // Nome do lugar ao entrar numa área, dicas de controle e contador de FPS
 export class Hud {
@@ -77,6 +77,8 @@ export class Hud {
     const a = t < 1.2 ? 0 : t < 2.4 ? (t - 1.2) / 1.2 : t > 6.2 ? Math.max(0, 1 - (t - 6.2) / 1.2) : 1;
     if (a <= 0) return;
     drawText(g, 'Teewald', W / 2, H * 0.62, 30 * k, { align: 'center', font: FONT_TITLE, alpha: a, color: '#efe2c4', shadow: '#2a0806' });
-    drawText(g, 'CALÇADÃO DO RIO CADEIA  ·  OUTONO', W / 2, H * 0.62 + 36 * k, 11 * k, { align: 'center', alpha: a, color: '#d8c8a8' });
+    // a linha encolhe para caber na largura (celular em pé)
+    const sub = 'CALÇADÃO DO RIO CADEIA  ·  OUTONO DE 1997', fit = Math.min(1, W * 0.92 / textSprite(sub, Math.round(11 * k)).w);
+    drawText(g, sub, W / 2, H * 0.62 + 36 * k, 11 * k * fit, { align: 'center', alpha: a, color: '#d8c8a8' });
   }
 }
