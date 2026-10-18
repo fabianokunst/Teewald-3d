@@ -146,7 +146,7 @@ It’s a horror game: there’s darkness, blood, creatures and jump scares, in t
 
 **Is the town real?**
 
-The map is inspired by Santa Maria do Herval (Rio Grande do Sul), with real streets and terrain. The townsfolk and their stories are made up.
+Only the map: it is inspired by Santa Maria do Herval (RS), with real streets and terrain. The residents, the names and the stories came from imagination, and any resemblance to real people or events is purely coincidental.
 
 **How many chapters are there?**
 
@@ -160,4 +160,4 @@ Pistol in its holster, a twelve-round magazine and a box of bullets. The rest yo
 
 ---
 
-*A work of fiction: all names, characters and stories in the game are made up and have no real connection to the town of Santa Maria do Herval or its residents. Only the map (streets, river and terrain) comes from the real town.*
+*A work of fiction: Teewald was born of imagination. The characters, their names, the dialogue and everything that happens in the game are made up, and any resemblance to real persons, living or dead, or to real events is purely coincidental. Santa Maria do Herval (RS) served only as inspiration for the setting: the street layout and street names, the river, the terrain and a few places come from public maps and appear only as scenery. The game does not portray the town, its residents, businesses or institutions, and has no connection whatsoever with the City Hall or any organization in the municipality.*

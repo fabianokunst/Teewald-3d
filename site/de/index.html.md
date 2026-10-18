@@ -5,7 +5,7 @@
 Seite: https://fabianokunst.github.io/Teewald-3d/site/de/  
 Kostenlos im Browser spielen: https://fabianokunst.github.io/Teewald-3d/?lang=de
 
-*Vale do Herval · Rio Grande do Sul · Mai*
+*Vale do Herval · Rio Grande do Sul · maio de 1997*
 
 ## Teewald
 
@@ -116,4 +116,4 @@ Der Bus nach Novo Hamburgo ist seit Mittag nicht gekommen. Wenn du schon bleibst
 
 ---
 
-*Fiktives Werk: Alle Namen, Figuren und Geschichten des Spiels sind frei erfunden und haben keinen realen Bezug zur Stadt Santa Maria do Herval oder zu ihren Einwohnern. Nur die Karte (Straßen, Fluss und Gelände) stammt von der echten Stadt.*
+*Fiktives Werk: Teewald ist der Fantasie entsprungen. Die Figuren, ihre Namen, die Dialoge und alles, was im Spiel geschieht, sind frei erfunden, und Ähnlichkeiten mit realen Personen, lebenden oder verstorbenen, oder mit realen Ereignissen sind rein zufällig. Santa Maria do Herval (RS) diente nur als Vorbild für den Schauplatz: Straßenverlauf und Straßennamen, der Fluss, das Gelände und einige Orte stammen aus öffentlichen Karten und erscheinen nur als Kulisse. Das Spiel zeigt weder die Stadt noch ihre Bewohner, Betriebe oder Einrichtungen und steht in keinerlei Verbindung zur Gemeindeverwaltung oder zu einer anderen Einrichtung der Gemeinde.*

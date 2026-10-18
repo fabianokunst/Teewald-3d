@@ -1,6 +1,6 @@
 # Die Geschichte — Teewald
 
-> Teewald, der Wald vom Tee: eine Kolonie von Einwanderern aus dem Hunsrück im Vale do Herval, ein nebliger Mai und Vieh, das tot aufgefunden wird, ohne einen Tropfen Blut.
+> Teewald, o mato do chá: uma colônia de imigrantes do Hunsrück no Vale do Herval. Maio de 1997, neblina, e a criação aparecendo morta sem uma gota de sangue.
 
 Seite: https://fabianokunst.github.io/Teewald-3d/site/de/historia.html  
 Kostenlos im Browser spielen: https://fabianokunst.github.io/Teewald-3d/?lang=de
@@ -24,7 +24,7 @@ Die Alten hatten Respekt vor diesem Wald. In ihren Tagebüchern steht ein Wort, 
 ![Die Pfarrkirche am späten Nachmittag, im Nebel](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
 *Die Pfarrkirche vom Platz aus gesehen*
 
-*Mai*
+*Maio de 1997*
 
 ### Die letzten Wochen
 
@@ -46,7 +46,7 @@ Alles, was hier steht, hörst du von den Einwohnern oder liest es in den Papiere
 In der Stadt gibt es Zeitungsausschnitte, Aushänge, Briefe und Tagebuchseiten. Im Spiel landet jedes Papier, das du liest, in den AKTEN. Diese hier hängen am Schwarzen Brett.
 
 ![Ausschnitt aus der Folha de Teewald: tote Schafe in der Linha Schmitt](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/jornal.png)
-*Folha de Teewald, 3. Mai*
+*Folha de Teewald, 3 de maio de 1997*
 
 ![Schreiben des Rathauses, das das Kartoffelfest absagt](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/de/oficio.png)
 *Schreiben des Rathauses*
@@ -98,4 +98,4 @@ Du nicht. Der Aushang hängt schon am Schwarzen Brett auf dem Platz.
 
 ---
 
-*Fiktives Werk: Alle Namen, Figuren und Geschichten des Spiels sind frei erfunden und haben keinen realen Bezug zur Stadt Santa Maria do Herval oder zu ihren Einwohnern. Nur die Karte (Straßen, Fluss und Gelände) stammt von der echten Stadt.*
+*Fiktives Werk: Teewald ist der Fantasie entsprungen. Die Figuren, ihre Namen, die Dialoge und alles, was im Spiel geschieht, sind frei erfunden, und Ähnlichkeiten mit realen Personen, lebenden oder verstorbenen, oder mit realen Ereignissen sind rein zufällig. Santa Maria do Herval (RS) diente nur als Vorbild für den Schauplatz: Straßenverlauf und Straßennamen, der Fluss, das Gelände und einige Orte stammen aus öffentlichen Karten und erscheinen nur als Kulisse. Das Spiel zeigt weder die Stadt noch ihre Bewohner, Betriebe oder Einrichtungen und steht in keinerlei Verbindung zur Gemeindeverwaltung oder zu einer anderen Einrichtung der Gemeinde.*

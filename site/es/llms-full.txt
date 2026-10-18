@@ -1,6 +1,6 @@
 # Teewald
 
-> Teewald es un survival horror en tercera persona con estética de PlayStation 1, gratuito, que corre directo en el navegador (PC, celular y tablet). Transcurre en Teewald, un pueblito ficticio de colonos alemanes en la sierra gaúcha, inspirado en Santa Maria do Herval (RS): un mayo de niebla, en pleno otoño, en el que los animales aparecen muertos, con dos agujeros en el cuello y sin una gota de sangre, y un forastero decide quedarse para descubrir qué anda en el monte.
+> Teewald es un survival horror en tercera persona con estética de PlayStation 1, gratuito, que corre directo en el navegador (PC, celular y tablet). Transcurre en Teewald, un pueblito ficticio de colonos alemanes en la sierra gaúcha, inspirado en Santa Maria do Herval (RS). En mayo de 1997, en pleno otoño y con niebla, los animales aparecen muertos, con dos agujeros en el cuello y sin una gota de sangre, y un forastero decide quedarse para descubrir qué anda en el monte.
 
 - Jugar: https://fabianokunst.github.io/Teewald-3d/?lang=es (gratis, sin instalar nada ni crear una cuenta)
 - Sitio oficial: https://fabianokunst.github.io/Teewald-3d/site/es/
@@ -15,7 +15,7 @@
 - Escenario: calles, río y relieve de datos abiertos (OpenStreetMap, Microsoft Global ML Building Footprints y SRTM), con unas 600 construcciones en sus contornos reales
 - Tecnología: Three.js (WebGL) y Vite
 
-Obra de ficción: todos los nombres, personajes e historias del juego son inventados y no tienen ninguna relación real con la ciudad de Santa Maria do Herval ni con sus habitantes. Solo el mapa (calles, río y relieve) viene de la ciudad de verdad.
+Obra de ficción: Teewald nació de la imaginación. Los personajes, sus nombres, los diálogos y todo lo que sucede en el juego son inventados, y cualquier parecido con personas reales, vivas o fallecidas, o con hechos reales es pura coincidencia. Santa Maria do Herval (RS) sirvió solo de inspiración para el escenario: el trazado y los nombres de las calles, el río, el relieve y algunos lugares vienen de mapas públicos y aparecen solo como paisaje. El juego no retrata la ciudad, a sus habitantes, empresas ni instituciones, y no tiene ningún vínculo con la Municipalidad ni con ninguna entidad del municipio.
 
 Sin spoilers: el sitio cuenta solo lo que el jugador oye y lee apenas llega al pueblo. Las criaturas de cada capítulo y lo que pasa después de la primera noche quedan para el juego.
 
@@ -30,7 +30,7 @@ In English: Teewald is a free third-person survival horror game with a PlayStati
 Página: https://fabianokunst.github.io/Teewald-3d/site/es/  
 Jugar gratis en el navegador: https://fabianokunst.github.io/Teewald-3d/?lang=es
 
-*Valle del Herval · Rio Grande do Sul · mayo*
+*Vale do Herval · Rio Grande do Sul · maio de 1997*
 
 ## Teewald
 
@@ -141,13 +141,13 @@ El ómnibus a Novo Hamburgo no pasa desde el mediodía. Ya que te vas a quedar, 
 
 ---
 
-*Obra de ficción: todos los nombres, personajes e historias del juego son inventados y no tienen ninguna relación real con la ciudad de Santa Maria do Herval ni con sus habitantes. Solo el mapa (calles, río y relieve) viene de la ciudad de verdad.*
+*Obra de ficción: Teewald nació de la imaginación. Los personajes, sus nombres, los diálogos y todo lo que sucede en el juego son inventados, y cualquier parecido con personas reales, vivas o fallecidas, o con hechos reales es pura coincidencia. Santa Maria do Herval (RS) sirvió solo de inspiración para el escenario: el trazado y los nombres de las calles, el río, el relieve y algunos lugares vienen de mapas públicos y aparecen solo como paisaje. El juego no retrata la ciudad, a sus habitantes, empresas ni instituciones, y no tiene ningún vínculo con la Municipalidad ni con ninguna entidad del municipio.*
 
 ---
 
 # La historia — Teewald
 
-> Teewald, el monte del té: una colonia de inmigrantes del Hunsrück en el Valle del Herval, un mayo de niebla y animales que aparecen muertos sin una gota de sangre.
+> Teewald, o mato do chá: uma colônia de imigrantes do Hunsrück no Vale do Herval. Maio de 1997, neblina, e a criação aparecendo morta sem uma gota de sangue.
 
 Página: https://fabianokunst.github.io/Teewald-3d/site/es/historia.html  
 Jugar gratis en el navegador: https://fabianokunst.github.io/Teewald-3d/?lang=es
@@ -171,7 +171,7 @@ Los antiguos le tenían respeto a ese monte. En sus diarios aparece una palabra 
 ![La iglesia matriz al caer la tarde, con niebla](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
 *La iglesia matriz vista desde la plaza*
 
-*Mayo*
+*Maio de 1997*
 
 ### Las últimas semanas
 
@@ -193,7 +193,7 @@ Todo lo que está acá lo escuchás de los vecinos o lo leés en los papeles del
 Por el pueblo hay recortes de periódico, carteles, cartas y páginas de diario. En el juego, cada papel que leés queda guardado en ARCHIVOS. Estos están en la cartelera.
 
 ![Recorte de la Folha de Teewald: ovejas muertas en la Linha Schmitt](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/es/jornal.png)
-*Folha de Teewald, 3 de mayo*
+*Folha de Teewald, 3 de maio de 1997*
 
 ![Oficio de la Municipalidad que cancela la Kartoffelfest](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/es/oficio.png)
 *Oficio de la Municipalidad*
@@ -245,7 +245,7 @@ Vos no. El cartel ya está en la cartelera de la plaza.
 
 ---
 
-*Obra de ficción: todos los nombres, personajes e historias del juego son inventados y no tienen ninguna relación real con la ciudad de Santa Maria do Herval ni con sus habitantes. Solo el mapa (calles, río y relieve) viene de la ciudad de verdad.*
+*Obra de ficción: Teewald nació de la imaginación. Los personajes, sus nombres, los diálogos y todo lo que sucede en el juego son inventados, y cualquier parecido con personas reales, vivas o fallecidas, o con hechos reales es pura coincidencia. Santa Maria do Herval (RS) sirvió solo de inspiración para el escenario: el trazado y los nombres de las calles, el río, el relieve y algunos lugares vienen de mapas públicos y aparecen solo como paisaje. El juego no retrata la ciudad, a sus habitantes, empresas ni instituciones, y no tiene ningún vínculo con la Municipalidad ni con ninguna entidad del municipio.*
 
 ---
 
@@ -343,7 +343,7 @@ Tuya, y de lo que ande ahí afuera.
 
 ---
 
-*Obra de ficción: todos los nombres, personajes e historias del juego son inventados y no tienen ninguna relación real con la ciudad de Santa Maria do Herval ni con sus habitantes. Solo el mapa (calles, río y relieve) viene de la ciudad de verdad.*
+*Obra de ficción: Teewald nació de la imaginación. Los personajes, sus nombres, los diálogos y todo lo que sucede en el juego son inventados, y cualquier parecido con personas reales, vivas o fallecidas, o con hechos reales es pura coincidencia. Santa Maria do Herval (RS) sirvió solo de inspiración para el escenario: el trazado y los nombres de las calles, el río, el relieve y algunos lugares vienen de mapas públicos y aparecen solo como paisaje. El juego no retrata la ciudad, a sus habitantes, empresas ni instituciones, y no tiene ningún vínculo con la Municipalidad ni con ninguna entidad del municipio.*
 
 ---
 
@@ -747,7 +747,7 @@ Vos tenés una 9 mm, una linterna y toda la noche por delante.
 
 ---
 
-*Obra de ficción: todos los nombres, personajes e historias del juego son inventados y no tienen ninguna relación real con la ciudad de Santa Maria do Herval ni con sus habitantes. Solo el mapa (calles, río y relieve) viene de la ciudad de verdad.*
+*Obra de ficción: Teewald nació de la imaginación. Los personajes, sus nombres, los diálogos y todo lo que sucede en el juego son inventados, y cualquier parecido con personas reales, vivas o fallecidas, o con hechos reales es pura coincidencia. Santa Maria do Herval (RS) sirvió solo de inspiración para el escenario: el trazado y los nombres de las calles, el río, el relieve y algunos lugares vienen de mapas públicos y aparecen solo como paisaje. El juego no retrata la ciudad, a sus habitantes, empresas ni instituciones, y no tiene ningún vínculo con la Municipalidad ni con ninguna entidad del municipio.*
 
 ---
 
@@ -899,7 +899,7 @@ Es un juego de terror: hay oscuridad, sangre, criaturas y sustos, en el espírit
 
 **¿El pueblo es de verdad?**
 
-El mapa está inspirado en Santa Maria do Herval (RS), con calles y relieve reales. Los vecinos y las historias son inventados.
+Solo el mapa: está inspirado en Santa Maria do Herval (RS), con calles y relieve reales. Los habitantes, los nombres y las historias salieron de la imaginación, y cualquier parecido con personas o hechos reales es pura coincidencia.
 
 **¿Cuántos capítulos son?**
 
@@ -913,7 +913,7 @@ Pistola en la funda, cargador de doce y una caja de balas. El resto lo encontrá
 
 ---
 
-*Obra de ficción: todos los nombres, personajes e historias del juego son inventados y no tienen ninguna relación real con la ciudad de Santa Maria do Herval ni con sus habitantes. Solo el mapa (calles, río y relieve) viene de la ciudad de verdad.*
+*Obra de ficción: Teewald nació de la imaginación. Los personajes, sus nombres, los diálogos y todo lo que sucede en el juego son inventados, y cualquier parecido con personas reales, vivas o fallecidas, o con hechos reales es pura coincidencia. Santa Maria do Herval (RS) sirvió solo de inspiración para el escenario: el trazado y los nombres de las calles, el río, el relieve y algunos lugares vienen de mapas públicos y aparecen solo como paisaje. El juego no retrata la ciudad, a sus habitantes, empresas ni instituciones, y no tiene ningún vínculo con la Municipalidad ni con ninguna entidad del municipio.*
 
 ---
 
@@ -986,4 +986,4 @@ Las lamparitas del pabellón se prenden todas las tardes, con o sin fiesta.
 
 ---
 
-*Obra de ficción: todos los nombres, personajes e historias del juego son inventados y no tienen ninguna relación real con la ciudad de Santa Maria do Herval ni con sus habitantes. Solo el mapa (calles, río y relieve) viene de la ciudad de verdad.*
+*Obra de ficción: Teewald nació de la imaginación. Los personajes, sus nombres, los diálogos y todo lo que sucede en el juego son inventados, y cualquier parecido con personas reales, vivas o fallecidas, o con hechos reales es pura coincidencia. Santa Maria do Herval (RS) sirvió solo de inspiración para el escenario: el trazado y los nombres de las calles, el río, el relieve y algunos lugares vienen de mapas públicos y aparecen solo como paisaje. El juego no retrata la ciudad, a sus habitantes, empresas ni instituciones, y no tiene ningún vínculo con la Municipalidad ni con ninguna entidad del municipio.*

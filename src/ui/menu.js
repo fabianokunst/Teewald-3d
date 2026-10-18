@@ -48,9 +48,11 @@ export const CREDITS = [
   ['Prédios: Microsoft Building Footprints (ODbL)', 'dim'],
   ['Relevo: SRTM 30m (NASA) via OpenTopoData', 'dim'],
   ['', ''],
-  // aviso de ficção
-  ['Obra de ficção: todos os nomes, personagens e histórias', 'note'],
-  ['são inventados e não têm nenhuma relação real com a cidade.', 'note'],
+  // aviso de ficção (uma frase inteira por linha: cada uma se traduz sozinha)
+  ['Obra de ficção, nascida da imaginação do autor.', 'note'],
+  ['Personagens, nomes e histórias são inventados.', 'note'],
+  ['Qualquer semelhança com pessoas reais é mera coincidência.', 'note'],
+  ['Ruas e lugares reais aparecem só como cenário.', 'note'],
   ['', ''],
   ['Um trabalho independente de Fabiano Kunst', 'name'],
 ];
@@ -232,23 +234,26 @@ export class Menu {
       return;
     }
     if (this.screen === 'options' || this.screen === 'credits') {
-      panel(g, W / 2 - 150 * k, 20 * k, 300 * k, 200 * k, 0.78);
-      drawText(g, this.screen === 'options' ? 'OPÇÕES' : 'CRÉDITOS', W / 2, 26 * k, 20 * k, { align: 'center', color: '#f2c879' });
+      // créditos: painel mais alto (8 px acima) para caber o aviso de ficção inteiro
+      const up = this.screen === 'credits' ? 8 * k : 0;
+      panel(g, W / 2 - 150 * k, 20 * k - up, 300 * k, 200 * k + 2 * up, 0.78);
+      drawText(g, this.screen === 'options' ? 'OPÇÕES' : 'CRÉDITOS', W / 2, 26 * k - up, 20 * k, { align: 'center', color: '#f2c879' });
       if (this.screen === 'options') {
         this._options(g, W, H, k, touch);
         help('↑↓ escolher   ◀▶ mudar   B voltar', '↑↓ escolher   ←→ mudar   ESC voltar', 'toque à esquerda do valor diminui, à direita aumenta');
       } else {
         // cada estilo tem seu tamanho; linha vazia só afasta um pouco os blocos
-        let y = 70 * k;
+        // começa 5 px acima do pé do título: a linha vazia depois dele (que o menu de toque usa) desce os 5
+        let y = 65 * k - up;
         CREDITS.forEach(([line, style]) => {
-          if (style === 'title') { drawText(g, line, W / 2, 44 * k, 26 * k, { align: 'center', font: FONT_TITLE, color: '#e9dcc0', shadow: '#4a0d08' }); return; }
+          if (style === 'title') { drawText(g, line, W / 2, 44 * k - up, 26 * k, { align: 'center', font: FONT_TITLE, color: '#e9dcc0', shadow: '#4a0d08' }); return; }
           if (!line) { y += 5 * k; return; }
           const size = style === 'name' ? 13 : style === 'dim' || style === 'note' ? 11 : 12;
           drawText(g, line, W / 2, y, size * k, { align: 'center', color: style === 'name' ? '#efe2c4' : style === 'dim' ? '#a89878' : style === 'note' ? '#d8c8a8' : '#e8dcc0' });
           y += (size - 0.5) * k;
         });
         // site do autor (clicável) e VOLTAR
-        this._list(g, W, H, k, 183 * k);
+        this._list(g, W, H, k, y + 6 * k);
       }
       return;
     }

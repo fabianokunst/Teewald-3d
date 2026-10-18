@@ -146,7 +146,7 @@ Es un juego de terror: hay oscuridad, sangre, criaturas y sustos, en el espírit
 
 **¿El pueblo es de verdad?**
 
-El mapa está inspirado en Santa Maria do Herval (RS), con calles y relieve reales. Los vecinos y las historias son inventados.
+Solo el mapa: está inspirado en Santa Maria do Herval (RS), con calles y relieve reales. Los habitantes, los nombres y las historias salieron de la imaginación, y cualquier parecido con personas o hechos reales es pura coincidencia.
 
 **¿Cuántos capítulos son?**
 
@@ -160,4 +160,4 @@ Pistola en la funda, cargador de doce y una caja de balas. El resto lo encontrá
 
 ---
 
-*Obra de ficción: todos los nombres, personajes e historias del juego son inventados y no tienen ninguna relación real con la ciudad de Santa Maria do Herval ni con sus habitantes. Solo el mapa (calles, río y relieve) viene de la ciudad de verdad.*
+*Obra de ficción: Teewald nació de la imaginación. Los personajes, sus nombres, los diálogos y todo lo que sucede en el juego son inventados, y cualquier parecido con personas reales, vivas o fallecidas, o con hechos reales es pura coincidencia. Santa Maria do Herval (RS) sirvió solo de inspiración para el escenario: el trazado y los nombres de las calles, el río, el relieve y algunos lugares vienen de mapas públicos y aparecen solo como paisaje. El juego no retrata la ciudad, a sus habitantes, empresas ni instituciones, y no tiene ningún vínculo con la Municipalidad ni con ninguna entidad del municipio.*

@@ -1,6 +1,6 @@
 # La historia — Teewald
 
-> Teewald, el monte del té: una colonia de inmigrantes del Hunsrück en el Valle del Herval, un mayo de niebla y animales que aparecen muertos sin una gota de sangre.
+> Teewald, o mato do chá: uma colônia de imigrantes do Hunsrück no Vale do Herval. Maio de 1997, neblina, e a criação aparecendo morta sem uma gota de sangue.
 
 Página: https://fabianokunst.github.io/Teewald-3d/site/es/historia.html  
 Jugar gratis en el navegador: https://fabianokunst.github.io/Teewald-3d/?lang=es
@@ -24,7 +24,7 @@ Los antiguos le tenían respeto a ese monte. En sus diarios aparece una palabra 
 ![La iglesia matriz al caer la tarde, con niebla](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
 *La iglesia matriz vista desde la plaza*
 
-*Mayo*
+*Maio de 1997*
 
 ### Las últimas semanas
 
@@ -46,7 +46,7 @@ Todo lo que está acá lo escuchás de los vecinos o lo leés en los papeles del
 Por el pueblo hay recortes de periódico, carteles, cartas y páginas de diario. En el juego, cada papel que leés queda guardado en ARCHIVOS. Estos están en la cartelera.
 
 ![Recorte de la Folha de Teewald: ovejas muertas en la Linha Schmitt](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/es/jornal.png)
-*Folha de Teewald, 3 de mayo*
+*Folha de Teewald, 3 de maio de 1997*
 
 ![Oficio de la Municipalidad que cancela la Kartoffelfest](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/es/oficio.png)
 *Oficio de la Municipalidad*
@@ -98,4 +98,4 @@ Vos no. El cartel ya está en la cartelera de la plaza.
 
 ---
 
-*Obra de ficción: todos los nombres, personajes e historias del juego son inventados y no tienen ninguna relación real con la ciudad de Santa Maria do Herval ni con sus habitantes. Solo el mapa (calles, río y relieve) viene de la ciudad de verdad.*
+*Obra de ficción: Teewald nació de la imaginación. Los personajes, sus nombres, los diálogos y todo lo que sucede en el juego son inventados, y cualquier parecido con personas reales, vivas o fallecidas, o con hechos reales es pura coincidencia. Santa Maria do Herval (RS) sirvió solo de inspiración para el escenario: el trazado y los nombres de las calles, el río, el relieve y algunos lugares vienen de mapas públicos y aparecen solo como paisaje. El juego no retrata la ciudad, a sus habitantes, empresas ni instituciones, y no tiene ningún vínculo con la Municipalidad ni con ninguna entidad del municipio.*

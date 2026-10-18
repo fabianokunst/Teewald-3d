@@ -5,7 +5,7 @@
 Página: https://fabianokunst.github.io/Teewald-3d/site/es/  
 Jugar gratis en el navegador: https://fabianokunst.github.io/Teewald-3d/?lang=es
 
-*Valle del Herval · Rio Grande do Sul · mayo*
+*Vale do Herval · Rio Grande do Sul · maio de 1997*
 
 ## Teewald
 
@@ -116,4 +116,4 @@ El ómnibus a Novo Hamburgo no pasa desde el mediodía. Ya que te vas a quedar, 
 
 ---
 
-*Obra de ficción: todos los nombres, personajes e historias del juego son inventados y no tienen ninguna relación real con la ciudad de Santa Maria do Herval ni con sus habitantes. Solo el mapa (calles, río y relieve) viene de la ciudad de verdad.*
+*Obra de ficción: Teewald nació de la imaginación. Los personajes, sus nombres, los diálogos y todo lo que sucede en el juego son inventados, y cualquier parecido con personas reales, vivas o fallecidas, o con hechos reales es pura coincidencia. Santa Maria do Herval (RS) sirvió solo de inspiración para el escenario: el trazado y los nombres de las calles, el río, el relieve y algunos lugares vienen de mapas públicos y aparecen solo como paisaje. El juego no retrata la ciudad, a sus habitantes, empresas ni instituciones, y no tiene ningún vínculo con la Municipalidad ni con ninguna entidad del municipio.*

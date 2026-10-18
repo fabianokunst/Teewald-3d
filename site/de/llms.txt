@@ -1,6 +1,6 @@
 # Teewald
 
-> Teewald ist ein kostenloser Survival-Horror in der dritten Person im Look der PlayStation 1, der direkt im Browser läuft (PC, Handy und Tablet). Er spielt in Teewald, einem erfundenen Städtchen deutscher Kolonisten im Bergland von Rio Grande do Sul in Südbrasilien, nach dem Vorbild von Santa Maria do Herval (RS): ein nebliger Mai mitten im Herbst, in dem das Vieh tot aufgefunden wird, mit zwei Löchern im Hals und ohne einen Tropfen Blut, und ein Fremder beschließt zu bleiben, um herauszufinden, was im Wald umgeht.
+> Teewald ist ein kostenloser Survival-Horror in der dritten Person im Look der PlayStation 1, der direkt im Browser läuft (PC, Handy und Tablet). Er spielt in Teewald, einem erfundenen Städtchen deutscher Kolonisten im Bergland von Rio Grande do Sul in Südbrasilien, nach dem Vorbild von Santa Maria do Herval (RS). Im Mai 1997, mitten im Herbst und im Nebel, wird das Vieh tot aufgefunden, mit zwei Löchern im Hals und ohne einen Tropfen Blut, und ein Fremder beschließt zu bleiben, um herauszufinden, was im Wald umgeht.
 
 - Spielen: https://fabianokunst.github.io/Teewald-3d/?lang=de (kostenlos, ohne Installation und ohne Konto)
 - Offizielle Website: https://fabianokunst.github.io/Teewald-3d/site/de/
@@ -15,7 +15,7 @@
 - Schauplatz: Straßen, Fluss und Gelände aus offenen Daten (OpenStreetMap, Microsoft Global ML Building Footprints und SRTM), mit rund 600 Gebäuden in ihren echten Umrissen
 - Technik: Three.js (WebGL) und Vite
 
-Fiktives Werk: Alle Namen, Figuren und Geschichten des Spiels sind frei erfunden und haben keinen realen Bezug zur Stadt Santa Maria do Herval oder zu ihren Einwohnern. Nur die Karte (Straßen, Fluss und Gelände) stammt von der echten Stadt.
+Fiktives Werk: Teewald ist der Fantasie entsprungen. Die Figuren, ihre Namen, die Dialoge und alles, was im Spiel geschieht, sind frei erfunden, und Ähnlichkeiten mit realen Personen, lebenden oder verstorbenen, oder mit realen Ereignissen sind rein zufällig. Santa Maria do Herval (RS) diente nur als Vorbild für den Schauplatz: Straßenverlauf und Straßennamen, der Fluss, das Gelände und einige Orte stammen aus öffentlichen Karten und erscheinen nur als Kulisse. Das Spiel zeigt weder die Stadt noch ihre Bewohner, Betriebe oder Einrichtungen und steht in keinerlei Verbindung zur Gemeindeverwaltung oder zu einer anderen Einrichtung der Gemeinde.
 
 Keine Spoiler: Die Website erzählt nur, was der Spieler gleich nach seiner Ankunft in der Stadt hört und liest. Die Kreaturen der einzelnen Kapitel und das, was nach der ersten Nacht geschieht, bleiben dem Spiel vorbehalten.
 
@@ -24,7 +24,7 @@ In English: Teewald is a free third-person survival horror game with a PlayStati
 ## Seiten der Website
 
 - [Start](https://fabianokunst.github.io/Teewald-3d/site/de/index.html.md): Survival-Horror in der dritten Person im Look der PlayStation 1, in einem Städtchen deutscher Kolonisten im Bergland Südbrasiliens. Kostenlos, im Browser.
-- [Die Geschichte](https://fabianokunst.github.io/Teewald-3d/site/de/historia.html.md): Teewald, der Wald vom Tee: eine Kolonie von Einwanderern aus dem Hunsrück im Vale do Herval, ein nebliger Mai und Vieh, das tot aufgefunden wird, ohne einen Tropfen Blut.
+- [Die Geschichte](https://fabianokunst.github.io/Teewald-3d/site/de/historia.html.md): Teewald, o mato do chá: uma colônia de imigrantes do Hunsrück no Vale do Herval. Maio de 1997, neblina, e a criação aparecendo morta sem uma gota de sangue.
 - [Die Stadt](https://fabianokunst.github.io/Teewald-3d/site/de/cidade.html.md): Die Orte von Teewald: die Promenade am Rio Cadeia, die Praça 10 de Abril, die Pfarrkirche, das Festzelt des Kartoffelfests, die Fachwerkhäuser und der Wald. Eine Stadt aus echten Karten.
 - [Figuren](https://fabianokunst.github.io/Teewald-3d/site/de/personagens.html.md): Die Figuren von Teewald: der Fremde und die 24 Einwohner, die reden, mit Porträt, Größe, Kleidung und Wesen von jedem, direkt aus den Modellen des Spiels.
 - [Das Spiel](https://fabianokunst.github.io/Teewald-3d/site/de/jogo.html.md): So spielt man Teewald: Kampf, Inventar, Akten, die Grafikstile KLARES 3D und PS1 RETRO, Wetter, Steuerung mit Tastatur, Controller und Touch, und häufige Fragen.

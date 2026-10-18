@@ -1,6 +1,6 @@
 # A história — Teewald
 
-> Teewald, o mato do chá: uma colônia de imigrantes do Hunsrück no Vale do Herval, um maio de neblina e criação aparecendo morta sem uma gota de sangue.
+> Teewald, o mato do chá: uma colônia de imigrantes do Hunsrück no Vale do Herval. Maio de 1997, neblina, e a criação aparecendo morta sem uma gota de sangue.
 
 Página: https://fabianokunst.github.io/Teewald-3d/site/historia.html  
 Jogar grátis no navegador: https://fabianokunst.github.io/Teewald-3d/
@@ -24,7 +24,7 @@ Os antigos tinham respeito por aquele mato. Nos diários deles aparece uma palav
 ![A Igreja Matriz no fim da tarde, com neblina](https://fabianokunst.github.io/Teewald-3d/site/img/capturas/igreja.jpg)
 *A Igreja Matriz vista da praça*
 
-*Maio*
+*Maio de 1997*
 
 ### As últimas semanas
 
@@ -46,7 +46,7 @@ Tudo o que está aqui você ouve dos moradores ou lê nos papéis da cidade logo
 Pela cidade há recortes de jornal, cartazes, cartas e páginas de diário. No jogo, cada papel que você lê fica guardado em ARQUIVOS. Estes aqui estão no mural.
 
 ![Recorte da Folha de Teewald: ovelhas mortas na Linha Schmitt](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/jornal.png)
-*Folha de Teewald, 3 de maio*
+*Folha de Teewald, 3 de maio de 1997*
 
 ![Ofício da Prefeitura cancelando a Kartoffelfest](https://fabianokunst.github.io/Teewald-3d/site/img/documentos/oficio.png)
 *Ofício da Prefeitura*
@@ -98,4 +98,4 @@ Você não. O cartaz já está no mural da praça.
 
 ---
 
-*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
+*Obra de ficção: Teewald nasceu da imaginação. Os personagens, seus nomes, os diálogos e tudo o que acontece no jogo foram inventados, e qualquer semelhança com pessoas reais, vivas ou falecidas, ou com fatos reais é mera coincidência. Santa Maria do Herval (RS) serviu só de inspiração para o cenário: o traçado e os nomes das ruas, o rio, o relevo e alguns lugares vêm de mapas públicos e aparecem apenas como paisagem. O jogo não retrata a cidade, seus moradores, empresas ou instituições, e não tem nenhum vínculo com a prefeitura nem com qualquer entidade do município.*

@@ -92,4 +92,4 @@ Sua e do que mais estiver lá fora.
 
 ---
 
-*Obra de ficção: todos os nomes, personagens e histórias do jogo são inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval ou com seus moradores. Só o mapa (ruas, rio e relevo) vem da cidade de verdade.*
+*Obra de ficção: Teewald nasceu da imaginação. Os personagens, seus nomes, os diálogos e tudo o que acontece no jogo foram inventados, e qualquer semelhança com pessoas reais, vivas ou falecidas, ou com fatos reais é mera coincidência. Santa Maria do Herval (RS) serviu só de inspiração para o cenário: o traçado e os nomes das ruas, o rio, o relevo e alguns lugares vêm de mapas públicos e aparecem apenas como paisagem. O jogo não retrata a cidade, seus moradores, empresas ou instituições, e não tem nenhum vínculo com a prefeitura nem com qualquer entidade do município.*

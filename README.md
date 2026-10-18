@@ -28,7 +28,7 @@
 </p>
 
 Jogo de terror em terceira pessoa com visual de PlayStation 1, ambientado numa
-versão de Santa Maria do Herval (RS) em maio, no outono: neblina, céu encoberto e uma
+versão de Santa Maria do Herval (RS) em maio de 1997, no outono: neblina, céu encoberto e uma
 cidade com medo do que anda no mato. São doze capítulos: o chupacabras, os cães de
 fogo, a moça da fábrica, os ETs de Varginha, a Fera da madrugada, os telefones que
 chamam para o mato, o lobisomem, o cemitério na Noite das Almas, a mulher da fotografia, os
@@ -1404,6 +1404,11 @@ do cache em `tools/cache`. Com `-- --refresh`, baixa tudo de novo da internet.
 Dados de mapa © colaboradores do OpenStreetMap (ODbL). Relevo: SRTM (NASA), via OpenTopoData.
 Contornos de prédios: Microsoft Global ML Building Footprints (ODbL).
 
-**Obra de ficção.** Todos os nomes, personagens e histórias do jogo são
-inventados e não têm nenhuma relação real com a cidade de Santa Maria do Herval
-ou com seus moradores. Teewald é um trabalho independente de Fabiano Kunst.
+**Obra de ficção.** Teewald nasceu da imaginação: os personagens, seus nomes, os
+diálogos e tudo o que acontece no jogo foram inventados, e qualquer semelhança
+com pessoas reais, vivas ou falecidas, ou com fatos reais é mera coincidência.
+Santa Maria do Herval (RS) serviu só de inspiração para o cenário: o traçado e os
+nomes das ruas, o rio, o relevo e alguns lugares vêm de mapas públicos e aparecem
+apenas como paisagem. O jogo não retrata a cidade, seus moradores, empresas ou
+instituições, e não tem nenhum vínculo com a prefeitura nem com qualquer entidade
+do município. Teewald é um trabalho independente de Fabiano Kunst.
