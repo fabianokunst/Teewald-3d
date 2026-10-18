@@ -1,6 +1,7 @@
 // Estúdio de retratos: monta cada personagem com o modelo do jogo, sem cidade em volta,
 // e fotografa o rosto e o corpo inteiro. Quem chama é tools/retratos.mjs (npm run retratos),
-// que lê window.__retratos e grava as fichas do site (site/personagens.html).
+// que lê window.__retratos e grava a lista completa (personagens/) e as fichas do site
+// (site/personagens.html).
 import * as THREE from 'three';
 import { loadTextures } from '../../src/engine/textures.js';
 import { makeMaterials, M } from '../../src/engine/materials.js';

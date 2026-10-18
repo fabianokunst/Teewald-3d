@@ -139,7 +139,7 @@ O navegador abre em `http://localhost:5173`.
 | `npm run exportar` | grava o protagonista em `exportados/teewald-protagonista.glb` |
 | `npm run shot` | uma captura do jogo (`node tools/screenshot.mjs saida.png "?skip=1"`) |
 | `npm run capturas` | refaz as fotos do site |
-| `npm run retratos` | refaz as fichas e retratos de `site/personagens.html` |
+| `npm run retratos` | refaz a lista completa de `personagens/` (criaturas incluídas) e as fichas de `site/personagens.html` |
 | `npm run site` | refaz a cabeça, o topo e o rodapé das páginas do site, as páginas em inglês, espanhol e alemão, o SEO, o sitemap e as versões para LLMs |
 | `npm run documentos` | recorta os papéis do site das imagens dos documentos do jogo, nos quatro idiomas |
 
@@ -959,6 +959,8 @@ de pistola (`npm run sons -- passo sino` mede só os que têm essas palavras no 
 - **Vite** (`vite.config.js`): `base: './'` (funciona em qualquer subpasta), `publicDir: 'texture'`,
   porta 5173 e um plugin que copia `site/` para `dist/site/` sem passar pelo Vite, refaz as
   versões em markdown para LLMs e põe `sitemap.xml`, `llms.txt` e `llms-full.txt` na raiz.
+  Duas páginas de entrada: o jogo (`index.html`) e a lista completa dos personagens
+  (`personagens/index.html`).
 - **Divisão do código**: só quatro pedaços saem do arquivo principal, carregados sob demanda.
 
   | Arquivo | Tamanho | gzip |
@@ -1331,6 +1333,11 @@ que leva a https://fabianokunst.github.io/Teewald-3d/.
   `<!-- fichas:inicio -->` e `<!-- fichas:fim -->`) e os retratos em `site/img/personagens/`:
   o protagonista e os moradores. Os personagens da campanha e as criaturas ficam de fora, e
   `SEM_SPOILER` (em `tools/retratos.mjs`) troca o que a ficha de um morador entrega da história.
+  Na mesma rodada ele grava a **lista completa**, com spoiler, fora do site: `personagens/`
+  (`index.html`, `rostos/`, `corpo/`) com o protagonista, os moradores, os personagens da
+  campanha e as criaturas. Ela vai com o jogo para https://fabianokunst.github.io/Teewald-3d/personagens/
+  (no `npm run dev`, `http://localhost:5173/personagens/`), sem link no site e com `noindex`
+  para ficar fora dos buscadores.
 - Os papéis em `site/img/documentos/` são recortes das imagens dos documentos do jogo
   (`node shots.mjs`, em `shots/<idioma>/`): `npm run documentos` (`tools/documentos-site.mjs`)
   recorta os quatro idiomas, o português em `site/img/documentos/` e os outros em
@@ -1393,6 +1400,7 @@ src/i18n/               index.js (tr), en.js, es.js, de.js, GUIA.md
 tools/                  build-mapdata, test-campaign + campaign-bot, audit, sons, traduzir,
                         screenshot, shots, capturas-site, retratos, site, exportar
 site/                   site promocional (HTML estático, separado do jogo)
+personagens/            lista completa dos personagens e criaturas (gerada por npm run retratos)
 texture/                fotos de material (servidas como pasta pública)
 exportados/             teewald-protagonista.glb
 .github/workflows/      deploy.yml (GitHub Pages)

@@ -36,5 +36,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     chunkSizeWarningLimit: 2000,
+    // o jogo e a lista completa dos personagens (personagens/, gerada por npm run retratos)
+    rollupOptions: { input: { main: 'index.html', personagens: 'personagens/index.html' } },
   },
 });

@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Personagens de Teewald</title>
+  <meta name="description" content="Fichas de todos os personagens de Teewald, criaturas incluídas: rosto, corpo, roupa e jeito de cada um.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #110e0c; --card: #1b1613; --line: #33291f; --text: #e8dfd2; --muted: #a8998a;
+      --gold: #d8a050; --red: #b3463a;
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font: 16px/1.5 'Source Sans 3', system-ui, sans-serif;
+    }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 32px 16px 64px; }
+    header h1 {
+      font: 600 clamp(36px, 7vw, 60px)/1.05 'Grenze Gotisch', serif; color: var(--gold);
+      margin: 0 0 8px; letter-spacing: 0.01em;
+    }
+    header p { color: var(--muted); margin: 0 0 20px; max-width: 70ch; }
+    header .aviso { color: var(--red); margin-top: -12px; }
+    nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+    nav a {
+      color: var(--text); text-decoration: none; border: 1px solid var(--line); border-radius: 999px;
+      padding: 8px 14px; min-height: 44px; display: inline-flex; align-items: center; background: var(--card);
+    }
+    nav a:hover, nav a:focus-visible { border-color: var(--gold); color: var(--gold); }
+    section { margin-top: 48px; }
+    h2 {
+      font: 600 34px/1.1 'Grenze Gotisch', serif; color: var(--gold); margin: 0 0 6px;
+      border-bottom: 1px solid var(--line); padding-bottom: 8px;
+    }
+    #criaturas h2 { color: var(--red); }
+    .intro { color: var(--muted); margin: 8px 0 0; max-width: 75ch; }
+    h4 { font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-size: 13px; margin: 28px 0 12px; }
+    .grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap: 16px; margin-top: 16px; }
+    .ficha {
+      display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: start;
+      background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 14px;
+    }
+    .fotos { display: grid; grid-template-columns: 150px 66px; gap: 6px; align-items: end; }
+    .fotos img { display: block; width: 100%; height: auto; border-radius: 4px; background: #17130f; }
+    .texto { min-width: 0; }
+    h3 { margin: 0; font-size: 19px; letter-spacing: 0.04em; }
+    .papel-ficha { margin: 2px 0 10px; color: var(--muted); }
+    .dados { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0 0 10px; }
+    .dados div { display: flex; gap: 6px; }
+    .dados dt { color: var(--gold); font-weight: 600; }
+    .dados dd { margin: 0; }
+    .desc { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; }
+    .desc dt { color: var(--muted); font-weight: 600; }
+    .desc dd { margin: 0; }
+    footer { margin-top: 56px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); padding-top: 16px; }
+    @media (max-width: 560px) {
+      .ficha { grid-template-columns: 1fr; }
+      .fotos { grid-template-columns: 1fr 0.44fr; max-width: 340px; }
+      .desc { grid-template-columns: 1fr; gap: 0; }
+      .desc dd { margin-bottom: 6px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Personagens de Teewald</h1>
+      <p>Quem vive, assombra e caça em Santa Maria do Herval. Retratos tirados dos modelos do jogo; as figuras de corpo inteiro das pessoas estão todas na mesma escala.</p>
+      <p class="aviso">Lista completa, com spoiler: os personagens dos capítulos e todas as criaturas.</p>
+      <nav><a href="#protagonista">Protagonista</a><a href="#moradores">Moradores</a><a href="#campanha">Personagens da campanha</a><a href="#criaturas">Criaturas</a></nav>
+    </header>
+
+    <section id="protagonista">
+      <h2>Protagonista</h2>
+      
+      
+      <div class="grade">
+          <article class="ficha" id="heroi">
+            <div class="fotos">
+              <img class="rosto" src="rostos/heroi.jpg" width="320" height="320" alt="Rosto de O Forasteiro" loading="lazy">
+              <img class="corpo" src="corpo/heroi.jpg" width="220" height="330" alt="O Forasteiro de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>O FORASTEIRO</h3>
+              <p class="papel-ficha">Protagonista, sem nome. Chegou de fora e ficou para caçar o chupacabras.</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>33 anos</dd></div><div><dt>Altura</dt><dd>1,75 m</dd></div><div><dt>Porte</dt><dd>médio</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Loiro, cabelo penteado para trás, olhos fundos, sobrancelhas retas e barba rala.</dd><dt>Corpo</dt><dd>Estatura média e ombros largos.</dd><dt>Roupa</dt><dd>Jaqueta de couro marrom com lapelas, suéter cinza de gola V, camisa escura, calça escura e botas.</dd><dt>Jeito</dt><dd>Sério e calado. Não é da cidade, e todo mundo percebe.</dd></dl>
+            </div>
+          </article>
+      </div>
+    </section>
+
+    <section id="moradores">
+      <h2>Moradores</h2>
+      <p class="intro">24 moradores com fala, espalhados pela cidade. Altura, porte e postura de cada ficha valem no jogo, e os traços do rosto (rugas, olheiras, sardas, barba por fazer, pinta, cicatriz) estão pintados na textura.</p>
+      <h4 id="calcadao">Calçadão do Rio Cadeia</h4>
+      <div class="grade">
+          <article class="ficha" id="arno">
+            <div class="fotos">
+              <img class="rosto" src="rostos/arno.jpg" width="320" height="320" alt="Rosto de Seu Arno" loading="lazy">
+              <img class="corpo" src="corpo/arno.jpg" width="220" height="330" alt="Seu Arno de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>SEU ARNO</h3>
+              <p class="papel-ficha">Ferreiro aposentado; pesca no calçadão do Rio Cadeia</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>68 anos</dd></div><div><dt>Altura</dt><dd>1,70 m</dd></div><div><dt>Porte</dt><dd>forte</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Queimado de sol, barba cheia grisalha e sobrancelhas grossas.</dd><dt>Corpo</dt><dd>Baixo e atarracado, braços e mãos grossos de quem bateu ferro a vida inteira.</dd><dt>Roupa</dt><dd>Camisa xadrez vermelha, calça cinza, botas e chapéu de palha. Vara de pescar.</dd><dt>Jeito</dt><dd>Fala pouco e desconfia de todo mundo. Agora só pesca de dia.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="hilda">
+            <div class="fotos">
+              <img class="rosto" src="rostos/hilda.jpg" width="320" height="320" alt="Rosto de Dona Hilda" loading="lazy">
+              <img class="corpo" src="corpo/hilda.jpg" width="220" height="330" alt="Dona Hilda de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>DONA HILDA</h3>
+              <p class="papel-ficha">Viúva do calçadão; procura a gata Mimi</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>74 anos</dd></div><div><dt>Altura</dt><dd>1,55 m</dd></div><div><dt>Porte</dt><dd>magro, curvado</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Rugas fundas, olheiras e óculos; cabelo grisalho sob um lenço roxo.</dd><dt>Corpo</dt><dd>Miúda e magra, um pouco curvada.</dd><dt>Roupa</dt><dd>Suéter vinho, saia comprida cinza, meia-calça e sapatos.</dd><dt>Jeito</dt><dd>Aflita, mas educada. Chama pela Mimi o tempo todo.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="lucas">
+            <div class="fotos">
+              <img class="rosto" src="rostos/lucas.jpg" width="320" height="320" alt="Rosto de Lucas" loading="lazy">
+              <img class="corpo" src="corpo/lucas.jpg" width="220" height="330" alt="Lucas de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>LUCAS</h3>
+              <p class="papel-ficha">Procura o cachorro Bóris; mora na última casa antes da ponte</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>19 anos</dd></div><div><dt>Altura</dt><dd>1,81 m</dd></div><div><dt>Porte</dt><dd>magro</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Pele morena, barba rala e olhos castanhos.</dd><dt>Corpo</dt><dd>Alto e magro, anda depressa.</dd><dt>Roupa</dt><dd>Jaqueta azul de gola cinza, calça escura, tênis claros e boné vermelho.</dd><dt>Jeito</dt><dd>Agitado; assobia e grita pelo Bóris.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="marlene">
+            <div class="fotos">
+              <img class="rosto" src="rostos/marlene.jpg" width="320" height="320" alt="Rosto de Marlene" loading="lazy">
+              <img class="corpo" src="corpo/marlene.jpg" width="220" height="330" alt="Marlene de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>MARLENE</h3>
+              <p class="papel-ficha">Repórter de um jornal de Porto Alegre</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>31 anos</dd></div><div><dt>Altura</dt><dd>1,68 m</dd></div><div><dt>Porte</dt><dd>médio</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Pele morena-clara, olhos castanhos e uma pinta na bochecha; cabelo preto em rabo de cavalo.</dd><dt>Corpo</dt><dd>Estatura média, ágil.</dd><dt>Roupa</dt><dd>Jaqueta mostarda, calça jeans e tênis. Câmera fotográfica na mão.</dd><dt>Jeito</dt><dd>Insistente e curiosa. Ninguém na cidade quer falar com ela.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="edgar">
+            <div class="fotos">
+              <img class="rosto" src="rostos/edgar.jpg" width="320" height="320" alt="Rosto de Professor Edgar" loading="lazy">
+              <img class="corpo" src="corpo/edgar.jpg" width="220" height="330" alt="Professor Edgar de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>PROFESSOR EDGAR</h3>
+              <p class="papel-ficha">Professor de história aposentado; conhece os diários dos colonos</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>79 anos</dd></div><div><dt>Altura</dt><dd>1,76 m</dd></div><div><dt>Porte</dt><dd>magro, curvado</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Cabelo e bigode brancos, óculos de aro claro, sobrancelhas grossas e rugas fundas.</dd><dt>Corpo</dt><dd>Alto e magro, curvado pela idade.</dd><dt>Roupa</dt><dd>Terno marrom gasto, camisa clara, gravata azul e boina cinza. Sempre com um livro.</dd><dt>Jeito</dt><dd>Fala devagar, como em sala de aula. Encara quem passa.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="lauro">
+            <div class="fotos">
+              <img class="rosto" src="rostos/lauro.jpg" width="320" height="320" alt="Rosto de Seu Lauro" loading="lazy">
+              <img class="corpo" src="corpo/lauro.jpg" width="220" height="330" alt="Seu Lauro de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>SEU LAURO</h3>
+              <p class="papel-ficha">Espera o ônibus para Novo Hamburgo desde o meio-dia</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>66 anos</dd></div><div><dt>Altura</dt><dd>1,72 m</dd></div><div><dt>Porte</dt><dd>médio</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Grisalho, barba por fazer e olheiras de quem não dorme.</dd><dt>Corpo</dt><dd>Estatura média, ombros caídos.</dd><dt>Roupa</dt><dd>Jaqueta verde-oliva, calça cáqui, botas e boné verde. Mala do lado.</dd><dt>Jeito</dt><dd>Cansado e decidido a ir embora da cidade.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="katia">
+            <div class="fotos">
+              <img class="rosto" src="rostos/katia.jpg" width="320" height="320" alt="Rosto de Kátia" loading="lazy">
+              <img class="corpo" src="corpo/katia.jpg" width="220" height="330" alt="Kátia de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>KÁTIA</h3>
+              <p class="papel-ficha">Operária do turno da noite na fábrica de calçados</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>27 anos</dd></div><div><dt>Altura</dt><dd>1,62 m</dd></div><div><dt>Porte</dt><dd>magro</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Pele morena, olhos castanhos e olheiras do turno da noite; cabelo preto em rabo de cavalo.</dd><dt>Corpo</dt><dd>Magra, de estatura mediana.</dd><dt>Roupa</dt><dd>Camisa azul-clara, calça azul-marinho e sapatos. Sacola de pano.</dd><dt>Jeito</dt><dd>Assustada; olha para trás enquanto anda.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="bruno">
+            <div class="fotos">
+              <img class="rosto" src="rostos/bruno.jpg" width="320" height="320" alt="Rosto de Seu Bruno" loading="lazy">
+              <img class="corpo" src="corpo/bruno.jpg" width="220" height="330" alt="Seu Bruno de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>SEU BRUNO</h3>
+              <p class="papel-ficha">Dono da floricultura</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>56 anos</dd></div><div><dt>Altura</dt><dd>1,77 m</dd></div><div><dt>Porte</dt><dd>forte</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Cabelo castanho, bigode, óculos e olhos verdes.</dd><dt>Corpo</dt><dd>Encorpado, com a barriga de quem passou dos cinquenta.</dd><dt>Roupa</dt><dd>Macacão verde sobre camisa clara e botas. Regador na mão.</dd><dt>Jeito</dt><dd>Calado e observador; encara quem passa.</dd></dl>
+            </div>
+          </article>
+      </div>
+      <h4 id="praca">Praça 10 de Abril</h4>
+      <div class="grade">
+          <article class="ficha" id="valdir">
+            <div class="fotos">
+              <img class="rosto" src="rostos/valdir.jpg" width="320" height="320" alt="Rosto de Seu Valdir" loading="lazy">
+              <img class="corpo" src="corpo/valdir.jpg" width="220" height="330" alt="Seu Valdir de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>SEU VALDIR</h3>
+              <p class="papel-ficha">Gaúcho aposentado; toma chimarrão no banco da praça</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>72 anos</dd></div><div><dt>Altura</dt><dd>1,71 m</dd></div><div><dt>Porte</dt><dd>magro</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Pele curtida, bigode grisalho, sobrancelhas grossas e uma cicatriz antiga na bochecha.</dd><dt>Corpo</dt><dd>Magro e rijo apesar da idade.</dd><dt>Roupa</dt><dd>Chapéu de aba preto, jaqueta escura, camisa vermelha e calça clara. Cuia e garrafa térmica.</dd><dt>Jeito</dt><dd>De poucas palavras. Viveu o caso de 1978 e não esqueceu.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="erna">
+            <div class="fotos">
+              <img class="rosto" src="rostos/erna.jpg" width="320" height="320" alt="Rosto de Dona Erna" loading="lazy">
+              <img class="corpo" src="corpo/erna.jpg" width="220" height="330" alt="Dona Erna de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>DONA ERNA</h3>
+              <p class="papel-ficha">Vende cuca na banca da praça</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>63 anos</dd></div><div><dt>Altura</dt><dd>1,58 m</dd></div><div><dt>Porte</dt><dd>gordo</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Bochechas coradas e cabelo loiro-acinzentado preso em coque.</dd><dt>Corpo</dt><dd>Baixa e cheinha.</dd><dt>Roupa</dt><dd>Vestido verde, avental branco, meia-calça e sapatos.</dd><dt>Jeito</dt><dd>Prática e direta. Perdeu as doze galinhas numa noite só.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="joao">
+            <div class="fotos">
+              <img class="rosto" src="rostos/joao.jpg" width="320" height="320" alt="Rosto de Joãozinho" loading="lazy">
+              <img class="corpo" src="corpo/joao.jpg" width="220" height="330" alt="Joãozinho de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>JOÃOZINHO</h3>
+              <p class="papel-ficha">Aluno da 4ª série; o cachorro dele sumiu no mato</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>9 anos</dd></div><div><dt>Altura</dt><dd>1,30 m</dd></div><div><dt>Porte</dt><dd>magro</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Cabelo castanho, olhos verdes e sardas no nariz.</dd><dt>Corpo</dt><dd>Franzino.</dd><dt>Roupa</dt><dd>Suéter marrom, bermuda azul-marinho, meias claras e sapatos.</dd><dt>Jeito</dt><dd>Quieto; fala pouco e fica olhando fixo.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="ana">
+            <div class="fotos">
+              <img class="rosto" src="rostos/ana.jpg" width="320" height="320" alt="Rosto de Ana" loading="lazy">
+              <img class="corpo" src="corpo/ana.jpg" width="220" height="330" alt="Ana de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>ANA</h3>
+              <p class="papel-ficha">Tenta ligar para a tia que mora na beira do mato</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>22 anos</dd></div><div><dt>Altura</dt><dd>1,66 m</dd></div><div><dt>Porte</dt><dd>magro</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Cabelo ruivo-escuro comprido, olhos verdes e olheiras de choro.</dd><dt>Corpo</dt><dd>Magra, de estatura mediana.</dd><dt>Roupa</dt><dd>Suéter cinza-claro com uma faixa bordada vinho, calça azul-marinho e sapatos.</dd><dt>Jeito</dt><dd>Ansiosa; não larga o orelhão.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="alfredo">
+            <div class="fotos">
+              <img class="rosto" src="rostos/alfredo.jpg" width="320" height="320" alt="Rosto de Seu Alfredo" loading="lazy">
+              <img class="corpo" src="corpo/alfredo.jpg" width="220" height="330" alt="Seu Alfredo de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>SEU ALFREDO</h3>
+              <p class="papel-ficha">Aposentado; dá a volta na praça com a esposa há cinquenta anos</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>81 anos</dd></div><div><dt>Altura</dt><dd>1,69 m</dd></div><div><dt>Porte</dt><dd>magro, curvado</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Cabelo branco, olhos azuis, rosto muito enrugado e olheiras.</dd><dt>Corpo</dt><dd>Magro e curvado; anda de bengala.</dd><dt>Roupa</dt><dd>Terno marrom, gravata e chapéu de feltro.</dd><dt>Jeito</dt><dd>Educado e protetor com a Wilma. Não dorme desde que arranharam a janela.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="wilma">
+            <div class="fotos">
+              <img class="rosto" src="rostos/wilma.jpg" width="320" height="320" alt="Rosto de Dona Wilma" loading="lazy">
+              <img class="corpo" src="corpo/wilma.jpg" width="220" height="330" alt="Dona Wilma de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>DONA WILMA</h3>
+              <p class="papel-ficha">Esposa do Seu Alfredo</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>78 anos</dd></div><div><dt>Altura</dt><dd>1,53 m</dd></div><div><dt>Porte</dt><dd>médio, curvado</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Cabelo branco em coque, óculos e olhos azuis.</dd><dt>Corpo</dt><dd>Baixinha e um pouco curvada.</dd><dt>Roupa</dt><dd>Suéter lilás com faixa bordada, saia comprida roxa e meia-calça. Sacola na mão.</dd><dt>Jeito</dt><dd>Carinhosa; chama todo mundo de querido.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="paula">
+            <div class="fotos">
+              <img class="rosto" src="rostos/paula.jpg" width="320" height="320" alt="Rosto de Paula" loading="lazy">
+              <img class="corpo" src="corpo/paula.jpg" width="220" height="330" alt="Paula de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>PAULA</h3>
+              <p class="papel-ficha">Atendente da Teewald Store</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>24 anos</dd></div><div><dt>Altura</dt><dd>1,71 m</dd></div><div><dt>Porte</dt><dd>magro</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Ruiva de rabo de cavalo, sardas e olhos verdes.</dd><dt>Corpo</dt><dd>Alta e magra.</dd><dt>Roupa</dt><dd>Camisa polo vinho do uniforme, calça preta e sapatos.</dd><dt>Jeito</dt><dd>Apressada para fechar a loja. Encara quem chega.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="romeu">
+            <div class="fotos">
+              <img class="rosto" src="rostos/romeu.jpg" width="320" height="320" alt="Rosto de Seu Romeu" loading="lazy">
+              <img class="corpo" src="corpo/romeu.jpg" width="220" height="330" alt="Seu Romeu de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>SEU ROMEU</h3>
+              <p class="papel-ficha">Funcionário da Prefeitura; tem um potreiro fora da cidade</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>52 anos</dd></div><div><dt>Altura</dt><dd>1,75 m</dd></div><div><dt>Porte</dt><dd>gordo</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Cabelo preto penteado, bigode aparado e sobrancelhas grossas.</dd><dt>Corpo</dt><dd>Corpulento, com barriga sob o paletó.</dd><dt>Roupa</dt><dd>Terno cinza, gravata vermelha e sapatos engraxados. Pasta de couro.</dd><dt>Jeito</dt><dd>Fala como em discurso oficial e diz que está tudo sob controle.</dd></dl>
+            </div>
+          </article>
+      </div>
+      <h4 id="igreja">Igreja Matriz e cemitério</h4>
+      <div class="grade">
+          <article class="ficha" id="bernardo">
+            <div class="fotos">
+              <img class="rosto" src="rostos/bernardo.jpg" width="320" height="320" alt="Rosto de Padre Bernardo" loading="lazy">
+              <img class="corpo" src="corpo/bernardo.jpg" width="220" height="330" alt="Padre Bernardo de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>PADRE BERNARDO</h3>
+              <p class="papel-ficha">Pároco da Igreja Matriz</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>70 anos</dd></div><div><dt>Altura</dt><dd>1,78 m</dd></div><div><dt>Porte</dt><dd>magro</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Cabelo branco curto, óculos de aro dourado e olheiras de quem reza à noite.</dd><dt>Corpo</dt><dd>Alto e magro, postura reta.</dd><dt>Roupa</dt><dd>Batina preta com colarinho clerical e sapatos pretos.</dd><dt>Jeito</dt><dd>Calmo e firme. Tranca a igreja antes de anoitecer.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="irma">
+            <div class="fotos">
+              <img class="rosto" src="rostos/irma.jpg" width="320" height="320" alt="Rosto de Dona Irma" loading="lazy">
+              <img class="corpo" src="corpo/irma.jpg" width="220" height="330" alt="Dona Irma de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>DONA IRMA</h3>
+              <p class="papel-ficha">Beata; reza o terço todo dia na igreja</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>76 anos</dd></div><div><dt>Altura</dt><dd>1,52 m</dd></div><div><dt>Porte</dt><dd>magro, curvado</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Cabelo branco sob lenço preto, olhos cinzentos e uma pinta perto da boca.</dd><dt>Corpo</dt><dd>Pequena, magra e curvada.</dd><dt>Roupa</dt><dd>Vestido preto de luto, lenço preto, meia-calça e sapatos.</dd><dt>Jeito</dt><dd>Severa; acha que tudo é castigo de Deus.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="rudi">
+            <div class="fotos">
+              <img class="rosto" src="rostos/rudi.jpg" width="320" height="320" alt="Rosto de Rudi, O Carteiro" loading="lazy">
+              <img class="corpo" src="corpo/rudi.jpg" width="220" height="330" alt="Rudi, O Carteiro de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>RUDI, O CARTEIRO</h3>
+              <p class="papel-ficha">Carteiro da cidade há quinze anos; caçula de uma família de sete irmãos</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>38 anos</dd></div><div><dt>Altura</dt><dd>1,79 m</dd></div><div><dt>Porte</dt><dd>forte</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Pele morena, cabelo preto curto, barba por fazer e olhos castanhos.</dd><dt>Corpo</dt><dd>Forte, com as pernas de quem anda o dia inteiro.</dd><dt>Roupa</dt><dd>Camisa polo amarela de gola azul, calça azul, boné azul e sacola de cartas.</dd><dt>Jeito</dt><dd>Prestativo, mas nervoso esta semana.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="otto">
+            <div class="fotos">
+              <img class="rosto" src="rostos/otto.jpg" width="320" height="320" alt="Rosto de Seu Otto" loading="lazy">
+              <img class="corpo" src="corpo/otto.jpg" width="220" height="330" alt="Seu Otto de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>SEU OTTO</h3>
+              <p class="papel-ficha">Zelador do cemitério há trinta anos</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>69 anos</dd></div><div><dt>Altura</dt><dd>1,74 m</dd></div><div><dt>Porte</dt><dd>forte</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Barba cheia grisalha, sobrancelhas grossas e uma cicatriz cortando a sobrancelha.</dd><dt>Corpo</dt><dd>Largo e forte, mãos calejadas.</dd><dt>Roupa</dt><dd>Macacão azul-marinho sobre camisa xadrez, botas e boné verde. Rastelo na mão.</dd><dt>Jeito</dt><dd>Fala pouco; respeita os mortos e não gosta de barulho.</dd></dl>
+            </div>
+          </article>
+      </div>
+      <h4 id="kartoffelfest">Kartoffelfest e campo de futebol</h4>
+      <div class="grade">
+          <article class="ficha" id="ivo">
+            <div class="fotos">
+              <img class="rosto" src="rostos/ivo.jpg" width="320" height="320" alt="Rosto de Seu Ivo" loading="lazy">
+              <img class="corpo" src="corpo/ivo.jpg" width="220" height="330" alt="Seu Ivo de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>SEU IVO</h3>
+              <p class="papel-ficha">Da comissão da Kartoffelfest; vigia o pavilhão de noite</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>58 anos</dd></div><div><dt>Altura</dt><dd>1,80 m</dd></div><div><dt>Porte</dt><dd>gordo</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Ruivo, de bigode ruivo, olhos azuis e rosto corado.</dd><dt>Corpo</dt><dd>Grande e pesado.</dd><dt>Roupa</dt><dd>Camisa xadrez vermelha, calça marrom, botas e chapéu. Caneca de chope na mão.</dd><dt>Jeito</dt><dd>Sério e prestativo; cuida do pavilhão vazio.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="gertrud">
+            <div class="fotos">
+              <img class="rosto" src="rostos/gertrud.jpg" width="320" height="320" alt="Rosto de Dona Gertrud" loading="lazy">
+              <img class="corpo" src="corpo/gertrud.jpg" width="220" height="330" alt="Dona Gertrud de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>DONA GERTRUD</h3>
+              <p class="papel-ficha">Cozinheira da Kartoffelhaus desde a primeira festa</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>71 anos</dd></div><div><dt>Altura</dt><dd>1,60 m</dd></div><div><dt>Porte</dt><dd>gordo</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Rosto redondo e corado, cabelo grisalho em coque e olhos azuis.</dd><dt>Corpo</dt><dd>Baixa e robusta.</dd><dt>Roupa</dt><dd>Vestido vermelho-escuro com avental branco, meia-calça e sapatos. Cesta no braço.</dd><dt>Jeito</dt><dd>Maternal; dá comida a todo mundo.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="luana">
+            <div class="fotos">
+              <img class="rosto" src="rostos/luana.jpg" width="320" height="320" alt="Rosto de Luana" loading="lazy">
+              <img class="corpo" src="corpo/luana.jpg" width="220" height="330" alt="Luana de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>LUANA</h3>
+              <p class="papel-ficha">Rainha da Kartoffelfest deste ano</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>18 anos</dd></div><div><dt>Altura</dt><dd>1,67 m</dd></div><div><dt>Porte</dt><dd>magro</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Loira de cabelo comprido e olhos azuis.</dd><dt>Corpo</dt><dd>Magra, de estatura mediana.</dd><dt>Roupa</dt><dd>Vestido típico verde com avental claro, meia-calça e sapatos.</dd><dt>Jeito</dt><dd>Tristonha; prometeu à mãe voltar antes de escurecer.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="tiago">
+            <div class="fotos">
+              <img class="rosto" src="rostos/tiago.jpg" width="320" height="320" alt="Rosto de Tiago" loading="lazy">
+              <img class="corpo" src="corpo/tiago.jpg" width="220" height="330" alt="Tiago de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>TIAGO</h3>
+              <p class="papel-ficha">Centroavante do time de futebol da cidade</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>17 anos</dd></div><div><dt>Altura</dt><dd>1,78 m</dd></div><div><dt>Porte</dt><dd>médio</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Pele morena, cabelo preto curto e olhos castanhos.</dd><dt>Corpo</dt><dd>Atlético.</dd><dt>Roupa</dt><dd>Camisa vermelha número 9, calção preto, meias vermelhas e chuteiras.</dd><dt>Jeito</dt><dd>Fala pouco; ficou sozinho no campo.</dd></dl>
+            </div>
+          </article>
+      </div>
+    </section>
+
+    <section id="campanha">
+      <h2>Personagens da campanha</h2>
+      <p class="intro">Os mortos e a bruxa que aparecem nos capítulos.</p>
+      
+      <div class="grade">
+          <article class="ficha" id="otilia">
+            <div class="fotos">
+              <img class="rosto" src="rostos/otilia.jpg" width="320" height="320" alt="Rosto de Otília Kranz" loading="lazy">
+              <img class="corpo" src="corpo/otilia.jpg" width="220" height="330" alt="Otília Kranz de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>OTÍLIA KRANZ</h3>
+              <p class="papel-ficha">A bruxa do mato. Chefe do último capítulo.</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>enterrada viva em 1878</dd></div><div><dt>Altura</dt><dd>≈ 2,41 m</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Pele cinzenta e olhos verdes que brilham entre as mechas do cabelo branco, comprido e solto.</dd><dt>Corpo</dt><dd>Velha alta e muito magra; flutua acima do chão.</dd><dt>Roupa</dt><dd>Manto preto forrado de vermelho.</dd><dt>Jeito</dt><dd>Curandeira viúva que jurou voltar. Invoca cães, almas e morcegos.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="lucia">
+            <div class="fotos">
+              <img class="rosto" src="rostos/lucia.jpg" width="320" height="320" alt="Rosto de Lúcia Weber" loading="lazy">
+              <img class="corpo" src="corpo/lucia.jpg" width="220" height="330" alt="Lúcia Weber de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>LÚCIA WEBER</h3>
+              <p class="papel-ficha">A moça da fábrica de calçados (capítulo 3).</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>19, morta no incêndio de 1983</dd></div><div><dt>Altura</dt><dd>≈ 1,57 m</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Muito pálida, olhos escuros e tristes com olheiras e boca pequena; cabelo escuro com franja.</dd><dt>Corpo</dt><dd>Magra e translúcida.</dd><dt>Roupa</dt><dd>Vestido de operária azul-claro de bolinhas, avental encardido, gola branca e barra chamuscada.</dd><dt>Jeito</dt><dd>Não ataca. Chora, aponta o caminho e só quer bater o ponto para ir para casa.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="capataz">
+            <div class="fotos">
+              <img class="rosto" src="rostos/capataz.jpg" width="320" height="320" alt="Rosto de O Capataz" loading="lazy">
+              <img class="corpo" src="corpo/capataz.jpg" width="220" height="330" alt="O Capataz de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>O CAPATAZ</h3>
+              <p class="papel-ficha">Kurt, o das chaves. Chefe da fábrica (capítulo 3).</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>morto no incêndio de 1983</dd></div><div><dt>Altura</dt><dd>≈ 2,65 m</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Pele carbonizada, preta e marrom, cortada por rachaduras em brasa.</dd><dt>Corpo</dt><dd>Grande e pesado, bem maior que um homem.</dd><dt>Roupa</dt><dd>Terno, colete, camisa e gravata queimados, com furos de borda em brasa. Chaves e corrente.</dd><dt>Jeito</dt><dd>Grita e apaga as lâmpadas. Na luz do lampião, ajoelha.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="coveiro">
+            <div class="fotos">
+              <img class="rosto" src="rostos/coveiro.jpg" width="320" height="320" alt="Rosto de O Coveiro" loading="lazy">
+              <img class="corpo" src="corpo/coveiro.jpg" width="220" height="330" alt="O Coveiro de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>O COVEIRO</h3>
+              <p class="papel-ficha">Alma presa na cripta dos fundadores (capítulo 8).</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>colono do século XIX</dd></div><div><dt>Altura</dt><dd>≈ 2,97 m</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Crânio magro e pálido, órbitas fundas e boca aberta num lamento.</dd><dt>Corpo</dt><dd>Um colono esticado a quase três metros, com braços compridos.</dd><dt>Roupa</dt><dd>Camisa de colono com cinto e suspensórios, esfarrapada; acaba em fiapos no lugar das pernas.</dd><dt>Jeito</dt><dd>Guarda a cruz de ferro. Agarra com um frio que fere.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="mulher">
+            <div class="fotos">
+              <img class="rosto" src="rostos/mulher.jpg" width="320" height="320" alt="Rosto de A Mulher de Preto" loading="lazy">
+              <img class="corpo" src="corpo/mulher.jpg" width="220" height="330" alt="A Mulher de Preto de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>A MULHER DE PRETO</h3>
+              <p class="papel-ficha">O vulto da fotografia de 1910 (capítulo 9).</p>
+              <dl class="dados"><div><dt>Idade</dt><dd>desconhecida</dd></div><div><dt>Altura</dt><dd>≈ 2,12 m</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Rosto cinzento e vazio sob o xale, com órbitas fundas e boca aberta.</dd><dt>Corpo</dt><dd>Alta e magra, translúcida.</dd><dt>Roupa</dt><dd>Vestido longo escuro e arroxeado e xale sobre a cabeça, acabando em fiapos.</dd><dt>Jeito</dt><dd>Aparece em todas as fotos da paróquia, cada vez mais perto. Foge rindo para o telhado.</dd></dl>
+            </div>
+          </article>
+      </div>
+    </section>
+
+    <section id="criaturas">
+      <h2>Criaturas</h2>
+      <p class="intro">O que anda no mato. Altura medida no modelo do jogo.</p>
+      
+      <div class="grade">
+          <article class="ficha" id="chupa">
+            <div class="fotos">
+              <img class="rosto" src="rostos/chupa.jpg" width="320" height="320" alt="Rosto de O Chupacabras" loading="lazy">
+              <img class="corpo" src="corpo/chupa.jpg" width="220" height="330" alt="O Chupacabras de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>O CHUPACABRAS</h3>
+              <p class="papel-ficha">Blutsauger, o bicho da Otília. O alvo da caçada do começo ao fim.</p>
+              <dl class="dados"><div><dt>Altura</dt><dd>≈ 1,37 m</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Cabeça de réptil, boca cheia de presas e olhos vermelhos enormes que brilham no escuro.</dd><dt>Corpo</dt><dd>Bípede corcunda de pele verde-acinzentada; anda aos pulos com pernas de canguru, tem espinhos vermelhos nas costas e garras compridas.</dd><dt>Jeito</dt><dd>Rodeia, chia agachado e dá o bote. Ferido, foge mato adentro.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="cao">
+            <div class="fotos">
+              <img class="rosto" src="rostos/cao.jpg" width="320" height="320" alt="Rosto de Cão de Fogo" loading="lazy">
+              <img class="corpo" src="corpo/cao.jpg" width="220" height="330" alt="Cão de Fogo de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>CÃO DE FOGO</h3>
+              <p class="papel-ficha">Höllenhund, os cachorrinhos da bruxa.</p>
+              <dl class="dados"><div><dt>Altura</dt><dd>≈ 1,03 m</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Cabeça de cachorro magro, orelhas em pé, presas e olhos amarelos.</dd><dt>Corpo</dt><dd>Magro e preto, com rachaduras em brasa e fogo saindo das costas.</dd><dt>Jeito</dt><dd>Caça em matilha. Apaga em qualquer água.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="et">
+            <div class="fotos">
+              <img class="rosto" src="rostos/et.jpg" width="320" height="320" alt="Rosto de O Visitante Pequeno" loading="lazy">
+              <img class="corpo" src="corpo/et.jpg" width="220" height="330" alt="O Visitante Pequeno de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>O VISITANTE PEQUENO</h3>
+              <p class="papel-ficha">Os ETs de Varginha, atrás da pedra verde do morro.</p>
+              <dl class="dados"><div><dt>Altura</dt><dd>≈ 1,25 m</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Cabeçorra com três calombos e olhos vermelhos enormes.</dd><dt>Corpo</dt><dd>Uns 1,2 m, pele marrom e oleosa.</dd><dt>Jeito</dt><dd>Anda em bando, de lado, e joga orbes pelas mãos. Apanhando, pisca e some.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="etchefe">
+            <div class="fotos">
+              <img class="rosto" src="rostos/etchefe.jpg" width="320" height="320" alt="Rosto de O Visitante" loading="lazy">
+              <img class="corpo" src="corpo/etchefe.jpg" width="220" height="330" alt="O Visitante de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>O VISITANTE</h3>
+              <p class="papel-ficha">O chefe dos ETs (capítulo 4).</p>
+              <dl class="dados"><div><dt>Altura</dt><dd>≈ 2,37 m</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Cabeça grande e lisa, olhos vermelhos.</dd><dt>Corpo</dt><dd>Alto, cinza-arroxeado, com colar de metal verde.</dd><dt>Jeito</dt><dd>Levanta escudo psíquico, solta onda de choque e chama os pequenos.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="fera">
+            <div class="fotos">
+              <img class="rosto" src="rostos/fera.jpg" width="320" height="320" alt="Rosto de A Fera da Madrugada" loading="lazy">
+              <img class="corpo" src="corpo/fera.jpg" width="220" height="330" alt="A Fera da Madrugada de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>A FERA DA MADRUGADA</h3>
+              <p class="papel-ficha">O bicho da madrugada dos sítios (capítulo 5).</p>
+              <dl class="dados"><div><dt>Altura</dt><dd>≈ 2,75 m</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Cabeça baixa entre boi e lobo, chifres curvos, presas e olhos amarelos.</dd><dt>Corpo</dt><dd>Quadrúpede de 2,3 m de cernelha e 4 m de comprido; corcunda de pelo sujo, anda nos nós dos dedos.</dd><dt>Jeito</dt><dd>Investe de cabeça baixa e não sabe frear.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="lobisomem">
+            <div class="fotos">
+              <img class="rosto" src="rostos/lobisomem.jpg" width="320" height="320" alt="Rosto de O Lobisomem" loading="lazy">
+              <img class="corpo" src="corpo/lobisomem.jpg" width="220" height="330" alt="O Lobisomem de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>O LOBISOMEM</h3>
+              <p class="papel-ficha">A sina do sétimo filho (capítulo 7). Por baixo do pelo, um morador.</p>
+              <dl class="dados"><div><dt>Altura</dt><dd>≈ 2,16 m</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Cabeça de lobo e olhos âmbar.</dd><dt>Corpo</dt><dd>Bípede corcunda, com pernas de cachorro e braços compridos com garras.</dd><dt>Roupa</dt><dd>Restos de camisa xadrez e calça rasgada.</dd><dt>Jeito</dt><dd>Corre de quatro e levanta para atacar. Só a prata segura a ferida.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="morcego">
+            <div class="fotos">
+              <img class="rosto" src="rostos/morcego.jpg" width="320" height="320" alt="Rosto de Morcego-vampiro Gigante" loading="lazy">
+              <img class="corpo" src="corpo/morcego.jpg" width="220" height="330" alt="Morcego-vampiro Gigante de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>MORCEGO-VAMPIRO GIGANTE</h3>
+              <p class="papel-ficha">Desmodus do tamanho de um cachorro (capítulo 10).</p>
+              <dl class="dados"><div><dt>Envergadura</dt><dd>1,80 m</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Focinho achatado, orelhas pontudas e dentes à mostra.</dd><dt>Corpo</dt><dd>Do tamanho de um cachorro, pelo marrom e asas de couro.</dd><dt>Jeito</dt><dd>Rodeia no alto, guincha e mergulha para morder.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="rainha">
+            <div class="fotos">
+              <img class="rosto" src="rostos/rainha.jpg" width="320" height="320" alt="Rosto de A Rainha dos Morcegos" loading="lazy">
+              <img class="corpo" src="corpo/rainha.jpg" width="220" height="330" alt="A Rainha dos Morcegos de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>A RAINHA DOS MORCEGOS</h3>
+              <p class="papel-ficha">Mãe de todos os ninhos, na torre da Matriz (capítulo 10).</p>
+              <dl class="dados"><div><dt>Envergadura</dt><dd>4,70 m</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>O mesmo focinho, bem maior.</dd><dt>Corpo</dt><dd>Uma morcega 2,6 vezes maior, com um rasgo na asa direita.</dd><dt>Jeito</dt><dd>Rasantes longos e guincho que derruba. Cansada, pendura-se para tomar fôlego.</dd></dl>
+            </div>
+          </article>
+          <article class="ficha" id="alma">
+            <div class="fotos">
+              <img class="rosto" src="rostos/alma.jpg" width="320" height="320" alt="Rosto de Alma Presa" loading="lazy">
+              <img class="corpo" src="corpo/alma.jpg" width="220" height="330" alt="Alma Presa de corpo inteiro" loading="lazy">
+            </div>
+            <div class="texto">
+              <h3>ALMA PRESA</h3>
+              <p class="papel-ficha">Os que morreram com medo, presos pela bruxa.</p>
+              <dl class="dados"><div><dt>Altura</dt><dd>≈ 1,86 m</dd></div></dl>
+              <dl class="desc"><dt>Rosto</dt><dd>Crânio magro e pálido, sem olhos.</dd><dt>Corpo</dt><dd>Figura translúcida que flutua, com braços compridos.</dd><dt>Roupa</dt><dd>Roupa de colono esfarrapada, acabando em fiapos.</dd><dt>Jeito</dt><dd>Atravessa paredes e rouba o calor de quem toca. Só a luz do lampião mata.</dd></dl>
+            </div>
+          </article>
+      </div>
+    </section>
+    <footer>Gerado por <code>npm run retratos</code> a partir de <code>src/game/npcData.js</code> e <code>tools/retratos/outros.js</code>. Todos os nomes, personagens e histórias são inventados.</footer>
+  </div>
+</body>
+</html>
