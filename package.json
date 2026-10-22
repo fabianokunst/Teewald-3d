@@ -17,6 +17,7 @@
     "site": "node tools/site.mjs",
     "documentos": "node tools/documentos-site.mjs",
     "exportar": "node tools/exportar.mjs",
+    "texturas": "node tools/texturas.mjs",
     "traduzir": "node tools/traduzir.mjs",
     "sons": "node tools/sons.mjs"
   },

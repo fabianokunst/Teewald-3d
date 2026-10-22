@@ -137,6 +137,7 @@ O navegador abre em `http://localhost:5173`.
 | `npm run traduzir` | acha textos novos no código e atualiza os dicionários |
 | `npm run mapdata` | regera `src/world/mapdata.json` (`-- --refresh` baixa tudo de novo) |
 | `npm run exportar` | grava o protagonista em `exportados/teewald-protagonista.glb` |
+| `npm run texturas` | grava o atlas de textura do protagonista em `texture-templates/forasteiro/` (`-- arno hilda` para moradores) |
 | `npm run shot` | uma captura do jogo (`node tools/screenshot.mjs saida.png "?skip=1"`) |
 | `npm run capturas` | refaz as fotos do site |
 | `npm run retratos` | refaz a lista completa de `personagens/` (criaturas incluídas) e as fichas de `site/personagens.html` |
@@ -953,6 +954,12 @@ de pistola (`npm run sons -- passo sino` mede só os que têm essas palavras no 
   multiplicando a *Base Color*. **Limite:** a animação do jogo é procedural (IK em código),
   então o arquivo leva o esqueleto mas nenhum clipe de animação. O código fica em
   `src/engine/exporter.js` (`GLTFExporter`), carregado só quando chamado.
+- `npm run texturas` (`tools/texturas.mjs`) grava em `texture-templates/<personagem>/` o atlas
+  que `src/game/heroTexture.js` pinta: `atlas.png` (o arquivo do jogo, 256 px no protagonista e
+  128 nos moradores), `atlas-ampliado.png` (1024 px sem suavizar), `mapa.png` (com o contorno e o
+  nome de cada parte) e `partes/` (tronco, manga, perna, cabeça... recortados do ampliado). Sem
+  argumento sai o protagonista (`forasteiro`); `npm run texturas -- arno hilda` faz os moradores
+  pelo id de `src/game/npcData.js`. É só para ver: o jogo não lê essa pasta.
 
 ## Build, publicação e sincronização
 
@@ -1398,11 +1405,12 @@ src/ui/                 menu, hud, inventory, dialogue, paper, journal, minimap,
 src/i18n/               index.js (tr), en.js, es.js, de.js, GUIA.md
 
 tools/                  build-mapdata, test-campaign + campaign-bot, audit, sons, traduzir,
-                        screenshot, shots, capturas-site, retratos, site, exportar
+                        screenshot, shots, capturas-site, retratos, site, exportar, texturas
 site/                   site promocional (HTML estático, separado do jogo)
 personagens/            lista completa dos personagens e criaturas (gerada por npm run retratos)
 texture/                fotos de material (servidas como pasta pública)
 exportados/             teewald-protagonista.glb
+texture-templates/      atlas de textura de cada personagem, para ver (npm run texturas)
 .github/workflows/      deploy.yml (GitHub Pages)
 ```
 
