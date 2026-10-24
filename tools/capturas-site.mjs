@@ -39,7 +39,7 @@ const FOTOS = [
   { nome: 'letreiro', cena: { clima: 'tarde', cam: [-263.5, 1.9, 164.5], alvo: [-273.5, 1.5, 153.5], fov: 58 } },
   { nome: 'praca', cena: { clima: 'tarde', cam: [-190, 3.4, 52], alvo: [-176, 1.4, 70], fov: 56 } },
   { nome: 'praca-noite', cena: { clima: 'noite', cam: [-164.8, 3, 57.4], alvo: [-180.8, 1.2, 70.4], fov: 55 } },
-  { nome: 'igreja-dentro', cena: { clima: 'tarde', interior: ['igreja', 'nave'], cam: [2110, 402.4, 1706], alvo: [2110, 401.8, 1736], fov: 60 } },
+  { nome: 'igreja-dentro', cena: { clima: 'tarde', interior: ['igreja', 'nave'], cam: [10110, 402.4, 9706], alvo: [10110, 401.8, 9736], fov: 60 } },
   { nome: 'kartoffelfest', cena: { clima: 'anoitecer', cam: [-236, 2.4, 171.5], alvo: [-200, 2.2, 201], fov: 60 } },
   { nome: 'kartoffelfest-portico', cena: { clima: 'noite', cam: [-253.1, 2, 157.7], alvo: [-225, 2.6, 181], fov: 56 } },
   { nome: 'enxaimel', cena: { clima: 'tarde', cam: [-150, 2, -116], alvo: [-128, 3, -103.6], fov: 55 } },
@@ -108,7 +108,7 @@ const FOTOS = [
   { nome: 'estilo-ps1', ps1: true, cena: { clima: 'anoitecer', cam: [-104.2, 15, 58.5], alvo: [-42.8, 13, 40.4], fov: 50 } },
   { nome: 'ps1-praca', ps1: true, cena: { clima: 'noite', cam: [-164.8, 3, 57.4], alvo: [-180.8, 1.2, 70.4], fov: 55 } },
   { nome: 'ps1-calcadao', ps1: true, cena: { clima: 'tarde', cam: [-318, 2.6, 258], alvo: [-333, 1.2, 330], fov: 55 } },
-  { nome: 'ps1-igreja-dentro', ps1: true, cena: { clima: 'tarde', interior: ['igreja', 'nave'], cam: [2110, 402.4, 1706], alvo: [2110, 401.8, 1736], fov: 60 } },
+  { nome: 'ps1-igreja-dentro', ps1: true, cena: { clima: 'tarde', interior: ['igreja', 'nave'], cam: [10110, 402.4, 9706], alvo: [10110, 401.8, 9736], fov: 60 } },
 ];
 
 // ajudante instalado na página: monta cada cena

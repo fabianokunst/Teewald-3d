@@ -19,7 +19,8 @@
     "exportar": "node tools/exportar.mjs",
     "texturas": "node tools/texturas.mjs",
     "traduzir": "node tools/traduzir.mjs",
-    "sons": "node tools/sons.mjs"
+    "sons": "node tools/sons.mjs",
+    "social": "node tools/social.mjs"
   },
   "dependencies": {
     "three": "^0.186.1"

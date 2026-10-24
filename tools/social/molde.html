@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Teewald · molde das peças do Instagram</title>
+<!-- Molde das peças do Instagram (npm run social). Usa os tokens e componentes do site
+     (site/css/site.css): rótulo, régua, cantos de HUD, papel e botão. O Node chama
+     monta({ ... }) e tira a foto da página no tamanho da peça. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Grenze+Gotisch:wght@600&family=Special+Elite&family=Spectral:ital,wght@0,400;0,600;1,400&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site/css/site.css">
+<style>
+  /* a peça inteira: 1080 de largura; post 1350 de altura, story e reels 1920 */
+  html, body { margin: 0; background: transparent; overflow: hidden; }
+  body::before { display: none; }   /* o grão do site: a foto já tem o do jogo */
+  body.com-fundo { background: var(--cor-fundo); }
+  .peca { position: relative; width: 1080px; height: var(--alto, 1350px); overflow: hidden; color: var(--cor-texto); font-family: var(--fonte-texto); }
+  .peca.transparente { background: transparent; }
+  .foto { position: absolute; inset: 0; background: center / cover no-repeat; }
+  .foto.borrada { filter: blur(18px) brightness(.38) saturate(.8); inset: -60px; }
+  /* sombras para o texto ler bem em cima da foto */
+  .sombra-alto { position: absolute; inset: 0 0 auto; height: 46%; background: linear-gradient(rgb(6 5 4 / .82), rgb(6 5 4 / .5) 45%, transparent); }
+  .sombra-baixo { position: absolute; inset: auto 0 0; height: 52%; background: linear-gradient(transparent, rgb(6 5 4 / .55) 40%, rgb(6 5 4 / .9)); }
+  .vinheta { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%, transparent 55%, rgb(0 0 0 / .55)); }
+  .peca .hud { inset: 40px; z-index: 3; }
+  .peca .hud i { width: 40px; height: 40px; border-width: 3px; }
+  .conteudo { position: absolute; z-index: 4; left: 96px; right: 96px; display: flex; flex-direction: column; }
+  .conteudo.alto { top: var(--margem-alto, 116px); }
+  .conteudo.baixo { bottom: var(--margem-baixo, 165px); }
+  .conteudo.meio { top: 50%; transform: translateY(-50%); }
+  .centro { align-items: center; text-align: center; }
+  /* letreiro em cima de imagem movimentada: uma sombra larga atrás do texto */
+  .fundo-escuro::before { content: ''; position: absolute; inset: -90px -160px; z-index: -1; background: radial-gradient(closest-side, rgb(6 5 4 / .7), rgb(6 5 4 / .35) 60%, transparent); }
+  .peca .rotulo { font-size: 34px; letter-spacing: .14em; margin: 0 0 18px; color: var(--cor-metal); text-shadow: 0 2px 0 rgb(0 0 0 / .8); }
+  .peca .rotulo::before { width: 34px; height: 3px; margin-right: 16px; }
+  .centro .rotulo::before { display: none; }
+  .peca .rotulo.fundo { align-self: flex-start; padding: 12px 20px 8px; background: rgb(6 5 4 / .8); }
+  .peca .regua { width: 210px; height: 3px; margin: 30px 0; }
+  .centro .regua { margin-inline: auto; }
+  .logo { margin: 0; font: 600 236px / .86 var(--fonte-titulo); color: var(--cor-texto-forte); letter-spacing: .005em; text-shadow: 0 6px 0 var(--cor-sombra-sangue), 0 0 60px rgb(0 0 0 / .7); }
+  .logo.medio { font-size: 168px; }
+  .logo.pequeno { font-size: 120px; }
+  .titulo { margin: 0; font: 600 96px / 1 var(--fonte-titulo); color: var(--cor-texto-forte); text-wrap: balance; text-shadow: 0 4px 0 var(--cor-sombra-sangue), 0 0 40px rgb(0 0 0 / .8); }
+  .titulo.grande { font-size: 124px; }
+  .titulo.menor { font-size: 80px; }
+  .frase { margin: 0; font: italic 400 52px / 1.2 var(--fonte-texto); color: var(--cor-texto); text-shadow: 0 2px 12px rgb(0 0 0 / .9); text-wrap: balance; }
+  .texto { margin: 26px 0 0; font: 400 38px / 1.42 var(--fonte-texto); color: var(--cor-texto); text-shadow: 0 2px 10px rgb(0 0 0 / .95); text-wrap: pretty; max-width: 26em; }
+  .texto b { color: var(--cor-destaque); font-weight: 600; }
+  .assinatura { position: absolute; z-index: 4; right: 96px; bottom: 74px; font: 600 64px / 1 var(--fonte-titulo); color: var(--cor-texto-forte); text-shadow: 0 3px 0 var(--cor-sombra-sangue); opacity: .92; }
+  .assinatura.esquerda { right: auto; left: 96px; }
+  .nota { margin: 22px 0 0; font: 34px / 1.2 var(--fonte-ui); letter-spacing: .1em; text-transform: uppercase; color: var(--cor-texto-suave); text-shadow: 0 2px 0 #000; }
+  .peca .botao { align-self: flex-start; --corte: 14px; min-height: 92px; padding: 10px 44px 6px; font-size: 52px; pointer-events: none; }
+  .centro .botao { align-self: center; }
+  .passa { position: absolute; z-index: 4; right: 96px; bottom: 82px; font: 38px / 1 var(--fonte-ui); letter-spacing: .12em; color: var(--cor-destaque); text-shadow: 0 2px 0 #000; }
+  .numero { position: absolute; z-index: 4; left: 96px; bottom: 82px; font: 38px / 1 var(--fonte-ui); letter-spacing: .12em; color: var(--cor-texto-suave); text-shadow: 0 2px 0 #000; }
+  /* citação */
+  .citacao-peca { margin: 0; padding-left: 44px; border-left: 4px solid var(--cor-sangue); }
+  .citacao-peca p { margin: 0; font: italic 400 64px / 1.28 var(--fonte-texto); color: var(--cor-texto-forte); text-shadow: 0 2px 14px rgb(0 0 0 / .95); text-wrap: balance; }
+  .citacao-peca footer { margin-top: 34px; font: 36px / 1.2 var(--fonte-ui); letter-spacing: .12em; text-transform: uppercase; color: var(--cor-metal); }
+  /* papel: documento do jogo pregado */
+  .peca .papel { position: absolute; z-index: 3; left: 50%; width: var(--largura-papel, 900px); transform: translateX(-50%) rotate(var(--giro, -1.5deg)); padding: 14px; }
+  .peca .papel::before { width: 34px; height: 34px; margin-left: -17px; top: -16px; }
+  /* olhos vermelhos no escuro (como na capa do site) */
+  .olhos { position: absolute; z-index: 2; display: flex; gap: 26px; }
+  .olhos i { width: 15px; height: 9px; border-radius: 50%; background: #ff5a3c; box-shadow: 0 0 10px 3px rgb(255 70 40 / .85), 0 0 34px 10px rgb(200 30 20 / .45); }
+  /* celular com o jogo */
+  .celular { position: absolute; z-index: 3; left: 50%; transform: translateX(-50%); width: var(--largura-celular, 560px); aspect-ratio: 9 / 19.5; border-radius: 64px; padding: 22px; background: linear-gradient(145deg, #2a2420, #0c0a09); box-shadow: inset 0 0 0 3px #3d3228, 0 40px 90px -20px rgb(0 0 0 / .95); }
+  .celular .tela { width: 100%; height: 100%; border-radius: 44px; background: #000 center / cover no-repeat; }
+  .celular.deitado { width: var(--largura-celular, 880px); aspect-ratio: 19.5 / 9; }
+  .lista { display: flex; flex-wrap: wrap; gap: 14px 18px; margin: 30px 0 0; padding: 0; list-style: none; font: 36px / 1 var(--fonte-ui); letter-spacing: .1em; text-transform: uppercase; }
+  .centro .lista { justify-content: center; }
+  .lista li { padding: 10px 18px 6px; border: 2px solid var(--cor-borda-viva); color: var(--cor-texto); background: rgb(6 5 4 / .6); }
+  /* tela do jogo (4:3) */
+  .tela-jogo { position: absolute; z-index: 3; left: 56px; right: 56px; aspect-ratio: 4 / 3; background: #000 center / cover no-repeat; box-shadow: 0 0 0 3px var(--cor-borda-viva), 0 40px 90px -20px rgb(0 0 0 / .95); }
+</style>
+</head>
+<body>
+<div id="peca"></div>
+<script>
+  // p: { alto, tipo, foto, borrada, sombra: 'alto'|'baixo'|'ambos'|'nenhuma', hud, html, transparente }
+  window.monta = async p => {
+    const el = document.getElementById('peca');
+    document.body.classList.toggle('com-fundo', !p.transparente);
+    el.className = 'peca' + (p.transparente ? ' transparente' : '');
+    el.style.cssText = '';   // as variáveis da peça anterior não passam para a próxima
+    el.style.setProperty('--alto', (p.alto || 1350) + 'px');
+    for (const [k, v] of Object.entries(p.vars || {})) el.style.setProperty(k, v);
+    const s = p.sombra || 'baixo';
+    el.innerHTML =
+      (p.foto ? `<div class="foto${p.borrada ? ' borrada' : ''}" style="background-image:url('${p.foto}')${p.posicao ? `;background-position:${p.posicao}` : ''}"></div>` : '') +
+      (p.foto && p.vinheta !== false ? '<div class="vinheta"></div>' : '') +
+      (s === 'alto' || s === 'ambos' ? '<div class="sombra-alto"></div>' : '') +
+      (s === 'baixo' || s === 'ambos' ? '<div class="sombra-baixo"></div>' : '') +
+      (p.hud ? '<div class="hud"><i></i><i></i><i></i><i></i></div>' : '') +
+      p.html;
+    await document.fonts.ready;
+    await Promise.all([...el.querySelectorAll('img')].map(i => i.decode().catch(() => {})));
+    // as fotos de fundo (a principal e as que vêm no html: tela do jogo, celular...)
+    const urls = [p.foto, ...[...p.html.matchAll(/url\('([^']+)'\)/g)].map(m => m[1])].filter(Boolean);
+    await Promise.all(urls.map(u => { const im = new Image(); im.src = u; return im.decode().catch(() => {}); }));
+    return true;
+  };
+</script>
+</body>
+</html>
