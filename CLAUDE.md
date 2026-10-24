@@ -51,6 +51,16 @@ dicionários o que ficou `""` (ele diz quanto falta; `-- --falta en` lista; `-- 
 confere as marcas HTML), seguindo `src/i18n/GUIA.md` e os nomes de menu/botão de
 `src/i18n/<idioma>.js`. O resumo do llms.txt traduzido fica em `tools/site/llms.<idioma>.md`.
 
+## Instagram (pasta `social/`)
+
+As peças do Instagram (fotos do jogo, posts, stories e o reels) saem de `npm run social`
+(`tools/social.mjs`; partes: `-- fotos`, `-- posts`, `-- reels`). O plano, as legendas e o
+calendário ficam em `social/CAMPANHA.md`. Valem as regras do site: **nada de spoiler** (nenhuma
+criatura além do cartaz e dos olhos no escuro, nada dos capítulos seguintes), maio de 1997 no
+outono, e o tom do jogo. Os posts "de dentro do jogo" (jornal, cartaz, Kartoffelfest) levam o
+aviso de ficção na legenda. Mude enquadramentos em `tools/social/fotos.mjs`, textos em
+`tools/social/posts.mjs` e o reels em `tools/social/roteiro.mjs`, nunca as imagens à mão.
+
 ## Sincronização entre computadores (GitHub)
 
 O projeto é editado em dois computadores. A fonte da verdade é a branch `main` de

@@ -140,6 +140,7 @@ O navegador abre em `http://localhost:5173`.
 | `npm run texturas` | grava o atlas de textura do protagonista em `texture-templates/forasteiro/` (`-- arno hilda` para moradores) |
 | `npm run shot` | uma captura do jogo (`node tools/screenshot.mjs saida.png "?skip=1"`) |
 | `npm run capturas` | refaz as fotos do site |
+| `npm run social` | refaz as peças do Instagram em `social/`: fotos, posts, stories e o reels ([detalhes](#capturas-retratos-e-exportação)) |
 | `npm run retratos` | refaz a lista completa de `personagens/` (criaturas incluídas) e as fichas de `site/personagens.html` |
 | `npm run site` | refaz a cabeça, o topo e o rodapé das páginas do site, as páginas em inglês, espanhol e alemão, o SEO, o sitemap e as versões para LLMs |
 | `npm run documentos` | recorta os papéis do site das imagens dos documentos do jogo, nos quatro idiomas |
@@ -945,6 +946,21 @@ de pistola (`npm run sons -- passo sino` mede só os que têm essas palavras no 
 - `npm run shot` (`tools/screenshot.mjs`): uma captura com consulta na URL, JS antes e espera.
   `tools/shots.mjs` faz várias na mesma sessão a partir de uma lista JSON.
 - `npm run capturas` e `npm run retratos`: veja [Site do jogo](#site-do-jogo).
+- `npm run social` (`tools/social.mjs`) faz as peças do Instagram em `social/`, sem spoiler
+  como o site. O plano da campanha, as legendas e o calendário ficam em `social/CAMPANHA.md`
+  e a prévia do perfil em `social/previa.html`.
+  - **Fotos** (`tools/social/fotos.mjs`): o jogo desenha com o dobro de pixels (post de
+    2160×2700, story de 1620×2880), sem o limite de 1440 linhas do 3D limpo. As telas com
+    interface saem em 4:3, e a do celular sai numa página de celular deitado, com toque.
+  - **Posts e stories** (`tools/social/posts.mjs`): montados em `tools/social/molde.html`
+    com os tokens e componentes do site.
+  - **Reels** (`tools/social/roteiro.mjs`): o jogo roda quadro a quadro. `relogio.js` toma
+    conta de `requestAnimationFrame` e de `performance.now`, e `gravador.js` passa a tela
+    pelo `VideoEncoder`. O som é o do motor de áudio do jogo num `OfflineAudioContext` que
+    para a cada quadro, então cada sino, tiro e trovão cai no quadro certo. `mp4.mjs` monta o
+    H.264 + AAC sem dependências. No fim, o gravador decodifica o próprio vídeo e imprime o
+    brilho médio de cada segundo.
+  - Partes: `npm run social -- fotos | posts | reels`; `-- fotos capa chuva` refaz só essas.
 - `npm run exportar` grava `exportados/teewald-protagonista.glb` (glTF binário), que abre no
   Blender (Arquivo → Importar → glTF 2.0) com textura e esqueleto; com o jogo aberto,
   `__teewald.exportar()` no console baixa o mesmo arquivo. O modelo vem na pose de repouso, em
@@ -1405,8 +1421,10 @@ src/ui/                 menu, hud, inventory, dialogue, paper, journal, minimap,
 src/i18n/               index.js (tr), en.js, es.js, de.js, GUIA.md
 
 tools/                  build-mapdata, test-campaign + campaign-bot, audit, sons, traduzir,
-                        screenshot, shots, capturas-site, retratos, site, exportar, texturas
+                        screenshot, shots, capturas-site, retratos, site, exportar, texturas,
+                        social (+ social/: fotos, posts, molde, roteiro, gravador, mp4)
 site/                   site promocional (HTML estático, separado do jogo)
+social/                 peças do Instagram (npm run social) e o plano em CAMPANHA.md
 personagens/            lista completa dos personagens e criaturas (gerada por npm run retratos)
 texture/                fotos de material (servidas como pasta pública)
 exportados/             teewald-protagonista.glb
